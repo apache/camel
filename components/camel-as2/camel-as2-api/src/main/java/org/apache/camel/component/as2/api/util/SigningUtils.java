@@ -34,15 +34,15 @@ import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
 
 public class SigningUtils {
 
     private SigningUtils() {
     }
 
-    public static AS2SignedDataGenerator createSigningGenerator(String algorithmName, Certificate[] certificateChain, PrivateKey privateKey) throws HttpException {
+    public static AS2SignedDataGenerator createSigningGenerator(Certificate[] certificateChain, PrivateKey privateKey) throws HttpException {
         
         AS2SignedDataGenerator gen = new AS2SignedDataGenerator();
 
@@ -61,14 +61,23 @@ public class SigningUtils {
                 new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
-        try {
-            gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
-                    .setSignedAttributeGenerator(new AttributeTable(attributes))
-                    .build(algorithmName, privateKey, signingCert));
-        } catch (CertificateEncodingException | OperatorCreationException e) {
-            throw new HttpException("Failed to add signer", e);
+        SignerInfoGenerator signerInfoGenerator = null;
+        for (String signingAlgorithmName : AS2SignedDataGenerator.getSupportedSignatureAlgorithmNamesForKey(privateKey)) {
+            try {
+                signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
+                .setSignedAttributeGenerator(new AttributeTable(attributes))
+                .build(signingAlgorithmName, privateKey, signingCert);
+                break;
+            } catch (Exception e) {
+                signerInfoGenerator = null;
+                continue;
+            }
         }
-
+        if (signerInfoGenerator == null) {
+            throw new HttpException("Failed to create signer info");
+        }
+        gen.addSignerInfoGenerator(signerInfoGenerator);
+        
         // Create and populate certificate store.
         try {
             JcaCertStore certs = new JcaCertStore(Arrays.asList(certificateChain));

@@ -26,6 +26,17 @@ public enum AS2MicAlgorithm {
         }
     }
     
+    public static String getAS2AlgorithmNake(String JdkAlgorithmName) {
+        switch(JdkAlgorithmName) {
+        case Constants.MD5_JDK_ALGORITHM_NAME:
+            return Constants.MD5_AS2_ALGORITHM_NAME;
+        case Constants.SHA_1_JDK_ALGORITHM_NAME:
+            return Constants.SHA_1_AS2_ALGORITHM_NAME;
+        default:
+            return null;
+        }
+    }
+    
     private String jdkAlgorithmName;
     private String as2AlgorithmName;
     

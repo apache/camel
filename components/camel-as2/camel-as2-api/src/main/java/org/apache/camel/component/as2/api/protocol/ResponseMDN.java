@@ -20,10 +20,8 @@ import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
-import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
-import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -135,22 +133,20 @@ public class ResponseMDN implements HttpResponseInterceptor {
                 
                 AS2SignedDataGenerator gen = null;
                 if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null && signingPrivateKey != null) {
-//                    Parameter param = dispositionNotificationOptions.getSignedReceiptMicalg();
-//                    String[] algorithmNames = param.getValues();
-//                    String algorithmName = MicUtils.getMicJdkAlgorithmName(algorithmNames);
-//                    gen = SigningUtils.createSigningGenerator(algorithmName, signingCertificateChain, signingPrivateKey);
+                    gen = SigningUtils.createSigningGenerator(signingCertificateChain, signingPrivateKey);
                 }
                 
                 if (gen != null) {
                     // Create signed receipt
-//                    try {
-//                        MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(multipartReportEntity, gen,
-//                                AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
-//                        response.setHeader(multipartSignedEntity.getContentType());
-//                        EntityUtils.setMessageEntity(response, multipartSignedEntity);
-//                    } catch (Exception e) {
-//                        
-//                    }
+                    try {
+                        multipartReportEntity.setMainBody(false);
+                        MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(multipartReportEntity, gen,
+                                AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+                        response.setHeader(multipartSignedEntity.getContentType());
+                        EntityUtils.setMessageEntity(response, multipartSignedEntity);
+                    } catch (Exception e) {
+                        LOG.warn("failed to sign receipt");
+                    }
                 } else {
                     // Create unsigned receipt
                     Header reportTypeHeader = AS2HeaderUtils.createHeader(AS2Header.REPORT_TYPE, new String[][] { {AS2ReportType.DISPOSITION_NOTIFICATION }, {BOUNDARY_PARAM_NAME, boundary } });
@@ -161,7 +157,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             }
             
         }
-
+        LOG.debug(Util.printMessage(response));
     }
 
 }

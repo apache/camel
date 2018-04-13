@@ -21,6 +21,16 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpMessage;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.RequestLine;
+import org.apache.http.StatusLine;
+
 /**
  * Utility Methods used in AS2 Component
  */
@@ -83,4 +93,83 @@ public class Util {
                 block != null &&
                 block != Character.UnicodeBlock.SPECIALS;
     }
+    
+    public static String printRequest(HttpRequest request) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PrintStream ps = new PrintStream(baos, true, "utf-8")) {
+            printRequest(ps, request);
+            String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            return content;
+        }
+    }
+    
+    public static String printMessage(HttpMessage message) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PrintStream ps = new PrintStream(baos, true, "utf-8")) {
+            printMessage(ps, message);
+            String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            return content;
+        }
+    }
+    
+    /**
+     * Prints the contents of request to given print stream.
+     * 
+     * @param out - the stream printed to.
+     * @param request - the request printed.
+     * @throws IOException
+     */
+    public static void printRequest(PrintStream out, HttpRequest request) throws IOException {
+        // Print request line
+        RequestLine requestLine = request.getRequestLine();
+        out.println(requestLine.getMethod() + ' ' + requestLine.getUri() + ' ' + requestLine.getProtocolVersion());
+        
+        // Write headers
+        for (final HeaderIterator it = request.headerIterator(); it.hasNext(); ) {
+            Header header = it.nextHeader();
+            out.println(header.getName() + ": " + (header.getValue() == null ? "" : header.getValue()));
+        }
+        out.println(); // write empty line separating header from body.
+        
+        if (request instanceof HttpEntityEnclosingRequest) {
+            // Write entity
+            HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
+            entity.writeTo(out);
+        }
+    }
+
+    /**
+     * Prints the contents of an Http Message to given print stream.
+     * 
+     * @param out - the stream printed to.
+     * @param message - the request printed.
+     * @throws IOException
+     */
+    public static void printMessage(PrintStream out, HttpMessage message) throws IOException {
+        // Print request line
+        if (message instanceof HttpRequest) {
+            RequestLine requestLine = ((HttpRequest)message).getRequestLine();
+            out.println(requestLine.getMethod() + ' ' + requestLine.getUri() + ' ' + requestLine.getProtocolVersion());
+        } else { // HttpResponse
+            StatusLine statusLine = ((HttpResponse)message).getStatusLine();
+            out.println(statusLine.toString());
+        }
+        // Write headers
+        for (final HeaderIterator it = message.headerIterator(); it.hasNext(); ) {
+            Header header = it.nextHeader();
+            out.println(header.getName() + ": " + (header.getValue() == null ? "" : header.getValue()));
+        }
+        out.println(); // write empty line separating header from body.
+        
+        if (message instanceof HttpEntityEnclosingRequest) {
+            // Write entity
+            HttpEntity entity = ((HttpEntityEnclosingRequest)message).getEntity();
+            entity.writeTo(out);
+        } else if (message instanceof HttpResponse) {
+            // Write entity
+            HttpEntity entity = ((HttpResponse)message).getEntity();
+            entity.writeTo(out);
+        }
+    }
+
 }

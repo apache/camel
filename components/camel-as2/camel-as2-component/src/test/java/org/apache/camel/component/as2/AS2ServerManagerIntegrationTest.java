@@ -27,6 +27,7 @@ import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ServerManagerApiMethod;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,7 +39,6 @@ import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.smime.SMIMECapabilitiesAttribute;
 import org.bouncycastle.asn1.smime.SMIMECapability;
@@ -46,7 +46,6 @@ import org.bouncycastle.asn1.smime.SMIMECapabilityVector;
 import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -102,8 +101,6 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     
     private AS2SignedDataGenerator gen;
     
-    private String algorithmName;
-    
     private KeyPair issueKP;
     private X509Certificate issueCert;
 
@@ -116,7 +113,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -169,7 +166,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, algorithmName, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -234,8 +231,6 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         
         setupKeysAndCertificates();
         
-        algorithmName = "DSA".equals(signingKP.getPrivate().getAlgorithm()) ? "SHA1withDSA" : "MD5withRSA";
-        
         // Create and populate certificate store.
         JcaCertStore certs = new JcaCertStore(certList);
 
@@ -250,8 +245,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
         
-        gen = new AS2SignedDataGenerator();
-        gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC").setSignedAttributeGenerator(new AttributeTable(attributes)).build(algorithmName, signingKP.getPrivate(), signingCert));
+        gen = SigningUtils.createSigningGenerator(certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
         gen.addCertificates(certs);
       
     }

@@ -162,7 +162,7 @@ public class AS2ClientManager {
      *            - the subject sent in the interchange request.
      * @throws HttpException
      */
-    public HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, AS2MessageStructure as2MessageStructure, ContentType ediMessageContentType, String ediMessageTransferEncoding, String signingAlgorithmName, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms) throws HttpException {
+    public HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, AS2MessageStructure as2MessageStructure, ContentType ediMessageContentType, String ediMessageTransferEncoding, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms) throws HttpException {
         
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(as2MessageStructure, "AS2 Message Structure");
@@ -179,7 +179,6 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, as2MessageStructure);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ediMessageContentType);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_TRANSFER_ENCODING, ediMessageTransferEncoding);
-        httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM_NAME, signingAlgorithmName);
         httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, signingCertificateChain);
         httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
@@ -271,11 +270,6 @@ public class AS2ClientManager {
 
     public AS2SignedDataGenerator createSigningGenerator(HttpCoreContext httpContext) throws HttpException {
 
-        String algorithmName = httpContext.getAttribute(SIGNING_ALGORITHM_NAME, String.class);
-        if (algorithmName == null) {
-            throw new HttpException("Signing lgorithm name missing");
-        }
-
         Certificate[] certificateChain = httpContext.getAttribute(SIGNING_CERTIFICATE_CHAIN, Certificate[].class);
         if (certificateChain == null) {
             throw new HttpException("Signing certificate chain missing");
@@ -286,7 +280,7 @@ public class AS2ClientManager {
             throw new HttpException("Signing private key missing");
         }
         
-        return SigningUtils.createSigningGenerator(algorithmName, certificateChain, privateKey);
+        return SigningUtils.createSigningGenerator(certificateChain, privateKey);
 
     }
 

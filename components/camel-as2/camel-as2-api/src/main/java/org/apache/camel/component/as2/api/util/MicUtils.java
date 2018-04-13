@@ -97,8 +97,8 @@ public class MicUtils {
             return null;
         }
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
-        String micAlgorithm = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
-        if (micAlgorithm == null) {
+        String micJdkAlgorithmName = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
+        if (micJdkAlgorithmName == null) {
             LOG.debug("do not create MIC: no matching MIC algorithms found");
             return null;
         }
@@ -132,9 +132,10 @@ public class MicUtils {
         
         byte[] content = EntityUtils.getContent(entity);
         
-        byte[] mic = createMic(content, micAlgorithm);
+        String micAS2AlgorithmName = AS2MicAlgorithm.getAS2AlgorithmNake(micJdkAlgorithmName);
+        byte[] mic = createMic(content, micJdkAlgorithmName);
         try {
-            return new ReceivedContentMic(micAlgorithm, mic);
+            return new ReceivedContentMic(micAS2AlgorithmName, mic);
         } catch (Exception e) {
             throw new HttpException("failed to encode MIC", e);
         }
@@ -145,9 +146,9 @@ public class MicUtils {
             return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
         }
         for(String micAs2AlgorithmName : micAs2AlgorithmNames) {
-            String micAlgorithmName = AS2MicAlgorithm.getJdkAlgorithmName(micAs2AlgorithmName);
-            if (micAlgorithmName != null) {
-                return micAlgorithmName;
+            String micJdkAlgorithmName = AS2MicAlgorithm.getJdkAlgorithmName(micAs2AlgorithmName);
+            if (micJdkAlgorithmName != null) {
+                return micJdkAlgorithmName;
             }
         }    
         return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
