@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -150,10 +151,8 @@ public class HttpProducer extends DefaultProducer {
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
                 if (entry.getValue().size() > 0) {
-                    // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                    // if multi valued, for a single value, then just output the value as is
-                    String s = entry.getValue().size() > 1 ? entry.getValue().toString() : entry.getValue().get(0);
-                    method.addRequestHeader(key, s);
+                    // join multi-values separated by semi-colon
+                    method.addRequestHeader(key, entry.getValue().stream().collect(Collectors.joining(";")));
                 }
             }
         }
@@ -208,7 +207,7 @@ public class HttpProducer extends DefaultProducer {
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
-            m.put(name, Collections.singletonList(value));
+            m.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
