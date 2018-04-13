@@ -89,10 +89,8 @@ public final class HttpHelper {
     @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         if (contentType != null) {
-            // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
+            String charset = getCharsetFromContentType(contentType);
+            if (charset != null) {
                 exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
             }
         }
