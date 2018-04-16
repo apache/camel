@@ -22,8 +22,8 @@ import java.util.List;
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     transient int lastIndex;
 
-    private List<Integer> distributionRatioList = new ArrayList<Integer>();
-    private List<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
+    private List<Integer> distributionRatioList = new ArrayList<>();
+    private List<DistributionRatio> runtimeRatios = new ArrayList<>();
 
     
     public WeightedLoadBalancer(List<Integer> distributionRatios) {

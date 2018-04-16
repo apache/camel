@@ -429,7 +429,7 @@ public abstract class BuilderSupport {
      * @return list of endpoints
      */
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
-        List<Endpoint> endpoints = new ArrayList<Endpoint>();
+        List<Endpoint> endpoints = new ArrayList<>();
         for (String uri : uris) {
             endpoints.add(endpoint(uri));
         }
@@ -443,7 +443,7 @@ public abstract class BuilderSupport {
      * @return list of the given endpoints
      */
     public List<Endpoint> endpoints(Endpoint... endpoints) {
-        List<Endpoint> answer = new ArrayList<Endpoint>();
+        List<Endpoint> answer = new ArrayList<>();
         answer.addAll(Arrays.asList(endpoints));
         return answer;
     }

@@ -163,7 +163,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             throw new IllegalArgumentException("You must configure fileExist=Move when moveExisting has been set");
         }
 
-        return new GenericFileProducer<File>(this, operations);
+        return new GenericFileProducer<>(this, operations);
     }
 
     public Exchange createExchange(GenericFile<File> file) {
@@ -298,7 +298,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+        Set<PosixFilePermission> permissions = new HashSet<>();
         if (ObjectHelper.isEmpty(chmod)) {
             return permissions;
         }
@@ -359,7 +359,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getDirectoryPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+        Set<PosixFilePermission> permissions = new HashSet<>();
         if (ObjectHelper.isEmpty(chmodDirectory)) {
             return permissions;
         }

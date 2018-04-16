@@ -32,7 +32,7 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class UnitOfWorkProducerTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
+    private static List<EventObject> events = new ArrayList<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

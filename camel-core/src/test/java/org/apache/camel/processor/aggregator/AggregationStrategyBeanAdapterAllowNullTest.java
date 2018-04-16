@@ -60,7 +60,7 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
 
         public List<String> addUsers(List<String> names, User user) {
             if (names == null) {
-                names = new ArrayList<String>();
+                names = new ArrayList<>();
             }
             names.add(user.getName());
             return names;

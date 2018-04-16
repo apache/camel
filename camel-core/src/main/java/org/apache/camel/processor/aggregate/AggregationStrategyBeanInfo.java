@@ -73,8 +73,8 @@ public class AggregationStrategyBeanInfo {
             }
         }
 
-        List<ParameterInfo> oldParameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> newParameters = new ArrayList<ParameterInfo>();
+        List<ParameterInfo> oldParameters = new ArrayList<>();
+        List<ParameterInfo> newParameters = new ArrayList<>();
 
         for (int i = 0; i < size / 2; i++) {
             Class<?> oldType = parameterTypes[i];

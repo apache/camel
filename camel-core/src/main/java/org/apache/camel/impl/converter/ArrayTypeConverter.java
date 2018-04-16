@@ -63,7 +63,7 @@ public class ArrayTypeConverter extends TypeConverterSupport {
                     return (T)Arrays.asList((Object[])value);
                 } else if (value.getClass().isArray()) {
                     int size = Array.getLength(value);
-                    List<Object> answer = new ArrayList<Object>(size);
+                    List<Object> answer = new ArrayList<>(size);
                     for (int i = 0; i < size; i++) {
                         answer.add(Array.get(value, i));
                     }

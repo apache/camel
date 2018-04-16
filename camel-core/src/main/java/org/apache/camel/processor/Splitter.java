@@ -247,7 +247,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
-        List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>();
+        List<ProcessorExchangePair> result = new ArrayList<>();
 
         // reuse iterable and add it to the result list
         Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairsIterable(exchange, value);

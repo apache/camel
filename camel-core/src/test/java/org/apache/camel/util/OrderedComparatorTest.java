@@ -29,7 +29,7 @@ import org.apache.camel.Ordered;
 public class OrderedComparatorTest extends TestCase {
 
     public void testOrderedComparatorGet() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(1));
@@ -46,7 +46,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparator() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(1));
@@ -63,7 +63,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparatorGetReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(1));
@@ -80,7 +80,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparatorReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(1));
@@ -97,7 +97,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparatorHigh() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(200));
@@ -116,7 +116,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparatorHighReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(200));
@@ -135,7 +135,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparatorLow() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(-2));
         answer.add(new MyOrder(200));
@@ -154,7 +154,7 @@ public class OrderedComparatorTest extends TestCase {
     }
 
     public void testOrderedComparatorLowReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(-2));
         answer.add(new MyOrder(200));

@@ -169,7 +169,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     }
 
     private List<Expression> createExpressions() {
-        List<Expression> answer = new ArrayList<Expression>();
+        List<Expression> answer = new ArrayList<>();
         for (SimpleNode token : nodes) {
             Expression exp = token.createExpression(expression);
             if (exp != null) {

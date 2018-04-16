@@ -36,7 +36,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
-    protected static List<EventObject> events = new ArrayList<EventObject>();
+    protected static List<EventObject> events = new ArrayList<>();
 
     @Override
     public void setUp() throws Exception {

@@ -429,7 +429,7 @@ public final class AdviceWithTasks {
                                                                final int selectFrom, final int selectTo, int maxDeep) {
 
         // first iterator and apply match by
-        List<ProcessorDefinition<?>> matched = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition<?>> matched = new ArrayList<>();
 
         List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 

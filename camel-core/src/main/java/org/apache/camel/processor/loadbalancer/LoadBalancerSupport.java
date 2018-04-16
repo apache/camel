@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor>, IdAware {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final List<Processor> processors = new CopyOnWriteArrayList<Processor>();
+    private final List<Processor> processors = new CopyOnWriteArrayList<>();
     private String id;
 
     public void addProcessor(Processor processor) {
@@ -62,7 +62,7 @@ public abstract class LoadBalancerSupport extends ServiceSupport implements Load
         if (!hasNext()) {
             return null;
         }
-        return new ArrayList<Processor>(processors);
+        return new ArrayList<>(processors);
     }
 
     public boolean hasNext() {

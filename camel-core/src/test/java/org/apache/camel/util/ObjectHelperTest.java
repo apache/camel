@@ -187,7 +187,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testCreateIterator() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         Iterator<String> iterator = list.iterator();
         assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
     }
@@ -645,7 +645,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(true, ObjectHelper.evaluateValuePredicate(""));
         assertEquals(true, ObjectHelper.evaluateValuePredicate(" "));
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         assertEquals(false, ObjectHelper.evaluateValuePredicate(list));
         list.add("foo");
         assertEquals(true, ObjectHelper.evaluateValuePredicate(list));
@@ -718,7 +718,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testMatches() {
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("foo");
         data.add("bar");
         assertEquals(true, ObjectHelper.matches(data));
@@ -787,7 +787,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIterable() {
-        final List<String> data = new ArrayList<String>();
+        final List<String> data = new ArrayList<>();
         data.add("A");
         data.add("B");
         data.add("C");

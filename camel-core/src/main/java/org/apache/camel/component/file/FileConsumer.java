@@ -196,7 +196,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
      * @return wrapped as a GenericFile
      */
     public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
-        GenericFile<File> answer = new GenericFile<File>(probeContentType);
+        GenericFile<File> answer = new GenericFile<>(probeContentType);
         // use file specific binding
         answer.setBinding(new FileBinding());
 

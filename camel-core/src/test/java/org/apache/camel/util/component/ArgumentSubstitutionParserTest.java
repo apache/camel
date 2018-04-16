@@ -37,9 +37,9 @@ public class ArgumentSubstitutionParserTest {
         adapters[2] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
         adapters[3] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
 
-        final ApiMethodParser<TestProxy> parser = new ArgumentSubstitutionParser<TestProxy>(TestProxy.class, adapters);
+        final ApiMethodParser<TestProxy> parser = new ArgumentSubstitutionParser<>(TestProxy.class, adapters);
 
-        final ArrayList<String> signatures = new ArrayList<String>();
+        final ArrayList<String> signatures = new ArrayList<>();
         signatures.add("public String sayHi();");
         signatures.add("public String sayHi(final String name);");
         signatures.add("public final String greetMe(final String name);");

@@ -415,9 +415,9 @@ public final class ObjectHelper {
      * @return an Optional
      */
     public static Optional<Object> firstNotNull(Object... values) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != null) {
-                return Optional.of(values[i]);
+        for (Object value : values) {
+            if (value != null) {
+                return Optional.of(value);
             }
         }
 
@@ -1532,7 +1532,7 @@ public final class ObjectHelper {
     public static List<Method> findMethodsWithAnnotation(Class<?> type,
                                                          Class<? extends Annotation> annotationType,
                                                          boolean checkMetaAnnotations) {
-        List<Method> answer = new ArrayList<Method>();
+        List<Method> answer = new ArrayList<>();
         do {
             Method[] methods = type.getDeclaredMethods();
             for (Method method : methods) {
@@ -1872,7 +1872,7 @@ public final class ObjectHelper {
      * @return the Iterable
      */
     public static Iterable<Throwable> createExceptionIterable(Throwable exception) {
-        List<Throwable> throwables = new ArrayList<Throwable>();
+        List<Throwable> throwables = new ArrayList<>();
 
         Throwable current = exception;
         // spool to the bottom of the caused by tree

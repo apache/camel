@@ -76,7 +76,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private Boolean apiDocs;
 
     @XmlElementRef
-    private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
+    private List<VerbDefinition> verbs = new ArrayList<>();
 
     @Override
     public String getLabel() {
@@ -615,7 +615,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // sanity check this rest definition do not have duplicates
         validateUniquePaths();
 
-        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> answer = new ArrayList<>();
         if (camelContext.getRestConfigurations().isEmpty()) {
             // make sure to initialize a rest configuration when its empty
             // lookup a global which may have been setup via camel-spring-boot etc
@@ -650,13 +650,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // sanity check this rest definition do not have duplicates
         validateUniquePaths();
 
-        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> answer = new ArrayList<>();
         addRouteDefinition(camelContext, answer, restConfiguration.getComponent());
         return answer;
     }
 
     protected void validateUniquePaths() {
-        Set<String> paths = new HashSet<String>();
+        Set<String> paths = new HashSet<>();
         for (VerbDefinition verb : verbs) {
             String path = verb.asVerb();
             if (verb.getUri() != null) {
@@ -679,7 +679,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         String from = "rest-api:" + configuration.getApiContextPath();
 
         // append options
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
 
         String routeId = configuration.getApiContextRouteId();
         if (routeId == null) {
@@ -778,7 +778,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
 
             // append options
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap<>();
             // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 options.put("consumes", verb.getConsumes());

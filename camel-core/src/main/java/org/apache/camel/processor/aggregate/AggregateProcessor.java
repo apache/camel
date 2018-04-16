@@ -111,9 +111,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private ExceptionHandler exceptionHandler;
     private AggregationRepository aggregationRepository;
     private Map<String, String> closedCorrelationKeys;
-    private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<String>();
+    private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<>();
     private final Set<String> inProgressCompleteExchanges = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-    private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
+    private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
     private final AtomicLong totalIn = new AtomicLong();
@@ -245,7 +245,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
     }
@@ -383,7 +383,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
-        List<Exchange> list = new ArrayList<Exchange>();
+        List<Exchange> list = new ArrayList<>();
         String complete = null;
 
         Exchange answer;
@@ -1233,7 +1233,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             LOG.trace("Starting recover check");
 
             // copy the current in progress before doing scan
-            final Set<String> copyOfInProgress = new LinkedHashSet<String>(inProgressCompleteExchanges);
+            final Set<String> copyOfInProgress = new LinkedHashSet<>(inProgressCompleteExchanges);
 
             Set<String> exchangeIds = recoverable.scan(camelContext);
             for (String exchangeId : exchangeIds) {
@@ -1350,7 +1350,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 closedCorrelationKeys = LRUCacheFactory.newLRUCache(getCloseCorrelationKeyOnCompletion());
             } else {
                 LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
-                closedCorrelationKeys = new ConcurrentHashMap<String, String>();
+                closedCorrelationKeys = new ConcurrentHashMap<>();
             }
         }
 

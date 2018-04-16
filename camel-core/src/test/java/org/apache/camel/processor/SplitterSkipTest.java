@@ -27,7 +27,7 @@ public class SplitterSkipTest extends ContextTestSupport {
     public void testSplitterSkip() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("C", "D", "E");
 
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("A");
         data.add("B");
         data.add("C");
@@ -41,7 +41,7 @@ public class SplitterSkipTest extends ContextTestSupport {
     public void testSplitterEmpty() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(0);
 
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("A");
         data.add("B");
         template.sendBody("direct:start", data);
@@ -52,7 +52,7 @@ public class SplitterSkipTest extends ContextTestSupport {
     public void testSplitterEmptyAgain() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(0);
 
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("A");
         template.sendBody("direct:start", data);
 

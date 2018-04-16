@@ -374,7 +374,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
                 ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
-                List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
+                List<ManagedProcessorMBean> mps = new ArrayList<>();
                 for (ObjectName on : names) {
                     ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
 
@@ -386,7 +386,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 mps.sort(new OrderProcessorMBeans());
 
                 // walk the processors in reverse order, and calculate the accumulated total time
-                Map<String, Long> accumulatedTimes = new HashMap<String, Long>();
+                Map<String, Long> accumulatedTimes = new HashMap<>();
                 Collections.reverse(mps);
                 for (ManagedProcessorMBean processor : mps) {
                     processorAccumulatedTime += processor.getTotalProcessingTime();

@@ -56,7 +56,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         WeightedLoadBalancer loadBalancer;
-        List<Integer> distributionRatioList = new ArrayList<Integer>();
+        List<Integer> distributionRatioList = new ArrayList<>();
         
         try {
             String[] ratios = distributionRatio.split(getDistributionRatioDelimiter());

@@ -87,7 +87,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     protected Expression createExpression(RouteContext routeContext) {
-        List<Expression> list = new ArrayList<Expression>();
+        List<Expression> list = new ArrayList<>();
 
         String[] parts = safeSplitRaw(uri);
         for (String part : parts) {
@@ -215,7 +215,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     private static List<Pair> checkRAW(String s) {
         Matcher matcher = RAW_PATTERN.matcher(s);
-        List<Pair> answer = new ArrayList<Pair>();
+        List<Pair> answer = new ArrayList<>();
         // Check all occurrences
         while (matcher.find()) {
             answer.add(new Pair(matcher.start(), matcher.end() - 1));

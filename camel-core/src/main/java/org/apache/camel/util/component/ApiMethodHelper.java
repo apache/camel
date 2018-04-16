@@ -74,12 +74,12 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         }
 
         if (nullableArguments != null && !nullableArguments.isEmpty()) {
-            this.nullableArguments = Collections.unmodifiableList(new ArrayList<String>(nullableArguments));
+            this.nullableArguments = Collections.unmodifiableList(new ArrayList<>(nullableArguments));
         } else {
             this.nullableArguments = Collections.emptyList();
         }
 
-        final Map<Pattern, String> aliasPatterns = new HashMap<Pattern, String>();
+        final Map<Pattern, String> aliasPatterns = new HashMap<>();
         for (Map.Entry<String, String> alias : aliases.entrySet()) {
             if (alias.getKey() == null || alias.getValue() == null) {
                 throw new IllegalArgumentException("Alias pattern and replacement cannot be null");
@@ -111,7 +111,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     }
                     Set<String> names = tmpAliasesMap.get(alias);
                     if (names == null) {
-                        names = new HashSet<String>();
+                        names = new HashSet<>();
                         tmpAliasesMap.put(alias, names);
                     }
                     names.add(name);
@@ -121,7 +121,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             // map method name to Enum
             List<T> overloads = tmpMethodMap.get(name);
             if (overloads == null) {
-                overloads = new ArrayList<T>();
+                overloads = new ArrayList<>();
                 tmpMethodMap.put(method.getName(), overloads);
             }
             overloads.add(method);
@@ -129,7 +129,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             // add arguments for this method
             List<Object> arguments = tmpArgumentsMap.get(name);
             if (arguments == null) {
-                arguments = new ArrayList<Object>();
+                arguments = new ArrayList<>();
                 tmpArgumentsMap.put(name, arguments);
             }
 
@@ -160,7 +160,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
         // validate nullableArguments
         if (!tmpValidArguments.keySet().containsAll(this.nullableArguments)) {
-            List<String> unknowns = new ArrayList<String>(this.nullableArguments);
+            List<String> unknowns = new ArrayList<>(this.nullableArguments);
             unknowns.removeAll(tmpValidArguments.keySet());
             throw new IllegalArgumentException("Unknown nullable arguments " + unknowns.toString());
         }
@@ -173,7 +173,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             if (methodNames.size() > 1) {
 
                 // get mapped methods
-                final List<T> aliasedMethods = new ArrayList<T>();
+                final List<T> aliasedMethods = new ArrayList<>();
                 for (String methodName : methodNames) {
                     List<T> mappedMethods = tmpMethodMap.get(methodName);
                     aliasedMethods.addAll(mappedMethods);
@@ -181,13 +181,13 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
                 // look for argument overlap
                 for (T method : aliasedMethods) {
-                    final List<String> argNames = new ArrayList<String>(method.getArgNames());
+                    final List<String> argNames = new ArrayList<>(method.getArgNames());
                     argNames.removeAll(this.nullableArguments);
 
-                    final Set<T> ambiguousMethods = new HashSet<T>();
+                    final Set<T> ambiguousMethods = new HashSet<>();
                     for (T otherMethod : aliasedMethods) {
                         if (method != otherMethod) {
-                            final List<String> otherArgsNames = new ArrayList<String>(otherMethod.getArgNames());
+                            final List<String> otherArgsNames = new ArrayList<>(otherMethod.getArgNames());
                             otherArgsNames.removeAll(this.nullableArguments);
 
                             if (argNames.equals(otherArgsNames)) {
@@ -236,7 +236,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         List<T> methods = methodMap.get(name);
         if (methods == null) {
             if (aliasesMap.containsKey(name)) {
-                methods = new ArrayList<T>();
+                methods = new ArrayList<>();
                 for (String method : aliasesMap.get(name)) {
                     methods.addAll(methodMap.get(method));
                 }
@@ -359,7 +359,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         List<Object> arguments = argumentsMap.get(name);
         if (arguments == null) {
             if (aliasesMap.containsKey(name)) {
-                arguments = new ArrayList<Object>();
+                arguments = new ArrayList<>();
                 for (String method : aliasesMap.get(name)) {
                     arguments.addAll(argumentsMap.get(method));
                 }
@@ -379,7 +379,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      */
     public Set<String> getMissingProperties(String methodName, Set<String> argNames) {
         final List<Object> argsWithTypes = getArguments(methodName);
-        final Set<String> missingArgs = new HashSet<String>();
+        final Set<String> missingArgs = new HashSet<>();
 
         for (int i = 1; i < argsWithTypes.size(); i += 2) {
             final String name = (String) argsWithTypes.get(i);

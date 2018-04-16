@@ -139,7 +139,7 @@ public class URISupportTest extends ContextTestSupport {
 
     public void testCreateRemaingURI() throws Exception {
         URI original = new URI("http://camel.apache.org");
-        Map<String, Object> param = new HashMap<String, Object>();
+        Map<String, Object> param = new HashMap<>();
         param.put("foo", "123");
         URI newUri = URISupport.createRemainingURI(original, param);
         assertNotNull(newUri);
@@ -194,7 +194,7 @@ public class URISupportTest extends ContextTestSupport {
         String uri = "http://localhost:23271/myapp/mytest?columns=name%2Ctotalsens%2Cupsens&username=apiuser";
 
         // these are the parameters which is tricky to encode
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("foo", "abc def");
         map.put("bar", "123,456");
         map.put("name", "S\u00F8ren"); // danish letter
@@ -328,7 +328,7 @@ public class URISupportTest extends ContextTestSupport {
     }
 
     public void testAppendParameterToUriAndReplaceExistingOne() throws Exception {
-        Map<String, Object> newParameters = new HashMap<String, Object>();
+        Map<String, Object> newParameters = new HashMap<>();
         newParameters.put("foo", "456");
         newParameters.put("bar", "yes");
         String newUri = URISupport.appendParametersToURI("stub:foo?foo=123", newParameters);

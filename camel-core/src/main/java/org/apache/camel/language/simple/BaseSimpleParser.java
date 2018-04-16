@@ -41,8 +41,8 @@ import org.apache.camel.language.simple.types.TokenType;
 public abstract class BaseSimpleParser {
 
     protected final String expression;
-    protected final List<SimpleToken> tokens = new ArrayList<SimpleToken>();
-    protected final List<SimpleNode> nodes = new ArrayList<SimpleNode>();
+    protected final List<SimpleToken> tokens = new ArrayList<>();
+    protected final List<SimpleNode> nodes = new ArrayList<>();
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
@@ -116,7 +116,7 @@ public abstract class BaseSimpleParser {
      * has a linked and prepared graph of nodes which represent the input expression.
      */
     protected void prepareBlocks() {
-        List<SimpleNode> answer = new ArrayList<SimpleNode>();
+        List<SimpleNode> answer = new ArrayList<>();
         Deque<Block> stack = new ArrayDeque<>();
 
         for (SimpleNode token : nodes) {

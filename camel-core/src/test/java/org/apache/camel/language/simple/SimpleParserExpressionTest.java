@@ -174,7 +174,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     public void testSimpleMap() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "123");
         map.put("foo bar", "456");
 

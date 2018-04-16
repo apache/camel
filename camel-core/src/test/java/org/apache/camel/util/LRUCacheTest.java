@@ -29,7 +29,7 @@ public class LRUCacheTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         // for testing use sync listener
-        cache = new LRUCache<String, Service>(10, 10, true, false, false, true);
+        cache = new LRUCache<>(10, 10, true, false, false, true);
     }
 
     public void testLRUCache() {

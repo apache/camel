@@ -216,11 +216,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ClassLoader applicationContextClassLoader;
     private EndpointRegistry<EndpointKey> endpoints;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
-    private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
-    private final Map<String, Component> components = new ConcurrentHashMap<String, Component>();
-    private final Set<Route> routes = new LinkedHashSet<Route>();
-    private final List<Service> servicesToStop = new CopyOnWriteArrayList<Service>();
-    private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<StartupListener>();
+    private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
+    private final Map<String, Component> components = new ConcurrentHashMap<>();
+    private final Set<Route> routes = new LinkedHashSet<>();
+    private final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
+    private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
@@ -228,27 +228,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ComponentResolver componentResolver;
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
-    private final Map<String, Language> languages = new HashMap<String, Language>();
+    private final Map<String, Language> languages = new HashMap<>();
     private Registry registry;
-    private List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<LifecycleStrategy>();
+    private List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
-    private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
-    private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
+    private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
+    private final List<RestDefinition> restDefinitions = new ArrayList<>();
     private Map<String, RestConfiguration> restConfigurations = new ConcurrentHashMap<>();
     private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
     private RestRegistry restRegistry = new DefaultRestRegistry();
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
-    private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
+    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
+    private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     private Set<LogListener> logListeners = new LinkedHashSet<>();
     private HeadersMapFactory headersMapFactory = new DefaultHeadersMapFactory();
 
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
-    private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<Boolean>();
-    private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<Boolean>();
+    private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
+    private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
@@ -268,16 +268,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ErrorHandlerFactory errorHandlerBuilder;
     private final Object errorHandlerExecutorServiceLock = new Object();
     private ScheduledExecutorService errorHandlerExecutorService;
-    private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
+    private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
-    private Map<String, String> globalOptions = new HashMap<String, String>();
+    private Map<String, String> globalOptions = new HashMap<>();
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
     private PropertiesComponent propertiesComponent;
     private StreamCachingStrategy streamCachingStrategy;
-    private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
-    private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
-    private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
+    private final Map<String, FactoryFinder> factories = new HashMap<>();
+    private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
+    private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
     private ClassResolver classResolver = new DefaultClassResolver(this);
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
@@ -293,7 +293,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private AsyncProcessorAwaitManager asyncProcessorAwaitManager = new DefaultAsyncProcessorAwaitManager();
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
-    private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
+    private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
     private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy(this);
@@ -601,11 +601,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Collection<Endpoint> getEndpoints() {
-        return new ArrayList<Endpoint>(endpoints.values());
+        return new ArrayList<>(endpoints.values());
     }
 
     public Map<String, Endpoint> getEndpointMap() {
-        Map<String, Endpoint> answer = new TreeMap<String, Endpoint>();
+        Map<String, Endpoint> answer = new TreeMap<>();
         for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
             answer.put(entry.getKey().get(), entry.getValue());
         }
@@ -637,7 +637,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
-        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        Collection<Endpoint> answer = new ArrayList<>();
         Endpoint oldEndpoint = endpoints.remove(getEndpointKey(uri));
         if (oldEndpoint != null) {
             answer.add(oldEndpoint);
@@ -893,7 +893,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return Collections.emptyList();
         } else {
             synchronized (routes) {
-                return new ArrayList<Route>(routes);
+                return new ArrayList<>(routes);
             }
         }
     }
@@ -1141,7 +1141,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must ensure route is prepared, before we can start it
             route.prepare(this);
 
-            List<Route> routes = new ArrayList<Route>();
+            List<Route> routes = new ArrayList<>();
             List<RouteContext> routeContexts = route.addRoutes(this, routes);
             RouteService routeService = new RouteService(this, route, routeContexts, routes);
             startRouteService(routeService, true);
@@ -1238,7 +1238,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
-                List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+                List<RouteStartupOrder> routes = new ArrayList<>(1);
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
                 routes.add(order);
 
@@ -1258,7 +1258,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
-                List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+                List<RouteStartupOrder> routes = new ArrayList<>(1);
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
                 routes.add(order);
 
@@ -1278,7 +1278,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
-                List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+                List<RouteStartupOrder> routes = new ArrayList<>(1);
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
                 routes.add(order);
 
@@ -1298,7 +1298,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
-                List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+                List<RouteStartupOrder> routes = new ArrayList<>(1);
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
                 routes.add(order);
 
@@ -1323,7 +1323,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // gather a map of all the endpoints in use by the routes, so we can known if a given endpoints is in use
         // by one or more routes, when we remove the route
-        Map<String, Set<Endpoint>> endpointsInUse = new HashMap<String, Set<Endpoint>>();
+        Map<String, Set<Endpoint>> endpointsInUse = new HashMap<>();
         for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
             endpointsInUse.put(entry.getKey(), entry.getValue().gatherEndpoints());
         }
@@ -1347,7 +1347,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                     // from the route which we have removed, then remove all its private endpoints
                     // (eg the endpoints which are not in use by other routes)
-                    Set<Endpoint> toRemove = new LinkedHashSet<Endpoint>();
+                    Set<Endpoint> toRemove = new LinkedHashSet<>();
                     for (Endpoint endpoint : endpointsInUse.get(routeId)) {
                         // how many times is the endpoint in use
                         int count = 0;
@@ -1390,7 +1390,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
-                List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+                List<RouteStartupOrder> routes = new ArrayList<>(1);
                 Route route = routeService.getRoutes().iterator().next();
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
                 routes.add(order);
@@ -1420,7 +1420,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
-                List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+                List<RouteStartupOrder> routes = new ArrayList<>(1);
                 Route route = routeService.getRoutes().iterator().next();
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
                 routes.add(order);
@@ -1805,10 +1805,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
                 // selected rows to use for answer
-                Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+                Map<String, String[]> selected = new LinkedHashMap<>();
 
                 // extract options from the node
-                Map<String, Object> options = new LinkedHashMap<String, Object>();
+                Map<String, Object> options = new LinkedHashMap<>();
                 IntrospectionSupport.getProperties(target, options, "", false);
                 // remove outputs which we do not want to include
                 options.remove("outputs");
@@ -1933,11 +1933,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
             // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
-            Map<String, String[]> dataFormatOptions = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> selected = new LinkedHashMap<>();
+            Map<String, String[]> dataFormatOptions = new LinkedHashMap<>();
 
             // extract options from the data format
-            Map<String, Object> options = new LinkedHashMap<String, Object>();
+            Map<String, Object> options = new LinkedHashMap<>();
             IntrospectionSupport.getProperties(dataFormat, options, "", false);
 
             for (Map.Entry<String, Object> entry : options.entrySet()) {
@@ -2092,11 +2092,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
 
             // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> selected = new LinkedHashMap<>();
 
             // insert values from component
             Component component = getComponent(componentName);
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap<>();
             IntrospectionSupport.getProperties(component, options, null);
 
             for (Map.Entry<String, Object> entry : options.entrySet()) {
@@ -2252,8 +2252,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
             // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
-            Map<String, String[]> uriOptions = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> selected = new LinkedHashMap<>();
+            Map<String, String[]> uriOptions = new LinkedHashMap<>();
 
             // insert values from uri
             Map<String, Object> options = EndpointHelper.endpointProperties(this, uri);
@@ -2414,7 +2414,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String createRouteStaticEndpointJson(String routeId, boolean includeDynamic) {
-        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> routes = new ArrayList<>();
         if (routeId != null) {
             RouteDefinition route = getRouteDefinition(routeId);
             if (route == null) {
@@ -3068,7 +3068,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // assemble list of startup ordering so routes can be shutdown accordingly
-        List<RouteStartupOrder> orders = new ArrayList<RouteStartupOrder>();
+        List<RouteStartupOrder> orders = new ArrayList<>();
         for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
             Route route = entry.getValue().getRoutes().iterator().next();
             Integer order = entry.getValue().getRouteDefinition().getStartupOrder();
@@ -3615,7 +3615,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         isStartingRoutes.set(true);
         try {
             // filter out already started routes
-            Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
+            Map<String, RouteService> filtered = new LinkedHashMap<>();
             for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
                 boolean startable = false;
 
@@ -3679,7 +3679,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private void shutdownServices(Collection<?> services, boolean reverse) {
         Collection<?> list = services;
         if (reverse) {
-            List<Object> reverseList = new ArrayList<Object>(services);
+            List<Object> reverseList = new ArrayList<>(services);
             Collections.reverse(reverseList);
             list = reverseList;
         }
@@ -3840,7 +3840,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                                                          boolean addingRoutes, Collection<RouteService> routeServices) throws Exception {
         // list of inputs to start when all the routes have been prepared for starting
         // we use a tree map so the routes will be ordered according to startup order defined on the route
-        Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<Integer, DefaultRouteStartupOrder>();
+        Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<>();
 
         // figure out the order in which the routes should be started
         for (RouteService routeService : routeServices) {
@@ -3959,7 +3959,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private void doStartOrResumeRouteConsumers(Map<Integer, DefaultRouteStartupOrder> inputs, boolean resumeOnly, boolean addingRoute) throws Exception {
-        List<Endpoint> routeInputs = new ArrayList<Endpoint>();
+        List<Endpoint> routeInputs = new ArrayList<>();
 
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
             Integer order = entry.getKey();
@@ -3985,7 +3985,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 // check for multiple consumer violations with existing routes which
                 // have already been started, or is currently starting
-                List<Endpoint> existingEndpoints = new ArrayList<Endpoint>();
+                List<Endpoint> existingEndpoints = new ArrayList<>();
                 for (Route existingRoute : getRoutes()) {
                     if (route.getId().equals(existingRoute.getId())) {
                         // skip ourselves
@@ -4282,7 +4282,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public List<String> getComponentNames() {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         for (String name : components.keySet()) {
             answer.add(name);
         }
@@ -4291,7 +4291,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public List<String> getLanguageNames() {
         synchronized (languages) {
-            List<String> answer = new ArrayList<String>();
+            List<String> answer = new ArrayList<>();
             for (String name : languages.keySet()) {
                 answer.add(name);
             }

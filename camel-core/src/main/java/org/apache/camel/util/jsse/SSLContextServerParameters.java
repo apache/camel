@@ -87,7 +87,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         // cipher suites and protocols, this method needs to address that.
         // As is, we do NOT pass the configurers along for those two settings.
         
-        List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<Configurer<SSLEngine>>();
+        List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<>();
         
         if (this.getClientAuthentication() != null) { 
             

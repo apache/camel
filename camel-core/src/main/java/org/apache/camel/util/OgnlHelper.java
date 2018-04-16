@@ -180,7 +180,7 @@ public final class OgnlHelper {
                 value = null;
             }
 
-            return new KeyValueHolder<String, String>(key, value);
+            return new KeyValueHolder<>(key, value);
         }
 
         return null;
@@ -196,7 +196,7 @@ public final class OgnlHelper {
      * @throws IllegalArgumentException if the last method has a missing ending parenthesis
      */
     public static List<String> splitOgnl(String ognl) {
-        List<String> methods = new ArrayList<String>();
+        List<String> methods = new ArrayList<>();
 
         // return an empty list if ognl is empty
         if (ObjectHelper.isEmpty(ognl)) {

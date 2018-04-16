@@ -166,7 +166,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
                 return newExchange;
             }
 
-            List<OrderItem> order = new ArrayList<OrderItem>(2);
+            List<OrderItem> order = new ArrayList<>(2);
             order.add(oldExchange.getIn().getBody(OrderItem.class));
             order.add(newExchange.getIn().getBody(OrderItem.class));
 

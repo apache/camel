@@ -182,7 +182,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
          */
         synchronized void add(FileInputStreamCache fileInputStreamCache) {
             if (fileInputStreamCaches == null) {
-                fileInputStreamCaches = new ArrayList<FileInputStreamCache>(3);
+                fileInputStreamCaches = new ArrayList<>(3);
             }
             fileInputStreamCaches.add(fileInputStreamCache);
         }

@@ -37,7 +37,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        AntPathMatcherGenericFileFilter<File> filterNotCaseSensitive = new AntPathMatcherGenericFileFilter<File>("**/c*");
+        AntPathMatcherGenericFileFilter<File> filterNotCaseSensitive = new AntPathMatcherGenericFileFilter<>("**/c*");
         filterNotCaseSensitive.setCaseSensitive(false);
 
         JndiRegistry jndi = super.createRegistry();

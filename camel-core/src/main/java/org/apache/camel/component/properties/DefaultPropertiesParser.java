@@ -118,7 +118,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                     throw new IllegalArgumentException("Circular reference detected with key [" + property.getKey() + "] from text: " + input);
                 }
 
-                Set<String> newReplaced = new HashSet<String>(replacedPropertyKeys);
+                Set<String> newReplaced = new HashSet<>(replacedPropertyKeys);
                 newReplaced.add(property.getKey());
 
                 String before = answer.substring(0, property.getBeginIndex());

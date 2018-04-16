@@ -36,9 +36,9 @@ public class ContextScanDefinition {
     @XmlAttribute
     private Boolean includeNonSingletons;
     @XmlElement(name = "excludes")
-    private List<String> excludes = new ArrayList<String>();
+    private List<String> excludes = new ArrayList<>();
     @XmlElement(name = "includes")
-    private List<String> includes = new ArrayList<String>();
+    private List<String> includes = new ArrayList<>();
 
     public ContextScanDefinition() {
     }

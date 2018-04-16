@@ -255,7 +255,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void addNewExchangeProcessor(Processor processor) {
         if (newExchangeProcessors == null) {
-            newExchangeProcessors = new ArrayList<Processor>();
+            newExchangeProcessors = new ArrayList<>();
         }
         newExchangeProcessors.add(processor);
     }

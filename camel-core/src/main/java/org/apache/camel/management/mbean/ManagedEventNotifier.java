@@ -142,7 +142,7 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
                           "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSendingEvent", "ExchangeSentEvent", "RouteStartedEvent",
                           "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent"};
 
-        List<MBeanNotificationInfo> infos = new ArrayList<MBeanNotificationInfo>();
+        List<MBeanNotificationInfo> infos = new ArrayList<>();
         for (String name : names) {
             MBeanNotificationInfo info = new MBeanNotificationInfo(new String[]{"org.apache.camel.management.event"},
                     "org.apache.camel.management.event." + name, "The event " + name + " occurred");

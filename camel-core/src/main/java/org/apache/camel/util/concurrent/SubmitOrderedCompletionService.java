@@ -39,7 +39,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
     // the idea to order the completed task in the same order as they where submitted is to leverage
     // the delay queue. With the delay queue we can control the order by the getDelay and compareTo methods
     // where we can order the tasks in the same order as they where submitted.
-    private final DelayQueue<SubmitOrderFutureTask> completionQueue = new DelayQueue<SubmitOrderFutureTask>();
+    private final DelayQueue<SubmitOrderFutureTask> completionQueue = new DelayQueue<>();
 
     // id is the unique id that determines the order in which tasks was submitted (incrementing)
     private final AtomicInteger id = new AtomicInteger();

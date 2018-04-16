@@ -470,7 +470,7 @@ public final class ExchangeHelper {
      * @return a Map populated with the require variables
      */
     public static Map<String, Object> createVariableMap(Exchange exchange) {
-        Map<String, Object> answer = new HashMap<String, Object>();
+        Map<String, Object> answer = new HashMap<>();
         populateVariableMap(exchange, answer);
         return answer;
     }

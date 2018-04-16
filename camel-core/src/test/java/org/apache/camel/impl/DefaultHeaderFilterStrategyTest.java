@@ -43,7 +43,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
     public void testInFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add("foo");
         comp.setInFilter(set);
 
@@ -53,7 +53,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
     public void testInFilterDoFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add("foo");
         comp.setInFilter(set);
 
@@ -68,7 +68,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
     public void testOutFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add("foo");
         comp.setOutFilter(set);
 
@@ -78,7 +78,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
     public void testOutFilterDoFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add("foo");
         comp.setOutFilter(set);
 
@@ -94,7 +94,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
         comp.setCaseInsensitive(true);
         
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add("Content-Type");
         comp.setOutFilter(set);
 

@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
-    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<EventNotifier>();
+    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private ManagementObjectStrategy managementObjectStrategy;

@@ -37,7 +37,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
      */
     public ArgumentSubstitutionParser(Class<T> proxyType, Substitution[] substitutions) {
         super(proxyType);
-        Map<String, Map<String, List<NameReplacement>>> regexMap = new LinkedHashMap<String, Map<String, List<NameReplacement>>>();
+        Map<String, Map<String, List<NameReplacement>>> regexMap = new LinkedHashMap<>();
 
         for (Substitution substitution : substitutions) {
             substitution.validate();
@@ -51,21 +51,21 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
             Map<String, List<NameReplacement>> replacementMap = regexMap.get(substitution.method);
             if (replacementMap == null) {
-                replacementMap = new LinkedHashMap<String, List<NameReplacement>>();
+                replacementMap = new LinkedHashMap<>();
                 regexMap.put(substitution.method, replacementMap);
             }
             List<NameReplacement> replacements = replacementMap.get(substitution.argName);
             if (replacements == null) {
-                replacements = new ArrayList<NameReplacement>();
+                replacements = new ArrayList<>();
                 replacementMap.put(substitution.argName, replacements);
             }
             replacements.add(nameReplacement);
         }
 
         // now compile the patterns, all this because Pattern doesn't override equals()!!!
-        this.methodMap = new LinkedHashMap<Pattern, Map<Pattern, List<NameReplacement>>>();
+        this.methodMap = new LinkedHashMap<>();
         for (Map.Entry<String, Map<String, List<NameReplacement>>> method : regexMap.entrySet()) {
-            Map<Pattern, List<NameReplacement>> argMap = new LinkedHashMap<Pattern, List<NameReplacement>>();
+            Map<Pattern, List<NameReplacement>> argMap = new LinkedHashMap<>();
             for (Map.Entry<String, List<NameReplacement>> arg : method.getValue().entrySet()) {
                 argMap.put(Pattern.compile(arg.getKey()), arg.getValue());
             }
@@ -75,7 +75,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
     @Override
     public List<ApiMethodModel> processResults(List<ApiMethodModel> parseResult) {
-        final List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
+        final List<ApiMethodModel> result = new ArrayList<>();
 
         for (ApiMethodModel model : parseResult) {
             // look for method name matches
@@ -84,7 +84,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                 if (methodEntry.getKey().matcher(model.getName()).matches()) {
 
                     // look for arg name matches
-                    final List<ApiMethodArg> updatedArguments = new ArrayList<ApiMethodArg>();
+                    final List<ApiMethodArg> updatedArguments = new ArrayList<>();
                     final Map<Pattern, List<NameReplacement>> argMap = methodEntry.getValue();
                     for (ApiMethodArg argument : model.getArguments()) {
 

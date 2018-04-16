@@ -43,7 +43,7 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
         // do not stop on eviction, as the endpoint may still be in use
         super(CamelContextHelper.getMaximumEndpointCacheSize(context), CamelContextHelper.getMaximumEndpointCacheSize(context), false);
         // static map to hold endpoints we do not want to be evicted
-        this.staticMap = new ConcurrentHashMap<EndpointKey, Endpoint>();
+        this.staticMap = new ConcurrentHashMap<>();
         this.context = context;
     }
 
@@ -150,7 +150,7 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
 
     @Override
     public Set<EndpointKey> keySet() {
-        Set<EndpointKey> answer = new LinkedHashSet<EndpointKey>();
+        Set<EndpointKey> answer = new LinkedHashSet<>();
         answer.addAll(staticMap.keySet());
         answer.addAll(super.keySet());
         return answer;
@@ -158,7 +158,7 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
 
     @Override
     public Collection<Endpoint> values() {
-        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        Collection<Endpoint> answer = new ArrayList<>();
         answer.addAll(staticMap.values());
         answer.addAll(super.values());
         return answer;
@@ -166,7 +166,7 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
 
     @Override
     public Set<Entry<EndpointKey, Endpoint>> entrySet() {
-        Set<Entry<EndpointKey, Endpoint>> answer = new LinkedHashSet<Entry<EndpointKey, Endpoint>>();
+        Set<Entry<EndpointKey, Endpoint>> answer = new LinkedHashSet<>();
         answer.addAll(staticMap.entrySet());
         answer.addAll(super.entrySet());
         return answer;

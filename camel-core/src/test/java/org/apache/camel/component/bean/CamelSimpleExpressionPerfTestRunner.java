@@ -56,7 +56,7 @@ public final class CamelSimpleExpressionPerfTestRunner {
 
         ctx.start();
 
-        Map<String, String> body = new HashMap<String, String>();
+        Map<String, String> body = new HashMap<>();
         body.put("p", "q");
 
         ProducerTemplate template = ctx.createProducerTemplate();

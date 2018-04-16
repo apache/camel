@@ -94,12 +94,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     private static volatile XPathFactory defaultXPathFactory;
 
     private CamelContext camelContext;
-    private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
-    private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
+    private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<>();
+    private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<>();
     private final String text;
-    private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
+    private final ThreadLocal<Exchange> exchange = new ThreadLocal<>();
     private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
-    private final Map<String, String> namespaces = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> namespaces = new ConcurrentHashMap<>();
     private boolean threadSafety;
     private volatile XPathFactory xpathFactory;
     private volatile Class<?> documentType = Document.class;
@@ -908,7 +908,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     private void logDiscoveredNamespaces(NodeList namespaces) {
-        Map<String, HashSet<String>> map = new LinkedHashMap<String, HashSet<String>>();
+        Map<String, HashSet<String>> map = new LinkedHashMap<>();
         for (int i = 0; i < namespaces.getLength(); i++) {
             Node n = namespaces.item(i);
             if (n.getNodeName().equals("xmlns:xml")) {

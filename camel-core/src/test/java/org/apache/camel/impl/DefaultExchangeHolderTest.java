@@ -85,7 +85,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     public void testSkipNonSerializableDataFromList() throws Exception {
         // use a mixed list, the MyFoo is not serializable so the entire list should be skipped
-        List<Object> list = new ArrayList<Object>();
+        List<Object> list = new ArrayList<>();
         list.add("I am okay");
         list.add(new MyFoo("Tiger"));
 
@@ -107,7 +107,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     public void testSkipNonSerializableDataFromMap() throws Exception {
         // use a mixed Map, the MyFoo is not serializable so the entire map should be skipped
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("A", "I am okay");
         map.put("B", new MyFoo("Tiger"));
 
@@ -129,7 +129,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     public void testCaughtException() throws Exception {
         // use a mixed list, the MyFoo is not serializable so the entire list should be skipped
-        List<Object> list = new ArrayList<Object>();
+        List<Object> list = new ArrayList<>();
         list.add("I am okay");
         list.add(new MyFoo("Tiger"));
 

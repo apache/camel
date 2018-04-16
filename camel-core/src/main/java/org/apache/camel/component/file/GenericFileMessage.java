@@ -65,7 +65,7 @@ public class GenericFileMessage<T> extends DefaultMessage {
 
     @Override
     public GenericFileMessage<T> newInstance() {
-        return new GenericFileMessage<T>(getCamelContext());
+        return new GenericFileMessage<>(getCamelContext());
     }
 
     @Override

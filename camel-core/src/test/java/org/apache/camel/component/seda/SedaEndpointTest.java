@@ -31,10 +31,10 @@ import org.apache.camel.Producer;
  */
 public class SedaEndpointTest extends ContextTestSupport {
 
-    private BlockingQueue<Exchange> queue = new ArrayBlockingQueue<Exchange>(1000);
+    private BlockingQueue<Exchange> queue = new ArrayBlockingQueue<>(1000);
 
     public void testSedaEndpointUnboundedQueue() throws Exception {
-        BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<Exchange>();
+        BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<>();
         SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), unbounded);        
         assertNotNull(seda);
 

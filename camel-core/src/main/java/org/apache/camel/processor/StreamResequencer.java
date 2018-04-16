@@ -91,7 +91,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator, Expression expression) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
-        this.engine = new ResequencerEngine<Exchange>(comparator);
+        this.engine = new ResequencerEngine<>(comparator);
         this.engine.setSequenceSender(this);
         this.processor = processor;
         this.expression = expression;
@@ -256,7 +256,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
     }

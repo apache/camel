@@ -32,7 +32,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<Object>());
+        jndi.bind("myFilter", new MyFileFilter<>());
         return jndi;
     }
 

@@ -136,7 +136,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"xslt:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);        
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);        
         mbeanServer.invoke(managedObjName, "clearCachedStylesheet", null, null);
         
         // now replace the file with a new XSL transformation

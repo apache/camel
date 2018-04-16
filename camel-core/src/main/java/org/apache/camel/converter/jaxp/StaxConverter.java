@@ -81,8 +81,8 @@ public class StaxConverter {
 
         LOG.debug("StaxConverter pool size: {}", i);
 
-        INPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLInputFactory>(i);
-        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLOutputFactory>(i);
+        INPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
+        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
     }
     
     private XMLInputFactory inputFactory;

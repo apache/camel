@@ -38,7 +38,7 @@ import org.apache.camel.spi.Condition;
  */
 public class DebugTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<String>();
+    private List<String> logs = new ArrayList<>();
     private Condition camelCondition;
     private Condition mockCondition;
     private Condition doneCondition;

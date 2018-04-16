@@ -47,10 +47,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private String method;
 
     @XmlElementRef
-    private List<RestOperationParamDefinition> params = new ArrayList<RestOperationParamDefinition>();
+    private List<RestOperationParamDefinition> params = new ArrayList<>();
 
     @XmlElementRef
-    private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<RestOperationResponseMsgDefinition>();
+    private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<>();
 
     @XmlAttribute
     private String uri;

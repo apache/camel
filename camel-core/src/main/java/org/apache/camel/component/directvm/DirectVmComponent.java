@@ -38,7 +38,7 @@ public class DirectVmComponent extends UriEndpointComponent {
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
-    private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
+    private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<>();
     @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
@@ -58,7 +58,7 @@ public class DirectVmComponent extends UriEndpointComponent {
      * @return consumer endpoints
      */
     public static Collection<Endpoint> getConsumerEndpoints() {
-        Collection<Endpoint> endpoints = new ArrayList<Endpoint>(CONSUMERS.size());
+        Collection<Endpoint> endpoints = new ArrayList<>(CONSUMERS.size());
         for (DirectVmConsumer consumer : CONSUMERS.values()) {
             endpoints.add(consumer.getEndpoint());
         }

@@ -40,7 +40,7 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
 
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(50);
-        List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
+        List<Callable<Object>> tasks = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             final int id = i % 25;
             final int choice = i % 2;

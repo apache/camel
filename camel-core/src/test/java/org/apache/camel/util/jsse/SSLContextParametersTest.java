@@ -810,7 +810,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     protected String[] getDefaultCipherSuiteIncludes(String[] availableCipherSuites) {
-        List<String> enabled = new LinkedList<String>();
+        List<String> enabled = new LinkedList<>();
 
         for (String string : availableCipherSuites) {
             if (!string.contains("_anon_") && !string.contains("_NULL_")

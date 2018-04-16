@@ -44,7 +44,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
 
     private void setupPolicies() {
         strategy = new DefaultExceptionPolicyStrategy();
-        policies = new HashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+        policies = new HashMap<>();
         type1 = new OnExceptionDefinition(CamelExchangeException.class);
         type2 = new OnExceptionDefinition(Exception.class);
         type3 = new OnExceptionDefinition(IOException.class);
@@ -56,7 +56,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
     private void setupPoliciesNoTopLevelException() {
         // without the top level exception that can be used as fallback
         strategy = new DefaultExceptionPolicyStrategy();
-        policies = new HashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+        policies = new HashMap<>();
         type1 = new OnExceptionDefinition(CamelExchangeException.class);
         type3 = new OnExceptionDefinition(IOException.class);
         policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class, null), type1);
@@ -65,7 +65,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
 
     private void setupPoliciesCausedBy() {
         strategy = new DefaultExceptionPolicyStrategy();
-        policies = new HashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+        policies = new HashMap<>();
         type1 = new OnExceptionDefinition(FileNotFoundException.class);
         type2 = new OnExceptionDefinition(ConnectException.class);
         type3 = new OnExceptionDefinition(IOException.class);

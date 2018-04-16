@@ -40,7 +40,7 @@ public class FilterParameters extends JsseParameters {
      */
     public List<String> getInclude() {
         if (this.include == null) {
-            this.include = new ArrayList<String>();
+            this.include = new ArrayList<>();
         }
         return this.include;
     }
@@ -53,7 +53,7 @@ public class FilterParameters extends JsseParameters {
      */
     public List<String> getExclude() {
         if (exclude == null) {
-            exclude = new ArrayList<String>();
+            exclude = new ArrayList<>();
         }
         return this.exclude;
     }
@@ -100,7 +100,7 @@ public class FilterParameters extends JsseParameters {
      * @throws PatternSyntaxException if any of the expressions are invalid
      */
     protected List<Pattern> getPattern(List<String> patternStrings) {
-        List<Pattern> patterns = new ArrayList<Pattern>(patternStrings.size());
+        List<Pattern> patterns = new ArrayList<>(patternStrings.size());
         
         for (String expression : patternStrings) {
             patterns.add(Pattern.compile(this.parsePropertyValue(expression)));
@@ -116,8 +116,8 @@ public class FilterParameters extends JsseParameters {
         private final List<Pattern> excludes;
         
         public Patterns(List<Pattern> includes, List<Pattern> excludes) {
-            this.includes = Collections.unmodifiableList(new ArrayList<Pattern>(includes));
-            this.excludes = Collections.unmodifiableList(new ArrayList<Pattern>(excludes));
+            this.includes = Collections.unmodifiableList(new ArrayList<>(includes));
+            this.excludes = Collections.unmodifiableList(new ArrayList<>(excludes));
         }
 
         public List<Pattern> getIncludes() {

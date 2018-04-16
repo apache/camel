@@ -1403,6 +1403,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * @deprecated use {@link #getGlobalOption(String)} instead.
      */
+    @Deprecated
     String getProperty(String key);
 
     /**

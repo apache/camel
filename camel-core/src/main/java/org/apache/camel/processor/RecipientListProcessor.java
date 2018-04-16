@@ -187,7 +187,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     @Override
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         // here we iterate the recipient lists and create the exchange pair for each of those
-        List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>();
+        List<ProcessorExchangePair> result = new ArrayList<>();
 
         // at first we must lookup the endpoint and acquire the producer which can send to the endpoint
         int index = 0;

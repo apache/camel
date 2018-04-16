@@ -33,7 +33,7 @@ import org.apache.camel.spi.Breakpoint;
  */
 public class DebugSingleStepTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<String>();
+    private List<String> logs = new ArrayList<>();
     private Breakpoint breakpoint;
 
     @Override

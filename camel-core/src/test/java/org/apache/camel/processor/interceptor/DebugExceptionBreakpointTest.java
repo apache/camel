@@ -35,7 +35,7 @@ import org.apache.camel.spi.Condition;
  */
 public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<String>();
+    private List<String> logs = new ArrayList<>();
     private Condition exceptionCondition;
     private Breakpoint breakpoint;
 

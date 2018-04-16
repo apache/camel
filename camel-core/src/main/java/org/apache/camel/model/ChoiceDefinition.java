@@ -46,7 +46,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     @XmlElementRef @AsPredicate
-    private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
+    private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
     private OtherwiseDefinition otherwise;
 
@@ -131,7 +131,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
+        List<FilterProcessor> filters = new ArrayList<>();
         for (WhenDefinition whenClause : whenClauses) {
             FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);
             filters.add(filter);
@@ -192,7 +192,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      */
     @AsPredicate
     public ExpressionClause<ChoiceDefinition> when() {
-        ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<ChoiceDefinition>(this);
+        ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<>(this);
         addClause(new WhenDefinition(clause));
         return clause;
     }

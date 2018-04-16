@@ -243,7 +243,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             }
 
             // find namespaces (there can be attributes mixed, so we should only grab the namespaces)
-            Map<String, String> namespaces = new LinkedHashMap<String, String>();
+            Map<String, String> namespaces = new LinkedHashMap<>();
             Matcher matcher = NAMESPACE_PATTERN.matcher(text);
             while (matcher.find()) {
                 String prefix = matcher.group(1);
@@ -318,7 +318,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
     private static String buildXMLTail(String xmlhead) {
         // assume the input text is a portion of a well-formed xml
-        List<String> tags = new ArrayList<String>();
+        List<String> tags = new ArrayList<>();
         int p = 0;
         while (p < xmlhead.length()) {
             p = xmlhead.indexOf('<', p);

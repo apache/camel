@@ -173,7 +173,7 @@ public class BinaryExpression extends BaseSimpleNode {
                 // from the right hand side expression.
                 // each element on the right hand side must be separated by comma (default for create iterator)
                 Iterator<Object> it = ObjectHelper.createIterator(rightExp.evaluate(exchange, Object.class));
-                List<Object> values = new ArrayList<Object>();
+                List<Object> values = new ArrayList<>();
                 while (it.hasNext()) {
                     values.add(it.next());
                 }

@@ -200,7 +200,7 @@ public class RestOperationParamDefinition {
             return allowableValues;
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**

@@ -56,7 +56,7 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        List<ObjectName> list = new ArrayList<ObjectName>(set);
+        List<ObjectName> list = new ArrayList<>(set);
         ObjectName on = null;
         for (ObjectName name : list) {
             if (name.getCanonicalName().contains("ConsumerCache")) {

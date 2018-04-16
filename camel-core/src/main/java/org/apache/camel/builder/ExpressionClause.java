@@ -39,11 +39,11 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     private ExpressionClauseSupport<T> delegate;
 
     public ExpressionClause(T result) {
-        this.delegate = new ExpressionClauseSupport<T>(result);
+        this.delegate = new ExpressionClauseSupport<>(result);
     }
 
     public static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
-        ExpressionClause<T> clause = new ExpressionClause<T>(result);
+        ExpressionClause<T> clause = new ExpressionClause<>(result);
         result.setExpression(clause);
         return clause;
     }

@@ -476,7 +476,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public Map<String, Object> getConsumerProperties() {
         if (consumerProperties == null) {
             // must create empty if none exists
-            consumerProperties = new HashMap<String, Object>();
+            consumerProperties = new HashMap<>();
         }
         return consumerProperties;
     }
@@ -485,7 +485,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         // append consumer properties
         if (consumerProperties != null && !consumerProperties.isEmpty()) {
             if (this.consumerProperties == null) {
-                this.consumerProperties = new HashMap<String, Object>(consumerProperties);
+                this.consumerProperties = new HashMap<>(consumerProperties);
             } else {
                 this.consumerProperties.putAll(consumerProperties);
             }
@@ -501,7 +501,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         if (consumerProperties != null) {
             // use a defensive copy of the consumer properties as the methods below will remove the used properties
             // and in case we restart routes, we need access to the original consumer properties again
-            Map<String, Object> copy = new HashMap<String, Object>(consumerProperties);
+            Map<String, Object> copy = new HashMap<>(consumerProperties);
 
             // set reference properties first as they use # syntax that fools the regular properties setter
             EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);

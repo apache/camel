@@ -86,7 +86,7 @@ public final class CollectionHelper {
             if (oldValue instanceof List) {
                 list = (List<Object>) oldValue;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(oldValue);
                 // replace old entry with list
                 map.remove(key);
@@ -99,7 +99,7 @@ public final class CollectionHelper {
     }
 
     public static <T> Set<T> createSetContaining(T... contents) {
-        Set<T> contentsAsSet = new HashSet<T>();
+        Set<T> contentsAsSet = new HashSet<>();
         contentsAsSet.addAll(Arrays.asList(contents));
         return contentsAsSet;
     }

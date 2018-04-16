@@ -100,7 +100,7 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
     private List<V> getList(Exchange exchange) {
         List<V> list = exchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
         if (list == null) {
-            list = new GroupedExchangeList<V>();
+            list = new GroupedExchangeList<>();
             exchange.setProperty(Exchange.GROUPED_EXCHANGE, list);
         }
         return list;

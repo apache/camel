@@ -74,6 +74,7 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
         assertTrue("Should find removeHeader mbean", found3);
         assertTrue("Should find removeHeaders mbean", found4);
         assertTrue("Should find removeProperty mbean", found5);
+        assertTrue("Should find removeProperty mbean", found6);
     }
 
     @Override

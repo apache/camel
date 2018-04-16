@@ -34,7 +34,7 @@ public final class QueueReference {
     private Integer size;
     private Boolean multipleConsumers;
 
-    private List<SedaEndpoint> endpoints = new LinkedList<SedaEndpoint>();
+    private List<SedaEndpoint> endpoints = new LinkedList<>();
 
     QueueReference(BlockingQueue<Exchange> queue, Integer size, Boolean multipleConsumers) {
         this.queue = queue;

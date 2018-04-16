@@ -53,7 +53,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
     }
 
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> result = new HashMap<String, T>();
+        Map<String, T> result = new HashMap<>();
         for (Map.Entry<String, Object> entry : entrySet()) {
             if (type.isInstance(entry.getValue())) {
                 result.put(entry.getKey(), type.cast(entry.getValue()));
@@ -63,7 +63,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
     }
 
     public <T> Set<T> findByType(Class<T> type) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
         for (Map.Entry<String, Object> entry : entrySet()) {
             if (type.isInstance(entry.getValue())) {
                 result.add(type.cast(entry.getValue()));

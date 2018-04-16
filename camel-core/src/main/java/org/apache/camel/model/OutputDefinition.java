@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
 
     @XmlElementRef
-    protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    protected List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;

@@ -28,7 +28,7 @@ public class CamelContextTrackerTest extends TestCase {
 
     private final class MyContextTracker extends CamelContextTracker {
 
-        private List<String> names = new ArrayList<String>();
+        private List<String> names = new ArrayList<>();
 
         @Override
         public void contextCreated(CamelContext camelContext) {

@@ -34,7 +34,7 @@ public class DirectComponent extends UriEndpointComponent {
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
-    private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
+    private final Map<String, DirectConsumer> consumers = new HashMap<>();
     @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
