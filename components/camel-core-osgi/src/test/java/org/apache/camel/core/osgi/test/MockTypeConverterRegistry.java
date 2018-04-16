@@ -27,8 +27,8 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 public class MockTypeConverterRegistry implements TypeConverterRegistry {
-    private List<TypeConverter> typeConverters = new ArrayList<TypeConverter>();
-    private List<TypeConverter> fallbackTypeConverters = new ArrayList<TypeConverter>();
+    private List<TypeConverter> typeConverters = new ArrayList<>();
+    private List<TypeConverter> fallbackTypeConverters = new ArrayList<>();
     
     public List<TypeConverter> getTypeConverters() {
         return typeConverters;

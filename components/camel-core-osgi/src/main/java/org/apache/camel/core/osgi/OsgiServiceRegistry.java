@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
     private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
     private final BundleContext bundleContext;
-    private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference<?>>();
+    private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<>();
     
     public OsgiServiceRegistry(BundleContext bc) {
         bundleContext = bc;
@@ -97,7 +97,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
     }
 
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> result = new HashMap<String, T>();
+        Map<String, T> result = new HashMap<>();
         int count = 0;
         try {
             ServiceReference<?>[] refs = bundleContext.getAllServiceReferences(type.getName(), null);
@@ -127,7 +127,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
 
     public <T> Set<T> findByType(Class<T> type) {
         Map<String, T> map = findByTypeWithName(type);
-        return new HashSet<T>(map.values());
+        return new HashSet<>(map.values());
     }
 
     public Object lookup(String name) {

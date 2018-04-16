@@ -42,7 +42,7 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
      */
     public void addExcludePattern(String excludePattern) {
         if (excludePatterns == null) {
-            excludePatterns = new ArrayList<String>();
+            excludePatterns = new ArrayList<>();
         }
         excludePatterns.add(excludePattern);
     }
@@ -53,21 +53,21 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
      */
     public void addIncludePattern(String includePattern) {
         if (includePatterns == null) {
-            includePatterns = new ArrayList<String>();
+            includePatterns = new ArrayList<>();
         }
         includePatterns.add(includePattern);
     }
     
     public void addIncludePatterns(Collection<String> includes) {
         if (includePatterns == null) {
-            includePatterns = new ArrayList<String>();
+            includePatterns = new ArrayList<>();
         }
         includePatterns.addAll(includes);
     }
     
     public void addExcludePatterns(Collection<String> excludes) {
         if (excludePatterns == null) {
-            excludePatterns = new ArrayList<String>();
+            excludePatterns = new ArrayList<>();
         }
         excludePatterns.addAll(excludes);
     }
