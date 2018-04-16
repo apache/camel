@@ -62,7 +62,12 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
             .getResponse();
 
         return services.stream()
-            .map(service -> newService(name, service, healths))
+            .map(service -> newService(
+                    name,
+                    service,
+                    healths.stream()
+                            .filter(serviceHealth -> serviceHealth.getService().getId().equals(service.getServiceId()))
+                            .collect(Collectors.toList())))
             .collect(Collectors.toList());
     }
 
