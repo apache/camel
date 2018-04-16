@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Processor;
-import org.apache.camel.component.as2.api.AS2Interchange;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.internal.AS2ApiName;
@@ -98,14 +97,8 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
         try {
-            
-            AS2Interchange as2Interchange = new AS2Interchange();
-            as2Interchange.setRequest(request);
-            as2Interchange.setResponse(response);
-            as2Interchange.setContext(context);
-            
-            // Convert AS2 interchange to exchange and process
-            log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, as2Interchange, false),
+            // Convert HTTP context to exchange and process
+            log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, context, false),
                     as2ServerConnection);
         } catch (Exception e) {
             log.info("Received exception consuming AS2 message: ", e);

@@ -18,15 +18,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
-import org.apache.camel.component.as2.api.protocol.RequestAS2;
 import org.apache.http.ExceptionLogger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.ParseException;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -35,14 +32,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpProcessorBuilder;
-import org.apache.http.protocol.HttpRequestExecutor;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.apache.http.protocol.RequestConnControl;
-import org.apache.http.protocol.RequestContent;
-import org.apache.http.protocol.RequestDate;
-import org.apache.http.protocol.RequestExpectContinue;
-import org.apache.http.protocol.RequestTargetHost;
-import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.protocol.ResponseConnControl;
 import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
@@ -136,7 +126,7 @@ public class AS2MessageTest {
                     @Override
                     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                             throws HttpException, IOException {
-                        Util.printRequest(System.out, request);
+//                        Util.printRequest(System.out, request);
                     }
                 })
                 .create();
@@ -202,7 +192,7 @@ public class AS2MessageTest {
         clientManager.send(EDI_MESSAGE, httpContext);
         
         HttpRequest request = httpContext.getRequest();
-        Util.printRequest(System.out, request);
+//        Util.printRequest(System.out, request);
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
         assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
         assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion());

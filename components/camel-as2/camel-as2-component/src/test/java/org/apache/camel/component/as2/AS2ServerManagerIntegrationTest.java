@@ -91,7 +91,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     private void sendTestMessage() throws UnknownHostException, IOException, InvalidAS2NameException, HttpException {
         AS2ClientConnection clientConnection = new AS2ClientConnection("1.1", "AS2ServerManagerIntegrationTest Client", "example.org", "localhost", 8888);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
-        clientManager.sendNoEncryptNoSign(REQUEST_URI, EDI_MESSAGE, SUBJECT, AS2_NAME, AS2_NAME);
+//        clientManager.sendNoEncryptNoSign(REQUEST_URI, EDI_MESSAGE, SUBJECT, AS2_NAME, AS2_NAME);
     }
     
     @Override
