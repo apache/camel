@@ -77,11 +77,11 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
 
     public static class MyIterator implements Iterator<String> {
 
+        private int count;
+
         public MyIterator(int count) {
             this.count = count;
         }
-
-        private int count;
 
         @Override
         public boolean hasNext() {
