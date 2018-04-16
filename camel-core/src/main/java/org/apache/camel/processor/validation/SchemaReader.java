@@ -175,6 +175,7 @@ public class SchemaReader {
         }  
         if (camelContext == null || !Boolean.parseBoolean(camelContext.getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
             try {
+                LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
                 factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             } catch (SAXException e) {
                 LOG.warn(e.getMessage(), e);
