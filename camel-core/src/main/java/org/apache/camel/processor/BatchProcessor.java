@@ -217,7 +217,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
     }
@@ -337,12 +337,12 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
         private Queue<Exchange> queue;
         private Lock queueLock = new ReentrantLock();
         private final AtomicBoolean exchangeEnqueued = new AtomicBoolean();
-        private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<String>();
+        private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<>();
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
         BatchSender() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));
-            this.queue = new LinkedList<Exchange>();
+            this.queue = new LinkedList<>();
         }
 
         @Override

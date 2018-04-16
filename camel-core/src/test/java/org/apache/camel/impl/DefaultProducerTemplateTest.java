@@ -184,7 +184,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = template.requestBodyAndHeader("direct:inout", "Hello", "foo", "bar", Integer.class);
         assertEquals(new Integer(123), out);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         out = template.requestBodyAndHeaders("direct:inout", "Hello", headers, Integer.class);
         assertEquals(new Integer(123), out);
 
@@ -196,7 +196,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = template.requestBodyAndHeader(endpoint, "Hello", "foo", "bar", Integer.class);
         assertEquals(new Integer(123), out);
 
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         out = template.requestBodyAndHeaders(endpoint, "Hello", headers, Integer.class);
         assertEquals(new Integer(123), out);
     }
@@ -211,7 +211,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = producer.requestBodyAndHeader("Hello", "foo", 123);
         assertEquals("Bye Bye World", out);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         out = producer.requestBodyAndHeaders("Hello", headers);
         assertEquals("Bye Bye World", out);
 
@@ -229,7 +229,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         producer.sendBody("Hello");
         producer.sendBodyAndHeader("Hello", "foo", 123);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         producer.sendBodyAndHeaders("Hello", headers);
 
         assertMockEndpointsSatisfied();

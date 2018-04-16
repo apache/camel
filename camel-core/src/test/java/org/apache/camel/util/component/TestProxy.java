@@ -57,7 +57,7 @@ class TestProxy {
     }
 
     public final String[] greetTimes(String name, int times) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (int i = 0; i < times; i++) {
             result.add("Greetings " + name);
         }
@@ -65,7 +65,7 @@ class TestProxy {
     }
 
     public Map<String, String> greetAll(Map<String, String> nameMap) {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         for (Map.Entry<String, String> entry : nameMap.entrySet()) {
             final String name = entry.getKey();
             final String greeting = entry.getValue();

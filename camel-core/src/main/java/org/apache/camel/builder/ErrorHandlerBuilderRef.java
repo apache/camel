@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
     private final String ref;
-    private final Map<RouteContext, ErrorHandlerBuilder> handlers = new HashMap<RouteContext, ErrorHandlerBuilder>();
+    private final Map<RouteContext, ErrorHandlerBuilder> handlers = new HashMap<>();
     private boolean supportTransacted;
 
     public ErrorHandlerBuilderRef(String ref) {

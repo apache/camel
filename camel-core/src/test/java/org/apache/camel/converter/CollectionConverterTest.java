@@ -68,7 +68,7 @@ public class CollectionConverterTest extends TestCase {
     }
 
     public void testToSet() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "bar");
 
         Set<Map.Entry<String, String>> out = CollectionConverter.toSet(map);
@@ -92,7 +92,7 @@ public class CollectionConverterTest extends TestCase {
     }
 
     public void testToProperties() {
-        Map<Object, Object> map = new HashMap<Object, Object>();
+        Map<Object, Object> map = new HashMap<>();
         map.put("foo", "bar");
 
         Properties prop = CollectionConverter.toProperties(map);

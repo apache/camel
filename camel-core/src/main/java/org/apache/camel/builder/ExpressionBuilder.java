@@ -878,7 +878,7 @@ public final class ExpressionBuilder {
      */
     public static Expression cacheExpression(final Expression expression) {
         return new ExpressionAdapter() {
-            private final AtomicReference<Object> cache = new AtomicReference<Object>();
+            private final AtomicReference<Object> cache = new AtomicReference<>();
 
             public Object evaluate(Exchange exchange) {
                 Object answer = cache.get();

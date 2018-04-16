@@ -41,18 +41,18 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
         String allNames = "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";
 
-        List<String> marxBrothers = new ArrayList<String>();
+        List<String> marxBrothers = new ArrayList<>();
         marxBrothers.add("Harpo");
         marxBrothers.add("Chico");
         marxBrothers.add("Groucho");
 
-        List<String> karamazovBrothers = new ArrayList<String>();
+        List<String> karamazovBrothers = new ArrayList<>();
         karamazovBrothers.add("Fiodor");
         karamazovBrothers.add("Ivan");
         karamazovBrothers.add("Alexei");
         karamazovBrothers.add("Dimitri");
 
-        Map<String, List<String>> allBrothers = new HashMap<String, List<String>>();
+        Map<String, List<String>> allBrothers = new HashMap<>();
         allBrothers.put("Marx", marxBrothers);
         allBrothers.put("Karamazov", karamazovBrothers);
 
@@ -81,7 +81,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         brothers.add(newExchange.getIn().getBody(String.class));
                         answer = oldExchange;
                     } else {
-                        List<String>brothers = new ArrayList<String>();
+                        List<String>brothers = new ArrayList<>();
                         brothers.add(newExchange.getIn().getBody(String.class));
                         newExchange.getIn().setBody(brothers);
                     }
@@ -104,7 +104,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class), newExchange.getIn().getBody(List.class));
                         answer = oldExchange;
                     } else {
-                        Map<String, List<?>> brothers = new HashMap<String, List<?>>();
+                        Map<String, List<?>> brothers = new HashMap<>();
                         brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class), newExchange.getIn().getBody(List.class));
                         newExchange.getIn().setBody(brothers);
                     }

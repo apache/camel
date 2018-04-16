@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);
     private MyBean myBean = new MyBean();
-    private Map<String, User> users = new HashMap<String, User>();
+    private Map<String, User> users = new HashMap<>();
 
     public void testCannotBindToParameter() throws Exception {
         // Create hashmap for testing purpose
@@ -64,7 +64,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     public void testBindToParameter() throws Exception {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         list.add("Charles");
         list.add("Claus");
 

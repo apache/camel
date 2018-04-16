@@ -31,11 +31,11 @@ public class CompositePackageScanFilter implements PackageScanFilter {
     private Set<PackageScanFilter> filters;
 
     public CompositePackageScanFilter() {
-        filters = new LinkedHashSet<PackageScanFilter>();
+        filters = new LinkedHashSet<>();
     }
 
     public CompositePackageScanFilter(Set<PackageScanFilter> filters) {
-        this.filters = new LinkedHashSet<PackageScanFilter>(filters);
+        this.filters = new LinkedHashSet<>(filters);
     }
 
     public void addFilter(PackageScanFilter filter) {

@@ -57,9 +57,9 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
-    private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<BreakpointConditions>();
+    private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
     private final int maxConcurrentSingleSteps = 1;
-    private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>(maxConcurrentSingleSteps);
+    private final Map<String, Breakpoint> singleSteps = new HashMap<>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
     private boolean useTracer = true;
 
@@ -201,7 +201,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     @Override
     public List<Breakpoint> getBreakpoints() {
-        List<Breakpoint> answer = new ArrayList<Breakpoint>(breakpoints.size());
+        List<Breakpoint> answer = new ArrayList<>(breakpoints.size());
         for (BreakpointConditions e : breakpoints) {
             answer.add(e.getBreakpoint());
         }

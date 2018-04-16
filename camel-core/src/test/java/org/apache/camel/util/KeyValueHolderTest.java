@@ -24,46 +24,46 @@ import junit.framework.TestCase;
 public class KeyValueHolderTest extends TestCase {
 
     public void testKeyValueHolder() {
-        KeyValueHolder<String, Integer> foo = new KeyValueHolder<String, Integer>("foo", 123);
+        KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
 
         assertEquals("foo", foo.getKey());
         assertEquals(123, foo.getValue().intValue());
     }
 
     public void testEqualsAndHashCodeOnEqualObjects() {
-        KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<String, Integer>("foo", 123);
-        KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<String, Integer>("foo", 123);
+        KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
+        KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 123);
 
         assertTrue("Should be equals", foo1.equals(foo2));
         assertTrue("Hash code should be equal", foo1.hashCode() == foo2.hashCode());
     }
 
     public void testEqualsAndHashCodeOnUnequalObjects() {
-        KeyValueHolder<String, Integer> foo = new KeyValueHolder<String, Integer>("foo", 123);
-        KeyValueHolder<String, Integer> bar = new KeyValueHolder<String, Integer>("bar", 678);
+        KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
+        KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 678);
 
         assertFalse("Should not be equals", foo.equals(bar));
         assertFalse("Hash code should not be equal", foo.hashCode() == bar.hashCode());
     }
 
     public void testEqualsAndHashCodeOnUnequalObjectsWithSameKeys() {
-        KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<String, Integer>("foo", 123);
-        KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<String, Integer>("foo", 678);
+        KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
+        KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 678);
 
         assertFalse("Should not be equals", foo1.equals(foo2));
         assertFalse("Hash code should not be equal", foo1.hashCode() == foo2.hashCode());
     }
 
     public void testEqualsAndHashCodeOnUnequalObjectsWithSameValues() {
-        KeyValueHolder<String, Integer> foo = new KeyValueHolder<String, Integer>("foo", 123);
-        KeyValueHolder<String, Integer> bar = new KeyValueHolder<String, Integer>("bar", 123);
+        KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
+        KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 123);
 
         assertFalse("Should not be equals", foo.equals(bar));
         assertFalse("Hash code should not be equal", foo.hashCode() == bar.hashCode());
     }
 
     public void testToString() {
-        KeyValueHolder<String, Integer> foo = new KeyValueHolder<String, Integer>("foo", 123);
+        KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
 
         assertEquals("foo -> 123", foo.toString());
     }

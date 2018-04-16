@@ -40,7 +40,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     @XmlElementRef
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ExpressionNode() {
     }

@@ -121,7 +121,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
             String str = newExchange.getIn().getBody(String.class);
 
             if (oldExchange == null) {
-                List<String> list = new ArrayList<String>(batchSize);
+                List<String> list = new ArrayList<>(batchSize);
                 list.add(str);
                 newExchange.getIn().setBody(list);
                 return newExchange;

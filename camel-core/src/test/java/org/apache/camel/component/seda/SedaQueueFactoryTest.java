@@ -30,7 +30,7 @@ import org.apache.camel.impl.SimpleRegistry;
  *
  */
 public class SedaQueueFactoryTest extends ContextTestSupport {
-    private final ArrayBlockingQueueFactory<Exchange> arrayQueueFactory = new ArrayBlockingQueueFactory<Exchange>();
+    private final ArrayBlockingQueueFactory<Exchange> arrayQueueFactory = new ArrayBlockingQueueFactory<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

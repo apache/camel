@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ExceptionFailureStatistics {
 
-    private final Map<Class<?>, AtomicLong> counters = new HashMap<Class<?>, AtomicLong>();
+    private final Map<Class<?>, AtomicLong> counters = new HashMap<>();
     private final AtomicLong fallbackCounter = new AtomicLong();
 
     public void init(List<Class<?>> exceptions) {

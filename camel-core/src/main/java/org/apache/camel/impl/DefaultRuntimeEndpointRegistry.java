@@ -73,7 +73,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public List<String> getAllEndpoints(boolean includeInputs) {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         if (includeInputs) {
             for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
                 answer.addAll(entry.getValue());
@@ -87,7 +87,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public List<String> getEndpointsPerRoute(String routeId, boolean includeInputs) {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         if (includeInputs) {
             Set<String> uris = inputs.get(routeId);
             if (uris != null) {
@@ -103,7 +103,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public List<Statistic> getEndpointStatistics() {
-        List<Statistic> answer = new ArrayList<Statistic>();
+        List<Statistic> answer = new ArrayList<>();
 
         // inputs
         for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
@@ -184,10 +184,10 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
         if (inputs == null) {
-            inputs = new HashMap<String, Set<String>>();
+            inputs = new HashMap<>();
         }
         if (outputs == null) {
-            outputs = new HashMap<String, Map<String, String>>();
+            outputs = new HashMap<>();
         }
         if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
             extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
@@ -219,7 +219,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String routeId = rse.getRoute().getId();
 
             // a HashSet is fine for inputs as we only have a limited number of those
-            Set<String> uris = new HashSet<String>();
+            Set<String> uris = new HashSet<>();
             uris.add(endpoint.getEndpointUri());
             inputs.put(routeId, uris);
             // use a LRUCache for outputs as we could potential have unlimited uris if dynamic routing is in use

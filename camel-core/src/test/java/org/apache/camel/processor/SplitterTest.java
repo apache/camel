@@ -54,8 +54,8 @@ public class SplitterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Set<String> ids = new HashSet<String>();
-        Set<String> ids2 = new HashSet<String>();
+        Set<String> ids = new HashSet<>();
+        Set<String> ids2 = new HashSet<>();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (int i = 0; i < 4; i++) {
@@ -119,7 +119,7 @@ public class SplitterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        Set<Integer> numbersFound = new TreeSet<Integer>();
+        Set<Integer> numbersFound = new TreeSet<>();
         final String[] names = {"James", "Guillaume", "Hiram", "Rob"};
 
         for (int i = 0; i < 4; i++) {

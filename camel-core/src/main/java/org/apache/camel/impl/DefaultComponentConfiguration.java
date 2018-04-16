@@ -69,7 +69,7 @@ public class DefaultComponentConfiguration extends ComponentConfigurationSupport
      */
     @Override
     public SortedMap<String, ParameterConfiguration> getParameterConfigurationMap() {
-        SortedMap<String, ParameterConfiguration> answer = new TreeMap<String, ParameterConfiguration>();
+        SortedMap<String, ParameterConfiguration> answer = new TreeMap<>();
         Set<Map.Entry<String, Object>> entries = getParameters().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String name = entry.getKey();

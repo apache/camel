@@ -44,7 +44,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     extends DefaultEndpoint implements PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
-    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<String, ExecutorService>();
+    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -127,7 +127,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         // compute endpoint property names and values
         this.endpointPropertyNames = Collections.unmodifiableSet(
             getPropertiesHelper().getEndpointPropertyNames(configuration));
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         getPropertiesHelper().getEndpointProperties(configuration, properties);
         this.endpointProperties = Collections.unmodifiableMap(properties);
 

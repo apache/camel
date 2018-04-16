@@ -48,7 +48,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals("Should be registered", true, registered);
         
         RouteDefinition definition = context.getRouteDefinition("route1");
-        List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);
         context.shutdownRoute("route1");
 
@@ -74,7 +74,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals("Should be registered", true, registered);
 
         RouteDefinition definition = context.getRouteDefinition("route1");
-        List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);
         // must stop before we can remove
         context.stopRoute("route1");
@@ -102,7 +102,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals("Should be registered", true, registered);
         
         RouteDefinition definition = context.getRouteDefinition("route1");
-        List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);
         context.stopRoute("route1");
 

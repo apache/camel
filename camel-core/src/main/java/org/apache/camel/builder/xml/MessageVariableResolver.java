@@ -45,7 +45,7 @@ import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPAC
 public class MessageVariableResolver implements XPathVariableResolver {
     private static final Logger LOG = LoggerFactory.getLogger(MessageVariableResolver.class);
 
-    private Map<String, Object> variables = new HashMap<String, Object>();
+    private Map<String, Object> variables = new HashMap<>();
     private final ThreadLocal<Exchange> exchange;
 
     public MessageVariableResolver(ThreadLocal<Exchange> exchange) {

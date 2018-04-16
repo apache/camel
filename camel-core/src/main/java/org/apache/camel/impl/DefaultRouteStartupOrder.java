@@ -52,7 +52,7 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     }
 
     public List<Consumer> getInputs() {
-        List<Consumer> answer = new ArrayList<Consumer>();
+        List<Consumer> answer = new ArrayList<>();
         Map<Route, Consumer> inputs = routeService.getInputs();
         for (Consumer consumer : inputs.values()) {
             answer.add(consumer);
@@ -61,7 +61,7 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     }
 
     public List<Service> getServices() {
-        List<Service> answer = new ArrayList<Service>();
+        List<Service> answer = new ArrayList<>();
         Collection<Route> routes = routeService.getRoutes();
         for (Route route : routes) {
             answer.addAll(route.getServices());

@@ -47,7 +47,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     public void testAggregateConcurrency() throws Exception {
         int total = 0;
         ExecutorService service = Executors.newFixedThreadPool(20);
-        List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
+        List<Callable<Object>> tasks = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             final int count = i;
             total += i;

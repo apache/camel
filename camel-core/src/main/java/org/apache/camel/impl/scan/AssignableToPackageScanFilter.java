@@ -25,7 +25,7 @@ import org.apache.camel.spi.PackageScanFilter;
  * Package scan filter for testing if a given class is assignable to another class.
  */
 public class AssignableToPackageScanFilter implements PackageScanFilter {
-    private final Set<Class<?>> parents = new HashSet<Class<?>>();
+    private final Set<Class<?>> parents = new HashSet<>();
 
     public AssignableToPackageScanFilter() {
     }

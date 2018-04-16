@@ -209,7 +209,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
                                             DataFormat dataFormat, String prefix) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
-            Map<String, Object> copy = new HashMap<String, Object>();
+            Map<String, Object> copy = new HashMap<>();
 
             // filter keys on prefix
             // - either its a known prefix and must match the prefix parameter
@@ -252,7 +252,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public void addDefaultValue(String paramName, String defaultValue) {
         if (defaultValues == null) {
-            defaultValues = new HashMap<String, String>();
+            defaultValues = new HashMap<>();
         }
         defaultValues.put(paramName, defaultValue);
     }

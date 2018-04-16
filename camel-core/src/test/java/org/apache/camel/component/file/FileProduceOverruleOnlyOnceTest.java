@@ -37,7 +37,7 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
         mock.expectedFileExists("target/write/ruled.txt", "Hello World");
         mock.expectedFileExists("target/again/hello.txt", "Hello World");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
         // this header should overrule the endpoint configuration
         map.put(Exchange.OVERRULE_FILE_NAME, "ruled.txt");

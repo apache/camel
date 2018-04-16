@@ -99,7 +99,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
     }
 
     public List<Processor> filter(String pattern) {
-        List<Processor> match = new ArrayList<Processor>();
+        List<Processor> match = new ArrayList<>();
         doFilter(pattern, navigate(), match);
         return match;
     }

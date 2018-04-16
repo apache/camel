@@ -61,9 +61,9 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
                                                     Exchange exchange, Throwable exception) {
 
-        Map<Integer, OnExceptionDefinition> candidates = new TreeMap<Integer, OnExceptionDefinition>();
-        Map<ExceptionPolicyKey, OnExceptionDefinition> routeScoped = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
-        Map<ExceptionPolicyKey, OnExceptionDefinition> contextScoped = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+        Map<Integer, OnExceptionDefinition> candidates = new TreeMap<>();
+        Map<ExceptionPolicyKey, OnExceptionDefinition> routeScoped = new LinkedHashMap<>();
+        Map<ExceptionPolicyKey, OnExceptionDefinition> contextScoped = new LinkedHashMap<>();
 
         // split policies into route and context scoped
         initRouteAndContextScopedExceptionPolicies(exceptionPolicies, routeScoped, contextScoped);

@@ -38,7 +38,7 @@ public final class HostUtils {
     public static Map<String, Set<InetAddress>> getNetworkInterfaceAddresses() {
         //JVM returns interfaces in a non-predictable order, so to make this more predictable
         //let's have them sort by interface name (by using a TreeMap).
-        Map<String, Set<InetAddress>> interfaceAddressMap = new TreeMap<String, Set<InetAddress>>();
+        Map<String, Set<InetAddress>> interfaceAddressMap = new TreeMap<>();
         try {
             Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
             while (ifaces.hasMoreElements()) {
@@ -53,7 +53,7 @@ public final class HostUtils {
                         if (!ia.isLoopbackAddress() && !ia.getHostAddress().contains(":")) {
                             Set<InetAddress> addresses = interfaceAddressMap.get(name);
                             if (addresses == null) {
-                                addresses = new LinkedHashSet<InetAddress>();
+                                addresses = new LinkedHashSet<>();
                             }
                             addresses.add(ia);
                             interfaceAddressMap.put(name, addresses);
@@ -71,7 +71,7 @@ public final class HostUtils {
      * Returns a {@link Set} of {@link InetAddress} that are non-loopback or mac.
      */
     public static Set<InetAddress> getAddresses() {
-        Set<InetAddress> allAddresses = new LinkedHashSet<InetAddress>();
+        Set<InetAddress> allAddresses = new LinkedHashSet<>();
         Map<String, Set<InetAddress>> interfaceAddressMap = getNetworkInterfaceAddresses();
         for (Map.Entry<String, Set<InetAddress>> entry : interfaceAddressMap.entrySet()) {
             Set<InetAddress> addresses = entry.getValue();

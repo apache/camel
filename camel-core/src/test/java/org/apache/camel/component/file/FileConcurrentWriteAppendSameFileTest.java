@@ -65,7 +65,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         assertEquals("Should be " + size + " lines", size, lines.length);
 
         // should be unique
-        Set<String> rows = new LinkedHashSet<String>(Arrays.asList(lines));
+        Set<String> rows = new LinkedHashSet<>(Arrays.asList(lines));
         assertEquals("Should be " + size + " unique lines", size, rows.size());
 
         log.info(txt);

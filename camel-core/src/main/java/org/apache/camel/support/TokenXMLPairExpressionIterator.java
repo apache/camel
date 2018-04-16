@@ -191,7 +191,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             }
 
             // find namespaces (there can be attributes mixed, so we should only grab the namespaces)
-            Map<String, String> namespaces = new LinkedHashMap<String, String>();
+            Map<String, String> namespaces = new LinkedHashMap<>();
             Matcher matcher = NAMESPACE_PATTERN.matcher(text);
             while (matcher.find()) {
                 String prefix = matcher.group(1);

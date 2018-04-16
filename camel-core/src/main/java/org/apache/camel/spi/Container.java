@@ -48,7 +48,7 @@ public interface Container {
 
         private static final Logger LOG = LoggerFactory.getLogger(Container.class);
         private static Container container;
-        private static final Set<CamelContext> CONTEXTS = new LinkedHashSet<CamelContext>();
+        private static final Set<CamelContext> CONTEXTS = new LinkedHashSet<>();
 
         private Instance() {
         }

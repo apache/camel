@@ -70,8 +70,8 @@ import org.apache.camel.util.ObjectHelper;
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
-    private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<FromDefinition> inputs = new ArrayList<>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     private String group;
     private String streamCache;
     private String trace;
@@ -190,7 +190,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
-        List<RouteContext> answer = new ArrayList<RouteContext>();
+        List<RouteContext> answer = new ArrayList<>();
 
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerBuilder();
@@ -621,7 +621,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition routePolicy(RoutePolicy... policies) {
         if (routePolicies == null) {
-            routePolicies = new ArrayList<RoutePolicy>();
+            routePolicies = new ArrayList<>();
         }
         for (RoutePolicy policy : policies) {
             routePolicies.add(policy);
@@ -1294,7 +1294,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
         }
 
-        List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);
+        List<ProcessorDefinition<?>> list = new ArrayList<>(outputs);
         for (ProcessorDefinition<?> output : list) {
             try {
                 output.addRoutes(routeContext, routes);

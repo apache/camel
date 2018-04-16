@@ -52,14 +52,14 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class DefaultRouteContext implements RouteContext {
-    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
+    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private FromDefinition from;
     private final Collection<Route> routes;
     private Endpoint endpoint;
-    private final List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
+    private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private InterceptStrategy managedInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
@@ -70,7 +70,7 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
-    private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
+    private List<RoutePolicy> routePolicyList = new ArrayList<>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
     private RouteError routeError;
@@ -88,7 +88,7 @@ public class DefaultRouteContext implements RouteContext {
      */
     public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.routes = new ArrayList<Route>();
+        this.routes = new ArrayList<>();
         this.route = new RouteDefinition("temporary");
     }
 

@@ -42,7 +42,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+    protected final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<>();
     protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
     public void addExceptionPolicy(RouteContext routeContext, OnExceptionDefinition exceptionType) {

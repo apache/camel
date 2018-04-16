@@ -98,7 +98,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
                 Object jpa = ObjectHelper.newInstance(jpaTraceEventMessageClass);
 
                 // copy options from event to jpa
-                Map<String, Object> options = new HashMap<String, Object>();
+                Map<String, Object> options = new HashMap<>();
                 IntrospectionSupport.getProperties(msg, options, null);
                 IntrospectionSupport.setProperties(exchange.getContext().getTypeConverter(), jpa, options);
                 // and set the timestamp as its not a String type

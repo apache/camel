@@ -67,7 +67,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      */
     public Set<String> getOutFilter() {
         if (outFilter == null) {
-            outFilter = new HashSet<String>();
+            outFilter = new HashSet<>();
         }
         
         return outFilter;
@@ -119,7 +119,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      */
     public Set<String> getInFilter() {
         if (inFilter == null) {
-            inFilter = new HashSet<String>();
+            inFilter = new HashSet<>();
         }
         return inFilter;
     }

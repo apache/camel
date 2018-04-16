@@ -39,7 +39,7 @@ public class CollectionProducerTest extends ContextTestSupport {
     }
 
     public void testCollectionProducer() throws Exception {
-        Queue<Exchange> queue = new ArrayBlockingQueue<Exchange>(10);
+        Queue<Exchange> queue = new ArrayBlockingQueue<>(10);
 
         Endpoint endpoint = context.getEndpoint("seda://foo");
         MyProducer my = new MyProducer(endpoint, queue);

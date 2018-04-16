@@ -42,9 +42,9 @@ public class SedaComponent extends UriEndpointComponent {
     @Metadata(label = "advanced")
     protected int queueSize;
     @Metadata(label = "advanced")
-    protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
+    protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<>();
 
-    private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
+    private final Map<String, QueueReference> queues = new HashMap<>();
 
     public SedaComponent() {
         super(SedaEndpoint.class);

@@ -121,7 +121,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         mbeanServer.invoke(on, "sendBodyAndHeaders", new Object[]{"direct:start", "Hello World", headers}, new String[]{"java.lang.String", "java.lang.Object", "java.util.Map"});
         assertMockEndpointsSatisfied();

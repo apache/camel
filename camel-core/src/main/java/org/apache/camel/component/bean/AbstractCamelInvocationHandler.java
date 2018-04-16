@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCamelInvocationHandler implements InvocationHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     private static ExecutorService executorService;
     protected final Endpoint endpoint;
     protected final Producer producer;
@@ -185,7 +185,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         final boolean isFuture = method.getReturnType() == Future.class;
 
         // create task to execute the proxy and gather the reply
-        FutureTask<Object> task = new FutureTask<Object>(new Callable<Object>() {
+        FutureTask<Object> task = new FutureTask<>(new Callable<Object>() {
             public Object call() throws Exception {
                 // process the exchange
                 LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);

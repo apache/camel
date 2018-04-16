@@ -33,7 +33,7 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
 
-    private final List<EventObject> events = new ArrayList<EventObject>();
+    private final List<EventObject> events = new ArrayList<>();
 
     public void testAsyncEndpointEventNotifier() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");

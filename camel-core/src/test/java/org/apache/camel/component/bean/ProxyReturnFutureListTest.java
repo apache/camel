@@ -75,7 +75,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
                     .delay(50)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            List<String> users = new ArrayList<String>();
+                            List<String> users = new ArrayList<>();
                             users.add("Claus");
                             users.add("Jonathan");
                             exchange.getIn().setBody(users);

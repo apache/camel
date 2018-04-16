@@ -31,7 +31,7 @@ import org.apache.camel.language.XPath;
 public class ClaimCheckTest extends ContextTestSupport {
 
     // in memory data store for testing only!
-    public static Map<String, Object> dataStore = new HashMap<String, Object>();
+    public static Map<String, Object> dataStore = new HashMap<>();
     
     public void testClaimCheck() throws Exception {
         String body = "<order custId=\"123\"><lotsOfContent/></order>";

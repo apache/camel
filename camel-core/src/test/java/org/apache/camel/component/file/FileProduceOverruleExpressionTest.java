@@ -47,7 +47,7 @@ public class FileProduceOverruleExpressionTest extends ContextTestSupport {
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
         mock.expectedFileExists("target/write/copy-of-overruled.txt", "Hello World");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
         // this header should overrule the endpoint configuration
         map.put(Exchange.OVERRULE_FILE_NAME, "overruled.txt");

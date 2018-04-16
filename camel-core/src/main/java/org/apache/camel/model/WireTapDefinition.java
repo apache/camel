@@ -52,7 +52,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @XmlElement(name = "body")
     private ExpressionSubElementDefinition newExchangeExpression;
     @XmlElementRef
-    private List<SetHeaderDefinition> headers = new ArrayList<SetHeaderDefinition>();
+    private List<SetHeaderDefinition> headers = new ArrayList<>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute

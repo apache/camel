@@ -345,7 +345,7 @@ public final class EndpointHelper {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
         if (value == null) {
-            return new ArrayList<T>();
+            return new ArrayList<>();
         }
         List<String> elements = Arrays.asList(value.split(","));
         if (elements.size() == 1) {
@@ -355,12 +355,12 @@ public final class EndpointHelper {
                 return (List) bean;
             } else {
                 // The bean is a list element
-                List<T> singleElementList = new ArrayList<T>();
+                List<T> singleElementList = new ArrayList<>();
                 singleElementList.add(elementType.cast(bean));
                 return singleElementList;
             }
         } else { // more than one list element
-            List<T> result = new ArrayList<T>(elements.size());
+            List<T> result = new ArrayList<>(elements.size());
             for (String element : elements) {
                 result.add(resolveReferenceParameter(context, element.trim(), elementType));
             }

@@ -37,7 +37,7 @@ public class HealthCheckTest {
         Assert.assertEquals(HealthCheck.State.UNKNOWN, result.getState());
         Assert.assertTrue(result.getMessage().isPresent());
         Assert.assertEquals("Disabled", result.getMessage().get());
-        Assert.assertEquals(false, result.getDetails().get(MyHealthCheck.CHECK_ENABLED));
+        Assert.assertEquals(false, result.getDetails().get(AbstractHealthCheck.CHECK_ENABLED));
 
         check.getConfiguration().setEnabled(true);
 
@@ -45,7 +45,7 @@ public class HealthCheckTest {
 
         Assert.assertEquals(HealthCheck.State.UP, result.getState());
         Assert.assertFalse(result.getMessage().isPresent());
-        Assert.assertFalse(result.getDetails().containsKey(MyHealthCheck.CHECK_ENABLED));
+        Assert.assertFalse(result.getDetails().containsKey(AbstractHealthCheck.CHECK_ENABLED));
     }
 
     @Test
@@ -62,17 +62,17 @@ public class HealthCheckTest {
 
         HealthCheck.Result result2 = check.call();
         Assert.assertEquals(HealthCheck.State.UP, result2.getState());
-        Assert.assertEquals(result1.getDetails().get(MyHealthCheck.INVOCATION_TIME), result2.getDetails().get(MyHealthCheck.INVOCATION_TIME));
-        Assert.assertEquals(result1.getDetails().get(MyHealthCheck.INVOCATION_COUNT), result2.getDetails().get(MyHealthCheck.INVOCATION_COUNT));
-        Assert.assertNotEquals(check.getMetaData().get(MyHealthCheck.INVOCATION_ATTEMPT_TIME), result2.getDetails().get(MyHealthCheck.INVOCATION_TIME));
+        Assert.assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_TIME), result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
+        Assert.assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT), result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+        Assert.assertNotEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME), result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
 
         Thread.sleep(1250);
 
         HealthCheck.Result result3 = check.call();
         Assert.assertEquals(HealthCheck.State.UP, result3.getState());
-        Assert.assertNotEquals(result2.getDetails().get(MyHealthCheck.INVOCATION_TIME), result3.getDetails().get(MyHealthCheck.INVOCATION_TIME));
-        Assert.assertNotEquals(result2.getDetails().get(MyHealthCheck.INVOCATION_COUNT), result3.getDetails().get(MyHealthCheck.INVOCATION_COUNT));
-        Assert.assertEquals(check.getMetaData().get(MyHealthCheck.INVOCATION_ATTEMPT_TIME), result3.getDetails().get(MyHealthCheck.INVOCATION_TIME));
+        Assert.assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME), result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
+        Assert.assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT), result3.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+        Assert.assertEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME), result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
     }
 
     @Test
@@ -88,8 +88,8 @@ public class HealthCheckTest {
             result = check.call();
 
             Assert.assertEquals(HealthCheck.State.UP, result.getState());
-            Assert.assertEquals(i + 1, result.getDetails().get(MyHealthCheck.INVOCATION_COUNT));
-            Assert.assertEquals(i + 1, result.getDetails().get(MyHealthCheck.FAILURE_COUNT));
+            Assert.assertEquals(i + 1, result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+            Assert.assertEquals(i + 1, result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT));
         }
 
         Assert.assertEquals(HealthCheck.State.DOWN, check.call().getState());
@@ -110,8 +110,8 @@ public class HealthCheckTest {
         for (int i = 0; i < check.getConfiguration().getFailureThreshold(); i++) {
             result = check.call();
 
-            icount = (int)result.getDetails().get(MyHealthCheck.INVOCATION_COUNT);
-            fcount = (int)result.getDetails().get(MyHealthCheck.FAILURE_COUNT);
+            icount = (int)result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT);
+            fcount = (int)result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT);
 
             Assert.assertEquals(HealthCheck.State.UP, result.getState());
             Assert.assertEquals(i + 1, icount);
@@ -120,8 +120,8 @@ public class HealthCheckTest {
             result = check.call();
 
             Assert.assertEquals(HealthCheck.State.UP, result.getState());
-            Assert.assertEquals(icount, result.getDetails().get(MyHealthCheck.INVOCATION_COUNT));
-            Assert.assertEquals(fcount, result.getDetails().get(MyHealthCheck.FAILURE_COUNT));
+            Assert.assertEquals(icount, result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+            Assert.assertEquals(fcount, result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT));
 
             Thread.sleep(550);
         }

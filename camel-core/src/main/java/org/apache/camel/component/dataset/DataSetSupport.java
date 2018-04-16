@@ -93,7 +93,7 @@ public abstract class DataSetSupport implements DataSet {
 
     public Map<String, Object> getDefaultHeaders() {
         if (defaultHeaders == null) {
-            defaultHeaders = new HashMap<String, Object>();
+            defaultHeaders = new HashMap<>();
             populateDefaultHeaders(defaultHeaders);
         }
         return defaultHeaders;

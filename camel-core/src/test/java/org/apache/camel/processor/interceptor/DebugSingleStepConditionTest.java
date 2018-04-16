@@ -35,7 +35,7 @@ import org.apache.camel.spi.Condition;
  */
 public class DebugSingleStepConditionTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<String>();
+    private List<String> logs = new ArrayList<>();
     private Breakpoint breakpoint;
     private Condition beerCondition;
 

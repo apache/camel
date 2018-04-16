@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerListenerManager.class);
-    private final Set<TimerListener> listeners = new LinkedHashSet<TimerListener>();
+    private final Set<TimerListener> listeners = new LinkedHashSet<>();
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
     private volatile ScheduledFuture<?> task;

@@ -30,7 +30,7 @@ public class SequenceTest extends TestCase {
         e1 = new TestObject(3);
         e2 = new TestObject(4);
         e3 = new TestObject(7);
-        set = new Sequence<TestObject>(new TestComparator());
+        set = new Sequence<>(new TestComparator());
         set.add(e3);
         set.add(e1);
         set.add(e2);

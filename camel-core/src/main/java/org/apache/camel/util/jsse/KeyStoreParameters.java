@@ -176,7 +176,7 @@ public class KeyStoreParameters extends JsseParameters {
         }
         
         if (LOG.isDebugEnabled()) {
-            List<String> aliases = new LinkedList<String>();
+            List<String> aliases = new LinkedList<>();
             
             Enumeration<String> aliasEnum = ks.aliases();
             while (aliasEnum.hasMoreElements()) {

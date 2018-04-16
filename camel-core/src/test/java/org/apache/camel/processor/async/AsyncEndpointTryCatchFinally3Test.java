@@ -45,7 +45,7 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         names.add(beforeThreadName);
         names.add(middleThreadName);
         names.add(afterThreadName);

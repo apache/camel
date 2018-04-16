@@ -65,19 +65,19 @@ import org.slf4j.LoggerFactory;
 public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
     private final ParameterMappingStrategy strategy;
     private final MethodInfo defaultMethod;
     // shared state with details of operations introspected from the bean, created during the constructor
-    private Map<String, List<MethodInfo>> operations = new HashMap<String, List<MethodInfo>>();
-    private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithNoBody = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
-    private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
+    private Map<String, List<MethodInfo>> operations = new HashMap<>();
+    private List<MethodInfo> operationsWithBody = new ArrayList<>();
+    private List<MethodInfo> operationsWithNoBody = new ArrayList<>();
+    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<>();
+    private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<>();
+    private Map<Method, MethodInfo> methodMap = new HashMap<>();
     private boolean publicConstructors;
 
     static {
@@ -239,7 +239,7 @@ public class BeanInfo {
                     // and therefore use arrayLength from ObjectHelper to return the array length field.
                     Method method = ObjectHelper.class.getMethod("arrayLength", Object[].class);
                     ParameterInfo pi = new ParameterInfo(0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
-                    List<ParameterInfo> lpi = new ArrayList<ParameterInfo>(1);
+                    List<ParameterInfo> lpi = new ArrayList<>(1);
                     lpi.add(pi);
                     methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
                     // Need to update the message body to be pojo for the invocation
@@ -370,7 +370,7 @@ public class BeanInfo {
             existing.add(methodInfo);
         } else {
             // its a new method we have not seen before so wrap it in a list and add it
-            List<MethodInfo> methods = new ArrayList<MethodInfo>();
+            List<MethodInfo> methods = new ArrayList<>();
             methods.add(methodInfo);
             operations.put(opName, methods);
         }
@@ -427,8 +427,8 @@ public class BeanInfo {
         Class<?>[] parameterTypes = method.getParameterTypes();
         List<Annotation>[] parametersAnnotations = collectParameterAnnotations(clazz, method);
 
-        List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
+        List<ParameterInfo> parameters = new ArrayList<>();
+        List<ParameterInfo> bodyParameters = new ArrayList<>();
 
         boolean hasCustomAnnotation = false;
         boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
@@ -480,7 +480,7 @@ public class BeanInfo {
     protected List<Annotation>[] collectParameterAnnotations(Class<?> c, Method m) {
         List<Annotation>[] annotations = new List[m.getParameterCount()];
         for (int i = 0; i < annotations.length; i++) {
-            annotations[i] = new ArrayList<Annotation>();
+            annotations[i] = new ArrayList<>();
         }
         collectParameterAnnotations(c, m, annotations);
         return annotations;
@@ -656,7 +656,7 @@ public class BeanInfo {
             count++;
         }
 
-        List<MethodInfo> operations = new ArrayList<MethodInfo>();
+        List<MethodInfo> operations = new ArrayList<>();
         for (MethodInfo info : operationList) {
             if (info.getParameters().size() == count) {
                 operations.add(info);
@@ -670,7 +670,7 @@ public class BeanInfo {
         }
 
         // okay we still got multiple operations, so need to match the best one
-        List<MethodInfo> candidates = new ArrayList<MethodInfo>();
+        List<MethodInfo> candidates = new ArrayList<>();
         MethodInfo fallbackCandidate = null;
         for (MethodInfo info : operations) {
             it = ObjectHelper.createIterator(parameters, ",", false);
@@ -1182,7 +1182,7 @@ public class BeanInfo {
             return Collections.emptyList();
         }
 
-        List<MethodInfo> methods = new ArrayList<MethodInfo>();
+        List<MethodInfo> methods = new ArrayList<>();
         for (Collection<MethodInfo> col : operations.values()) {
             methods.addAll(col);
         }

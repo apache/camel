@@ -36,7 +36,7 @@ public final class CamelContextTrackerRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTrackerRegistry.class);
 
-    private final Set<CamelContextTracker> trackers = new LinkedHashSet<CamelContextTracker>();
+    private final Set<CamelContextTracker> trackers = new LinkedHashSet<>();
 
     private CamelContextTrackerRegistry() {
         // hide constructor

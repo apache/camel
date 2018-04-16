@@ -146,7 +146,7 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                 WatchService watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
                 if (isRecursive) {
-                    this.folderKeys = new HashMap<WatchKey, Path>();
+                    this.folderKeys = new HashMap<>();
                     registerRecursive(watcher, path, modifier);
                 } else {
                     registerPathToWatcher(modifier, path, watcher);

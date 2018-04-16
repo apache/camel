@@ -519,7 +519,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
             Set<ObjectName> routes = server.queryNames(query, null);
 
-            List<ManagedProcessorMBean> processors = new ArrayList<ManagedProcessorMBean>();
+            List<ManagedProcessorMBean> processors = new ArrayList<>();
             if (includeProcessors) {
                 // gather all the processors for this CamelContext, which requires JMX
                 query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
@@ -618,7 +618,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public List<String> findEipNames() throws Exception {
         Map<String, Properties> map = findEips();
-        return new ArrayList<String>(map.keySet());
+        return new ArrayList<>(map.keySet());
     }
 
     public TabularData listEips() throws Exception {
@@ -674,7 +674,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public List<String> findComponentNames() throws Exception {
         Map<String, Properties> map = findComponents();
-        return new ArrayList<String>(map.keySet());
+        return new ArrayList<>(map.keySet());
     }
 
     @Override
@@ -755,7 +755,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             configuration.setParameters(endpointParameters);
             return configuration.completeEndpointPath(completionText);
         } else {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 

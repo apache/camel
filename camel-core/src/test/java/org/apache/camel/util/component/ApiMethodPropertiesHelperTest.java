@@ -51,7 +51,7 @@ public class ApiMethodPropertiesHelperTest {
         MockEndpoint mock = new MockEndpoint();
         mock.setCamelContext(camelContext);
 
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         final DefaultExchange exchange = new DefaultExchange(mock);
         exchange.getIn().setHeader(PROPERTY_1, VALUE_1);
         exchange.getIn().setHeader(PROPERTY_2, VALUE_2);
@@ -64,7 +64,7 @@ public class ApiMethodPropertiesHelperTest {
 
     @Test
     public void testGetEndpointProperties() throws Exception {
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         final TestEndpointConfiguration endpointConfiguration = new TestEndpointConfiguration();
         endpointConfiguration.setProperty1(VALUE_1);
         endpointConfiguration.setProperty2(VALUE_2);

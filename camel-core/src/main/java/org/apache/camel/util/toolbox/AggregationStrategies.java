@@ -40,7 +40,7 @@ public final class AggregationStrategies {
      * @param type The type the {@link FlexibleAggregationStrategy} deals with.
      */
     public static <T> FlexibleAggregationStrategy<T> flexible(Class<T> type) {
-        return new FlexibleAggregationStrategy<T>(type);
+        return new FlexibleAggregationStrategy<>(type);
     }
     
     /**
@@ -48,7 +48,7 @@ public final class AggregationStrategies {
      * <tt>pick expression</tt> results.
      */
     public static FlexibleAggregationStrategy<Object> flexible() {
-        return new FlexibleAggregationStrategy<Object>();
+        return new FlexibleAggregationStrategy<>();
     }
 
     /**

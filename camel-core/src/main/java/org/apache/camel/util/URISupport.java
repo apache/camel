@@ -175,7 +175,7 @@ public final class URISupport {
 
         if (uri == null || ObjectHelper.isEmpty(uri)) {
             // return an empty map
-            return new LinkedHashMap<String, Object>(0);
+            return new LinkedHashMap<>(0);
         }
 
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
@@ -183,7 +183,7 @@ public final class URISupport {
 
         try {
             // use a linked map so the parameters is in the same order
-            Map<String, Object> rc = new LinkedHashMap<String, Object>();
+            Map<String, Object> rc = new LinkedHashMap<>();
 
             boolean isKey = true;
             boolean isValue = false;
@@ -291,7 +291,7 @@ public final class URISupport {
                 list = CastUtils.cast((List<?>) existing);
             } else {
                 // create a new list to hold the multiple values
-                list = new ArrayList<String>();
+                list = new ArrayList<>();
                 String s = existing != null ? existing.toString() : null;
                 if (s != null) {
                     list.add(s);
@@ -318,7 +318,7 @@ public final class URISupport {
             int idx = schemeSpecificPart.indexOf('?');
             if (idx < 0) {
                 // return an empty map
-                return new LinkedHashMap<String, Object>(0);
+                return new LinkedHashMap<>(0);
             } else {
                 query = schemeSpecificPart.substring(idx + 1);
             }
@@ -581,10 +581,10 @@ public final class URISupport {
             return buildUri(scheme, path, null);
         } else {
             // reorder parameters a..z
-            List<String> keys = new ArrayList<String>(parameters.keySet());
+            List<String> keys = new ArrayList<>(parameters.keySet());
             keys.sort(null);
 
-            Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
+            Map<String, Object> sorted = new LinkedHashMap<>(parameters.size());
             for (String key : keys) {
                 sorted.put(key, parameters.get(key));
             }
@@ -601,7 +601,7 @@ public final class URISupport {
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
-        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+        Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
         for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, Object> entry = it.next();

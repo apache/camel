@@ -39,7 +39,7 @@ public class DirectVmConsumerExpression extends ExpressionAdapter {
 
     @Override
     public Object evaluate(Exchange exchange) {
-        Collection<Endpoint> endpoints = new ArrayList<Endpoint>();
+        Collection<Endpoint> endpoints = new ArrayList<>();
         for (Endpoint endpoint : DirectVmComponent.getConsumerEndpoints()) {
             if (matcher.match(pattern, endpoint.getEndpointKey())) {
                 endpoints.add(endpoint);

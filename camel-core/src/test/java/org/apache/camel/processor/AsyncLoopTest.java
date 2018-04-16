@@ -73,7 +73,7 @@ public class AsyncLoopTest extends ContextTestSupport {
 
     private void performLoopTest(String endpointUri, int expectedIterations, String header) throws InterruptedException {
         resultEndpoint.expectedMessageCount(expectedIterations);
-        List<String> results = new ArrayList<String>(expectedIterations);
+        List<String> results = new ArrayList<>(expectedIterations);
         for (int i = 0; i < expectedIterations; i++) {
             results.add(BASE_PAYLOAD + new String(new char[i + 1]).replace("\0", " Hello Camel"));
         }

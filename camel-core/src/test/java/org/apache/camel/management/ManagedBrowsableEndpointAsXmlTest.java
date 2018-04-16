@@ -44,7 +44,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         template.sendBodyAndHeader("direct:start", "<foo>Camel &gt; Donkey</foo>", "title", "<title>Me &amp; You</title>");
         template.sendBodyAndHeader("direct:start", "Camel > Donkey", "name", "Me & You");
         template.sendBodyAndHeader("direct:start", 123, "user", true);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("user", false);
         headers.put("uid", 123);
         headers.put("title", "Camel rocks");

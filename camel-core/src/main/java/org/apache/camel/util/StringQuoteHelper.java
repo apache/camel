@@ -92,7 +92,7 @@ public final class StringQuoteHelper {
             return new String[]{trim ? input.trim() : input};
         }
 
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
         boolean singleQuoted = false;

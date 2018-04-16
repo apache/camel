@@ -33,8 +33,8 @@ import org.apache.camel.spi.PackageScanFilter;
  */
 public class TypeConvertersPackageScanClassResolver implements PackageScanClassResolver {
 
-    private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
-    private final Set<Class<?>> converters = new LinkedHashSet<Class<?>>();
+    private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
+    private final Set<Class<?>> converters = new LinkedHashSet<>();
 
     public TypeConvertersPackageScanClassResolver(Class<?> clazz) {
         converters.add(clazz);
@@ -51,7 +51,7 @@ public class TypeConvertersPackageScanClassResolver implements PackageScanClassR
     @Override
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
-        return Collections.unmodifiableSet(new LinkedHashSet<ClassLoader>(classLoaders));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
     }
 
     @Override

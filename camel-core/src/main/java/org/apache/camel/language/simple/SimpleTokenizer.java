@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 public final class SimpleTokenizer {
 
     // use CopyOnWriteArrayList so we can modify it in the for loop when changing function start/end tokens
-    private static final List<SimpleTokenType> KNOWN_TOKENS = new CopyOnWriteArrayList<SimpleTokenType>();
+    private static final List<SimpleTokenType> KNOWN_TOKENS = new CopyOnWriteArrayList<>();
 
     // optimise to be able to quick check for start functions
     private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};

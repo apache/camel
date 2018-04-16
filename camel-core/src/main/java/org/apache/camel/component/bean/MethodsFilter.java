@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 class MethodsFilter {
 
-    private final List<Method> methods = new ArrayList<Method>();
+    private final List<Method> methods = new ArrayList<>();
     private final Class<?> inheritingClass;
 
     /**

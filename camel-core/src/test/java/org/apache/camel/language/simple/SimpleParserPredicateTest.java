@@ -205,7 +205,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     public void testSimpleMap() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "123");
         map.put("foo bar", "456");
 
@@ -233,7 +233,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("foo");
         list.add("bar");
 
@@ -242,7 +242,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     public void testSimpleIn() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("key", "foo");
         map.put("key2", "bar");
         map.put("key3", "none");

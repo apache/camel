@@ -60,7 +60,7 @@ public class DefaultSubUnitOfWork implements SubUnitOfWork, SubUnitOfWorkCallbac
 
     private void addFailedException(Exception exception) {
         if (failedExceptions == null) {
-            failedExceptions = new ArrayList<Exception>();
+            failedExceptions = new ArrayList<>();
         }
         if (!failedExceptions.contains(exception)) {
             // avoid adding the same exception multiple times

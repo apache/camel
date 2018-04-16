@@ -63,7 +63,7 @@ import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
 public final class IntrospectionSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     // use a cache to speedup introspecting for known classes during startup
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
@@ -79,7 +79,7 @@ public final class IntrospectionSupport {
         EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
     }
 
-    private static final Set<Class<?>> PRIMITIVE_CLASSES = new HashSet<Class<?>>();
+    private static final Set<Class<?>> PRIMITIVE_CLASSES = new HashSet<>();
 
     static {
         PRIMITIVE_CLASSES.add(String.class);
@@ -305,7 +305,7 @@ public final class IntrospectionSupport {
 
         // loop each method on the class and gather details about the method
         // especially about getter/setters
-        List<MethodInfo> found = new ArrayList<MethodInfo>();
+        List<MethodInfo> found = new ArrayList<>();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (EXCLUDED_METHODS.contains(method)) {
@@ -456,7 +456,7 @@ public final class IntrospectionSupport {
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
         ObjectHelper.notNull(properties, "properties");
 
-        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+        Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
         for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, Object> entry = it.next();
@@ -478,7 +478,7 @@ public final class IntrospectionSupport {
     public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
         ObjectHelper.notNull(properties, "properties");
 
-        Map<String, String> rc = new LinkedHashMap<String, String>(properties.size());
+        Map<String, String> rc = new LinkedHashMap<>(properties.size());
 
         for (Entry<String, Object> entry : properties.entrySet()) {
             String name = entry.getKey();
@@ -693,7 +693,7 @@ public final class IntrospectionSupport {
     }
 
     public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern) {
-        Set<Method> candidates = new LinkedHashSet<Method>();
+        Set<Method> candidates = new LinkedHashSet<>();
 
         // Build the method name.
         name = "set" + ObjectHelper.capitalize(name);
@@ -747,8 +747,8 @@ public final class IntrospectionSupport {
     }
 
     protected static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
-        List<Method> answer = new LinkedList<Method>();
-        List<Method> primitives = new LinkedList<Method>();
+        List<Method> answer = new LinkedList<>();
+        List<Method> primitives = new LinkedList<>();
         Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern);
         for (Method setter : setters) {
             Class<?> parameterType = setter.getParameterTypes()[0];

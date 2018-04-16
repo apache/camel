@@ -92,7 +92,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     @SuppressWarnings("unchecked")
     private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
-    private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
+    private final Map<String, PropertiesFunction> functions = new HashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private boolean isDefaultCreated;

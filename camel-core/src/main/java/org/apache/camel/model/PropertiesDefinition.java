@@ -54,7 +54,7 @@ public class PropertiesDefinition {
     }
     
     public Map<String, String> asMap() {
-        Map<String, String> propertiesAsMap = new HashMap<String, String>();
+        Map<String, String> propertiesAsMap = new HashMap<>();
         for (PropertyDefinition propertyType : getProperties()) {
             propertiesAsMap.put(propertyType.getKey(), propertyType.getValue());
         }

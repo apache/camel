@@ -59,9 +59,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         super(endpoint);
         this.queueCapacity = queueSize;
         if (queueSize <= 0) {
-            this.queue = new LinkedBlockingQueue<Exchange>();
+            this.queue = new LinkedBlockingQueue<>();
         } else {
-            this.queue = new ArrayBlockingQueue<Exchange>(queueSize);
+            this.queue = new ArrayBlockingQueue<>(queueSize);
         }
         this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }

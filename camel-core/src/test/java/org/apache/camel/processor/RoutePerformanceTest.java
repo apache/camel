@@ -60,7 +60,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
     @Override
     protected Context createJndiContext() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         dataSet.setDefaultHeaders(headers);
 
