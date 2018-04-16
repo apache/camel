@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import org.apache.camel.component.salesforce.api.dto.Limits.Operation;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -35,7 +34,7 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportIns
  */
 public final class TypeReferences {
 
-    public static final TypeReference<Map<Operation, Usage>> USAGES_TYPE = new TypeReference<Map<Operation, Usage>>() {
+    public static final TypeReference<Map<String, Usage>> USAGES_TYPE = new TypeReference<Map<String, Usage>>() {
     };
 
     public static final TypeReference<List<RestError>> REST_ERROR_LIST_TYPE = new TypeReference<List<RestError>>() {
