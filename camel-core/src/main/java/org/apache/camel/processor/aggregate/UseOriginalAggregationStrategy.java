@@ -28,7 +28,7 @@ import org.apache.camel.Exchange;
  */
 public class UseOriginalAggregationStrategy implements AggregationStrategy {
 
-    private final Exchange original;
+    private Exchange original;
     private final boolean propagateException;
 
     public UseOriginalAggregationStrategy() {
@@ -62,6 +62,14 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
                 ? newExchange.getException()
                 : oldExchange.getException();
         }
+    }
+
+    public Exchange getOriginal() {
+        return original;
+    }
+
+    public void setOriginal(Exchange original) {
+        this.original = original;
     }
 
     @Override
