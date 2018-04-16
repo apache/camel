@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.agent.ImmutableRegCheck;
 import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.cloud.ServiceDefinition;
@@ -44,7 +45,12 @@ public class ConsulServiceDiscoveryTest {
         client = Consul.builder().build().agentClient();
         registrations = new ArrayList<>(3);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 6; i++) {
+            Registration.RegCheck c = ImmutableRegCheck.builder()
+                .ttl("1m")
+                .status(i < 3 ? "passing" : "critical")
+                .build();
+
             Registration r = ImmutableRegistration.builder()
                 .id("service-" + i)
                 .name("my-service")
@@ -53,6 +59,7 @@ public class ConsulServiceDiscoveryTest {
                 .addTags("key1=value1")
                 .addTags("key2=value2")
                 .port(9000 + i)
+                .check(c)
                 .build();
 
             client.register(r);
@@ -76,7 +83,7 @@ public class ConsulServiceDiscoveryTest {
 
         List<ServiceDefinition> services = discovery.getServices("my-service");
         assertNotNull(services);
-        assertEquals(3, services.size());
+        assertEquals(6, services.size());
 
         for (ServiceDefinition service : services) {
             assertFalse(service.getMetadata().isEmpty());
@@ -85,6 +92,7 @@ public class ConsulServiceDiscoveryTest {
             assertTrue(service.getMetadata().containsKey("a-tag"));
             assertTrue(service.getMetadata().containsKey("key1"));
             assertTrue(service.getMetadata().containsKey("key2"));
+            assertTrue(service.getPort() < 9003 ? service.getHealth().isHealthy() : !service.getHealth().isHealthy());
         }
     }
 }

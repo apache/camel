@@ -99,7 +99,11 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
             service.getServiceAddress(),
             service.getServicePort(),
             meta,
-            new DefaultServiceHealth(serviceHealthList.stream().allMatch(this::isHealthy))
+            new DefaultServiceHealth(
+                    serviceHealthList.stream()
+                            .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId()))
+                            .allMatch(this::isHealthy)
+            )
         );
     }
 }
