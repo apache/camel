@@ -81,6 +81,7 @@ public final class Limits implements Serializable {
         HourlySyncReportRuns,
         HourlyTimeBasedWorkflow,
         MassEmail,
+        PermissionSets,
         SingleEmail,
         StreamingApiConcurrentClients
     }
@@ -277,6 +278,13 @@ public final class Limits implements Serializable {
      */
     public Usage getMassEmail() {
         return forOperation(Operation.MassEmail);
+    }
+
+    /**
+     * Usage of permission sets.
+     */
+    public Usage getPermissionSets() {
+        return forOperation(Operation.PermissionSets);
     }
 
     /**
