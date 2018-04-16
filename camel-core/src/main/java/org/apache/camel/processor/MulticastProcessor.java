@@ -361,6 +361,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 } else {
                     executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
                 }
+                // and because of the exception we must signal we are done so the latch can open and let the other thread continue processing
+                LOG.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
+                LOG.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
+                aggregationOnTheFlyDone.countDown();
             }
 
             // signal all tasks has been submitted
