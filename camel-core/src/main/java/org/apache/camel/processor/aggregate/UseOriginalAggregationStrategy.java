@@ -35,6 +35,10 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
         this(null, true);
     }
 
+    public UseOriginalAggregationStrategy(boolean propagateException) {
+        this.propagateException = propagateException;
+    }
+
     public UseOriginalAggregationStrategy(Exchange original, boolean propagateException) {
         this.original = original;
         this.propagateException = propagateException;

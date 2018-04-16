@@ -77,7 +77,7 @@ public final class AggregationStrategies {
      * @see org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
      */
     public static AggregationStrategy useOriginal(boolean propagateException) {
-        return new UseOriginalAggregationStrategy(null, propagateException);
+        return new UseOriginalAggregationStrategy(propagateException);
     }
 
     /**
