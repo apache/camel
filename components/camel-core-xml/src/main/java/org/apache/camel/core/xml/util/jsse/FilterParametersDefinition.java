@@ -42,7 +42,7 @@ public class FilterParametersDefinition {
      */
     public List<String> getInclude() {
         if (this.include == null) {
-            this.include = new ArrayList<String>();
+            this.include = new ArrayList<>();
         }
         return this.include;
     }
@@ -55,7 +55,7 @@ public class FilterParametersDefinition {
      */
     public List<String> getExclude() {
         if (exclude == null) {
-            exclude = new ArrayList<String>();
+            exclude = new ArrayList<>();
         }
         return this.exclude;
     }

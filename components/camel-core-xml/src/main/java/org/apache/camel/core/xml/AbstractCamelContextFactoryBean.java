@@ -140,7 +140,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
     @XmlTransient
-    private List<RoutesBuilder> builders = new ArrayList<RoutesBuilder>();
+    private List<RoutesBuilder> builders = new ArrayList<>();
     @XmlTransient
     private ClassLoader contextClassLoaderOnStart;
     @XmlTransient
@@ -994,7 +994,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     protected void initThreadPoolProfiles(T context) throws Exception {
-        Set<String> defaultIds = new HashSet<String>();
+        Set<String> defaultIds = new HashSet<>();
 
         // lookup and use custom profiles from the registry
         Map<String, ThreadPoolProfile> profiles = context.getRegistry().findByTypeWithName(ThreadPoolProfile.class);
@@ -1058,7 +1058,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      * Strategy to install all available routes into the context
      */
     protected void installRoutes() throws Exception {
-        List<RouteBuilder> builders = new ArrayList<RouteBuilder>();
+        List<RouteBuilder> builders = new ArrayList<>();
 
         // lets add RoutesBuilder's added from references
         if (getBuilderRefs() != null) {
@@ -1151,7 +1151,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     private String[] normalizePackages(T context, List<String> unnormalized) throws Exception {
-        List<String> packages = new ArrayList<String>();
+        List<String> packages = new ArrayList<>();
         for (String name : unnormalized) {
             // it may use property placeholders
             name = context.resolvePropertyPlaceholders(name);

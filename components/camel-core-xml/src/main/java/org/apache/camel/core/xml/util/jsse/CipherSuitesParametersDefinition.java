@@ -35,7 +35,7 @@ public class CipherSuitesParametersDefinition {
      */
     public List<String> getCipherSuite() {
         if (this.cipherSuite == null) {
-            this.cipherSuite = new ArrayList<String>();
+            this.cipherSuite = new ArrayList<>();
         }
         return this.cipherSuite;
     }
