@@ -27,6 +27,7 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.Args;
@@ -184,18 +185,17 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
         
-        AS2MessageStructure messageStructure = httpContext.getAttribute(AS2_MESSAGE_STRUCTURE, AS2MessageStructure.class);
-        if (messageStructure == null) {
-            throw new HttpException("AS2 Message Structure missing");
-        }
-
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
         httpContext.setAttribute(HTTP_REQUEST, request);
 
         // Create Message Body
-        ApplicationEDIFACTEntity applicationEDIFACTEntity = new ApplicationEDIFACTEntity(ediMessage,
-                AS2CharSet.US_ASCII, AS2TransferEncoding.BASE64, false);
-        switch (messageStructure) {
+        ApplicationEDIEntity applicationEDIEntity;
+        try {
+            applicationEDIEntity = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, ediMessageTransferEncoding, false);
+        } catch (Exception e) {
+            throw new HttpException("Failed to create EDI message entity",e);
+        }
+        switch (as2MessageStructure) {
         case PLAIN:
             applicationEDIEntity.setMainBody(true);
             EntityUtils.setMessageEntity(request, applicationEDIEntity);
@@ -226,46 +226,7 @@ public class AS2ClientManager {
             throw new HttpException("Failed to send http request message", e);
         }
         httpContext.setAttribute(HTTP_RESPONSE, response);
-    }
-
-    /**
-     * Send <code>ediMessage</code> unencrypted and signed to trading partner.
-     * 
-     * @param ediMessage
-     *            - EDI message to transport
-     * @param httpContext
-     *            - context containing client sending attributes
-     * @throws HttpException
-     */
-    public void sendSigned(String ediMessage, HttpCoreContext httpContext) throws HttpException {
-
-        String requestUri = httpContext.getAttribute(REQUEST_URI, String.class);
-        if (requestUri == null) {
-            throw new HttpException("Request URI missing");
-        }
-
-        BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
-        httpContext.setAttribute(HTTP_REQUEST, request);
-
-        AS2SignedDataGenerator gen = createSigningGenerator(httpContext);
-
-        // Create Application EDIFACT Mime Part
-        ApplicationEDIFACTEntity applicationEDIFACTEntity = new ApplicationEDIFACTEntity(ediMessage,
-                AS2CharSet.US_ASCII, AS2TransferEncoding.BASE64, false);
-
-        // Create Multipart Signed Message Body
-        MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIFACTEntity, gen,
-                AS2CharSet.US_ASCII, AS2TransferEncoding.BASE64, false, null);
-        request.setEntity(multipartSignedEntity);
-
-        HttpResponse response;
-        try {
-            response = as2ClientConnection.send(request, httpContext);
-        } catch (IOException e) {
-            throw new HttpException("Failed to send http request message", e);
-        }
-        httpContext.setAttribute(HTTP_RESPONSE, response);
-
+        return httpContext;
     }
 
     public AS2SignedDataGenerator createSigningGenerator(HttpCoreContext httpContext) throws HttpException {

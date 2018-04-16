@@ -14,26 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.as2.api.entity;
+package org.apache.camel.component.as2.api;
 
-import org.apache.camel.component.as2.api.AS2MimeType;
-import org.apache.http.HttpException;
-import org.apache.http.entity.ContentType;
-
-public class MultipartReportEntity extends MultipartMimeEntity {
-
-    public MultipartReportEntity(String charset,
-                                 boolean isMainBody,
-                                 String boundary)
-            throws HttpException {
-
-        super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
-
-    }
-    
-    protected MultipartReportEntity() {
-        
-    }
-
-
+public class AS2TransferEncoding {
+    public static final String NONE = null; 
+    public static final String BASE64 = "base64";
+    public static final String _7BIT = "7bit";
 }

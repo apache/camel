@@ -54,7 +54,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
         setMainBody(isMainBody);
         try {
-            this.signature = signature(data, signer);
+            this.signature = createSignature(data, signer);
         } catch (Exception e) {
             throw new HttpException("Failed to create signed data", e);
         }
@@ -68,6 +68,10 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
             addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
             addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
             setMainBody(isMainBody);
+    }
+    
+    public byte[] getSignature() {
+        return signature;
     }
 
     @Override
@@ -99,7 +103,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         }
     }
     
-    private byte[] signature(MimeEntity data, CMSSignedDataGenerator signer) throws Exception {
+    private byte[] createSignature(MimeEntity data, CMSSignedDataGenerator signer) throws Exception {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             data.writeTo(bos);
             bos.flush();

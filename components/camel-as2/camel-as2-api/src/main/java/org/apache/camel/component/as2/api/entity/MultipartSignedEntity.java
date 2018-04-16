@@ -16,16 +16,25 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+
 import org.apache.camel.component.as2.api.AS2Header;
-import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.io.AbstractMessageParser;
-import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicLineParser;
-import org.apache.http.util.Args;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.util.Store;
 
 public class MultipartSignedEntity extends MultipartMimeEntity {
 
@@ -38,63 +47,63 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
         addPart(signature);
     }
     
-    protected MultipartSignedEntity() {
+    protected MultipartSignedEntity(String boundary, boolean isMainBody) {
+        this.boundary = boundary;
+        this.isMainBody = isMainBody;
     }
     
-    public HttpEntity parseEntity(HttpEntity entity, boolean isMainBody) throws Exception{
-        Args.notNull(entity, "Entity");
-        Args.check(entity.isStreaming(), "Entity is not streaming");
-        MultipartSignedEntity multipartSignedEntity = null;
-        Header[] headers = null;
-
-        try {
-            // Determine and validate the Content Type
-            Header contentTypeHeader = entity.getContentType();
-            if (contentTypeHeader == null) {
-                throw new HttpException("Content-Type header is missing");
-            }
-            ContentType contentType =  ContentType.parse(entity.getContentType().getValue());
-            if (!contentType.getMimeType().equals(AS2MimeType.MULTIPART_SIGNED)) {
-                throw new HttpException("Entity has invalid MIME type '" + contentType.getMimeType() + "'");
-            }
-
-            // Determine Transfer Encoding
-            Header transferEncoding = entity.getContentEncoding();
-            String contentTransferEncoding = transferEncoding == null ? null : transferEncoding.getValue();
-            
-            SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
-            inBuffer.bind(entity.getContent());
-            
-            // Parse Headers
-            if (!isMainBody) {
-               headers = AbstractMessageParser.parseHeaders(
-                        inBuffer,
-                        -1,
-                        -1,
-                        BasicLineParser.INSTANCE,
-                        null);
-            }
-            
-            // Get Boundary Value
-            String boundary = contentType.getParameter("boundary");
-            if (boundary == null) {
-                throw new HttpException("Failed to retrive boundary value");
-            }
-            
-            // TODO: parse encapsulated parts and create sub-entities. 
-            
-            multipartSignedEntity = new MultipartSignedEntity();
-            
-            if (headers != null) {
-                multipartSignedEntity.setHeaders(headers);
-            }
-
-            return multipartSignedEntity;
-        } catch (HttpException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new HttpException("Failed to parse entity content", e);
+    public boolean isValid()  {
+        ApplicationEDIEntity applicationEDIEntity = getSignedDataEntity();
+        ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = getSignatureEntity();
+        
+        if (applicationEDIEntity == null || applicationPkcs7SignatureEntity == null) {
+            return false;
         }
+        
+        try {
+            ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+            applicationEDIEntity.writeTo(outstream);
+            CMSProcessable signedContent = new CMSProcessableByteArray(outstream.toByteArray());
+
+            byte[] signature = applicationPkcs7SignatureEntity.getSignature();
+            InputStream is = new ByteArrayInputStream(signature);
+
+            CMSSignedData signedData = new CMSSignedData(signedContent, is);
+
+            Store<X509CertificateHolder> store = signedData.getCertificates();
+            SignerInformationStore signers = signedData.getSignerInfos();
+
+            for (SignerInformation signer : signers.getSigners()) {
+                @SuppressWarnings("unchecked")
+                Collection<X509CertificateHolder> certCollection = store.getMatches(signer.getSID());
+
+                X509CertificateHolder certHolder = certCollection.iterator().next();
+                X509Certificate cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(certHolder);
+                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert))) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        
+        return true;
     }
     
+    public ApplicationEDIEntity getSignedDataEntity() {
+        if (getPartCount() > 0 && getPart(0) instanceof ApplicationEDIEntity) {
+            return (ApplicationEDIEntity)  getPart(0);
+        }
+        
+        return null;
+    }
+    
+    public ApplicationPkcs7SignatureEntity getSignatureEntity() {
+        if (getPartCount() > 1 && getPart(1) instanceof ApplicationPkcs7SignatureEntity) {
+            return (ApplicationPkcs7SignatureEntity)  getPart(1);
+        }
+        
+        return null;
+    }
+
 }

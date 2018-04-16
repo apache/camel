@@ -14,26 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.as2.api.entity;
+package org.apache.camel.component.as2.api;
 
-import org.apache.camel.component.as2.api.AS2MimeType;
-import org.apache.http.HttpException;
-import org.apache.http.entity.ContentType;
-
-public class MultipartReportEntity extends MultipartMimeEntity {
-
-    public MultipartReportEntity(String charset,
-                                 boolean isMainBody,
-                                 String boundary)
-            throws HttpException {
-
-        super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
-
-    }
+public class AS2Charset {
     
-    protected MultipartReportEntity() {
-        
-    }
-
-
+    /**
+     * Name of charset parameter in Content-Type header values.
+     */
+    public static final String PARAM = "charset";
+    
+    /**
+     * Character Set Name for US ASCII
+     */
+    public static final String US_ASCII = "US-ASCII";
 }

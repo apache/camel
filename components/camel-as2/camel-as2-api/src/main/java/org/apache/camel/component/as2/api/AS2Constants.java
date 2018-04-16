@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.as2.api;
 
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpCoreContext;
 
 /**
@@ -24,11 +23,25 @@ import org.apache.http.protocol.HttpCoreContext;
  */
 public interface AS2Constants {
     
+    /**
+     * The Value of User Agent Header used by AS2 Camel Component.
+     */
     public static final String HTTP_USER_AGENT = "Camel AS2 Component";
     
+    /**
+     * The Value of Origin Server Header used by AS2 Camel Component.
+     */
     public static final String HTTP_ORIGIN_SERVER = "Camel AS2 Component";
     
+    /**
+     * Fully Qualified Domain Name used by AS2 Camel Component in Message ID Header.
+     */
     public static final String HTTP_MESSAGE_ID_FQDN = "camel.apache.org";
+    
+    /**
+     * The Value of User Agent Header used by AS2 Camel Component.
+     */
+    public static final String MIME_VERSION = "1.0";
     
     //
     // HTTP Context Attribute Names
@@ -64,70 +77,6 @@ public interface AS2Constants {
      */
     public static final String HTTP_SERVER_SERVICE = "http.server.service";
     
-    
-    //
-    // AS2 Header Names
-    //
-    
-    /**
-     * Message Header Name for AS2 Version
-     */
-    public static final String AS2_VERSION_HEADER = "AS2-Version";
-    
-    /**
-     * Message Header Name for Content Type
-     */
-    public static final String CONTENT_TYPE_HEADER = "Content-Type";
-    
-    /**
-     * Message Header Name for AS2 From
-     */
-    public static final String AS2_FROM_HEADER = "AS2-From";
-    
-    /**
-     * Message Header Name for AS2 To
-     */
-    public static final String AS2_TO_HEADER = "AS2-To";
-    
-    /**
-     * Message Header Name for Subject
-     */
-    public static final String SUBJECT_HEADER = "Subject";
-    
-    /**
-     * Message Header Name for Message ID
-     */
-    public static final String MESSAGE_ID_HEADER = "Message-Id";
-    
-    /**
-     * Message Header Name for Target Host
-     */
-    public static final String TARGET_HOST_HEADER = HTTP.TARGET_HOST;
-    
-    /**
-     * Message Header Name for User Agent
-     */
-    public static final String USER_AGENT_HEADER = HTTP.USER_AGENT;
-    
-    /**
-     * Message Header Name for Date
-     */
-    public static final String DATE_HEADER = HTTP.DATE_HEADER;
-    
-    /**
-     * Message Header Name for Content Length
-     */
-    public static final String CONTENT_LENGTH_HEADER = HTTP.CONTENT_LEN;
-    
-    /**
-     * Message Header Name for Connection
-     */
-    public static final String CONNECTION_HEADER = HTTP.CONN_DIRECTIVE;
-    
-    /**
-     * Message Header Name for Connection
-     */
-    public static final String EXPECT_HEADER = HTTP.EXPECT_DIRECTIVE;
     
     //
     // AS2 MIME Content Types

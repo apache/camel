@@ -11,6 +11,7 @@ import java.io.InputStream;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
+import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -146,7 +147,7 @@ public class EntityParserTest {
     }
     
     @Test
-    public void parseMessageDispositionNotificationReportTest() throws Exception {
+    public void parseMessageDispositionNotificationReportMessageTest() throws Exception {
         HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
         HttpMessageUtils.setHeaderValue(response, AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
         HttpMessageUtils.setHeaderValue(response, AS2Header.REPORT_TYPE, REPORT_TYPE_HEADER_VALUE);
@@ -155,9 +156,12 @@ public class EntityParserTest {
         entity.setContentType(AS2MimeType.MULTIPART_REPORT);
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         entity.setContent(is);
-        EntityParser.setMessageEntity(response, entity);
+        EntityUtils.setMessageEntity(response, entity);
         
-        HttpEntity parsedEntity = EntityParser.parseMessageDispositionNotificationReportEntity(response, entity, true);
+        EntityParser.parseMessageDispositionNotificationReportEntity(response);
+        HttpEntity parsedEntity = EntityUtils.getMessageEntity(response);
+        assertNotNull("Unexpected Null message disposition notification report entity", parsedEntity);
+        assertTrue("Unexpected type for message disposition notification report entity", parsedEntity instanceof DispositionNotificationMultipartReportEntity);
     }
     
     @Test
@@ -167,7 +171,7 @@ public class EntityParserTest {
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
         inbuffer.bind(is);
 
-        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser.parseDispositionNotificationMultipartReportEntityBody(inbuffer, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY, DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser.parseMultipartReportEntityBody(inbuffer, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY, DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
         
         assertNotNull("Unexpected Null disposition notification multipart entity", dispositionNotificationMultipartReportEntity);
         assertEquals("Unexpected number of body parts", 2, dispositionNotificationMultipartReportEntity.getPartCount());

@@ -17,6 +17,10 @@
 package org.apache.camel.component.as2.api;
 
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +53,7 @@ public class Util {
     public static final Pattern AS_NAME_PATTERN = Pattern.compile(AS2_NAME);
     
     private static Random generator = new Random();
-   
+    
     /**
      * Validates if the given <code>name</code> is a valid AS2 Name
      * 
@@ -80,8 +84,9 @@ public class Util {
                     /* Wall Clock Time in Nanoseconds */          /* 64 Bit Random Number */                      /* Fully Qualified Domain Name */
         return "<" + Long.toString(System.nanoTime(), 36) + "." + Long.toString(generator.nextLong(), 36) + "@" + fqdn + ">";
     }
-
-    /**
+    
+    
+   /**
      * Determines if <code>c</code> is a printable character.
      * @param c - the character to test
      * @return <code>true</code> if <code>c</code> is a printable character; <code>false</code> otherwise.

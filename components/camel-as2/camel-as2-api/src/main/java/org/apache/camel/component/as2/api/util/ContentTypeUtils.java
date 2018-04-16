@@ -14,26 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.as2.api.entity;
+package org.apache.camel.component.as2.api.util;
 
+import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MimeType;
-import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
 
-public class MultipartReportEntity extends MultipartMimeEntity {
+public class ContentTypeUtils {
 
-    public MultipartReportEntity(String charset,
-                                 boolean isMainBody,
-                                 String boundary)
-            throws HttpException {
+    private ContentTypeUtils() {}
 
-        super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
-
+    public static boolean isEDIMessageContentType(ContentType ediMessageContentType) {
+        switch (ediMessageContentType.getMimeType().toLowerCase()) {
+        case AS2MediaType.APPLICATION_EDIFACT:
+            return true;
+        case AS2MediaType.APPLICATION_EDI_X12:
+            return true;
+        case AS2MediaType.APPLICATION_EDI_CONSENT:
+            return true;
+        default:
+            return false;
+        }
     }
-    
-    protected MultipartReportEntity() {
-        
-    }
 
+    public static boolean isPkcs7SignatureType(ContentType pcks7SignatureType) {
+        switch (pcks7SignatureType.getMimeType().toLowerCase()) {
+        case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
+            return true;
+        default:
+            return false;
+        }
+    }
 
 }

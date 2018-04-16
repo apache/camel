@@ -32,6 +32,8 @@ import java.util.List;
 
 import org.apache.camel.component.as2.api.entity.Importance;
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.message.TokenParser;
@@ -156,6 +158,23 @@ public class AS2HeaderUtils {
         }
 
         return new Parameter(name, importance, values.toArray(new String[values.size()]));
+    }
+
+    public static String getBoundaryParameterValue(Header[] headers, String headerName) {
+        Args.notNull(headers, "headers");
+        Args.notNull(headerName, "headerName");
+        for (Header header : headers) {
+            if (header.getName().equalsIgnoreCase(headerName)) {
+                for (HeaderElement headerElement : header.getElements()) {
+                    for (NameValuePair nameValuePair : headerElement.getParameters()) {
+                        if (nameValuePair.getName().equalsIgnoreCase("boundary")) {
+                            return nameValuePair.getValue();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

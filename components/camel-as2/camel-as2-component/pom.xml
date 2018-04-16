@@ -149,7 +149,9 @@
                 <api>
                     <apiName>send</apiName>
                     <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
-                    <fromJavadoc/>
+                    <fromJavadoc>
+                      <excludeMethods>createSigningGenerator</excludeMethods>
+                    </fromJavadoc>
                 </api>
                 <api>
                     <apiName>listen</apiName>

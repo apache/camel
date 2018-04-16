@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.as2;
 
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.http.entity.ContentType;
 
 /**
  * Component configuration for AS2 component.

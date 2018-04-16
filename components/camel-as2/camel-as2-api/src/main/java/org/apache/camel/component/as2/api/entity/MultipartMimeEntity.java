@@ -91,13 +91,12 @@ public abstract class MultipartMimeEntity extends MimeEntity {
             String boundary = "--" + this.boundary;
             // Write out parts
             for (MimeEntity part : parts) {
-                canonicalOutstream.writeln(); // ensure boundary occurs at the beginning of a line; RFC2046 - 5.1.1
                 canonicalOutstream.writeln(boundary);
                 part.writeTo(outstream);
+                canonicalOutstream.writeln(); // ensure boundary occurs at the beginning of a line; RFC2046 - 5.1.1
             }
             
             // Write out closing boundary delimiter line
-            canonicalOutstream.writeln(); // ensure boundary occurs at the beginning of a line; RFC2046 - 5.1.1
             canonicalOutstream.writeln(boundary + "--");
             
         }

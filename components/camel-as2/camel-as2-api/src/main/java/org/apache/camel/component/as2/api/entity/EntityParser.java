@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
@@ -8,7 +24,6 @@ import java.util.List;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
-import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
@@ -17,12 +32,9 @@ import org.apache.camel.component.as2.api.util.DispositionNotificationContentUti
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.io.AbstractMessageParser;
@@ -100,28 +112,6 @@ public class EntityParser {
         return true;
     }
 
-    public static boolean isEDIMessageContentType(ContentType ediMessageContentType) {
-        switch (ediMessageContentType.getMimeType().toLowerCase()) {
-        case AS2MediaType.APPLICATION_EDIFACT:
-            return true;
-        case AS2MediaType.APPLICATION_EDI_X12:
-            return true;
-        case AS2MediaType.APPLICATION_EDI_CONSENT:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    public static boolean isPkcs7SignatureType(ContentType pcks7SignatureType) {
-        switch (pcks7SignatureType.getMimeType().toLowerCase()) {
-        case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
-            return true;
-        default:
-            return false;
-        }
-    }
-
     public static void skipPreambleAndStartBoundary(AS2SessionInputBuffer inbuffer, String boundary)
             throws HttpException {
 
@@ -179,7 +169,6 @@ public class EntityParser {
 
         if (entity instanceof MultipartSignedEntity) {
             return;
-
         }
 
         Args.check(entity.isStreaming(), "Entity is not streaming");
@@ -228,13 +217,11 @@ public class EntityParser {
     
      public static void parseApplicationEDIEntity(HttpMessage message)
             throws HttpException {
-        Args.notNull(entity, "Entity");
-        Args.check(entity.isStreaming(), "Entity is not streaming");
         ApplicationEDIEntity applicationEDIEntity = null;
-        Header[] headers = null;
+        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationEDIEntity) {
-            return entity;
+            return;
         }
 
         Args.check(entity.isStreaming(), "Entity is not streaming");
@@ -247,7 +234,7 @@ public class EntityParser {
                 throw new HttpException("Content-Type header is missing");
             }
             ContentType contentType = ContentType.parse(entity.getContentType().getValue());
-            if (!contentType.getMimeType().startsWith(EntityParser.APPLICATION_EDIT_CONTENT_TYPE_PREFIX)) {
+            if (!contentType.getMimeType().startsWith(EntityParser.APPLICATION_EDI_CONTENT_TYPE_PREFIX)) {
                 throw new HttpException("Entity has invalid MIME type '" + contentType.getMimeType() + "'");
             }
 
@@ -258,12 +245,6 @@ public class EntityParser {
             SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
             inBuffer.bind(entity.getContent());
 
-            // Parse Headers
-            if (!isMainBody) {
-                headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
-                        new ArrayList<CharArrayBuffer>());
-            }
-
             // Extract content from stream
             CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
             while (inBuffer.readLine(lineBuffer) != -1) {
@@ -272,13 +253,9 @@ public class EntityParser {
 
             // Build application EDI entity
             applicationEDIEntity = EntityUtils.createEDIEntity(lineBuffer.toString(), contentType,
-                    contentTransferEncoding, isMainBody);
+                    contentTransferEncoding, true);
 
-            if (headers != null) {
-                applicationEDIEntity.setHeaders(headers);
-            }
-
-            return applicationEDIEntity;
+            EntityUtils.setMessageEntity(message, applicationEDIEntity);
         } catch (HttpException e) {
             throw e;
         } catch (Exception e) {
@@ -286,16 +263,13 @@ public class EntityParser {
         }
     }
 
-    public static HttpEntity parseMessageDispositionNotificationReportEntity(HttpMessage message,
-                                                                             HttpEntity entity,
-                                                                             boolean isMainBody)
+    public static void parseMessageDispositionNotificationReportEntity(HttpMessage message)
             throws HttpException {
-        Args.notNull(entity, "entity");
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
-        Header[] headers = null;
+        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof DispositionNotificationMultipartReportEntity) {
-            return entity;
+            return;
         }
 
         Args.check(entity.isStreaming(), "Entity is not streaming");
@@ -325,30 +299,15 @@ public class EntityParser {
             AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
             inbuffer.bind(entity.getContent());
 
-            // Parse Headers
-            if (!isMainBody) {
-                headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
-                        new ArrayList<CharArrayBuffer>());
-            }
-
             // Get Boundary Value
-            String boundary = null;
-            if (isMainBody) {
-                boundary = getBoundaryParameterValue(message, AS2Header.REPORT_TYPE);
-            } else if (headers != null) {
-                boundary = getBoundaryParameterValue(headers, AS2Header.REPORT_TYPE);
-            }
+            String boundary = HttpMessageUtils.getBoundaryParameterValue(message, AS2Header.REPORT_TYPE);
             if (boundary == null) {
                 throw new HttpException("Failed to retrive boundary value");
             }
             
-            dispositionNotificationMultipartReportEntity = parseDispositionNotificationMultipartReportEntityBody(inbuffer, boundary, charsetName, contentTransferEncoding);
+            dispositionNotificationMultipartReportEntity = parseMultipartReportEntityBody(inbuffer, boundary, charsetName, contentTransferEncoding);
 
-            if (headers != null) {
-                dispositionNotificationMultipartReportEntity.setHeaders(headers);
-            }
-
-            return dispositionNotificationMultipartReportEntity;
+            EntityUtils.setMessageEntity(message, dispositionNotificationMultipartReportEntity);
 
         } catch (HttpException e) {
             throw e;
@@ -358,9 +317,7 @@ public class EntityParser {
     }
 
     public static void parseAS2MessageEntity(HttpMessage message) throws HttpException {
-        HttpEntity entity = null;
         if (EntityUtils.hasEntity(message)) {
-            entity = EntityUtils.getMessageEntity(message);
             String contentTypeStr =  HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TYPE);
             if (contentTypeStr != null) {
                 ContentType contentType;
@@ -374,18 +331,15 @@ public class EntityParser {
                 case AS2MimeType.APPLICATION_EDIFACT:
                 case AS2MimeType.APPLICATION_EDI_X12:
                 case AS2MimeType.APPLICATION_EDI_CONSENT:
-                    entity = parseApplicationEDIEntity(message, entity, true);
-                    setMessageEntity(message, entity);
+                    parseApplicationEDIEntity(message);
                     break;
                 case AS2MimeType.MULTIPART_SIGNED:
-                    entity = parseMultipartSignedEntity(message, entity, true);
-                    setMessageEntity(message, entity);
+                    parseMultipartSignedEntity(message);
                     break;
                 case AS2MimeType.APPLICATION_PKCS7_MIME:
                     break;
                 case AS2MimeType.MULTIPART_REPORT:
-                    entity = parseMessageDispositionNotificationReportEntity(message, entity, true);
-                    setMessageEntity(message, entity);
+                    parseMessageDispositionNotificationReportEntity(message);
                     break;
                 default:
                     break;
@@ -393,6 +347,14 @@ public class EntityParser {
             }
         }
     }
+    
+    public static MultipartSignedEntity parseMultipartSignedEntityBody(AS2SessionInputBuffer inbuffer,
+                                                                       String boundary,
+                                                                       String charsetName,
+                                                                       String contentTransferEncoding)
+            throws ParseException {
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
@@ -771,8 +733,21 @@ public class EntityParser {
         String previousContentTransferEncoding = inbuffer.getTransferEncoding();
         
         try {
+            Charset charset = contentType.getCharset();
+            if (charset == null) {
+                charset = Charset.forName(AS2Charset.US_ASCII);
+            }
+            CharsetDecoder charsetDecoder = charset.newDecoder();
+
+            inbuffer.setCharsetDecoder(charsetDecoder);
+            inbuffer.setTransferEncoding(contentTransferEncoding);
+
+            String pkcs7SignatureBodyContent = parseBodyPartText(inbuffer, boundary);
             
-            return null;
+            String charsetName = charset.toString();
+            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(
+                    charsetName, contentTransferEncoding, pkcs7SignatureBodyContent.getBytes(charset), false);
+            return applicationPkcs7SignatureEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Signature entity");
             parseException.initCause(e);

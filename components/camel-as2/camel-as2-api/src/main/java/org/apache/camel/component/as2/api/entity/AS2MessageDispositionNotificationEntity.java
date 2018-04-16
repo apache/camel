@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -34,6 +35,7 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.Args;
 
 public class AS2MessageDispositionNotificationEntity extends MimeEntity {
@@ -135,10 +137,6 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
     public String getMtnName() {
         return mtnName;
-    }
-
-    public String getOriginalRecipient() {
-        return originalRecipient;
     }
 
     public String getFinalRecipient() {

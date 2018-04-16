@@ -61,6 +61,14 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         this.isMainBody = isMainBody;
     }
     
+    public String getContentTypeValue() {
+        Header contentTypeHeader = getContentType();
+        if (contentTypeHeader != null) {
+            return contentTypeHeader.getValue();
+        }
+        return null;
+    }
+    
     public void setContentType(ContentType contentType) {
         super.setContentType(contentType == null ? null : contentType.toString());
     }
@@ -71,12 +79,28 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         addHeader(contentType);
     }
     
+    public String getContentEncodingValue() {
+        Header contentEncodingHeader = getContentEncoding();
+        if (contentEncodingHeader != null) {
+            return contentEncodingHeader.getValue();
+        }
+        return null;
+    }
+    
     @Override
     public void setContentEncoding(Header contentEncoding) {
         super.setContentEncoding(contentEncoding);
         addHeader(contentEncoding);
     }
 
+    public String getContentTransferEncodingValue() {
+        Header contentTransferEncodingHeader = getContentTransferEncoding();
+        if (contentTransferEncodingHeader != null) {
+            return contentTransferEncodingHeader.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Obtains the Content-Transfer-Encoding header.
      * The default implementation returns the value of the

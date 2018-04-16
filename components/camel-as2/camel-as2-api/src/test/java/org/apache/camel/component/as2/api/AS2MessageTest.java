@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api;
 
 import static org.junit.Assert.assertEquals;
@@ -5,10 +21,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -44,22 +60,25 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AS2MessageTest {
     
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AS2MessageTest.class);
-    
+
     private static final String METHOD = "POST";
     private static final String TARGET_HOST = "localhost";
-    private static final int TARGET_PORT = 80;
+    private static final int TARGET_PORT = 8080;
     private static final String AS2_VERSION = "1.1";
     private static final String USER_AGENT = "Camel AS2 Endpoint";
     private static final String REQUEST_URI = "/";
     private static final String AS2_NAME = "878051556";
     private static final String SUBJECT = "Test Case";
     private static final String FROM = "mrAS@example.org";
-    private static final String CLIENT_FQDN = "example.org";
+    private static final String CLIENT_FQDN = "client.example.org";
+    private static final String SERVER_FQDN = "server.example.org";
     private static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
     
@@ -186,12 +205,10 @@ public class AS2MessageTest {
     public void setUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         
-        // Load keystore
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-        keystore.load(new FileInputStream("keystore.pfx"), "CamelsKool".toCharArray()); // TODO remove before checkin
+        setupKeysAndCertificates();
         
         // Create and populate certificate store.
-        JcaCertStore certs = new JcaCertStore(Arrays.asList(chain));
+        JcaCertStore certs = new JcaCertStore(certList);
 
         // Create capabilities vector
         SMIMECapabilityVector capabilities = new SMIMECapabilityVector();
@@ -262,7 +279,6 @@ public class AS2MessageTest {
          HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
-//        Util.printRequest(System.out, request);
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
         assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
         assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion());

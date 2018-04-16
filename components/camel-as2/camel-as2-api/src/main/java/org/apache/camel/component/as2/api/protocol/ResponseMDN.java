@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
@@ -16,6 +32,7 @@ import org.apache.camel.component.as2.api.InvalidAS2NameException;
 import org.apache.camel.component.as2.api.Util;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
+import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
@@ -76,9 +93,6 @@ public class ResponseMDN implements HttpResponseInterceptor {
         /* AS2-Version header */
         response.addHeader(AS2Header.AS2_VERSION, as2Version);
 
-        /* MIME header */
-        response.addHeader(AS2Header.MIME_VERSION, AS2Constants.MIME_VERSION);
-        
         /* Subject header */
         String subjectPrefix = coreContext.getAttribute(AS2ServerManager.SUBJECT, String.class);
         String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
@@ -96,7 +110,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         response.addHeader(AS2Header.FROM, from);
 
         /* AS2-From header */
-        String as2From = coreContext.getAttribute(AS2ServerManager.AS2_FROM, String.class);
+        String as2From = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
         try {
             Util.validateAS2Name(as2From);
         } catch (InvalidAS2NameException e) {
@@ -105,7 +119,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         response.addHeader(AS2Header.AS2_FROM, as2From);
 
         /* AS2-To header */
-        String as2To = coreContext.getAttribute(AS2ServerManager.AS2_TO, String.class);
+        String as2To = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
         try {
             Util.validateAS2Name(as2To);
         } catch (InvalidAS2NameException e) {
@@ -122,9 +136,9 @@ public class ResponseMDN implements HttpResponseInterceptor {
             String boundary = EntityUtils.createBoundaryValue();
             DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true);
 
-            DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(coreContext.getAttribute(AS2ServerManager.MESSAGE_DISPOSITION_OPTIONS, String.class), null);
+            DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
             
-            String receiptAddress = coreContext.getAttribute(AS2ServerManager.RECEIPT_ADDRESS, String.class);
+            String receiptAddress = HttpMessageUtils.getHeaderValue(request, AS2Header.RECEIPT_DELIVERY_OPTION);
             if (receiptAddress != null) { 
                 // Asynchronous Delivery
                 // TODO Implement
@@ -152,7 +166,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     Header reportTypeHeader = AS2HeaderUtils.createHeader(AS2Header.REPORT_TYPE, new String[][] { {AS2ReportType.DISPOSITION_NOTIFICATION }, {BOUNDARY_PARAM_NAME, boundary } });
                     response.addHeader(reportTypeHeader);
                     response.setHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
-                    EntityParser.setMessageEntity(response, multipartReportEntity);
+                    EntityUtils.setMessageEntity(response, multipartReportEntity);
                 }
             }
             

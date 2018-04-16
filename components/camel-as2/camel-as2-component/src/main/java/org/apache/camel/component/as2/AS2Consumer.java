@@ -102,7 +102,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
             if (request instanceof HttpEntityEnclosingRequest) {
                 EntityParser.parseAS2MessageEntity(request);
                 // TODO derive last to parameters from configuration.
-                apiProxy.processMDNRequest((HttpEntityEnclosingRequest)request, response, context, "MDN Response", "Camel AS2 Server Endpoint");
+                apiProxy.handleMDNResponse((HttpEntityEnclosingRequest)request, response, context, "MDN Response", "Camel AS2 Server Endpoint");
             }
             // Convert HTTP context to exchange and process
             log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, context, false),

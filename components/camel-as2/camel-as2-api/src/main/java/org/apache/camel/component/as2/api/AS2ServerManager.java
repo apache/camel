@@ -18,7 +18,6 @@ package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
 
-import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
@@ -48,21 +47,6 @@ public class AS2ServerManager {
     public static final String CAMEL_AS2_SERVER_PREFIX = "camel-as2.server";
 
     /**
-     * The HTTP Context Attribute indicating a Message Disposition Notification is to be sent.
-     */
-    public static final String MESSAGE_DISPOSITION_NOTIFICATION = CAMEL_AS2_SERVER_PREFIX + "message-disposition-notification";
-
-    /**
-     * The HTTP Context Attribute indicating a Message Disposition Notification is to be sent.
-     */
-    public static final String MESSAGE_DISPOSITION_OPTIONS = CAMEL_AS2_SERVER_PREFIX + "message-disposition-options";
-
-    /**
-     * The HTTP Context Attribute indicating the address the receipt is to be sent to.
-     */
-    public static final String RECEIPT_ADDRESS = CAMEL_AS2_SERVER_PREFIX + "receipt-address";
-
-    /**
      * The HTTP Context Attribute containing the subject header sent in an AS2
      * response.
      */
@@ -73,18 +57,6 @@ public class AS2ServerManager {
      * responding system
      */
     public static final String FROM = CAMEL_AS2_SERVER_PREFIX + "from";
-
-    /**
-     * The HTTP Context Attribute containing the AS2 System Identifier of the
-     * responding system
-     */
-    public static final String AS2_FROM = CAMEL_AS2_SERVER_PREFIX + "as2-from";
-
-    /**
-     * The HTTP Context Attribute containing the AS2 System Identifier of the
-     * responded to system
-     */
-    public static final String AS2_TO = CAMEL_AS2_SERVER_PREFIX + "as2-to";
 
     private AS2ServerConnection as2ServerConnection;
     
@@ -106,18 +78,9 @@ public class AS2ServerManager {
         as2ServerConnection.stopListening(requestUri);
     }
     
-    public void processMDNRequest(HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from) throws HttpException {
-        String dispositionNotificationTo = HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO);
-        if (dispositionNotificationTo != null) {
-
-            httpContext.setAttribute(SUBJECT, subject);
-            httpContext.setAttribute(FROM, from);
-            httpContext.setAttribute(AS2_FROM, HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO));
-            httpContext.setAttribute(AS2_TO, HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM));
-            httpContext.setAttribute(MESSAGE_DISPOSITION_NOTIFICATION, dispositionNotificationTo);
-            httpContext.setAttribute(RECEIPT_ADDRESS, HttpMessageUtils.getHeaderValue(request, AS2Header.RECEIPT_DELIVERY_OPTION));
-            httpContext.setAttribute(MESSAGE_DISPOSITION_OPTIONS, HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS));
-            
-        }
+    public void handleMDNResponse(HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from) throws HttpException {
+        // Add Context attributes for Response 
+        httpContext.setAttribute(SUBJECT, subject);
+        httpContext.setAttribute(FROM, from);
     }
 }

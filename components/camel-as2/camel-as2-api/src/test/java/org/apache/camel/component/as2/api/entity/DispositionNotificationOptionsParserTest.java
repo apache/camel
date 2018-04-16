@@ -1,4 +1,4 @@
-package org.apache.camel.component.as2.api;
+package org.apache.camel.component.as2.api.entity;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -7,8 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class DispositionNotificationOptionsParserTest {
@@ -20,14 +18,6 @@ public class DispositionNotificationOptionsParserTest {
     private static String SIGNED_RECEIPT_MICALG_ATTRIBUTE = "signed-receipt-micalg";
     private static String SIGNED_RECEIPT_MICALG_IMPORTANCE = "required";
     private static String[] SIGNED_RECEIPT_MICALG_VALUES = { "sha1" };
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void parseDispositionNotificationOptionsTest() {
