@@ -70,6 +70,17 @@ public final class AggregationStrategies {
     }
 
     /**
+     * Use the original exchange.
+     *
+     * @param propagateException whether to propgate exception if errors was thrown during processing splitted messages.
+     *
+     * @see org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
+     */
+    public static AggregationStrategy useOriginal(boolean propagateException) {
+        return new UseOriginalAggregationStrategy(null, propagateException);
+    }
+
+    /**
      * Creates a {@link GroupedExchangeAggregationStrategy} aggregation strategy.
      */
     public static AggregationStrategy groupedExchange() {

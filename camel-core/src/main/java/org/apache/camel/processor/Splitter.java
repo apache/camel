@@ -100,6 +100,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         final AggregationStrategy strategy = getAggregationStrategy();
 
+        // set original exchange if not already pre-configured
+        if (strategy instanceof UseOriginalAggregationStrategy) {
+            UseOriginalAggregationStrategy original = (UseOriginalAggregationStrategy) strategy;
+            if (original.getOriginal() == null) {
+                original.setOriginal(exchange);
+            }
+        }
+
         // if no custom aggregation strategy is being used then fallback to keep the original
         // and propagate exceptions which is done by a per exchange specific aggregation strategy
         // to ensure it supports async routing
