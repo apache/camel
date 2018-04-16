@@ -126,8 +126,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
-    private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors =
-            new HashMap<>();
+    private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors = new HashMap<>();
     private final List<PreRegisterService> preServices = new ArrayList<>();
     private final TimerListenerManager loadTimer = new ManagedLoadTimer();
     private final TimerListenerManagerStartupListener loadTimerStartupListener = new TimerListenerManagerStartupListener();

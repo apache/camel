@@ -458,7 +458,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             ProcessorDefinitionHelper.resolveKnownConstantFields(output);
 
             // also resolve properties and constant fields on embedded expressions
-            ProcessorDefinition<?> me = output;
+            ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;
             if (me instanceof ExpressionNode) {
                 ExpressionNode exp = (ExpressionNode) me;
                 ExpressionDefinition expressionDefinition = exp.getExpression();
@@ -540,7 +540,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         ProcessorDefinitionHelper.resolveKnownConstantFields(this);
 
         // also resolve properties and constant fields on embedded expressions
-        ProcessorDefinition<?> me = this;
+        ProcessorDefinition<?> me = (ProcessorDefinition<?>) this;
         if (me instanceof ExpressionNode) {
             ExpressionNode exp = (ExpressionNode) me;
             ExpressionDefinition expressionDefinition = exp.getExpression();
@@ -3132,8 +3132,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorDefinition<Type>> transform() {
-        ExpressionClause<ProcessorDefinition<Type>> clause =
-            new ExpressionClause<>(this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         TransformDefinition answer = new TransformDefinition(clause);
         addOutput(answer);
         return clause;
@@ -3158,8 +3157,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to use as script.
      */
     public ExpressionClause<ProcessorDefinition<Type>> script() {
-        ExpressionClause<ProcessorDefinition<Type>> clause =
-                new ExpressionClause<>(this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         ScriptDefinition answer = new ScriptDefinition(clause);
         addOutput(answer);
         return clause;
