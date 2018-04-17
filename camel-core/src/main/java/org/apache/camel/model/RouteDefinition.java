@@ -376,6 +376,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Set the route group for this route
+     *
+     * @param group the route group
+     * @return the builder
+     */
+    public RouteDefinition routeGroup(String group) {
+        setGroup(group);
+        return this;
+    }
+
+    /**
      * Set the route id for this route
      *
      * @param id the route id
