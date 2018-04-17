@@ -47,14 +47,14 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
 
     @Override
     public void signatureValueValidationFailed(SignatureValue value) throws Exception { //NOPMD
-        error.append("The signature value could not be validated by the public key. Either the message has been tampered or the public key is not correct.");
+        error.append("The signature value could not be validated by the public key. Either the message has been tampered with or the public key is not correct.");
         throw new XmlSignatureInvalidValueException(error.toString());
     }
 
     @Override
     public void referenceValidationFailed(Reference ref) throws Exception { //NOPMD
         error.append(String
-                .format("The calculated digest value of the document  %s is not equal to the value specified in the XML signature. The document may have been tampered.",
+                .format("The calculated digest value of the document  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
                         getReferenceUriOrId(ref)));
         throw new XmlSignatureInvalidContentHashException(error.toString());
     }
@@ -62,7 +62,7 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
     @Override
     public void manifestReferenceValidationFailed(Reference ref) throws Exception { //NOPMD
         error.append(String
-                .format("The calculated digest value of the manifest  %s is not equal to the value specified in the XML signature. The document may have been tampered.",
+                .format("The calculated digest value of the manifest  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
                         getReferenceUriOrId(ref)));
         throw new XmlSignatureInvalidContentHashException(error.toString());
     }
