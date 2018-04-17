@@ -100,10 +100,10 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
         ((BindingProvider)client).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
         
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         Throwable t = null;
         try {
             client.getPerson(personId, ssn, name);

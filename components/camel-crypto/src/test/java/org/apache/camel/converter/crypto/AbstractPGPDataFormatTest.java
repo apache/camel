@@ -41,7 +41,7 @@ public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
     }
 
     protected Map<String, Object> getHeaders() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     protected void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws Exception {

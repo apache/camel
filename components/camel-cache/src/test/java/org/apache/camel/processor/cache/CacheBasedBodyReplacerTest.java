@@ -45,7 +45,7 @@ public class CacheBasedBodyReplacerTest extends BaseCacheTest {
 
         resultEndpoint.expectedMessageCount(1);
 
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         keys.add("farewell");
         keys.add("greeting");
         for (final String key : keys) {

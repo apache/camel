@@ -74,7 +74,7 @@ public final class ResultSetConversionStrategies {
 
         @Override
         public Object getBody(ResultSet resultSet) {
-            List<Row> rows = new ArrayList<Row>(rowMax);
+            List<Row> rows = new ArrayList<>(rowMax);
             int rowCount = 0;
             Iterator<Row> rowIter = resultSet.iterator();
             while (rowIter.hasNext() && rowCount < rowMax) {

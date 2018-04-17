@@ -66,10 +66,10 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
                  "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
                  + "/PersonService/");
                                                           
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "hello";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
         assertEquals("we should get the right answer from router", "Bonjour", name.value);
 
@@ -123,12 +123,12 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     protected Exchange sendJaxWsMessageWithHolders(final String personIdString) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                final List<Object> params = new ArrayList<Object>();
-                Holder<String> personId = new Holder<String>();
+                final List<Object> params = new ArrayList<>();
+                Holder<String> personId = new Holder<>();
                 personId.value = personIdString;
                 params.add(personId);
-                Holder<String> ssn = new Holder<String>();
-                Holder<String> name = new Holder<String>();
+                Holder<String> ssn = new Holder<>();
+                Holder<String> name = new Holder<>();
                 params.add(ssn);
                 params.add(name);
                 exchange.getIn().setBody(params);

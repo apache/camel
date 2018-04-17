@@ -54,7 +54,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
 
     private static final Logger LOG = LoggerFactory.getLogger(EnvelopedDataEncryptorConfiguration.class);
 
-    private static final Map<String, List<Integer>> SUPPORTED_ENCRYPTION_ALGORITHMS = new HashMap<String, List<Integer>>(7);
+    private static final Map<String, List<Integer>> SUPPORTED_ENCRYPTION_ALGORITHMS = new HashMap<>(7);
 
     static {
 
@@ -74,7 +74,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
     }
 
     @UriParam(label = "encrypt", multiValue = true, description = "Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo")
-    private final List<RecipientInfo> recipient = new ArrayList<RecipientInfo>(3);
+    private final List<RecipientInfo> recipient = new ArrayList<>(3);
 
     @UriParam(label = "encrypt", enums = "AES/CBC/PKCS5Padding,DESede/CBC/PKCS5Padding,Camellia/CBC/PKCS5Padding,CAST5/CBC/PKCS5Padding")
     private String contentEncryptionAlgorithm;

@@ -93,10 +93,10 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  "http://localhost:" + port2 
                      + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
-        Holder<Integer> ssn = new Holder<Integer>();
+        Holder<Integer> ssn = new Holder<>();
         ssn.value = 0;
         
-        Holder<String> name = new Holder<String>();
+        Holder<String> name = new Holder<>();
         name.value = "Unknown name";
         
         client.getPersonMultiPartOperation("foo", 0, name, ssn);

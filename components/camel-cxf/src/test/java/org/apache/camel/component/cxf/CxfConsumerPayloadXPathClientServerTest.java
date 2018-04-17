@@ -94,10 +94,10 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
                         //build some dummy response 
                         XmlConverter converter = new XmlConverter();
                         Document outDocument = converter.toDOMDocument(ECHO_RESPONSE, exchange);
-                        List<Source> outElements = new ArrayList<Source>();
+                        List<Source> outElements = new ArrayList<>();
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);
+                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements, null);
                         exchange.getOut().setBody(responsePayload);
                     }
                 });

@@ -68,9 +68,9 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
             MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response
-            List<Source> elements = new ArrayList<Source>();
+            List<Source> elements = new ArrayList<>();
             elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
-            CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+            CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                 elements, null);
             exchange.getOut().setBody(body);
             exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 

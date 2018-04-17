@@ -101,7 +101,7 @@ abstract class CsvUnmarshaller {
         }
 
         private <T> List<T> asList(Iterator<CSVRecord> iterator, CsvRecordConverter<T> converter) {
-            List<T> answer = new ArrayList<T>();
+            List<T> answer = new ArrayList<>();
             while (iterator.hasNext()) {
                 answer.add(converter.convertRecord(iterator.next()));
             }

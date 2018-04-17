@@ -76,8 +76,8 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
             return;
         }
 
-        Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
-        Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
+        Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
         Hello port = getPort();
 

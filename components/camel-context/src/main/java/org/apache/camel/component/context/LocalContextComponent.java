@@ -38,7 +38,7 @@ public class LocalContextComponent extends DefaultComponent {
 
     private CamelContext localCamelContext;
     @Metadata(label = "advanced", defaultValue = "direct,seda,mock")
-    private List<String> localProtocolSchemes = new ArrayList<String>(Arrays.asList("direct", "seda", "mock"));
+    private List<String> localProtocolSchemes = new ArrayList<>(Arrays.asList("direct", "seda", "mock"));
 
     public LocalContextComponent(CamelContext localCamelContext) {
         ObjectHelper.notNull(localCamelContext, "localCamelContext");

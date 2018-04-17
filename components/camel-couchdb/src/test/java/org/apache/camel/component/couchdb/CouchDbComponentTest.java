@@ -39,7 +39,7 @@ public class CouchDbComponentTest {
 
     @Test
     public void testEndpointCreated() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
 
         String uri = "couchdb:http://localhost:5984/db";
         String remaining = "http://localhost:5984/db";
@@ -50,7 +50,7 @@ public class CouchDbComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("createDatabase", true);
         params.put("username", "coldplay");
         params.put("password", "chrism");

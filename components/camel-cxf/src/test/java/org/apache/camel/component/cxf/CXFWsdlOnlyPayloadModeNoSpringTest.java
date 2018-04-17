@@ -114,10 +114,10 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
         
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "hello";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
         assertEquals("Bonjour", name.value);
 
@@ -138,10 +138,10 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
         
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         Throwable t = null;
         try {
             client.getPerson(personId, ssn, name);

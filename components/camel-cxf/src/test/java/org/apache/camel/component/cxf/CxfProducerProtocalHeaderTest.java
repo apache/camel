@@ -66,7 +66,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     private Exchange sendSimpleMessage(String endpointUri) {
         Exchange exchange = template.send(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add("Hello World!");
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");

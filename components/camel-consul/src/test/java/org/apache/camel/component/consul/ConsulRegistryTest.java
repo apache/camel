@@ -119,7 +119,7 @@ public class ConsulRegistryTest implements Serializable {
                 .findByTypeWithName(consulTestClassOne.getClass());
         registry.remove("testClassOne");
         registry.remove("testClassTwo");
-        HashMap<String, ConsulTestClass> emptyHashMap = new HashMap<String, ConsulTestClass>();
+        HashMap<String, ConsulTestClass> emptyHashMap = new HashMap<>();
         assertNotNull(consulTestClassMap);
         assertEquals(consulTestClassMap.getClass(), emptyHashMap.getClass());
         assertEquals(2, consulTestClassMap.size());
@@ -146,7 +146,7 @@ public class ConsulRegistryTest implements Serializable {
         registry.put("classTwo", classTwo);
         Set<? extends ConsulTestClass> results = registry.findByType(classOne.getClass());
         assertNotNull(results);
-        HashSet<ConsulTestClass> hashSet = new HashSet<ConsulTestClass>();
+        HashSet<ConsulTestClass> hashSet = new HashSet<>();
         registry.remove("classOne");
         registry.remove("classTwo");
         assertEquals(results.getClass(), hashSet.getClass());

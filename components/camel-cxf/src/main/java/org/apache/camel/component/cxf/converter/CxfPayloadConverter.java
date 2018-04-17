@@ -60,16 +60,16 @@ public final class CxfPayloadConverter {
 
     @Converter
     public static <T> CxfPayload<T> elementToCxfPayload(Element element, Exchange exchange) {
-        List<T> headers = new ArrayList<T>();
-        List<Element> body = new ArrayList<Element>();
+        List<T> headers = new ArrayList<>();
+        List<Element> body = new ArrayList<>();
         body.add(element);
-        return new CxfPayload<T>(headers, body);
+        return new CxfPayload<>(headers, body);
     }
 
     @Converter
     public static <T> CxfPayload<T> nodeListToCxfPayload(NodeList nodeList, Exchange exchange) {
-        List<T> headers = new ArrayList<T>();
-        List<Element> body = new ArrayList<Element>();
+        List<T> headers = new ArrayList<>();
+        List<Element> body = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             // add all nodes to the body that are elements
@@ -77,15 +77,15 @@ public final class CxfPayloadConverter {
                 body.add((Element) node);
             }
         }
-        return new CxfPayload<T>(headers, body);
+        return new CxfPayload<>(headers, body);
     }
 
     @Converter
     public static <T> CxfPayload<T> sourceToCxfPayload(Source src, Exchange exchange) {
-        List<T> headers = new ArrayList<T>();
-        List<Source> body = new ArrayList<Source>();
+        List<T> headers = new ArrayList<>();
+        List<Source> body = new ArrayList<>();
         body.add(src);
-        return new CxfPayload<T>(headers, body, null);
+        return new CxfPayload<>(headers, body, null);
     }
 
     @Converter
@@ -115,7 +115,7 @@ public final class CxfPayloadConverter {
 
     @Converter
     public static <T> StreamCache cxfPayLoadToStreamCache(CxfPayload<T> payload, Exchange exchange) {
-        return new CachedCxfPayload<T>(payload, exchange, xml);
+        return new CachedCxfPayload<>(payload, exchange, xml);
     }
 
     @SuppressWarnings("unchecked")

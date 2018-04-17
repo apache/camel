@@ -208,7 +208,7 @@ public final class PGPDataFormatUtil {
     }
 
     public static List<PGPPublicKey> findPublicKeys(List<String> useridParts, boolean forEncryption, PGPPublicKeyRingCollection pgpPublicKeyringCollection) {
-        List<PGPPublicKey> result = new ArrayList<PGPPublicKey>(useridParts.size());
+        List<PGPPublicKey> result = new ArrayList<>(useridParts.size());
         for (Iterator<PGPPublicKeyRing> keyRingIter = pgpPublicKeyringCollection.getKeyRings(); keyRingIter.hasNext();) {
             PGPPublicKeyRing keyRing = keyRingIter.next();
             PGPPublicKey primaryKey = keyRing.getPublicKey();
@@ -405,13 +405,13 @@ public final class PGPDataFormatUtil {
 
     public static List<PGPSecretKeyAndPrivateKeyAndUserId> findSecretKeysWithPrivateKeyAndUserId(Map<String, String> sigKeyUserId2Password,
             String provider, PGPSecretKeyRingCollection pgpSec) throws PGPException {
-        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<PGPSecretKeyAndPrivateKeyAndUserId>(sigKeyUserId2Password.size());
+        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<>(sigKeyUserId2Password.size());
         for (Iterator<?> i = pgpSec.getKeyRings(); i.hasNext();) {
             Object data = i.next();
             if (data instanceof PGPSecretKeyRing) {
                 PGPSecretKeyRing keyring = (PGPSecretKeyRing) data;
                 PGPSecretKey primaryKey = keyring.getSecretKey();
-                List<String> useridParts = new ArrayList<String>(sigKeyUserId2Password.keySet());
+                List<String> useridParts = new ArrayList<>(sigKeyUserId2Password.keySet());
                 String[] foundKeyUserIdForUserIdPart = findFirstKeyUserIdContainingOneOfTheParts(useridParts, primaryKey.getPublicKey());
                 if (foundKeyUserIdForUserIdPart == null) {
                     LOG.debug("No User ID found in primary key with key ID {} containing one of the parts {}", primaryKey.getKeyID(),

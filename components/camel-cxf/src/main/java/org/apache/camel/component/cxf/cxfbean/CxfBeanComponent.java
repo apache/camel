@@ -33,7 +33,7 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 @Deprecated
 public class CxfBeanComponent extends HeaderFilterStrategyComponent {
 
-    private Map<String, CxfBeanEndpoint> endpoints = new HashMap<String, CxfBeanEndpoint>();
+    private Map<String, CxfBeanEndpoint> endpoints = new HashMap<>();
 
     public CxfBeanComponent() {
         super(CxfBeanEndpoint.class);

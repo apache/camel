@@ -46,7 +46,7 @@ public class CxfNamespaceHandler extends BaseNamespaceHandler {
 
     @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
-        return new HashSet<Class>(Arrays.asList(CxfNamespaceHandler.class));
+        return new HashSet<>(Arrays.asList(CxfNamespaceHandler.class));
     }
 
     public Metadata parse(Element element, ParserContext context) {

@@ -43,7 +43,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
         if (canTest()) {
             cluster = CassandraUnitUtils.cassandraCluster();
             session = cluster.connect(CassandraUnitUtils.KEYSPACE);
-            idempotentRepository = new NamedCassandraIdempotentRepository<String>(session, "ID");
+            idempotentRepository = new NamedCassandraIdempotentRepository<>(session, "ID");
             idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
             idempotentRepository.start();
         }

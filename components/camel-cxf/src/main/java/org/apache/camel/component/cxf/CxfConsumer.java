@@ -315,7 +315,7 @@ public class CxfConsumer extends DefaultConsumer {
             // bind the CXF request into a Camel exchange
             binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);
             // extract the javax.xml.ws header
-            Map<String, Object> context = new HashMap<String, Object>();
+            Map<String, Object> context = new HashMap<>();
             binding.extractJaxWsContext(cxfExchange, context);
             // put the context into camelExchange
             camelExchange.setProperty(CxfConstants.JAXWS_CONTEXT, context);

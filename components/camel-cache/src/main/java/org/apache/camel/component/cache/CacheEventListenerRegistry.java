@@ -38,7 +38,7 @@ public class CacheEventListenerRegistry {
 
     public synchronized List<CacheEventListener> getEventListeners() {
         if (eventListeners == null) {
-            eventListeners = new ArrayList<CacheEventListener>();
+            eventListeners = new ArrayList<>();
         }
         return eventListeners;
     }

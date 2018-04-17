@@ -120,7 +120,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertEquals(MessageContentsList.class, exchange.getIn().getBody().getClass());
                         assertEquals(0, exchange.getIn().getBody(MessageContentsList.class).size());
                         CustomerList response = new CustomerList();
-                        List<Customer> list = new ArrayList<Customer>(2);
+                        List<Customer> list = new ArrayList<>(2);
                         list.add(new Customer(123, "Raul"));
                         list.add(new Customer(456, "Raul2"));
                         response.setCustomers(list);
