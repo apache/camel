@@ -48,7 +48,7 @@ public class EndpointOptionComparatorTest {
         EndpointOption op4 = new EndpointOption("country", "Country", "string", "true", "", "", "blah", null, null, false,
             false, null, false, group4, label4, false, null);
 
-        List<EndpointOption> list = new ArrayList<EndpointOption>();
+        List<EndpointOption> list = new ArrayList<>();
         list.add(op1);
         list.add(op2);
         list.add(op3);

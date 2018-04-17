@@ -19,15 +19,11 @@ package org.apache.camel.blueprint.test.builder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.timer.TimerComponent;
-import org.apache.camel.model.ModelCamelContext;
 
 public class AddComponentInConfigureBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        ModelCamelContext context = getContext();
-        TimerComponent timerComponent = new TimerComponent();
-
-        getContext().addComponent("my-timer", timerComponent);
+        getContext().addComponent("my-timer", new TimerComponent());
 
         from("my-timer://test-timer?period=1000")
                 .to("mock://result");

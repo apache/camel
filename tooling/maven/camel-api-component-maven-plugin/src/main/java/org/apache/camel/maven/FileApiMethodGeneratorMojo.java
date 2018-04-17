@@ -43,7 +43,7 @@ public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
         // get signatureFile as a list of Strings
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(this.signatureFile));
             String line = reader.readLine();

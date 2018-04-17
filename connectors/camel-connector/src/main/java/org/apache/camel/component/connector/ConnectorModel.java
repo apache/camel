@@ -24,9 +24,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.json.simple.DeserializationException;
-import org.apache.camel.json.simple.JsonObject;
-import org.apache.camel.json.simple.Jsoner;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
