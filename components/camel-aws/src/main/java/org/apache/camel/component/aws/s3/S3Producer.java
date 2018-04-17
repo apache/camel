@@ -167,7 +167,7 @@ public class S3Producer extends DefaultProducer {
 
         final InitiateMultipartUploadResult initResponse = getEndpoint().getS3Client().initiateMultipartUpload(initRequest);
         final long contentLength = objectMetadata.getContentLength();
-        final List<PartETag> partETags = new ArrayList<PartETag>();
+        final List<PartETag> partETags = new ArrayList<>();
         long partSize = getConfiguration().getPartSize();
         CompleteMultipartUploadResult uploadResult = null;
 

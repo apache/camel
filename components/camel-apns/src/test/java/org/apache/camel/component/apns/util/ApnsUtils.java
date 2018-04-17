@@ -77,8 +77,8 @@ public final class ApnsUtils {
     }
     
     public static String getAlgorithm() {
-        List<String> keys = new LinkedList<String>();
-        List<String> trusts = new LinkedList<String>();
+        List<String> keys = new LinkedList<>();
+        List<String> trusts = new LinkedList<>();
         for (Provider p : Security.getProviders()) {
             for (Service s : p.getServices()) {
                 if ("KeyManagerFactory".equals(s.getType())

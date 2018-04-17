@@ -34,8 +34,8 @@ public class MemoryWebSocketStore implements WebSocketStore {
     private Map<WebSocket, String> keys;
     
     public MemoryWebSocketStore() {
-        values = new ConcurrentHashMap<String, WebSocket>();
-        keys = new ConcurrentHashMap<WebSocket, String>();
+        values = new ConcurrentHashMap<>();
+        keys = new ConcurrentHashMap<>();
     }
     
     /* (non-Javadoc)

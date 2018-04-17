@@ -157,7 +157,7 @@ public class BlobServiceProducer extends DefaultProducer {
         
         List<BlobBlock> blobBlocks = null;
         if (object instanceof List) {
-            blobBlocks = (List<BlobBlock>)blobBlocks;
+            blobBlocks = blobBlocks;
         } else if (object instanceof BlobBlock) {
             blobBlocks = Collections.singletonList((BlobBlock)object);
         } 
@@ -170,7 +170,7 @@ public class BlobServiceProducer extends DefaultProducer {
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         
         LOG.trace("Putting a blob [{}] from blocks from exchange [{}]...", getConfiguration().getBlobName(), exchange);
-        List<BlockEntry> blockEntries = new LinkedList<BlockEntry>();
+        List<BlockEntry> blockEntries = new LinkedList<>();
         for (BlobBlock blobBlock : blobBlocks) {
             blockEntries.add(blobBlock.getBlockEntry());
             client.uploadBlock(blobBlock.getBlockEntry().getId(), blobBlock.getBlockStream(), -1, 
@@ -189,7 +189,7 @@ public class BlobServiceProducer extends DefaultProducer {
         
         List<BlockEntry> blockEntries = null;
         if (object instanceof List) {
-            blockEntries = (List<BlockEntry>)blockEntries;
+            blockEntries = blockEntries;
         } else if (object instanceof BlockEntry) {
             blockEntries = Collections.singletonList((BlockEntry)object);
         } 
@@ -435,7 +435,7 @@ public class BlobServiceProducer extends DefaultProducer {
             client.setStreamWriteSizeInBytes(getConfiguration().getStreamWriteSize());
         }
         if (getConfiguration().getBlobMetadata() != null) {
-            client.setMetadata(new HashMap<String, String>(getConfiguration().getBlobMetadata()));
+            client.setMetadata(new HashMap<>(getConfiguration().getBlobMetadata()));
         }
     }
 

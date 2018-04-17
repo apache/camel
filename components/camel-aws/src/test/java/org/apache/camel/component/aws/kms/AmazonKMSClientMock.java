@@ -256,7 +256,7 @@ public class AmazonKMSClientMock implements AWSKMS {
     @Override
     public ListKeysResult listKeys(ListKeysRequest listKeysRequest) {
         ListKeysResult result = new ListKeysResult();
-        List<KeyListEntry> keyList = new ArrayList<KeyListEntry>();
+        List<KeyListEntry> keyList = new ArrayList<>();
         KeyListEntry kle = new KeyListEntry();
         kle.withKeyId("keyId");
         keyList.add(kle);

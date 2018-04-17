@@ -106,6 +106,6 @@ public class QueueServiceProducerTest {
     private Context createJndiContext() throws Exception {
         Properties properties = new Properties();
         properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
-        return new InitialContext(new Hashtable<Object, Object>(properties));
+        return new InitialContext(new Hashtable<>(properties));
     }
 }

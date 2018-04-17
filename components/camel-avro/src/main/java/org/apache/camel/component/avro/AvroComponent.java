@@ -33,7 +33,7 @@ import org.apache.camel.util.URISupport;
 
 public class AvroComponent extends UriEndpointComponent {
 
-    private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<String, AvroListener>();
+    private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")
     private AvroConfiguration configuration;

@@ -82,7 +82,7 @@ public class ApnsProducer extends DefaultProducer {
             if (hasTokensHeader(exchange)) {
                 throw new IllegalArgumentException("Tokens already configured on endpoint " + ApnsConstants.HEADER_TOKENS);
             }
-            tokens = new ArrayList<String>(tokenList);
+            tokens = new ArrayList<>(tokenList);
         } else {
             String tokensHeader = getHeaderTokens(exchange);
             tokens = extractTokensFromString(tokensHeader);

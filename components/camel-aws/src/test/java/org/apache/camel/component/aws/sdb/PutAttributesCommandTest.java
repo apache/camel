@@ -50,7 +50,7 @@ public class PutAttributesCommandTest {
 
     @Test
     public void execute() {
-        List<ReplaceableAttribute> replaceableAttributes = new ArrayList<ReplaceableAttribute>();
+        List<ReplaceableAttribute> replaceableAttributes = new ArrayList<>();
         replaceableAttributes.add(new ReplaceableAttribute("NAME1", "VALUE1", true));
         exchange.getIn().setHeader(SdbConstants.REPLACEABLE_ATTRIBUTES, replaceableAttributes);
         exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
@@ -67,7 +67,7 @@ public class PutAttributesCommandTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void executeWithoutItemName() {
-        List<ReplaceableAttribute> replaceableAttributes = new ArrayList<ReplaceableAttribute>();
+        List<ReplaceableAttribute> replaceableAttributes = new ArrayList<>();
         replaceableAttributes.add(new ReplaceableAttribute("NAME1", "VALUE1", true));
         exchange.getIn().setHeader(SdbConstants.REPLACEABLE_ATTRIBUTES, replaceableAttributes);
         UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
@@ -80,7 +80,7 @@ public class PutAttributesCommandTest {
     public void determineReplaceableAttributes() {
         assertNull(this.command.determineReplaceableAttributes());
 
-        List<ReplaceableAttribute> replaceableAttributes = new ArrayList<ReplaceableAttribute>();
+        List<ReplaceableAttribute> replaceableAttributes = new ArrayList<>();
         replaceableAttributes.add(new ReplaceableAttribute("NAME1", "VALUE1", true));
         exchange.getIn().setHeader(SdbConstants.REPLACEABLE_ATTRIBUTES, replaceableAttributes);
 

@@ -47,11 +47,11 @@ public class BatchGetItemsCommandTest {
 
     @Test
     public void execute() {
-        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> key = new HashMap<>();
         key.put("1", new AttributeValue("Key_1"));
-        Map<String, AttributeValue> unprocessedKey = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> unprocessedKey = new HashMap<>();
         unprocessedKey.put("1", new AttributeValue("UNPROCESSED_KEY"));
-        Map<String, KeysAndAttributes> keysAndAttributesMap = new HashMap<String, KeysAndAttributes>();
+        Map<String, KeysAndAttributes> keysAndAttributesMap = new HashMap<>();
         KeysAndAttributes keysAndAttributes = new KeysAndAttributes().withKeys(key);
         keysAndAttributesMap.put("DOMAIN1", keysAndAttributes);
         exchange.getIn().setHeader(DdbConstants.BATCH_ITEMS, keysAndAttributesMap);

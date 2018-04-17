@@ -50,7 +50,7 @@ public class DeleteAttributesCommandTest {
 
     @Test
     public void execute() {
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("NAME1", "VALUE1"));
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
         exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
@@ -67,7 +67,7 @@ public class DeleteAttributesCommandTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void executeWithoutItemName() {
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("NAME1", "VALUE1"));
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
         UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
@@ -80,7 +80,7 @@ public class DeleteAttributesCommandTest {
     public void determineAttributes() {
         assertNull(this.command.determineAttributes());
         
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("NAME1", "VALUE1"));
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
         

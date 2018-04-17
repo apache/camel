@@ -30,7 +30,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
 

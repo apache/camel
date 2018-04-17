@@ -83,8 +83,8 @@ import org.junit.Assert;
 
 public class AmazonS3EncryptionClientMock extends AmazonS3EncryptionClient {
     
-    List<S3Object> objects = new CopyOnWriteArrayList<S3Object>();
-    List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<PutObjectRequest>();
+    List<S3Object> objects = new CopyOnWriteArrayList<>();
+    List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<>();
     
     private boolean nonExistingBucketCreated;
     
@@ -168,7 +168,7 @@ public class AmazonS3EncryptionClientMock extends AmazonS3EncryptionClient {
 
     @Override
     public List<Bucket> listBuckets() throws AmazonClientException, AmazonServiceException {
-        ArrayList<Bucket> list = new ArrayList<Bucket>();
+        ArrayList<Bucket> list = new ArrayList<>();
         Bucket bucket = new Bucket("camel-bucket");
         bucket.setOwner(new Owner("Camel", "camel"));
         bucket.setCreationDate(new Date());

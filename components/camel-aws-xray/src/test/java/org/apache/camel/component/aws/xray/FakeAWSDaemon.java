@@ -196,7 +196,7 @@ public class FakeAWSDaemon extends ExternalResource {
             if (json.has("annotations")) {
                 JsonObject annotations = (JsonObject) json.get("annotations");
                 for (String key : annotations.getKeys()) {
-                    entity.withAnnotation((String)key, annotations.get(key));
+                    entity.withAnnotation(key, annotations.get(key));
                 }
             }
         }
