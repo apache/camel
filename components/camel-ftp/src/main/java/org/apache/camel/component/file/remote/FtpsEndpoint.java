@@ -169,7 +169,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         dataTimeout = getConfiguration().getTimeout();
 
         if (ftpClientParameters != null) {
-            Map<String, Object> localParameters = new HashMap<String, Object>(ftpClientParameters);
+            Map<String, Object> localParameters = new HashMap<>(ftpClientParameters);
             // setting soTimeout has to be done later on FTPClient (after it has connected)
             Object timeout = localParameters.remove("soTimeout");
             if (timeout != null) {
@@ -188,7 +188,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            Map<String, Object> localConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
+            Map<String, Object> localConfigParameters = new HashMap<>(ftpClientConfigParameters);
             setProperties(ftpClientConfig, localConfigParameters);
         }
 

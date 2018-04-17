@@ -58,15 +58,15 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         // by default we get on big message
         mock.expectedMessageCount(1);
 
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-        Map<String, Object> row = new LinkedHashMap<String, Object>();
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<String, Object> row = new LinkedHashMap<>();
         row.put("ITEM_DESC", "SOME VALVE");
         row.put("IN_STOCK", "2");
         row.put("PRICE", "5.00");
         row.put("LAST_RECV_DT", "20050101");
         data.add(row);
 
-        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row2 = new LinkedHashMap<>();
         row2.put("ITEM_DESC", "AN ENGINE");
         row2.put("IN_STOCK", "100");
         row2.put("PRICE", "1000.00");
@@ -83,15 +83,15 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         // by default we get on big message
         mock.expectedMessageCount(1);
 
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-        Map<String, Object> row = new LinkedHashMap<String, Object>();
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<String, Object> row = new LinkedHashMap<>();
         row.put("ITEM_DESC", "SOME VALVE");
         row.put("IN_STOCK", "2");
         row.put("PRICE", "5.00");
         row.put("LAST_RECV_DT", "20050101");
         data.add(row);
 
-        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row2 = new LinkedHashMap<>();
         row2.put("ITEM_DESC", "AN ENGINE");
         row2.put("IN_STOCK", "100");
         row2.put("PRICE", "1000.00");

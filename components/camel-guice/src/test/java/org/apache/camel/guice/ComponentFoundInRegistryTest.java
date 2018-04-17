@@ -53,7 +53,7 @@ public class ComponentFoundInRegistryTest extends Assert {
 
     @Test
     public void testGuice() throws Exception {
-        Hashtable<String, Object> env = new Hashtable<String, Object>();
+        Hashtable<String, Object> env = new Hashtable<>();
         env.put(Context.PROVIDER_URL, GuiceInitialContextFactory.class.getName());
         env.put(Injectors.MODULE_CLASS_NAMES, MyModule.class.getName());
 

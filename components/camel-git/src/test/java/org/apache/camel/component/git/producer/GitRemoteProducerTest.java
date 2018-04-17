@@ -60,7 +60,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
             }
         });
 
-        Iterable<PushResult> result = template.requestBody("direct:push", "", Iterable.class);
+        template.requestBody("direct:push", "", Iterable.class);
 
         repository.close();
     }

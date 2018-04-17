@@ -27,7 +27,7 @@ import org.eclipse.egit.github.core.service.IssueService;
 
 public class MockIssueService extends IssueService {
 
-    private List<Comment> comments = new ArrayList<Comment>();
+    private List<Comment> comments = new ArrayList<>();
     private MockPullRequestService mockPullRequestService;
 
     public MockIssueService(MockPullRequestService mockPullRequestService) {

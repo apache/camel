@@ -40,7 +40,7 @@ import org.junit.Test;
 public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
     public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";
 
-    private final Set<String> searchNames = new HashSet<String>();
+    private final Set<String> searchNames = new HashSet<>();
     private List<String> excludedNames;
 
     public FacebookComponentConsumerTest() throws Exception {

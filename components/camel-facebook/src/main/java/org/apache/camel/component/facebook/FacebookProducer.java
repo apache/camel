@@ -64,7 +64,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
 
         getExchangeProperties(exchange, properties);
         FacebookPropertiesHelper.configureReadingProperties(endpoint.getConfiguration(), properties);

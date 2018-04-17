@@ -40,7 +40,7 @@ public class GroovySetHeaderTest extends CamelTestSupport {
         mock.expectedHeaderReceived("drink", "Carlsberg");
         mock.expectedHeaderReceived("camelId", context.getName());
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("one", "einz");
         headers.put("two", "twei");
         headers.put("beer", "Carlsberg");

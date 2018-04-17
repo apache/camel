@@ -50,7 +50,7 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
             throw new IllegalAccessError("test-options.properties could not be found");
         }
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
         }

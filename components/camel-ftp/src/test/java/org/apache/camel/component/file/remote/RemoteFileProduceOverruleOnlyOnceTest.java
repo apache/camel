@@ -31,7 +31,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
 
     @Test
     public void testFileToFtp() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.FILE_NAME, "/sub/hello.txt");
         headers.put(Exchange.OVERRULE_FILE_NAME, "/sub/ruled.txt");
         template.sendBodyAndHeaders("direct:input", "Hello World", headers);

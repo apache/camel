@@ -35,7 +35,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     
     private CommitService commitService;
     
-    private List<String> commitHashes = new ArrayList<String>();
+    private List<String> commitHashes = new ArrayList<>();
     
     public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName) throws Exception {
         super(endpoint, processor);
@@ -61,7 +61,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<RepositoryCommit> commits = commitService.getCommits(getRepository());
         // In the end, we want tags oldest to newest.
-        Stack<RepositoryCommit> newCommits = new Stack<RepositoryCommit>();
+        Stack<RepositoryCommit> newCommits = new Stack<>();
         for (RepositoryCommit commit : commits) {
             if (!commitHashes.contains(commit.getSha())) {
                 newCommits.push(commit);

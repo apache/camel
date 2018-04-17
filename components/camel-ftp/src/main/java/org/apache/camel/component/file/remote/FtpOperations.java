@@ -898,7 +898,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         log.trace("listFiles()");
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
         try {
-            final List<FTPFile> list = new ArrayList<FTPFile>();
+            final List<FTPFile> list = new ArrayList<>();
             FTPFile[] files = client.listFiles();
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
@@ -921,7 +921,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         try {
-            final List<FTPFile> list = new ArrayList<FTPFile>();
+            final List<FTPFile> list = new ArrayList<>();
             FTPFile[] files = client.listFiles(path);
             // can return either null or an empty list depending on FTP servers
             if (files != null) {

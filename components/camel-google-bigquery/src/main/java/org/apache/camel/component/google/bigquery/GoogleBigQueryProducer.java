@@ -137,8 +137,6 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             return 0;
         }
 
-        GoogleBigQueryEndpoint endpoint = getEndpoint();
-
         TableDataInsertAllRequest apiRequestData = new TableDataInsertAllRequest().setRows(apiRequestRows);
 
         Bigquery.Tabledata.InsertAll apiRequest = bigquery

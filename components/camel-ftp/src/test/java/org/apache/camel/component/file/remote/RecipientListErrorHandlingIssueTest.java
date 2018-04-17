@@ -67,7 +67,7 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         String foo = "direct:foo," + getFtpUrl();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 
@@ -97,7 +97,7 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         String foo = "direct:foo," + getFtpUrl();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 
