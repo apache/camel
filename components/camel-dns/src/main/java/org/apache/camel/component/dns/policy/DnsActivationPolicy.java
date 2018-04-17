@@ -38,7 +38,7 @@ public class DnsActivationPolicy extends RoutePolicySupport {
     private DnsActivation dnsActivation;
     private long ttl;
 
-    private Map<String, Route> routes = new ConcurrentHashMap<String, Route>();
+    private Map<String, Route> routes = new ConcurrentHashMap<>();
     private Timer timer;
 
     public DnsActivationPolicy() {

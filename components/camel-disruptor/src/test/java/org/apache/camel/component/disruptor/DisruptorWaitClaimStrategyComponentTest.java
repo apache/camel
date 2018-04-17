@@ -59,7 +59,7 @@ public class DisruptorWaitClaimStrategyComponentTest extends CamelTestSupport {
 
     @Parameters
     public static Collection<String[]> strategies() {
-        final List<String[]> strategies = new ArrayList<String[]>();
+        final List<String[]> strategies = new ArrayList<>();
 
         for (final DisruptorWaitStrategy waitStrategy : DisruptorWaitStrategy.values()) {
             for (final DisruptorProducerType producerType : DisruptorProducerType.values()) {

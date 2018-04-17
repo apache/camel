@@ -72,7 +72,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
     private final int amountProducers;
     private final long[] sizeHistogramBounds;
 
-    private final Queue<Integer> endpointSizeQueue = new ConcurrentLinkedQueue<Integer>();
+    private final Queue<Integer> endpointSizeQueue = new ConcurrentLinkedQueue<>();
     
     public SedaDisruptorCompareTest(final String componentName, final String endpointUri,
                                     final int amountProducers, final int amountConsumers,
@@ -142,7 +142,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> parameters() {
-        final List<Object[]> parameters = new ArrayList<Object[]>();
+        final List<Object[]> parameters = new ArrayList<>();
 
         // This parameter set can be compared to the next and shows the impact of a 'long' endpoint name
         // It defines all parameters to the same values as the default, so the result should be the same as
@@ -350,14 +350,14 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         private final int count;
         private long countDownReachedTime;
 
-        private Queue<Long> latencyQueue = new ConcurrentLinkedQueue<Long>();
+        private Queue<Long> latencyQueue = new ConcurrentLinkedQueue<>();
 
         ExchangeAwaiter(final int count) {
             this.count = count;
         }
 
         public void reset() {
-            latencyQueue = new ConcurrentLinkedQueue<Long>();
+            latencyQueue = new ConcurrentLinkedQueue<>();
             latch = new CountDownLatch(count);
             countDownReachedTime = 0;
         }

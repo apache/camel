@@ -197,14 +197,14 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
      * Lookup the dozer {@link Mapper} to be used.
      */
     protected Map<String, Mapper> lookupDozerBeanMappers() {
-        return new HashMap<String, Mapper>(camelContext.getRegistry().findByTypeWithName(Mapper.class));
+        return new HashMap<>(camelContext.getRegistry().findByTypeWithName(Mapper.class));
     }
 
     /**
      * Lookup the dozer {@link DozerBeanMapperConfiguration} to be used.
      */
     protected Map<String, DozerBeanMapperConfiguration> lookupDozerBeanMapperConfigurations() {
-        return new HashMap<String, DozerBeanMapperConfiguration>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapperConfiguration.class));
+        return new HashMap<>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapperConfiguration.class));
     }
 
     protected void registerClassMaps(TypeConverterRegistry registry, String dozerId, Mapper dozer, List<ClassMappingMetadata> all) {

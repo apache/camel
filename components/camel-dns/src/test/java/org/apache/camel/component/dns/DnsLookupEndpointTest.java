@@ -85,7 +85,7 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
                 return record[0].getName().toString().equals("www.example.com.");
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "www.example.com");
         template.sendBodyAndHeaders("hello", headers);
         resultEndpoint.assertIsSatisfied();
@@ -101,7 +101,7 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
                 return record[0].getName().toString().equals("www.example.com.");
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "www.example.com");
         headers.put("dns.type", "A");
         template.sendBodyAndHeaders("hello", headers);

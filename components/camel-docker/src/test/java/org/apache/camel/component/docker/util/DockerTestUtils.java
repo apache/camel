@@ -30,7 +30,7 @@ public final class DockerTestUtils {
     }
     
     public static Map<String, Object> getDefaultParameters(String host, Integer port, DockerConfiguration dockerConfiguration) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerConstants.DOCKER_HOST, host);
         parameters.put(DockerConstants.DOCKER_PORT, port);
         parameters.put(DockerConstants.DOCKER_EMAIL, dockerConfiguration.getEmail());

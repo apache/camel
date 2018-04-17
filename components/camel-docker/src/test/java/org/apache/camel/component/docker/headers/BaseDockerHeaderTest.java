@@ -122,7 +122,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
     }
 
     protected Map<String, Object> getDefaultParameters() {
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerConstants.DOCKER_HOST, getHost());
         parameters.put(DockerConstants.DOCKER_PORT, getPort());
         parameters.put(DockerConstants.DOCKER_EMAIL, getEmail());

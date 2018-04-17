@@ -18,19 +18,16 @@ package org.apache.camel.component.dns.policy;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.UnknownHostException;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +40,7 @@ public class DnsActivation {
     private static final transient Logger LOG = LoggerFactory.getLogger(DnsActivation.class);
 
     private String hostname;
-    private final List<String> resolvesTo = new ArrayList<String>();
+    private final List<String> resolvesTo = new ArrayList<>();
 
     public DnsActivation() {
     }
@@ -76,10 +73,10 @@ public class DnsActivation {
         }
 
         LOG.debug("Resolving " + hostname);
-        List<String> hostnames = new ArrayList<String>();
+        List<String> hostnames = new ArrayList<>();
         hostnames.add(hostname);
 
-        List<String> resolved = new ArrayList<String>();
+        List<String> resolved = new ArrayList<>();
         while (!hostnames.isEmpty()) {
             NamingEnumeration attributeEnumeration = null;
             try {
@@ -119,7 +116,7 @@ public class DnsActivation {
     }
 
     private List<String> getLocalIps() throws Exception {
-        List<String> localIps = new ArrayList<String>();
+        List<String> localIps = new ArrayList<>();
 
         Enumeration<NetworkInterface> networkInterfacesEnumeration = NetworkInterface.getNetworkInterfaces();
         while (networkInterfacesEnumeration.hasMoreElements()) {

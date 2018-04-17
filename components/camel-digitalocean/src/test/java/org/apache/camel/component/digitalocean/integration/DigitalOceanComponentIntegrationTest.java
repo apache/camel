@@ -89,7 +89,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
                     .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
                     .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
                     .process(e -> {
-                        Collection<String> tags = new ArrayList<String>();
+                        Collection<String> tags = new ArrayList<>();
                         tags.add("tag1");
                         tags.add("tag2");
                         e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
@@ -101,7 +101,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
                 from("direct:createMultipleDroplets")
                     .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
                     .process(e -> {
-                        Collection<String> names = new ArrayList<String>();
+                        Collection<String> names = new ArrayList<>();
                         names.add("droplet1");
                         names.add("droplet2");
                         e.getIn().setHeader(DigitalOceanHeaders.NAMES, names);
@@ -111,7 +111,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
                     .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
                     .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
                     .process(e -> {
-                        Collection<String> tags = new ArrayList<String>();
+                        Collection<String> tags = new ArrayList<>();
                         tags.add("tag1");
                         tags.add("tag2");
                         e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);

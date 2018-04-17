@@ -96,7 +96,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     }
 
     Set<LifecycleAwareExchangeEventHandler> createEventHandlers(final int concurrentConsumers) {
-        final Set<LifecycleAwareExchangeEventHandler> eventHandlers = new HashSet<LifecycleAwareExchangeEventHandler>();
+        final Set<LifecycleAwareExchangeEventHandler> eventHandlers = new HashSet<>();
 
         for (int i = 0; i < concurrentConsumers; ++i) {
             eventHandlers.add(new ConsumerEventHandler(i, concurrentConsumers));

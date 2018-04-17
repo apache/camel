@@ -28,7 +28,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
 public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
 
     private static long id;
-    private final ThreadLocal<String> local = new ThreadLocal<String>();
+    private final ThreadLocal<String> local = new ThreadLocal<>();
 
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
