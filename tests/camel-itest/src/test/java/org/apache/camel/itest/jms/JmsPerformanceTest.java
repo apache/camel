@@ -35,8 +35,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * @version
  */
 public class JmsPerformanceTest extends CamelTestSupport {
-    private List<Integer> receivedHeaders = new ArrayList<Integer>(getMessageCount());
-    private List<Object> receivedMessages = new ArrayList<Object>(getMessageCount());
+    private List<Integer> receivedHeaders = new ArrayList<>(getMessageCount());
+    private List<Object> receivedMessages = new ArrayList<>(getMessageCount());
 
     @Test
     public void testSendingAndReceivingMessages() throws Exception {
@@ -76,12 +76,12 @@ public class JmsPerformanceTest extends CamelTestSupport {
         assertEquals("The expected message count does not match!", getMessageCount(), receivedMessages.size());
 
         // assert on the expected message order
-        List<Integer> expectedHeaders = new ArrayList<Integer>(getMessageCount());
+        List<Integer> expectedHeaders = new ArrayList<>(getMessageCount());
         for (int i = 1; i <= getMessageCount(); i++) {
             expectedHeaders.add(i);
         }
 
-        List<Object> expectedMessages = new ArrayList<Object>(getMessageCount());
+        List<Object> expectedMessages = new ArrayList<>(getMessageCount());
         for (int i = 1; i <= getMessageCount(); i++) {
             expectedMessages.add("Hello:" + i);
         }

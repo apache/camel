@@ -29,8 +29,8 @@ import org.apache.camel.language.XPath;
  */
 public class StockService {
 
-    private final List<String> symbols = new ArrayList<String>();
-    private Map<String, Integer> stat = new ConcurrentHashMap<String, Integer>();
+    private final List<String> symbols = new ArrayList<>();
+    private Map<String, Integer> stat = new ConcurrentHashMap<>();
 
     public StockService() {
         symbols.add("IBM");

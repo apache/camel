@@ -60,7 +60,7 @@ public class CreditScoreProcessor implements Processor {
         int score = proxy.getCreditScore(ssn);
 
         // create the invocation message for Bank client
-        List<Object> bankRequest = new ArrayList<Object>();
+        List<Object> bankRequest = new ArrayList<>();
         bankRequest.add(ssn);
         bankRequest.add(amount);
         bankRequest.add(loanDuration);

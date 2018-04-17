@@ -18,7 +18,6 @@ package org.apache.camel.example.springboot.geocoder;
 
 import com.google.code.geocoder.model.GeocodeResponse;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
 import static org.apache.camel.model.rest.RestParamType.query;

@@ -29,7 +29,7 @@ public class CafeAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         List<Drink> drinks;
         if (oldExchange == null) {
-            drinks = new ArrayList<Drink>();           
+            drinks = new ArrayList<>();           
         } else {
             drinks = (List<Drink>) oldExchange.getIn().getBody();
         }

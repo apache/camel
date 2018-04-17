@@ -39,7 +39,7 @@ public final class PackageHelper {
     }
 
     public static Map<String, File> findJsonFiles(File rootDir) {
-        Map<String, File> results = new HashMap<String, File>();
+        Map<String, File> results = new HashMap<>();
         findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
         return results;
     }

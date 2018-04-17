@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
 
 public class BookStoreImpl implements BookStore {
     
-    private Map<Long, Book> books = new HashMap<Long, Book>();
+    private Map<Long, Book> books = new HashMap<>();
     private boolean isRest;
     
     public BookStoreImpl(boolean restFlag) {
