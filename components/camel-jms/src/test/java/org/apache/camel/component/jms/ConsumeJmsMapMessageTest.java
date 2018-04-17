@@ -84,7 +84,7 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
 
         endpoint.expectedMessageCount(1);
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "abc");
         map.put("bar", "xyz");
 

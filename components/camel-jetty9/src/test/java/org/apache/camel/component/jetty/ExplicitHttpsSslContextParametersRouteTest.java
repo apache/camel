@@ -61,7 +61,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
-                Map<Integer, Connector> connectors = new HashMap<Integer, Connector>();
+                Map<Integer, Connector> connectors = new HashMap<>();
                 connectors.put(port1, createSslSocketConnector(getContext(), port1));
                 connectors.put(port2, createSslSocketConnector(getContext(), port2));
 

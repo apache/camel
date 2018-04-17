@@ -155,7 +155,7 @@ public class NotificationXmlFormatter extends ServiceSupport {
     }
 
     private List<String> toStringList(List<ObjectName> objectNames) {
-        List<String> roles = new ArrayList<String>(objectNames.size());
+        List<String> roles = new ArrayList<>(objectNames.size());
         for (ObjectName on : objectNames) {
             roles.add(on.toString());
         }

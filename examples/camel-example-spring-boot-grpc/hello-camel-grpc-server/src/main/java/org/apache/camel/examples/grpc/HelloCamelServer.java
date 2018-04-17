@@ -23,6 +23,10 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
+import org.apache.camel.examples.CamelHelloGrpc;
+import org.apache.camel.examples.CamelHelloReply;
+import org.apache.camel.examples.CamelHelloRequest;
+
 /**
  * Server that manages startup/shutdown of a server.
  */

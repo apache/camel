@@ -44,7 +44,7 @@ public class JacksonConversionsSimpleTest extends CamelTestSupport {
     public void shouldNotConvertMapToString() {
         Exchange exchange = new DefaultExchange(context);
 
-        Map<String, String> body = new HashMap<String, String>();
+        Map<String, String> body = new HashMap<>();
         Object convertedObject = context.getTypeConverter().convertTo(String.class, exchange, body);
         // will do a toString which is an empty map
         assertEquals(body.toString(), convertedObject);

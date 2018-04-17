@@ -42,7 +42,7 @@ import org.josql.QueryParseException;
 public class SqlBuilder implements Expression, Predicate {
 
     private Query query;
-    private Map<String, Object> variables = new HashMap<String, Object>();
+    private Map<String, Object> variables = new HashMap<>();
 
     public SqlBuilder(Query query) {
         this.query = query;

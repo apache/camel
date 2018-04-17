@@ -60,7 +60,7 @@ public class KafkaComponentTest {
 
     @Test
     public void testAllProducerConfigProperty() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         setProducerProperty(params);
 
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
@@ -117,7 +117,7 @@ public class KafkaComponentTest {
 
     @Test
     public void testAllProducerKeys() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
 
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
         String remaining = "mytopic";

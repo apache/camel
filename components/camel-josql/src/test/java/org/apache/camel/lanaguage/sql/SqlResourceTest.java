@@ -42,7 +42,7 @@ public class SqlResourceTest extends CamelTestSupport {
 
     @SuppressWarnings({"rawtypes"})
     private List createBody() {
-        List<Person> list = new ArrayList<Person>();
+        List<Person> list = new ArrayList<>();
         list.add(new Person("James", "London"));
         list.add(new Person("Guillaume", "Normandy"));
         list.add(new Person("Hiram", "Tampa"));

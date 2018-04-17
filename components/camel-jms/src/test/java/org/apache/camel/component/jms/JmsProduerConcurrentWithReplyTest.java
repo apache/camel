@@ -50,7 +50,7 @@ public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        final List<Future<String>> futures = new ArrayList<Future<String>>();
+        final List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {

@@ -29,7 +29,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
     @Test
     public void testYes() throws Exception {
-        final Map<String, Object> in = new HashMap<String, Object>();
+        final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         Exchange out = template.request("direct:yes", new Processor() {
@@ -46,7 +46,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
     @Test
     public void testYes2() throws Exception {
-        final Map<String, Object> in = new HashMap<String, Object>();
+        final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         Exchange out = template.request("direct:yes2", new Processor() {
@@ -63,7 +63,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
     @Test
     public void testNo() throws Exception {
-        final Map<String, Object> in = new HashMap<String, Object>();
+        final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         Exchange out = template.request("direct:no", new Processor() {

@@ -46,7 +46,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
     @Before
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(props);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
     }
 
     @After
@@ -73,7 +73,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("m1", "m2");
         for (int k = 1; k <= 2; k++) {
             String msg = "m" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
         to.assertIsSatisfied();
@@ -89,7 +89,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
         //Second route must wake up and consume all from scratch and commit 9 consumed
         for (int k = 3; k <= 10; k++) {
             String msg = "m" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
 

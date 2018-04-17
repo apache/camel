@@ -76,7 +76,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
         mock.expectedHeaderReceived("Content-Type", "text/plain");
         mock.expectedHeaderReceived("org.apache.camel.MyKey", "foo");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "cheese");
         headers.put("Content-Type", "text/plain");
         headers.put("org.apache.camel.MyKey", "foo");

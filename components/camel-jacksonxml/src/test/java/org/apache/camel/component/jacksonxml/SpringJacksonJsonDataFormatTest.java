@@ -32,7 +32,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-        Map<String, Object> in = new HashMap<String, Object>();
+        Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
@@ -51,7 +51,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMapWithPrettyPrint() throws Exception {
-        Map<String, Object> in = new HashMap<String, Object>();
+        Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");

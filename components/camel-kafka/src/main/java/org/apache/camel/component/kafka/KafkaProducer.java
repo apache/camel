@@ -228,8 +228,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
     // Camel calls this method if the endpoint isSynchronous(), as the KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
         Iterator<ProducerRecord> c = createRecorder(exchange);
-        List<Future<RecordMetadata>> futures = new LinkedList<Future<RecordMetadata>>();
-        List<RecordMetadata> recordMetadatas = new ArrayList<RecordMetadata>();
+        List<Future<RecordMetadata>> futures = new LinkedList<>();
+        List<RecordMetadata> recordMetadatas = new ArrayList<>();
 
         if (endpoint.getConfiguration().isRecordMetadata()) {
             if (exchange.hasOut()) {

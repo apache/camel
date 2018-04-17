@@ -53,7 +53,7 @@ public class CamelContinuationServlet extends CamelServlet {
     // we must remember expired exchanges as Jetty will initiate a new continuation when we send
     // back the error when timeout occurred, and thus in the async callback we cannot check the
     // continuation if it was previously expired. So that's why we have our own map for that
-    private final Map<String, String> expiredExchanges = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> expiredExchanges = new ConcurrentHashMap<>();
 
     @Override
     protected void doService(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {

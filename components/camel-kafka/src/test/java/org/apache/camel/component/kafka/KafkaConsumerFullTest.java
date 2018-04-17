@@ -48,7 +48,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     @Before
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(props);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
     }
 
     @After
@@ -78,7 +78,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
 
@@ -94,7 +94,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
         to.assertIsSatisfied(3000);
@@ -123,7 +123,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
         to.assertIsSatisfied(3000);

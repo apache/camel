@@ -90,14 +90,14 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        stringsConsumerConn = new KafkaConsumer<String, String>(stringsProps);
+        stringsConsumerConn = new KafkaConsumer<>(stringsProps);
 
         Properties bytesProps = new Properties();
         bytesProps.putAll(stringsProps);
         bytesProps.put("group.id", GROUP_BYTES);
         bytesProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         bytesProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        bytesConsumerConn = new KafkaConsumer<byte[], byte[]>(bytesProps);
+        bytesConsumerConn = new KafkaConsumer<>(bytesProps);
     }
 
     @AfterClass
@@ -201,13 +201,13 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        List<String> msgs = new ArrayList<String>();
+        List<String> msgs = new ArrayList<>();
         for (int x = 0; x < messageInTopic; x++) {
             msgs.add("Message " + x);
         }
 
         sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "1");
-        msgs = new ArrayList<String>();
+        msgs = new ArrayList<>();
         for (int x = 0; x < messageInOtherTopic; x++) {
             msgs.add("Other Message " + x);
         }
@@ -245,11 +245,11 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        Map<String, Object> inTopicHeaders = new HashMap<String, Object>();
+        Map<String, Object> inTopicHeaders = new HashMap<>();
         inTopicHeaders.put(KafkaConstants.PARTITION_KEY, "1".getBytes());
         sendMessagesInRoute(messageInTopic, bytesTemplate, "IT test message".getBytes(), inTopicHeaders);
 
-        Map<String, Object> otherTopicHeaders = new HashMap<String, Object>();
+        Map<String, Object> otherTopicHeaders = new HashMap<>();
         otherTopicHeaders.put(KafkaConstants.PARTITION_KEY, "1".getBytes());
         otherTopicHeaders.put(KafkaConstants.TOPIC, TOPIC_BYTES_IN_HEADER);
         sendMessagesInRoute(messageInOtherTopic, bytesTemplate, "IT test message in other topic".getBytes(), otherTopicHeaders);
@@ -308,7 +308,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     private void sendMessagesInRoute(int messages, ProducerTemplate template, Object bodyOther, String... headersWithValue) {
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+        Map<String, Object> headerMap = new HashMap<>();
         if (headersWithValue != null) {
             for (int i = 0; i < headersWithValue.length; i = i + 2) {
                 headerMap.put(headersWithValue[i], headersWithValue[i + 1]);

@@ -39,7 +39,6 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResolverHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,7 +228,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             // get from configuration
             if (ObjectHelper.isNotEmpty(config.getCiphers())) {
                 LOG.trace("Using ciphers: {}", config.getCiphers());
-                Hashtable<String, String> ciphers = new Hashtable<String, String>();
+                Hashtable<String, String> ciphers = new Hashtable<>();
                 ciphers.put("cipher.s2c", config.getCiphers());
                 ciphers.put("cipher.c2s", config.getCiphers());
                 JSch.setConfig(ciphers);

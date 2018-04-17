@@ -52,7 +52,7 @@ public class NewIssueConsumer extends AbstractJIRAConsumer {
 
     @Override
     protected int poll() throws Exception {
-        Stack<BasicIssue> newIssues = new Stack<BasicIssue>();
+        Stack<BasicIssue> newIssues = new Stack<>();
         getNewIssues(0, newIssues);
         while (!newIssues.empty()) {
             BasicIssue newIssue = newIssues.pop();

@@ -117,7 +117,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     public void testCheckContainerExists() throws InterruptedException {
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.CONTAINER_EXISTS, Boolean.class);
         assertEquals(true, result);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(JcloudsConstants.OPERATION, JcloudsConstants.CONTAINER_EXISTS);
         headers.put(JcloudsConstants.CONTAINER_NAME, "otherTest");
         result = template.requestBodyAndHeaders("direct:container-exists", null, headers, Boolean.class);
@@ -131,7 +131,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         assertEquals(new Long(1), result);
         List blobsToRemove = new ArrayList<>();
         blobsToRemove.add(TEST_BLOB_IN_DIR);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOBS);
         headers.put(JcloudsConstants.CONTAINER_NAME, TEST_CONTAINER);
         headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);

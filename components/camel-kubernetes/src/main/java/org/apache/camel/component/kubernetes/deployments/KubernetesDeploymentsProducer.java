@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.deployments;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentList;

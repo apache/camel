@@ -69,7 +69,7 @@ public class JMXUriBuilderTest {
 
     @Test
     public void objectProperties() throws Exception {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("one", "1");
         map.put("two", "2");
         assertEquals("jmx:platform?key.one=1&key.two=2", new JMXUriBuilder().withObjectProperties(map).toString());

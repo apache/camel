@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
-    private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<SchemaFactory>();
+    private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<>();
 
     private SchemaFactory schemaFactory;
     private CamelContext camelContext;
@@ -200,7 +200,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             if (partNamespaceFromHeader != null) {
                 partNamespaceOnDataFormat = QName.valueOf(partNamespaceFromHeader);
             }
-            element = new JAXBElement<Object>(partNamespaceOnDataFormat, partialClass, graph);
+            element = new JAXBElement<>(partNamespaceOnDataFormat, partialClass, graph);
         }
 
         // only marshal if its possible
