@@ -42,7 +42,7 @@ public class IrcEndpointTest {
         configuration = mock(IrcConfiguration.class);
         connection = mock(IRCConnection.class);
 
-        List<IrcChannel> channels = new ArrayList<IrcChannel>();
+        List<IrcChannel> channels = new ArrayList<>();
         channels.add(new IrcChannel("#chan1", null));
         channels.add(new IrcChannel("#chan2", "chan2key"));
 

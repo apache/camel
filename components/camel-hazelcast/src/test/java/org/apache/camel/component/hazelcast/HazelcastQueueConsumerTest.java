@@ -63,7 +63,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(queue).addItemListener(argument.capture(), eq(true));
-        final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.ADDED, "foo", null);
+        final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
 
 
@@ -78,7 +78,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(queue).addItemListener(argument.capture(), eq(true));
-        final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.REMOVED, "foo", null);
+        final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.REMOVED, "foo", null);
         argument.getValue().itemRemoved(event);
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);

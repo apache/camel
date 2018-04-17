@@ -45,7 +45,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("TestHeader", "test");
         expectedHeaders.put("Accept-Language", "pl");
 

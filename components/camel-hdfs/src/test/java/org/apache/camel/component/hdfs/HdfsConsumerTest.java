@@ -125,7 +125,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
             fos.close();
         }
 
-        final Set<String> fileNames = new HashSet<String>();
+        final Set<String> fileNames = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(ITERATIONS);
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.whenAnyExchangeReceived(new Processor() {
@@ -279,7 +279,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         scheduler.getScheduledExecutorService().shutdown();
         scheduler.getScheduledExecutorService().awaitTermination(5000, TimeUnit.MILLISECONDS);
 
-        Set<String> files = new HashSet<String>(Arrays.asList(new File("target/test").list()));
+        Set<String> files = new HashSet<>(Arrays.asList(new File("target/test").list()));
         // there may be some leftover files before, so test that we only added 2 new files
         assertThat(files.size() - before, equalTo(2));
         assertTrue(files.remove("test-camel-boolean.handled"));

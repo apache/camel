@@ -69,6 +69,7 @@ public class InfinispanConfiguration implements Cloneable {
      *
      * @deprecated replaced by @{link setOperation}
      */
+    @Deprecated
     public void setCommand(String command) {
         if (command.startsWith(InfinispanConstants.OPERATION)) {
             command = command.substring(InfinispanConstants.OPERATION.length()).toUpperCase();

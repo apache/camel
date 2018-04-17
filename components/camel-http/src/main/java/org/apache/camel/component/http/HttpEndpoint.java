@@ -121,7 +121,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         }
 
         if (getAuthMethodPriority() != null) {
-            List<String> authPrefs = new ArrayList<String>();
+            List<String> authPrefs = new ArrayList<>();
             Iterator<?> it = getCamelContext().getTypeConverter().convertTo(Iterator.class, getAuthMethodPriority());
             int i = 1;
             while (it.hasNext()) {

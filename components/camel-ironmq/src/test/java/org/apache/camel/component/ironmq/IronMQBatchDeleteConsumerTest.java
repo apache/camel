@@ -67,7 +67,7 @@ public class IronMQBatchDeleteConsumerTest extends CamelTestSupport {
 
         CamelContext context = super.createCamelContext();
         IronMQComponent component = new IronMQComponent(context);
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");
         parameters.put("maxMessagesPerPoll", "5");

@@ -121,7 +121,7 @@ public class IgniteCacheTest extends AbstractIgniteTest {
             keys.add("k" + i);
         }
 
-        Query<Entry<String, String>> query = new ScanQuery<String, String>(new IgniteBiPredicate<String, String>() {
+        Query<Entry<String, String>> query = new ScanQuery<>(new IgniteBiPredicate<String, String>() {
             private static final long serialVersionUID = 1L;
 
             @Override

@@ -197,7 +197,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
+        Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         final Map<String, Object> httpClientOptions = new HashMap<>();
 
         // timeout values can be configured on both component and endpoint level, where endpoint take priority

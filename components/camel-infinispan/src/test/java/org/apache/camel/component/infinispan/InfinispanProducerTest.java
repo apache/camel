@@ -160,7 +160,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(KEY_ONE, VALUE_ONE);
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
@@ -180,7 +180,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(KEY_ONE, VALUE_ONE);
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
@@ -204,7 +204,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(KEY_ONE, VALUE_ONE);
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
@@ -227,7 +227,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         template.send("direct:putallasync", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(KEY_ONE, VALUE_ONE);
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
@@ -247,7 +247,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         template.send("direct:putallasync", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(KEY_ONE, VALUE_ONE);
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
@@ -274,7 +274,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         template.send("direct:putallasync", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(KEY_ONE, VALUE_ONE);
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);

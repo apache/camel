@@ -113,7 +113,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
     @Override
     protected void doStart() throws Exception {
         LOG.info("Starting HystrixMetricsPoller with delay: {} and queue size: {}", delay, queueSize);
-        queue = new LinkedBlockingQueue<String>(queueSize);
+        queue = new LinkedBlockingQueue<>(queueSize);
         poller = new HystrixMetricsPoller(this, delay);
         poller.start();
     }

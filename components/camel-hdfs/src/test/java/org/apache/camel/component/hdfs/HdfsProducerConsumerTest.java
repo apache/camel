@@ -61,7 +61,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
         });
         context.start();
 
-        List<String> expectedResults = new ArrayList<String>();
+        List<String> expectedResults = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start", "CIAO" + i);
             expectedResults.add("CIAO" + i);

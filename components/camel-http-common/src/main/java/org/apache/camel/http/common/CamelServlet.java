@@ -56,7 +56,7 @@ public class CamelServlet extends HttpServlet {
     private boolean async;
 
     private ServletResolveConsumerStrategy servletResolveConsumerStrategy = new HttpServletResolveConsumerStrategy();
-    private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
+    private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<>();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
