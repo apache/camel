@@ -96,7 +96,7 @@ public final class CodehausIrcChat {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        List<IrcChannel> channels = new ArrayList<IrcChannel>();
+        List<IrcChannel> channels = new ArrayList<>();
         channels.add(new IrcChannel("camel-test", null));
         final IrcConfiguration config = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", channels);
 

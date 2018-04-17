@@ -168,9 +168,9 @@ public enum HdfsFileType {
         @Override
         public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
             try {
-                Holder<Integer> keySize = new Holder<Integer>();
+                Holder<Integer> keySize = new Holder<>();
                 Writable keyWritable = getWritable(key, typeConverter, keySize);
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
                 Writer writer = (SequenceFile.Writer) hdfsostr.getOut();
                 writer.append(keyWritable, valueWritable);
@@ -185,9 +185,9 @@ public enum HdfsFileType {
         public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
             try {
                 SequenceFile.Reader reader = (SequenceFile.Reader) hdfsistr.getIn();
-                Holder<Integer> keySize = new Holder<Integer>();
+                Holder<Integer> keySize = new Holder<>();
                 Writable keyWritable = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
                 if (reader.next(keyWritable, valueWritable)) {
                     key.value = getObject(keyWritable, keySize);
@@ -238,9 +238,9 @@ public enum HdfsFileType {
         @Override
         public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
             try {
-                Holder<Integer> keySize = new Holder<Integer>();
+                Holder<Integer> keySize = new Holder<>();
                 Writable keyWritable = getWritable(key, typeConverter, keySize);
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
                 ((MapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
                 return keySize.value + valueSize.value;
@@ -253,9 +253,9 @@ public enum HdfsFileType {
         public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
             try {
                 MapFile.Reader reader = (MapFile.Reader) hdfsistr.getIn();
-                Holder<Integer> keySize = new Holder<Integer>();
+                Holder<Integer> keySize = new Holder<>();
                 WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
                 if (reader.next(keyWritable, valueWritable)) {
                     key.value = getObject(keyWritable, keySize);
@@ -306,9 +306,9 @@ public enum HdfsFileType {
         @Override
         public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
             try {
-                Holder<Integer> keySize = new Holder<Integer>();
+                Holder<Integer> keySize = new Holder<>();
                 Writable keyWritable = getWritable(key, typeConverter, keySize);
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
                 ((BloomMapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
                 return keySize.value + valueSize.value;
@@ -321,9 +321,9 @@ public enum HdfsFileType {
         public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
             try {
                 MapFile.Reader reader = (BloomMapFile.Reader) hdfsistr.getIn();
-                Holder<Integer> keySize = new Holder<Integer>();
+                Holder<Integer> keySize = new Holder<>();
                 WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
                 if (reader.next(keyWritable, valueWritable)) {
                     key.value = getObject(keyWritable, keySize);
@@ -374,7 +374,7 @@ public enum HdfsFileType {
         @Override
         public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
             try {
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
                 ((ArrayFile.Writer) hdfsostr.getOut()).append(valueWritable);
                 return valueSize.value;
@@ -387,7 +387,7 @@ public enum HdfsFileType {
         public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
             try {
                 ArrayFile.Reader reader = (ArrayFile.Reader) hdfsistr.getIn();
-                Holder<Integer> valueSize = new Holder<Integer>();
+                Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
                 if (reader.next(valueWritable) != null) {
                     value.value = getObject(valueWritable, valueSize);
@@ -435,8 +435,8 @@ public enum HdfsFileType {
     @SuppressWarnings({"rawtypes"})
     private static final class WritableCache {
 
-        private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> writables = new HashMap<Class, HdfsWritableFactories.HdfsWritableFactory>();
-        private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> readables = new HashMap<Class, HdfsWritableFactories.HdfsWritableFactory>();
+        private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> writables = new HashMap<>();
+        private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> readables = new HashMap<>();
 
         private WritableCache() {
         }

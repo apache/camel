@@ -210,7 +210,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (uri.startsWith("https:")) {
             addressUri = "https://" + remaining;
         }
-        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
+        Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
@@ -236,7 +236,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             thisHttpConnectionManager.setParams(connectionManagerParams);
         }
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
-        final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
+        final Set<AuthMethod> authMethods = new LinkedHashSet<>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);

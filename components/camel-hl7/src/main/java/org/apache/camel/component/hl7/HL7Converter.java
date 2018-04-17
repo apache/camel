@@ -46,7 +46,7 @@ public final class HL7Converter {
         parserConfiguration.setInvalidObx2Type("ST");
         parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
 
-        DEFAULT_CONTEXT = new DefaultHapiContext(parserConfiguration, (ValidationContext) ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
+        DEFAULT_CONTEXT = new DefaultHapiContext(parserConfiguration, ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
     }
 
     private HL7Converter() {

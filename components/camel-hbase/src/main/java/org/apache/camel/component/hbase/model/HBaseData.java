@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "data")
 public class HBaseData {
 
-    private List<HBaseRow> rows = new LinkedList<HBaseRow>();
+    private List<HBaseRow> rows = new LinkedList<>();
 
     public HBaseData() {
     }

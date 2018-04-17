@@ -162,7 +162,7 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
     
     @Test
     public void drainTo() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         Collection l = new ArrayList<>();
         headers.put(HazelcastConstants.DRAIN_TO_COLLECTION, l);
         when(queue.drainTo(l)).thenReturn(10);

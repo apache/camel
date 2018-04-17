@@ -355,7 +355,7 @@ public final class HttpHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);
@@ -388,7 +388,7 @@ public final class HttpHelper {
         if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
             // remove the [ ] markers
             trimmed = trimmed.substring(1, trimmed.length() - 1);
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             String[] values = trimmed.split(",");
             for (String s : values) {
                 list.add(s.trim());

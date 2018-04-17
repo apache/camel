@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public final class HBaseHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(HBaseIdempotentRepository.class);
-    private static final Map<String, byte[]> NAMES = new HashMap<String, byte[]>();
+    private static final Map<String, byte[]> NAMES = new HashMap<>();
 
     private HBaseHelper() {
         //Utility Class
