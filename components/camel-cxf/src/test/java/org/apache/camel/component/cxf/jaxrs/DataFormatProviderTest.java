@@ -37,7 +37,7 @@ public class DataFormatProviderTest extends Assert {
     
     @Test
     public void testIsReadableWriteableSpecificMatch() {
-        DataFormatProvider<Book> p = new DataFormatProvider<Book>();
+        DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("text/plain", new TestDataFormat());
         assertTrue(p.isReadable(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE));
         assertTrue(p.isWriteable(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE));
@@ -45,7 +45,7 @@ public class DataFormatProviderTest extends Assert {
 
     @Test
     public void testIsReadableWriteableComplexSubMatch() {
-        DataFormatProvider<Book> p = new DataFormatProvider<Book>();
+        DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("text/plain", new TestDataFormat());
         assertTrue(p.isReadable(Book.class, Book.class, new Annotation[] {},
                                 MediaType.valueOf("text/plain+v2")));
@@ -55,7 +55,7 @@ public class DataFormatProviderTest extends Assert {
 
     @Test
     public void testIsReadableWriteableStarMatch() {
-        DataFormatProvider<Book> p = new DataFormatProvider<Book>();
+        DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat(new TestDataFormat());
         assertTrue(p.isReadable(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE));
         assertTrue(p.isWriteable(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE));
@@ -63,7 +63,7 @@ public class DataFormatProviderTest extends Assert {
 
     @Test
     public void testNotReadableWriteable() {
-        DataFormatProvider<Book> p = new DataFormatProvider<Book>();
+        DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("application/json", new TestDataFormat());
         assertFalse(p.isReadable(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE));
         assertFalse(p.isWriteable(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE));
@@ -71,7 +71,7 @@ public class DataFormatProviderTest extends Assert {
 
     @Test
     public void testReadFrom() throws Exception {
-        DataFormatProvider<Book> p = new DataFormatProvider<Book>();
+        DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("text/plain", new TestDataFormat());
 
         ByteArrayInputStream bis = new ByteArrayInputStream("dataformat".getBytes());
@@ -82,7 +82,7 @@ public class DataFormatProviderTest extends Assert {
 
     @Test
     public void testWriteTo() throws Exception {
-        DataFormatProvider<Book> p = new DataFormatProvider<Book>();
+        DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("text/plain", new TestDataFormat());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -97,8 +97,8 @@ public class CXFMultiPartTest extends CamelTestSupport {
         e0.setV(in0);
         e1.setV(in1);
         
-        javax.xml.ws.Holder<InE> h = new javax.xml.ws.Holder<InE>();
-        javax.xml.ws.Holder<InE> h1 = new javax.xml.ws.Holder<InE>();
+        javax.xml.ws.Holder<InE> h = new javax.xml.ws.Holder<>();
+        javax.xml.ws.Holder<InE> h1 = new javax.xml.ws.Holder<>();
         multiPartClient.foo(e0, e1, h, h1);
         return h.value.getV() + " " + h1.value.getV();
     }

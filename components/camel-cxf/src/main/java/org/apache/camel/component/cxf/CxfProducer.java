@@ -123,8 +123,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // prepare binding operation info
             BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
             
-            Map<String, Object> invocationContext = new HashMap<String, Object>();
-            Map<String, Object> responseContext = new HashMap<String, Object>();
+            Map<String, Object> invocationContext = new HashMap<>();
+            Map<String, Object> responseContext = new HashMap<>();
             invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
             invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
             
@@ -160,8 +160,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // prepare binding operation info
         BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
         
-        Map<String, Object> invocationContext = new HashMap<String, Object>();
-        Map<String, Object> responseContext = new HashMap<String, Object>();
+        Map<String, Object> invocationContext = new HashMap<>();
+        Map<String, Object> responseContext = new HashMap<>();
         invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
         invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
         
@@ -229,7 +229,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 Map<String, List<String>> transportHeaders = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
                 boolean added;
                 if (transportHeaders == null) {
-                    transportHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+                    transportHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                     added = true;
                 } else {
                     added = false;

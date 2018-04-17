@@ -117,7 +117,7 @@ abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<Object>(fixedColumns.length);
+            List<Object> result = new ArrayList<>(fixedColumns.length);
             for (String key : fixedColumns) {
                 result.add(map.get(key));
             }
@@ -135,7 +135,7 @@ abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<Object>(map.size());
+            List<Object> result = new ArrayList<>(map.size());
             for (Object key : map.keySet()) {
                 result.add(map.get(key));
             }

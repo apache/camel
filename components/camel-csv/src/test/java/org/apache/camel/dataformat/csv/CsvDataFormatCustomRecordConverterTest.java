@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.csv;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,8 +26,6 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link CsvRecordConverter}.

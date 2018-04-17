@@ -47,7 +47,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
 
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel";
     public static final List<String> DEFAULT_NAMESPACES = Arrays.asList(TRANSPORT_ID);
-    private static final Set<String> URI_PREFIXES = new HashSet<String>();
+    private static final Set<String> URI_PREFIXES = new HashSet<>();
 
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;

@@ -95,12 +95,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @UriParam(label = "advanced")
     private CxfRsBinding binding;
     @UriParam(javaType = "java.lang.String")
-    private List<Object> providers = new LinkedList<Object>();
+    private List<Object> providers = new LinkedList<>();
     private String providersRef;
     @UriParam
     private List<String> schemaLocations;
     @UriParam
-    private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
+    private List<Feature> features = new ModCountCopyOnWriteArrayList<>();
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean httpClientAPI = true;
     @UriParam(label = "producer,advanced")
@@ -422,7 +422,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public void addResourceClass(Class<?> resourceClass) {
         if (resourceClasses == null) {
-            resourceClasses = new ArrayList<Class<?>>();
+            resourceClasses = new ArrayList<>();
         }
         resourceClasses.add(resourceClass);
     }

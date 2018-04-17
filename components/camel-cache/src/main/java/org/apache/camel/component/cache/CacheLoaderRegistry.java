@@ -36,7 +36,7 @@ public class CacheLoaderRegistry {
 
     public synchronized List<CacheLoaderWrapper> getCacheLoaders() {
         if (registeredCacheLoaders == null) {
-            registeredCacheLoaders = new ArrayList<CacheLoaderWrapper>();
+            registeredCacheLoaders = new ArrayList<>();
         }
         return registeredCacheLoaders;
     }

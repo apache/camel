@@ -99,8 +99,8 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
             return;
         }
 
-        Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
-        Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
+        Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
         Hello port = getPort();
 

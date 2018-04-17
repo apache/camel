@@ -30,7 +30,7 @@ public final class CMISHelper {
     }
 
     public static Map<String, Object> filterCMISProperties(Map<String, Object> properties) {
-        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+        Map<String, Object> result = new HashMap<>(properties.size());
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (entry.getKey().startsWith("cmis:")) {
                 result.put(entry.getKey(), entry.getValue());
@@ -45,7 +45,7 @@ public final class CMISHelper {
     }
 
     public static Map<String, Object> propertyDataToMap(List<? extends PropertyData<?>> properties) {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         for (PropertyData<?> propertyData : properties) {
             result.put(propertyData.getId(), propertyData.getFirstValue());
         }

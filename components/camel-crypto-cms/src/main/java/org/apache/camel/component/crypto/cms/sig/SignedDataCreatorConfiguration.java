@@ -36,7 +36,7 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     private Boolean includeContent = Boolean.TRUE;
 
     @UriParam(label = "sign", multiValue = true, description = "Signer information: reference to a bean which implements org.apache.camel.component.crypto.cms.api.SignerInfo")
-    private final List<SignerInfo> signer = new ArrayList<SignerInfo>(3);
+    private final List<SignerInfo> signer = new ArrayList<>(3);
 
     public SignedDataCreatorConfiguration(CamelContext context) {
         super(context);

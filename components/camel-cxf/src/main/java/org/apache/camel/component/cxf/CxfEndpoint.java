@@ -133,11 +133,11 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
     private Object serviceFactoryBean;
-    private List<Interceptor<? extends Message>> in = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Interceptor<? extends Message>> out = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Interceptor<? extends Message>> outFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Interceptor<? extends Message>> inFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
+    private List<Interceptor<? extends Message>> in = new ModCountCopyOnWriteArrayList<>();
+    private List<Interceptor<? extends Message>> out = new ModCountCopyOnWriteArrayList<>();
+    private List<Interceptor<? extends Message>> outFault = new ModCountCopyOnWriteArrayList<>();
+    private List<Interceptor<? extends Message>> inFault = new ModCountCopyOnWriteArrayList<>();
+    private List<Feature> features = new ModCountCopyOnWriteArrayList<>();
     private List<Handler> handlers;
     private List<String> schemaLocations;
     private String transportId;
@@ -445,7 +445,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             Method m = factoryBean.getClass().getMethod("getServiceFactory");
             JaxWsServiceFactoryBean sf = (JaxWsServiceFactoryBean)m.invoke(factoryBean);
             @SuppressWarnings("rawtypes")
-            List<Handler> chain = new ArrayList<Handler>(handlers);
+            List<Handler> chain = new ArrayList<>(handlers);
 
             chain.addAll(builder.buildHandlerChainFromClass(sf.getServiceClass(),
                                                             sf.getEndpointInfo().getName(),

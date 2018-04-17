@@ -78,7 +78,7 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
                             // Put the result back
                             exchange.getIn().setBody(result);
                             // set up the response context which force start document
-                            Map<String, Object> map = new HashMap<String, Object>();
+                            Map<String, Object> map = new HashMap<>();
                             map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
                             exchange.getIn().setHeader(Client.RESPONSE_CONTEXT, map);
                         }

@@ -110,7 +110,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
@@ -123,7 +122,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test

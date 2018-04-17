@@ -393,7 +393,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                     inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
                     // override the parameter setting from URI
                     // START SNIPPET: QueryMapExample
-                    Map<String, String> queryMap = new LinkedHashMap<String, String>();                    
+                    Map<String, String> queryMap = new LinkedHashMap<>();                    
                     queryMap.put("q1", "new");
                     queryMap.put("q2", "world");                    
                     inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);

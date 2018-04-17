@@ -63,13 +63,13 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         document = documentBuilder.parse(file);
         document.getDocumentElement().normalize();
-        List<Source> body = new ArrayList<Source>();
+        List<Source> body = new ArrayList<>();
         body.add(new DOMSource(document.getDocumentElement()));
-        List<Source> staxbody = new ArrayList<Source>();
+        List<Source> staxbody = new ArrayList<>();
         staxbody.add(new StAXSource(StaxUtils.createXMLStreamReader(new FileInputStream(file), "utf-8")));
-        payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body, null);
-        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Source>(), null);
-        staxpayload = new CxfPayload<String[]>(new ArrayList<String[]>(), staxbody, null);
+        payload = new CxfPayload<>(new ArrayList<String[]>(), body, null);
+        emptyPayload = new CxfPayload<>(new ArrayList<String[]>(), new ArrayList<Source>(), null);
+        staxpayload = new CxfPayload<>(new ArrayList<String[]>(), staxbody, null);
         inputStream = new FileInputStream(file);
     }
 

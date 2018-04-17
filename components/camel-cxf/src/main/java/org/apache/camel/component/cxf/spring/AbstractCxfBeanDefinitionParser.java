@@ -88,7 +88,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
         Map<String, Object> map = null;
         if (propertyValue == null) {
             if (lazyInstantiation) {
-                map = new HashMap<String, Object>();
+                map = new HashMap<>();
                 bean.addPropertyValue("properties", map);
             }
         } else {

@@ -105,7 +105,7 @@ public class SignedDataCreator extends CryptoCmsMarshallerAbstract {
 
             gen.addSignerInfoGenerator(signerBuilder.build(contentSigner, signerCert));
 
-            List<Certificate> certificateList = new ArrayList<Certificate>();
+            List<Certificate> certificateList = new ArrayList<>();
             for (Certificate cert : signer.getCertificateChain(exchange)) {
                 if (!certificateList.contains(cert)) {
                     certificateList.add(cert);

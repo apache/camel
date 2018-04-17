@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class CometdComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
-    private final Map<String, ConnectorRef> connectors = new LinkedHashMap<String, ConnectorRef>();
+    private final Map<String, ConnectorRef> connectors = new LinkedHashMap<>();
 
     private List<BayeuxServer.BayeuxServerListener> serverListeners;
 
@@ -305,14 +305,14 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
 
     public void addExtension(BayeuxServer.Extension extension) {
         if (extensions == null) {
-            extensions = new ArrayList<BayeuxServer.Extension>();
+            extensions = new ArrayList<>();
         }
         extensions.add(extension);
     }
     
     public void addServerListener(BayeuxServer.BayeuxServerListener serverListener) {
         if (serverListeners == null) {
-            serverListeners = new ArrayList<BayeuxServer.BayeuxServerListener>();
+            serverListeners = new ArrayList<>();
         }
         serverListeners.add(serverListener);
     }

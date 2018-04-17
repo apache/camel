@@ -48,15 +48,15 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
     }
 
     private List<Map<String, Object>> createBody() {
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> data = new ArrayList<>();
 
-        Map<String, Object> row1 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row1 = new LinkedHashMap<>();
         row1.put("orderId", 123);
         row1.put("item", "Camel in Action");
         row1.put("amount", 1);
         data.add(row1);
 
-        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row2 = new LinkedHashMap<>();
         row2.put("orderId", 124);
         row2.put("item", "ActiveMQ in Action");
         row2.put("amount", 2);

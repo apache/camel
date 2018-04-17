@@ -291,7 +291,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             if (userids == null || userids.isEmpty()) {
                 result = Collections.singletonList(userid);
             } else {
-                result = new ArrayList<String>(userids.size() + 1);
+                result = new ArrayList<>(userids.size() + 1);
                 result.add(userid);
                 result.addAll(userids);
             }
@@ -313,7 +313,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             if (userids == null || userids.isEmpty()) {
                 result = Collections.singletonList(userid);
             } else {
-                result = new ArrayList<String>(userids.size() + 1);
+                result = new ArrayList<>(userids.size() + 1);
                 result.add(userid);
                 result.addAll(userids);
             }
@@ -339,7 +339,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
         exchange.getOut().setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
 
-        List<PGPSignatureGenerator> sigGens = new ArrayList<PGPSignatureGenerator>();
+        List<PGPSignatureGenerator> sigGens = new ArrayList<>();
         for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId : sigSecretKeysWithPrivateKeyAndUserId) {
             PGPPrivateKey sigPrivateKey = sigSecretKeyWithPrivateKeyAndUserId.getPrivateKey();
 

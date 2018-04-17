@@ -51,9 +51,9 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         
         MyOrderEndpoint client = (MyOrderEndpoint) proxyFactory.create();
         
-        Holder<String> strPart = new Holder<String>();
+        Holder<String> strPart = new Holder<>();
         strPart.value = "parts";
-        Holder<String> strCustomer = new Holder<String>();
+        Holder<String> strCustomer = new Holder<>();
         strCustomer.value = "";
 
         String result = client.myOrder(strPart, 2, strCustomer);
@@ -72,7 +72,7 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         
         MyOrderEndpoint client = (MyOrderEndpoint) proxyFactory.create();
         
-        Holder<String> header = new Holder<String>();
+        Holder<String> header = new Holder<>();
         header.value = "parts";
 
         String result = client.mySecureOrder(1, header);

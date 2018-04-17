@@ -34,7 +34,7 @@ public class CsvMarshalCharsetTest extends CamelTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:daltons");
         endpoint.expectedMessageCount(1);
 
-        List<List<String>> data = new ArrayList<List<String>>();
+        List<List<String>> data = new ArrayList<>();
         data.add(0, new ArrayList<String>());
         data.get(0).add(0, "L\u00fccky Luke");
         Exchange in = createExchangeWithBody(data);

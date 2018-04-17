@@ -161,7 +161,7 @@ public class HeaderTesterImpl implements HeaderTester {
                     ob.setName("testOobReturnHeaderName");
                     ob.setValue("testOobReturnHeaderValue");
                     ob.setHdrAttribute("testReturnHdrAttribute");
-                    JAXBElement<OutofBandHeader> job = new JAXBElement<OutofBandHeader>(
+                    JAXBElement<OutofBandHeader> job = new JAXBElement<>(
                             new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM), 
                             OutofBandHeader.class, null, ob);
                     Header hdr = new Header(

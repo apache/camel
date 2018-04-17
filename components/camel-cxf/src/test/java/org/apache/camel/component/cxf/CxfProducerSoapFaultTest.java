@@ -90,7 +90,7 @@ public class CxfProducerSoapFaultTest extends Assert {
     private Exchange sendJaxWsMessage(final String uri, final String message, final String operation) {
         Exchange exchange = template.request(uri, new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(message);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, operation);

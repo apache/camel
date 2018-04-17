@@ -52,7 +52,7 @@ public final class CxfUtils {
     }
     
     public static String elementToString(Element element) throws Exception {
-        Map<String, String> namespaces = new HashMap<String, String>();
+        Map<String, String> namespaces = new HashMap<>();
         visitNodesForNameSpace(element, namespaces);
         W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
         writeElement(element, writer, namespaces);
