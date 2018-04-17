@@ -68,7 +68,7 @@ public class CafeRouteBuilderTest extends CamelTestSupport {
     @Test
     public void testCafeRoute() throws Exception {
         driverRouter.setTestModel(false);
-        List<Drink> drinks = new ArrayList<Drink>();
+        List<Drink> drinks = new ArrayList<>();
         Order order = new Order(2);
         order.addItem(DrinkType.ESPRESSO, 2, true);
         order.addItem(DrinkType.CAPPUCCINO, 4, false);

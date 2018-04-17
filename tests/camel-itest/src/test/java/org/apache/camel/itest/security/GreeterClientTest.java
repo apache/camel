@@ -65,7 +65,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
 
         Client client = ClientProxy.getClient(greeter);        
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("action", "UsernameToken");
         props.put("user", username);
         // Set the the password type to be plain text, 

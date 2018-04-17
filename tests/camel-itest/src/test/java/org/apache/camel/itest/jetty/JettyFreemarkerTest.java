@@ -36,7 +36,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
 
     @Test
     public void testClasspath() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
@@ -48,7 +48,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
     @Test
     public void testClasspathInvalidParameter() throws Exception {
         try {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             map.put("firstName", "John");
             map.put("lastName", "Doe");
 
@@ -61,7 +61,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
 
     @Test
     public void testHttp() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 

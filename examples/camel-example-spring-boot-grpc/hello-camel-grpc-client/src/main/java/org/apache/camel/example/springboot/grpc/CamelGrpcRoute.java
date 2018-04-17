@@ -19,7 +19,6 @@ package org.apache.camel.example.springboot.grpc;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.examples.CamelHelloRequest;
 import org.springframework.stereotype.Component;
 
 /**

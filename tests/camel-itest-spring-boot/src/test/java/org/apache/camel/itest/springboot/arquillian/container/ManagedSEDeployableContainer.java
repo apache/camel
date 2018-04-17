@@ -316,7 +316,7 @@ public class ManagedSEDeployableContainer implements DeployableContainer<Managed
     }
 
     private List<String> buildProcessCommand(Properties properties) {
-        final List<String> command = new ArrayList<String>();
+        final List<String> command = new ArrayList<>();
         final File javaHome = new File(System.getProperty(SYSPROP_KEY_JAVA_HOME));
         command.add(javaHome.getAbsolutePath() + File.separator + "bin" + File.separator + "java");
         command.add("-cp");

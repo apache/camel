@@ -109,7 +109,7 @@ public class PerformanceTestComponent extends DefaultComponent {
             if (endpoint != null) {
                 final DefaultConsumer consumer = (DefaultConsumer)endpoint.getConsumer();
                 ExecutorService executor = exchange.getContext().getExecutorServiceManager().newFixedThreadPool(this, "perf", threads);
-                CompletionService<Exchange> tasks = new ExecutorCompletionService<Exchange>(executor);
+                CompletionService<Exchange> tasks = new ExecutorCompletionService<>(executor);
 
                 // StopWatch watch = new StopWatch();  // if we want to clock how long it takes
                 for (int i = 0; i < count; i++) {
