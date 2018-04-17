@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.braintreegateway.AddOn;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.internal.AddOnGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

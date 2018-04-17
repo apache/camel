@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxEventLogsManager;
+import org.apache.camel.component.box.internal.BoxApiCollection;
+import org.apache.camel.component.box.internal.BoxEventLogsManagerApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

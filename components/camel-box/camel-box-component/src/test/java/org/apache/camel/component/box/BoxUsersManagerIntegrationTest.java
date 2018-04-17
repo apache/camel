@@ -28,6 +28,8 @@ import com.box.sdk.EmailAlias;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxUsersManager;
+import org.apache.camel.component.box.internal.BoxApiCollection;
+import org.apache.camel.component.box.internal.BoxUsersManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

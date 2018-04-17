@@ -17,6 +17,7 @@
 package org.apache.camel.component.braintree;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 

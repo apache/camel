@@ -26,6 +26,8 @@ import com.box.sdk.BoxGroupMembership;
 import com.box.sdk.BoxUser;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxGroupsManager;
+import org.apache.camel.component.box.internal.BoxApiCollection;
+import org.apache.camel.component.box.internal.BoxGroupsManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

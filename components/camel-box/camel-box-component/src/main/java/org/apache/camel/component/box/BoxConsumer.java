@@ -26,6 +26,7 @@ import com.box.sdk.EventListener;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.box.api.BoxEventsManager;
+import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;

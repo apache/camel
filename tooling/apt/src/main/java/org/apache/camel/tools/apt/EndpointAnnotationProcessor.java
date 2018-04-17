@@ -595,7 +595,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     if (Strings.isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
                     }
-                    path.defaultValueNote();
                     String required = metadata != null ? metadata.required() : null;
                     String label = path.label();
                     if (Strings.isNullOrEmpty(label) && metadata != null) {

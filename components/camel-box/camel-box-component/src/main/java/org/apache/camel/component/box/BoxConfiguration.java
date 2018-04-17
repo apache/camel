@@ -22,6 +22,7 @@ import com.box.sdk.EncryptionAlgorithm;
 import com.box.sdk.IAccessTokenCache;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
