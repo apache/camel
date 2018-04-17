@@ -25,7 +25,7 @@ import java.util.Map.Entry;
  * and messing up the param names
  */
 public class JMXUriBuilder {
-    private Map<String, String> mQueryProps = new LinkedHashMap<String, String>();
+    private Map<String, String> mQueryProps = new LinkedHashMap<>();
     private String mServerName = "platform";
 
     public JMXUriBuilder() {

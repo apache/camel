@@ -73,7 +73,7 @@ public abstract class AbstractJIRAConsumer extends ScheduledPollConsumer {
     protected List<BasicIssue> getIssues(String jql, int start, int maxResults, int maxPerQuery) {
         LOG.info("Indexing current JIRA issues...");
 
-        List<BasicIssue> issues = new ArrayList<BasicIssue>();
+        List<BasicIssue> issues = new ArrayList<>();
         while (true) {
             SearchRestClient searchRestClient = client.getSearchClient();
             SearchResult searchResult = searchRestClient.searchJqlWithFullIssues(jql, maxPerQuery, start, null);

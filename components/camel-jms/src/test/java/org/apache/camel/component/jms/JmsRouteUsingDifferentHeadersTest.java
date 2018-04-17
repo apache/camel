@@ -35,7 +35,7 @@ public class JmsRouteUsingDifferentHeadersTest extends CamelTestSupport {
 
     @Test
     public void testUsingDifferentHeaderTypes() throws Exception {
-        Map<String, Object> headers = new LinkedHashMap<String, Object>();
+        Map<String, Object> headers = new LinkedHashMap<>();
         headers.put("a", new Byte("65"));
         headers.put("b", Boolean.TRUE);
         headers.put("c", new Double("44444"));

@@ -29,7 +29,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 public class Main {
 
     private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-    private final List<Option> options = new ArrayList<Option>();
+    private final List<Option> options = new ArrayList<>();
     private String command;
     private String password;
     private String input;
@@ -152,7 +152,7 @@ public class Main {
     }
 
     private boolean parseArguments(String[] arguments) {
-        LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
+        LinkedList<String> args = new LinkedList<>(Arrays.asList(arguments));
 
         boolean valid = true;
         while (!args.isEmpty()) {

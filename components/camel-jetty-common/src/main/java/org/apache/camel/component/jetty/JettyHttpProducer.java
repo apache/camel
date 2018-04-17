@@ -221,7 +221,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the values to add as a request header
-                final List<String> values = new ArrayList<String>();
+                final List<String> values = new ArrayList<>();
 
                 // if its a multi value then check each value if we can add it and for multi values they
                 // should be combined into a single value

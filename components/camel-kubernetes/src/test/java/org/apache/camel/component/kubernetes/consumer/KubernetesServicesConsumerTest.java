@@ -59,18 +59,18 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
-                Map<String, String> labels = new HashMap<String, String>();
+                Map<String, String> labels = new HashMap<>();
                 labels.put("this", "rocks");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
                 ServiceSpec serviceSpec = new ServiceSpec();
-                List<ServicePort> lsp = new ArrayList<ServicePort>();
+                List<ServicePort> lsp = new ArrayList<>();
                 ServicePort sp = new ServicePort();
                 sp.setPort(8080);
                 sp.setTargetPort(new IntOrString(8080));
                 sp.setProtocol("TCP");
                 lsp.add(sp);
                 serviceSpec.setPorts(lsp);
-                Map<String, String> selectorMap = new HashMap<String, String>();
+                Map<String, String> selectorMap = new HashMap<>();
                 selectorMap.put("containter", "test");
                 serviceSpec.setSelector(selectorMap);
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, serviceSpec);

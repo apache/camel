@@ -31,7 +31,7 @@ public class Foo {
     @XmlElements({
         @XmlElement(name = "bar", type = Bar.class, required = false),
         @XmlElement(name = "zot", type = Zot.class, required = false)})
-    List<Bar> barRefs = new ArrayList<Bar>();
+    List<Bar> barRefs = new ArrayList<>();
     
     public List<Bar> getBarRefs() {
         return barRefs;

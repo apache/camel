@@ -31,7 +31,7 @@ public class KratiIdempotentRepositoryTest extends CamelTestSupport {
 
     private String path = "target/test/idempotent";
     private DataSet<byte[]> dataSet = KratiHelper.createDataSet(path, 2, new ChannelSegmentFactory());
-    private Serializer<String> serializer = new KratiDefaultSerializer<String>();
+    private Serializer<String> serializer = new KratiDefaultSerializer<>();
     private KratiIdempotentRepository repository;
 
     private String key01 = "123";

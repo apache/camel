@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class MyRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(MyRegistry.class);
 
-    private Map<String, Map<String, Object>> services = new HashMap<String, Map<String, Object>>();
+    private Map<String, Map<String, Object>> services = new HashMap<>();
 
     public void onEvent(Map<String, Object> heartbeat) {
         String key = (String) heartbeat.get("name");

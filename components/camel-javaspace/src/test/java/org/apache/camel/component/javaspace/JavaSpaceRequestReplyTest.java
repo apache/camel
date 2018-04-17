@@ -55,7 +55,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
 
     @Test
     public void testJavaSpaceConcurrentRequestReply() throws Exception {
-        Vector<FutureTask<Reply>> tasks = new Vector<FutureTask<Reply>>();
+        Vector<FutureTask<Reply>> tasks = new Vector<>();
         Endpoint endpoint = context.getEndpoint("direct:input");
         ExecutorService es = Executors.newFixedThreadPool(10);
         long start = System.currentTimeMillis();
@@ -63,7 +63,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
             Request req = new Request();
             req.setPayload("REQUEST " + i);
             ITestPojo proxy = ProxyHelper.createProxy(endpoint, ITestPojo.class);
-            FutureTask<Reply> task = new FutureTask<Reply>(new PojoCallable(req, proxy));
+            FutureTask<Reply> task = new FutureTask<>(new PojoCallable(req, proxy));
             tasks.add(task);
             es.submit(task);
         }

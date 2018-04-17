@@ -66,8 +66,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected static int maxServerTasks = 1;
     protected static int maxCalls = 5;
     protected static AtomicBoolean inited = new AtomicBoolean(false);
-    protected static Map<String, ContextBuilder> contextBuilders = new HashMap<String, ContextBuilder>();
-    protected static Map<String, RouteBuilder> routeBuilders = new HashMap<String, RouteBuilder>();
+    protected static Map<String, ContextBuilder> contextBuilders = new HashMap<>();
+    protected static Map<String, RouteBuilder> routeBuilders = new HashMap<>();
 
     private interface ContextBuilder {
         CamelContext buildContext(CamelContext context) throws Exception;
@@ -455,7 +455,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         template.start();
 
         ExecutorService executor = context.getExecutorServiceManager().newFixedThreadPool(this, "Task", maxTasks);
-        CompletionService<Task> completionService = new ExecutorCompletionService<Task>(executor);
+        CompletionService<Task> completionService = new ExecutorCompletionService<>(executor);
 
         final AtomicInteger counter = new AtomicInteger(-1);
         for (int i = 0; i < maxTasks; i++) {

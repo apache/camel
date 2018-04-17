@@ -45,7 +45,7 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
             public void configure() throws URISyntaxException {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
-                Map<Integer, Connector> connectors = new HashMap<Integer, Connector>();
+                Map<Integer, Connector> connectors = new HashMap<>();
                 connectors.put(port1, createSslSocketConnector(port1));
                 connectors.put(port2, createSslSocketConnector(port2));
 

@@ -151,7 +151,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         Object body = exchange.getIn().getMandatoryBody();
         Object[] params = (Object[]) body;
 
-        List<Object> results = new ArrayList<Object>();
+        List<Object> results = new ArrayList<>();
 
         int i = 1;
         for (ProgramParameter pgmParam : pgmCall.getParameterList()) {

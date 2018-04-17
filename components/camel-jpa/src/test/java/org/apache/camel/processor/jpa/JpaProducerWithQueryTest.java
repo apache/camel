@@ -122,7 +122,7 @@ public class JpaProducerWithQueryTest extends Assert {
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
         SimpleRegistry registry = new SimpleRegistry();
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
         // bind the params
         registry.put("params", params);

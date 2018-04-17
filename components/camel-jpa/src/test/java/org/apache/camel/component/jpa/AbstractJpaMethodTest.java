@@ -81,7 +81,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     public void produceNewEntitiesFromList() throws Exception {
         setUp("jpa://" + List.class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
         
-        List<Customer> customers = new ArrayList<Customer>();
+        List<Customer> customers = new ArrayList<>();
         customers.add(createDefaultCustomer());
         customers.add(createDefaultCustomer());
         List<?> returnedCustomers = template.requestBody(endpoint, customers, List.class);

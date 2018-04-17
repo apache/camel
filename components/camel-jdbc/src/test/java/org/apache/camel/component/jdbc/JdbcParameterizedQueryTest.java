@@ -33,7 +33,7 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
 
         // The linkedHashMap values has different order in JDK7 and JDK8
         // so I had to reduce the parameters size 
-        Map<String, Object> jdbcParams = new HashMap<String, Object>();
+        Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("name", "jstrachan");
 
         template.sendBodyAndHeaders("direct:start", "select * from customer where id = 'cust1' and name = ? order by ID", jdbcParams);
@@ -51,7 +51,7 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> jdbcParams = new HashMap<String, Object>();
+        Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("name", "jstrachan");
         jdbcParams.put("id", "cust1");
         
@@ -71,11 +71,11 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> jdbcParams = new HashMap<String, Object>();
+        Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("id", "cust1");
         jdbcParams.put("name", "jstrachan");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", "cust2");
         // this header should take precedence so we will not get cust2
         headers.put(JdbcConstants.JDBC_PARAMETERS, jdbcParams);

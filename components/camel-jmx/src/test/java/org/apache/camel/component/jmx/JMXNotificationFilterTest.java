@@ -34,7 +34,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
     /**
      * we'll track the rejected messages so we know what got filtered
      */
-    private LinkedHashSet<Notification> mRejected = new LinkedHashSet<Notification>();
+    private LinkedHashSet<Notification> mRejected = new LinkedHashSet<>();
 
     @Test
     public void testNotificationFilter() throws Exception {

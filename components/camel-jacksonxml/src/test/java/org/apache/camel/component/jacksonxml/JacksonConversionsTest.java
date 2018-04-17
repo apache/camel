@@ -37,7 +37,7 @@ public class JacksonConversionsTest extends CamelTestSupport {
     @Test
     public void shouldConvertMapToPojo() {
         String name = "someName";
-        Map<String, String> pojoAsMap = new HashMap<String, String>();
+        Map<String, String> pojoAsMap = new HashMap<>();
         pojoAsMap.put("name", name);
 
         TestPojo testPojo = (TestPojo) template.requestBody("direct:test", pojoAsMap);

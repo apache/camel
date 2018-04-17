@@ -54,7 +54,7 @@ public class BeanAndMethodELResolver extends BeanELResolver {
     protected Method findMethod(ELContext elContext, Object base, Object property) {
         if (base != null) {
             Method[] methods = base.getClass().getMethods();
-            List<Method> matching = new ArrayList<Method>();
+            List<Method> matching = new ArrayList<>();
             for (Method method : methods) {
                 if (method.getName().equals(property.toString()) && Modifier.isPublic(method.getModifiers())) {
                     matching.add(method);

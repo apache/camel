@@ -113,7 +113,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     }
 
     public void triggerRelationNotification() throws Exception {
-        List<ObjectName> list = new ArrayList<ObjectName>();
+        List<ObjectName> list = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
             list.add(new ObjectName("TestDomain", "name", "mbean-" + i));
         }

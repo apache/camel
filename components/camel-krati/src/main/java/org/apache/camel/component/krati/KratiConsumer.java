@@ -52,7 +52,7 @@ public class KratiConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
         int max = getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : Integer.MAX_VALUE;
 
-        Queue<Exchange> queue = new LinkedList<Exchange>();
+        Queue<Exchange> queue = new LinkedList<>();
 
         Iterator<Object> keyIterator = dataStore.keyIterator();
         int index = 0;

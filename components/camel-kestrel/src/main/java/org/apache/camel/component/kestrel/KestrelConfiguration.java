@@ -101,7 +101,7 @@ public class KestrelConfiguration implements Cloneable {
     }
 
     public List<InetSocketAddress> getInetSocketAddresses() {
-        List<InetSocketAddress> list = new ArrayList<InetSocketAddress>();
+        List<InetSocketAddress> list = new ArrayList<>();
         for (String address : addresses) {
             String[] tok = address.split(":");
             String host;

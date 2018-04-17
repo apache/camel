@@ -40,7 +40,7 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest 
             @Override
             public void configure() throws Exception {
                 // define socket connector properties
-                Map<String, Object> properties = new HashMap<String, Object>();
+                Map<String, Object> properties = new HashMap<>();
                 properties.put("acceptors", 4);
                 properties.put("statsOn", "false");
                 properties.put("soLingerTime", "5000");

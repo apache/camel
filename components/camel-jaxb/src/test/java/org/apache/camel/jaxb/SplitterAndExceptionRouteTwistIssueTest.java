@@ -165,7 +165,7 @@ class Twits implements Serializable {
 
     public List<Twit> getTwits() {
         if (twits == null) {
-            twits = new ArrayList<Twit>();
+            twits = new ArrayList<>();
         }
         return this.twits;
     }

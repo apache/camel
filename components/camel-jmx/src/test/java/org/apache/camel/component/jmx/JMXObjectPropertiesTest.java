@@ -41,7 +41,7 @@ public class JMXObjectPropertiesTest extends SimpleBeanFixture {
 
     @Override
     protected void initRegistry() {
-        Map<String, String> ht = new Hashtable<String, String>();
+        Map<String, String> ht = new Hashtable<>();
         ht.put("name", "simpleBean");
         getRegistry().put("myTable", ht);
     }
