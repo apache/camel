@@ -42,7 +42,7 @@ import org.apache.camel.bam.rules.ActivityRules;
 @Table(name = "CAMEL_PROCESSINSTANCE")
 public class ProcessInstance {
     private ProcessDefinition processDefinition;
-    private Collection<ActivityState> activityStates = new CopyOnWriteArraySet<ActivityState>();
+    private Collection<ActivityState> activityStates = new CopyOnWriteArraySet<>();
     private String correlationKey;
     private Date timeStarted;
     private Date timeCompleted;

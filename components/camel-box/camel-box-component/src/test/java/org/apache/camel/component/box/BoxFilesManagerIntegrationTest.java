@@ -34,8 +34,6 @@ import com.box.sdk.Metadata;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFilesManager;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxFilesManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -66,7 +64,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         com.box.sdk.BoxFile result = null;
 
         try {
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelBox.fileId", testFile.getID());
             // parameter type is String
@@ -91,7 +89,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         Metadata metadata = new Metadata();
         metadata.add("/foo", "bar");
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is com.box.sdk.Metadata
@@ -108,7 +106,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testCreateFileSharedLink() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is com.box.sdk.BoxSharedLink.Access
@@ -162,7 +160,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testDeleteFileVersion() throws Exception {
         testFile.uploadVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is Integer
@@ -175,7 +173,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testDownloadFile() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is java.io.OutputStream
@@ -197,7 +195,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     @Ignore // Requires premium user account to test
     @Test
     public void testDownloadPreviousFileVersion() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is Integer
@@ -226,7 +224,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testGetFileInfo() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is String[]
@@ -242,7 +240,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testGetFileMetadata() throws Exception {
         testFile.createMetadata(new Metadata());
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is String
@@ -265,7 +263,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testGetFileThumbnail() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is com.box.sdk.BoxFile.ThumbnailFileType
@@ -300,7 +298,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         com.box.sdk.BoxFile result = null;
 
         try {
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelBox.fileId", testFile.getID());
             // parameter type is String
@@ -325,7 +323,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testPromoteFileVersion() throws Exception {
         testFile.uploadVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is Integer
@@ -343,7 +341,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         com.box.sdk.BoxFile result = null;
 
         try {
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelBox.fileId", testFile.getID());
             // parameter type is String
@@ -366,7 +364,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxFile.Info info = testFile.getInfo();
         info.setDescription(CAMEL_TEST_FILE_DESCRIPTION);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is com.box.sdk.BoxFile.Info
@@ -385,7 +383,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // metadata.add("/foo", "bar");
         metadata = testFile.createMetadata(metadata);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is com.box.sdk.Metadata
@@ -403,7 +401,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         com.box.sdk.BoxFile result = null;
 
         try {
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             headers.put("CamelBox.parentFolderId", "0");
             headers.put("CamelBox.content", getClass().getResourceAsStream(CAMEL_TEST_FILE));
             headers.put("CamelBox.fileName", CAMEL_TEST_UPLOAD_FILE_NAME);
@@ -431,7 +429,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         com.box.sdk.BoxFile result = null;
 
         try {
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelBox.fileId", testFile.getID());
             // parameter type is java.io.InputStream

@@ -78,7 +78,7 @@ public class BlueprintContainerRegistry implements Registry {
     @Override
     public <T> Set<T> findByType(Class<T> type) {
         Map<String, T> map = lookupByType(blueprintContainer, type);
-        return new HashSet<T>(map.values());
+        return new HashSet<>(map.values());
     }
 
     @Override
@@ -102,7 +102,7 @@ public class BlueprintContainerRegistry implements Registry {
 
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type, boolean includeNonSingletons) {
         Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
-        Map<String, T> objects = new LinkedHashMap<String, T>();
+        Map<String, T> objects = new LinkedHashMap<>();
         Set<String> ids = blueprintContainer.getComponentIds();
         for (String id : ids) {
             try {

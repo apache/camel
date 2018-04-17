@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class BindyComplexCsvGenerateHeaderMarshallTest extends AbstractJUnit4SpringContextTests {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
                             + "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150.00,USD,14-01-2009\r\n";
 
@@ -59,7 +59,7 @@ public class BindyComplexCsvGenerateHeaderMarshallTest extends AbstractJUnit4Spr
     }
 
     private List<Map<String, Object>> generateModel() {
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
 
         Order order = new Order();
         order.setOrderNr(10);

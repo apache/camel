@@ -20,8 +20,6 @@ import java.util.List;
 
 import com.braintreegateway.Discount;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
-import org.apache.camel.component.braintree.internal.DiscountGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

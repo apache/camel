@@ -31,7 +31,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class ProcessRules extends ServiceSupport {
     private ProcessDefinition processDefinition;
-    private List<ActivityRules> activities = new CopyOnWriteArrayList<ActivityRules>();
+    private List<ActivityRules> activities = new CopyOnWriteArrayList<>();
 
     public synchronized void processExpired(ActivityState activityState) throws Exception {
         for (ActivityRules activityRules : activities) {

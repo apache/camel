@@ -27,7 +27,6 @@ import com.braintreegateway.PaymentMethod;
 import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

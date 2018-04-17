@@ -126,8 +126,8 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
         calendar.set(2009, 7, 1, 0, 0, 0);
         order.setOrderDate(calendar.getTime());
         
-        List<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
-        Map<String, Object> bodyRow = new HashMap<String, Object>();
+        List<Map<String, Object>> input = new ArrayList<>();
+        Map<String, Object> bodyRow = new HashMap<>();
         bodyRow.put(Order.class.getName(), order);
         input.add(createHeaderRow());
         input.add(bodyRow);
@@ -161,13 +161,13 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
         calendar.set(2009, 7, 1, 0, 0, 0);
         order.setOrderDate(calendar.getTime());
         
-        List<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
-        Map<String, Object> bodyRow = new HashMap<String, Object>();
+        List<Map<String, Object>> input = new ArrayList<>();
+        Map<String, Object> bodyRow = new HashMap<>();
         bodyRow.put(Order.class.getName(), order);
 
         input.add(bodyRow);
         
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_HEADER, createHeaderRow());
         headers.put(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_FOOTER, createFooterRow());
         
@@ -181,7 +181,7 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
     }
         
     private Map<String, Object> createHeaderRow() {
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+        Map<String, Object> headerMap = new HashMap<>();
         OrderHeader header = new OrderHeader();
         Calendar calendar = new GregorianCalendar();
         calendar.set(2009, 7, 1, 0, 0, 0);
@@ -191,7 +191,7 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
     }
    
     private Map<String, Object> createFooterRow() {
-        Map<String, Object> footerMap = new HashMap<String, Object>();
+        Map<String, Object> footerMap = new HashMap<>();
         OrderFooter footer = new OrderFooter();
         footer.setNumberOfRecordsInTheFile(1);
         footerMap.put(OrderFooter.class.getName(), footer);

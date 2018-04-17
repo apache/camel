@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
-import org.apache.camel.component.braintree.internal.SettlementBatchSummaryGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -47,7 +45,7 @@ public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraint
     @Ignore
     @Test
     public void testGenerateWithCustomFields() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is java.util.Calendar
         headers.put("CamelBraintree.settlementDate", null);
         // parameter type is String

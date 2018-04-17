@@ -19,7 +19,7 @@ package org.apache.camel.component.box.api;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -560,7 +560,7 @@ public class BoxFilesManager {
         try {
             LOG.debug("Creating shared link for file(id=" + fileId + ") with access=" + access
                     + (unshareDate == null ? ""
-                            : " unsharedDate=" + SimpleDateFormat.getDateTimeInstance().format(unshareDate)
+                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
                                     + " permissions=" + permissions));
 
             if (fileId == null) {

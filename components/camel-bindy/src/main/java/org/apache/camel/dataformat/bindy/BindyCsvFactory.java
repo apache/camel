@@ -55,9 +55,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     boolean isOneToMany;
 
-    private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
-    private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
-    private Map<String, Integer> sections = new HashMap<String, Integer>();
+    private Map<Integer, DataField> dataFields = new LinkedHashMap<>();
+    private Map<Integer, Field> annotatedFields = new LinkedHashMap<>();
+    private Map<String, Integer> sections = new HashMap<>();
 
     private int numberOptionalFields;
     private int numberMandatoryFields;
@@ -106,7 +106,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         maxpos = 0;
         for (Class<?> cl : models) {
-            List<Field> linkFields = new ArrayList<Field>();
+            List<Field> linkFields = new ArrayList<>();
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Class retrieved: {}", cl.getName());
@@ -296,7 +296,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
-        Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
+        Map<Integer, List<String>> results = new HashMap<>();
 
         // Check if separator exists
         ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
@@ -324,13 +324,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         // Transpose result
-        List<List<String>> l = new ArrayList<List<String>>();
+        List<List<String>> l = new ArrayList<>();
         if (isOneToMany) {
             l = product(results);
         } else {
             // Convert Map<Integer, List> into List<List>
-            TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
-            List<String> temp = new ArrayList<String>();
+            TreeMap<Integer, List<String>> sortValues = new TreeMap<>(results);
+            List<String> temp = new ArrayList<>();
 
             for (Entry<Integer, List<String>> entry : sortValues.entrySet()) {
                 // Get list of values
@@ -395,16 +395,16 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     private List<List<String>> product(Map<Integer, List<String>> values) {
-        TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(values);
+        TreeMap<Integer, List<String>> sortValues = new TreeMap<>(values);
 
-        List<List<String>> product = new ArrayList<List<String>>();
-        Map<Integer, Integer> index = new HashMap<Integer, Integer>();
+        List<List<String>> product = new ArrayList<>();
+        Map<Integer, Integer> index = new HashMap<>();
 
         int idx = 0;
         int idxSize = 0;
         do {
             idxSize = 0;
-            List<String> v = new ArrayList<String>();
+            List<String> v = new ArrayList<>();
 
             for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
                 List<String> l = values.get(ii);
@@ -460,9 +460,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 if (obj != null) {
 
-                    // Retrieve the format, pattern and precision associated to the type
-                    Class<?> type = field.getType();
-
                     // Create format
                     FormattingOptions formattingOptions = ConverterUtils.convert(datafield,
                             field.getType(),
@@ -517,7 +514,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
 
                 if (!results.containsKey(key)) {
-                    List<String> list = new LinkedList<String>();
+                    List<String> list = new LinkedList<>();
                     list.add(result);
                     results.put(key, list);
                 } else {
@@ -562,7 +559,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      */
     public String generateHeader() {
 
-        Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
+        Map<Integer, DataField> dataFieldsSorted = new TreeMap<>(dataFields);
         Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
 
         StringBuilder builderHeader = new StringBuilder();

@@ -35,7 +35,7 @@ import org.apache.camel.util.ServiceHelper;
 public class ActivityRules extends ServiceSupport {
     private int expectedMessages = 1;
     private ProcessRules processRules;
-    private List<TemporalRule> rules = new ArrayList<TemporalRule>();
+    private List<TemporalRule> rules = new ArrayList<>();
     private String activityName;
     private final org.apache.camel.bam.ProcessBuilder builder;
 

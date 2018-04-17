@@ -78,12 +78,12 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
         // the body is not a prepared list so help a bit here and create one for us
         if (!isPreparedList(body)) {
-            models = new ArrayList<Map<String, Object>>();
+            models = new ArrayList<>();
             Iterator<?> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 Object model = it.next();
                 String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<String, Object>();
+                Map<String, Object> row = new HashMap<>();
                 row.put(name, model);
                 row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
@@ -180,7 +180,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
         // Pojos of the model
         Map<String, Object> model;

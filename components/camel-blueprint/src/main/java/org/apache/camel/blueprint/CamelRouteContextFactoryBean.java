@@ -31,7 +31,7 @@ import org.apache.camel.model.RouteDefinition;
 public class CamelRouteContextFactoryBean extends IdentifiedType {
 
     @XmlElement(name = "route", required = true)
-    private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+    private List<RouteDefinition> routes = new ArrayList<>();
 
     public List<RouteDefinition> getRoutes() throws Exception {
         return routes;

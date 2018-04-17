@@ -22,8 +22,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxEventLogsManager;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxEventLogsManagerApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -47,7 +45,7 @@ public class BoxEventLogsManagerIntegrationTest extends AbstractBoxTestSupport {
         Date after = new Date();
         after.setTime(before.getTime() - ONE_MINUTE_OF_MILLISECONDS);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.position", null);
         // parameter type is java.util.Date

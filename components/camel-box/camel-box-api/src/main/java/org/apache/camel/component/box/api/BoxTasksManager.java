@@ -109,7 +109,7 @@ public class BoxTasksManager {
             }
 
             BoxFile fileToAddTaskOn = new BoxFile(boxConnection, fileId);
-            return (BoxTask) fileToAddTaskOn.addTask(action, message, dueAt).getResource();
+            return fileToAddTaskOn.addTask(action, message, dueAt).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);

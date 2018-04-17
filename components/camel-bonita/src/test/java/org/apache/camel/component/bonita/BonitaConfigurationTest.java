@@ -51,8 +51,7 @@ public class BonitaConfigurationTest extends CamelTestSupport {
 
     @Test(expected = ResolveEndpointFailedException.class)
     public void testBonitaConfigurationWrongOperation() {
-        BonitaEndpoint bonitaEndpoint =
-                context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class);
+        context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class);
     }
 
 }

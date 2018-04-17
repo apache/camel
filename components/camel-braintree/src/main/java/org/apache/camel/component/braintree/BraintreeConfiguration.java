@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
-import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

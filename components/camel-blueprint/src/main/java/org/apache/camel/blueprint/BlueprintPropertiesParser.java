@@ -47,7 +47,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     private final PropertiesComponent propertiesComponent;
     private final BlueprintContainer container;
     private final PropertiesParser delegate;
-    private final Set<AbstractPropertyPlaceholder> placeholders = new LinkedHashSet<AbstractPropertyPlaceholder>();
+    private final Set<AbstractPropertyPlaceholder> placeholders = new LinkedHashSet<>();
     private Method method;
 
     public BlueprintPropertiesParser(PropertiesComponent propertiesComponent, BlueprintContainer container, PropertiesParser delegate) {
@@ -64,7 +64,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
      * @return the ids, will be an empty array if none found.
      */
     public String[] lookupPropertyPlaceholderIds() {
-        List<String> ids = new ArrayList<String>();
+        List<String> ids = new ArrayList<>();
 
         for (Object componentId : container.getComponentIds()) {
             String id = (String) componentId;

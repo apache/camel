@@ -40,8 +40,8 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyComplexKeyValuePairStandaloneTest.class);
 
-    protected Map<String, Object> model = new HashMap<String, Object>();
-    protected Set<Class<?>> models = new HashSet<Class<?>>();
+    protected Map<String, Object> model = new HashMap<>();
+    protected Set<Class<?>> models = new HashSet<>();
     BindyAbstractFactory factory;
     int counter;
 

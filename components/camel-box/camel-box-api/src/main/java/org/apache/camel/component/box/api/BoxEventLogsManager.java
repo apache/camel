@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.box.api;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,8 +78,8 @@ public class BoxEventLogsManager {
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {
         try {
             LOG.debug("Getting all enterprise events occuring between "
-                    + (after == null ? after : SimpleDateFormat.getDateTimeInstance().format(after)) + " and "
-                    + (before == null ? before : SimpleDateFormat.getDateTimeInstance().format(before))
+                    + (after == null ? after : DateFormat.getDateTimeInstance().format(after)) + " and "
+                    + (before == null ? before : DateFormat.getDateTimeInstance().format(before))
                     + (position == null ? position : (" starting at " + position)));
 
             if (after == null) {
@@ -95,7 +95,7 @@ public class BoxEventLogsManager {
 
             EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, position, after, before, types);
 
-            List<BoxEvent> results = new ArrayList<BoxEvent>();
+            List<BoxEvent> results = new ArrayList<>();
             for (BoxEvent event : eventLog) {
                 results.add(event);
             }
