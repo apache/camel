@@ -76,7 +76,7 @@ public class ElasticsearchComponent extends UriEndpointComponent {
             return null;
         }
         List<String> addressesStr = Arrays.asList(ipsString.split(ElasticsearchConstants.TRANSPORT_ADDRESSES_SEPARATOR_REGEX));
-        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<InetSocketTransportAddress>(addressesStr.size());
+        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<>(addressesStr.size());
         for (String address : addressesStr) {
             String[] split = address.split(ElasticsearchConstants.IP_PORT_SEPARATOR_REGEX);
             String hostname;

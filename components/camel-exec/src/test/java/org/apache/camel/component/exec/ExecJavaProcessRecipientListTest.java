@@ -275,7 +275,7 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
 
     List<String> buildArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-cp");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);

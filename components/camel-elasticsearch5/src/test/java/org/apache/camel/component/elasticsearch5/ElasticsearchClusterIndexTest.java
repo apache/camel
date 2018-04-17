@@ -27,7 +27,7 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
     @Test
     public void indexWithIpAndPort() throws Exception {
         Map<String, String> map = createIndexedData();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
@@ -54,7 +54,7 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
     @Test
     public void indexWithTransportAddresses() throws Exception {
         Map<String, String> map = createIndexedData();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "facebook");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "post");
@@ -70,7 +70,7 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
     @Test
     public void indexWithIpAndTransportAddresses() throws Exception {
         Map<String, String> map = createIndexedData();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "ebay");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "search");

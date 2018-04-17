@@ -59,7 +59,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Dictionary<String, String> props = new Hashtable<String, String>();
+        Dictionary<String, String> props = new Hashtable<>();
         props.put(EventConstants.EVENT_TOPIC, endpoint.getTopic());
         registration = endpoint.getComponent().getBundleContext().registerService(EventHandler.class.getName(), this, props);
     }
