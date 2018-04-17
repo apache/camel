@@ -67,6 +67,10 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return (String) properties.get(Route.ID_PROPERTY);
     }
 
+    public String getGroup() {
+        return (String) properties.get(Route.GROUP_PROPERTY);
+    }
+
     public String getUptime() {
         long delta = getUptimeMillis();
         if (delta == 0) {

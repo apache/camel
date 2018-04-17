@@ -1095,6 +1095,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Set the route group for this route.
+     *
+     * @param group  the route group
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type routeGroup(String group) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.setGroup(group);
+        }
+
+        return (Type) this;
+    }
+
+    /**
      * Set the route description for this route
      *
      * @param description the route description
