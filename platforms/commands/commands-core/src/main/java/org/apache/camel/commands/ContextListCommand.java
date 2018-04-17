@@ -92,7 +92,7 @@ public class ContextListCommand extends AbstractCamelCommand {
                 maxUptimeLen = java.lang.Math.max(maxUptimeLen, uptime == null ? 0 : uptime.length());
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>();
+            final Map<String, Integer> retval = new Hashtable<>();
             retval.put(CONTEXT_COLUMN_LABEL, maxNameLen);
             retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
             retval.put(TOTAL_COLUMN_LABEL, maxTotalLen);

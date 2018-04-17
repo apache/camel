@@ -45,8 +45,8 @@ public class JavadocParser extends Parser {
     private String methodWithTypes;
     private StringBuilder methodTextBuilder = new StringBuilder();
 
-    private List<String> methods = new ArrayList<String>();
-    private Map<String, String> methodText = new HashMap<String, String>();
+    private List<String> methods = new ArrayList<>();
+    private Map<String, String> methodText = new HashMap<>();
     private String errorMessage;
 
     public JavadocParser(DTD dtd, String docPath) {

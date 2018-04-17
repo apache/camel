@@ -154,7 +154,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         context.put("componentPackage", componentPackage);
 
         // generate parameter names and types for configuration, sorted by parameter name
-        Map<String, ApiMethodArg> parameters = new TreeMap<String, ApiMethodArg>();
+        Map<String, ApiMethodArg> parameters = new TreeMap<>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodArg argument : model.getArguments()) {
 
@@ -272,7 +272,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     static {
-        PRIMITIVE_VALUES = new HashMap<Class<?>, String>();
+        PRIMITIVE_VALUES = new HashMap<>();
         PRIMITIVE_VALUES.put(Boolean.TYPE, "Boolean.FALSE");
         PRIMITIVE_VALUES.put(Byte.TYPE, "(byte) 0");
         PRIMITIVE_VALUES.put(Character.TYPE, "(char) 0");

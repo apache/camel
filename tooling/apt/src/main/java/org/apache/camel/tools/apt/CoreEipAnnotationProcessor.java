@@ -144,7 +144,7 @@ public class CoreEipAnnotationProcessor {
         EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
-        Set<EipOption> eipOptions = new TreeSet<EipOption>(new EipOptionComparator(eipModel));
+        Set<EipOption> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(processingEnv, writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
         // after we have found all the options then figure out if the model accepts input/output
@@ -354,7 +354,7 @@ public class CoreEipAnnotationProcessor {
         required = findRequired(fieldElement, required);
 
         // gather enums
-        Set<String> enums = new TreeSet<String>();
+        Set<String> enums = new TreeSet<>();
         boolean isEnum;
         if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
             isEnum = true;
@@ -468,7 +468,7 @@ public class CoreEipAnnotationProcessor {
             }
 
             // gather enums
-            Set<String> enums = new TreeSet<String>();
+            Set<String> enums = new TreeSet<>();
             boolean isEnum;
             if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
                 isEnum = true;
@@ -494,7 +494,7 @@ public class CoreEipAnnotationProcessor {
             }
 
             // gather oneOf expression/predicates which uses language
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
             if (isOneOf) {
                 // okay its actually an language expression, so favor using that in the eip option
@@ -505,7 +505,7 @@ public class CoreEipAnnotationProcessor {
                     if (languages != null) {
                         String superClassName = canonicalClassName(languages.toString());
                         // find all classes that has that superClassName
-                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                        Set<TypeElement> children = new LinkedHashSet<>();
                         findTypeElementChildren(processingEnv, roundEnv, children, superClassName);
                         for (TypeElement child : children) {
                             XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
@@ -559,7 +559,7 @@ public class CoreEipAnnotationProcessor {
             required = findRequired(fieldElement, required);
 
             // gather oneOf of the elements
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             for (XmlElement element : elements.value()) {
                 String child = element.name();
                 oneOfTypes.add(child);
@@ -653,7 +653,7 @@ public class CoreEipAnnotationProcessor {
         eipOptions.add(ep);
 
         // shutdownRoute
-        Set<String> enums = new LinkedHashSet<String>();
+        Set<String> enums = new LinkedHashSet<>();
         enums.add("Default");
         enums.add("Defer");
         docComment = findJavaDoc(elementUtils, null, "shutdownRoute", "Default", classElement, true);
@@ -662,7 +662,7 @@ public class CoreEipAnnotationProcessor {
         eipOptions.add(ep);
 
         // shutdownRunningTask
-        enums = new LinkedHashSet<String>();
+        enums = new LinkedHashSet<>();
         enums.add("CompleteCurrentTaskOnly");
         enums.add("CompleteAllTasks");
         docComment = findJavaDoc(elementUtils, null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
@@ -671,7 +671,7 @@ public class CoreEipAnnotationProcessor {
         eipOptions.add(ep);
 
         // inputs
-        Set<String> oneOfTypes = new TreeSet<String>();
+        Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("from");
         docComment = findJavaDoc(elementUtils, null, "inputs", null, classElement, true);
         ep = new EipOption("inputs", "Inputs", "element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment,
@@ -680,9 +680,9 @@ public class CoreEipAnnotationProcessor {
 
         // outputs
         // gather oneOf which extends any of the output base classes
-        oneOfTypes = new TreeSet<String>();
+        oneOfTypes = new TreeSet<>();
         // find all classes that has that superClassName
-        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+        Set<TypeElement> children = new LinkedHashSet<>();
         for (String superclass : ONE_OF_OUTPUTS) {
             findTypeElementChildren(processingEnv, roundEnv, children, superclass);
         }
@@ -743,7 +743,7 @@ public class CoreEipAnnotationProcessor {
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
 
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             oneOfTypes.add("route");
 
             EipOption ep = new EipOption("routes", "Routes", "element", fieldTypeName, false, "", "Contains the Camel routes",
@@ -762,7 +762,7 @@ public class CoreEipAnnotationProcessor {
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
 
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             oneOfTypes.add("rest");
 
             EipOption ep = new EipOption("rests", "Rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl",
@@ -787,9 +787,9 @@ public class CoreEipAnnotationProcessor {
             String fieldTypeName = fieldType.toString();
 
             // gather oneOf which extends any of the output base classes
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             // find all classes that has that superClassName
-            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+            Set<TypeElement> children = new LinkedHashSet<>();
             for (String superclass : ONE_OF_OUTPUTS) {
                 findTypeElementChildren(processingEnv, roundEnv, children, superclass);
             }
@@ -840,9 +840,9 @@ public class CoreEipAnnotationProcessor {
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
 
             // gather oneOf which extends any of the output base classes
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             // find all classes that has that superClassName
-            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+            Set<TypeElement> children = new LinkedHashSet<>();
             for (String superclass : ONE_OF_VERBS) {
                 findTypeElementChildren(processingEnv, roundEnv, children, superclass);
             }
@@ -902,12 +902,12 @@ public class CoreEipAnnotationProcessor {
             }
 
             // gather oneOf expression/predicates which uses language
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             for (String language : ONE_OF_LANGUAGES) {
                 TypeElement languages = findTypeElement(processingEnv, roundEnv, language);
                 String superClassName = canonicalClassName(languages.toString());
                 // find all classes that has that superClassName
-                Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                Set<TypeElement> children = new LinkedHashSet<>();
                 findTypeElementChildren(processingEnv, roundEnv, children, superClassName);
                 for (TypeElement child : children) {
                     XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
@@ -955,7 +955,7 @@ public class CoreEipAnnotationProcessor {
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
 
             // indicate that this element is one of when
-            Set<String> oneOfTypes = new HashSet<String>();
+            Set<String> oneOfTypes = new HashSet<>();
             oneOfTypes.add("when");
 
             // when is predicate

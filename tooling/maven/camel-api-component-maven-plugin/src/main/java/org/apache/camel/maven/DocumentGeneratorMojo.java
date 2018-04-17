@@ -138,7 +138,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         context.put("uriFormat", scheme + suffix);
 
         // API helpers
-        final Map<String, ApiMethodHelper> apiHelpers = new TreeMap<String, ApiMethodHelper>();
+        final Map<String, ApiMethodHelper> apiHelpers = new TreeMap<>();
         for (Object element : collection.getApiHelpers().entrySet()) {
             Map.Entry entry = (Map.Entry) element;
             apiHelpers.put(((ApiName) entry.getKey()).getName(), (ApiMethodHelper) entry.getValue());
@@ -146,8 +146,8 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         context.put("apiHelpers", apiHelpers);
 
         // API methods and endpoint configurations
-        final Map<String, Class<? extends ApiMethod>> apiMethods = new TreeMap<String, Class<? extends ApiMethod>>();
-        final Map<String, Class<?>> apiConfigs = new TreeMap<String, Class<?>>();
+        final Map<String, Class<? extends ApiMethod>> apiMethods = new TreeMap<>();
+        final Map<String, Class<?>> apiConfigs = new TreeMap<>();
         for (Object element : collection.getApiMethods().entrySet()) {
             Map.Entry entry = (Map.Entry) element;
             final String name = ((ApiName) entry.getValue()).getName();
@@ -184,7 +184,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         // get declared and derived fields for component config
         // use get/set methods instead of fields, since this class could inherit others, that have private fields
         // so getDeclaredFields() won't work, like it does for generated endpoint config classes!!!
-        final Map<String, String> configFields = new TreeMap<String, String>();
+        final Map<String, String> configFields = new TreeMap<>();
         do {
             IntrospectionSupport.ClassInfo classInfo = IntrospectionSupport.cacheClass(configClass);
             for (IntrospectionSupport.MethodInfo method : classInfo.methods) {
@@ -315,32 +315,32 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
     public static List<EndpointInfo> getEndpoints(Class<? extends ApiMethod> apiMethod,
                                                   ApiMethodHelper<?> helper, Class<?> endpointConfig) {
         // get list of valid options
-        final Set<String> validOptions = new HashSet<String>();
+        final Set<String> validOptions = new HashSet<>();
         for (Field field : endpointConfig.getDeclaredFields()) {
             validOptions.add(field.getName());
         }
 
         // create method name map
-        final Map<String, List<ApiMethod>> methodMap = new TreeMap<String, List<ApiMethod>>();
+        final Map<String, List<ApiMethod>> methodMap = new TreeMap<>();
         for (ApiMethod method : apiMethod.getEnumConstants()) {
             String methodName = method.getName();
             List<ApiMethod> apiMethods = methodMap.get(methodName);
             if (apiMethods == null) {
-                apiMethods = new ArrayList<ApiMethod>();
+                apiMethods = new ArrayList<>();
                 methodMap.put(methodName, apiMethods);
             }
             apiMethods.add(method);
         }
 
         // create method name to alias name map
-        final Map<String, Set<String>> aliasMap = new TreeMap<String, Set<String>>();
+        final Map<String, Set<String>> aliasMap = new TreeMap<>();
         final Map<String, Set<String>> aliasToMethodMap = helper.getAliases();
         for (Map.Entry<String, Set<String>> entry : aliasToMethodMap.entrySet()) {
             final String alias = entry.getKey();
             for (String method : entry.getValue()) {
                 Set<String> aliases = aliasMap.get(method);
                 if (aliases == null) {
-                    aliases = new TreeSet<String>();
+                    aliases = new TreeSet<>();
                     aliasMap.put(method, aliases);
                 }
                 aliases.add(alias);
@@ -348,16 +348,16 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         }
 
         // create options map and return type map
-        final Map<String, Set<String>> optionMap = new TreeMap<String, Set<String>>();
-        final Map<String, Set<String>> returnType = new TreeMap<String, Set<String>>();
+        final Map<String, Set<String>> optionMap = new TreeMap<>();
+        final Map<String, Set<String>> returnType = new TreeMap<>();
         for (Map.Entry<String, List<ApiMethod>> entry : methodMap.entrySet()) {
             final String name = entry.getKey();
             final List<ApiMethod> apiMethods = entry.getValue();
 
             // count the number of times, every valid option shows up across methods
             // and also collect return types
-            final Map<String, Integer> optionCount = new TreeMap<String, Integer>();
-            final TreeSet<String> resultTypes = new TreeSet<String>();
+            final Map<String, Integer> optionCount = new TreeMap<>();
+            final TreeSet<String> resultTypes = new TreeSet<>();
             returnType.put(name, resultTypes);
 
             for (ApiMethod method : apiMethods) {
@@ -383,14 +383,14 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
             }
 
             // collect method options
-            final TreeSet<String> options = new TreeSet<String>();
+            final TreeSet<String> options = new TreeSet<>();
             optionMap.put(name, options);
-            final Set<String> mandatory = new TreeSet<String>();
+            final Set<String> mandatory = new TreeSet<>();
 
             // generate optional and mandatory lists for overloaded methods
             int nMethods = apiMethods.size();
             for (ApiMethod method : apiMethods) {
-                final Set<String> optional = new TreeSet<String>();
+                final Set<String> optional = new TreeSet<>();
 
                 for (String arg : method.getArgNames()) {
                     if (validOptions.contains(arg)) {
@@ -417,7 +417,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         }
 
         // create endpoint data
-        final List<EndpointInfo> infos = new ArrayList<EndpointInfo>();
+        final List<EndpointInfo> infos = new ArrayList<>();
         for (Map.Entry<String, List<ApiMethod>> methodEntry : methodMap.entrySet()) {
             final String endpoint = methodEntry.getKey();
 

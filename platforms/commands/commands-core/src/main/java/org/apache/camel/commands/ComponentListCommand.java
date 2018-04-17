@@ -118,7 +118,7 @@ public class ComponentListCommand extends AbstractContextCommand {
                 }
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>(4);
+            final Map<String, Integer> retval = new Hashtable<>(4);
             retval.put(NAME_COLUMN_LABEL, maxNameLen);
             retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
             retval.put(MAVEN_COLUMN_LABEL, maxMavenLen);

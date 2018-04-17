@@ -107,7 +107,7 @@ public class SpringAnnotationProcessor {
         EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
         // collect eip information
-        Set<EipOption> eipOptions = new TreeSet<EipOption>(new EipOptionComparator(eipModel));
+        Set<EipOption> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(processingEnv, writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
         String json = createParameterJsonSchema(eipModel, eipOptions);
@@ -272,7 +272,7 @@ public class SpringAnnotationProcessor {
         required = findRequired(fieldElement, required);
 
         // gather enums
-        Set<String> enums = new TreeSet<String>();
+        Set<String> enums = new TreeSet<>();
         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
         if (isEnum) {
             TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
@@ -322,7 +322,7 @@ public class SpringAnnotationProcessor {
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
 
-        Set<String> oneOfTypes = new TreeSet<String>();
+        Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("route");
 
         EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes",
@@ -339,7 +339,7 @@ public class SpringAnnotationProcessor {
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
 
-        Set<String> oneOfTypes = new TreeSet<String>();
+        Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("rest");
 
         EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl",
@@ -377,7 +377,7 @@ public class SpringAnnotationProcessor {
             required = findRequired(fieldElement, required);
 
             // gather enums
-            Set<String> enums = new LinkedHashSet<String>();
+            Set<String> enums = new LinkedHashSet<>();
             boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
             if (isEnum) {
                 TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
@@ -462,7 +462,7 @@ public class SpringAnnotationProcessor {
             required = findRequired(fieldElement, required);
 
             // gather oneOf of the elements
-            Set<String> oneOfTypes = new TreeSet<String>();
+            Set<String> oneOfTypes = new TreeSet<>();
             for (XmlElement element : elements.value()) {
                 String child = element.name();
                 oneOfTypes.add(child);

@@ -136,7 +136,7 @@ public class RestRegistryListCommand extends AbstractContextCommand {
             maxRouteLen = Math.max(maxRouteLen, routeId == null ? 0 : routeId.length());
         }
 
-        final Map<String, Integer> retval = new Hashtable<String, Integer>();
+        final Map<String, Integer> retval = new Hashtable<>();
         retval.put(URL_COLUMN_NAME, maxUriLen);
         retval.put(BASE_PATH_LABEL, maxBasePathLen);
         retval.put(URI_TEMPLATE_LABEL, maxUriTemplateLen);

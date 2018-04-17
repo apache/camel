@@ -66,7 +66,6 @@ public class EndpointOptionModel extends OptionModel {
     }
 
     public String getShortJavaType(int watermark) {
-        String group = getGroup();
         String type = getType();
         String javaType = getJavaType();
 
