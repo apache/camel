@@ -22,6 +22,7 @@
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
   <repository>mvn:org.hibernate.validator/hibernate-validator-osgi-karaf-features/${hibernate-validator-version}/xml/features</repository>
+  <repository>mvn:ca.uhn.hapi.fhir.karaf/hapi-fhir/${hapi-fhir-version}/xml/features</repository>
 
   <feature name='xml-specs-api' version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
@@ -671,19 +672,9 @@
   </feature>
   <feature name='camel-fhir' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${guava-fhir-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:ca.uhn.hapi/hapi-osgi-base/${hapi-version}</bundle>
-    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-client/${hapi-fhir-version}</bundle>
-    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-base/${hapi-fhir-version}$DynamicImport-Package=*</bundle>
-    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-structures-dstu3/${hapi-fhir-version}</bundle>
-    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-utilities/${hapi-fhir-version}</bundle>
-    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-structures-dstu2/${hapi-fhir-version}</bundle>
+    <feature version='${hapi-fhir-version}'>hapi-fhir</feature>
+    <feature version='${hapi-fhir-version}'>hapi-fhir-dstu2</feature>
+    <feature version='${hapi-fhir-version}'>hapi-fhir-dstu3</feature>
     <bundle>mvn:org.apache.camel/camel-fhir/${project.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
