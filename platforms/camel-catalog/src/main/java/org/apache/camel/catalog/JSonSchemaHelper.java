@@ -399,7 +399,7 @@ public final class JSonSchemaHelper {
     }
 
     public static Set<String> getNames(List<Map<String, String>> rows) {
-        Set<String> answer = new LinkedHashSet<String>();
+        Set<String> answer = new LinkedHashSet<>();
         for (Map<String, String> row : rows) {
             if (row.containsKey("name")) {
                 answer.add(row.get("name"));
