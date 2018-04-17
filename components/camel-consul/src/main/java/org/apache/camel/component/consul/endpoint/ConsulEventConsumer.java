@@ -52,7 +52,7 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
     @Override
     protected void doStop() throws Exception {
-        scheduledExecutorService.shutdown();
+        executorServiceManager.shutdownGraceful(scheduledExecutorService);
         super.doStop();
     }
 
