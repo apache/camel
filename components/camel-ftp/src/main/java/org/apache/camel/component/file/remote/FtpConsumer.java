@@ -145,7 +145,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 fileExpressionResult = evaluateFileExpression();
                 if (fileExpressionResult != null) {
                     file.setName(fileExpressionResult);
-                    files = new ArrayList<FTPFile>(1);
+                    files = new ArrayList<>(1);
                     files.add(file);
                 }
             }
@@ -242,7 +242,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file, String charset) {
-        RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
+        RemoteFile<FTPFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);

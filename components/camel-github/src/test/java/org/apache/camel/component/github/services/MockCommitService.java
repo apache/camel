@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 public class MockCommitService extends CommitService {
     protected static final Logger LOG = LoggerFactory.getLogger(MockCommitService.class);
 
-    private List<RepositoryCommit> commitsList = new ArrayList<RepositoryCommit>();
+    private List<RepositoryCommit> commitsList = new ArrayList<>();
     private AtomicLong fakeSha = new AtomicLong(System.currentTimeMillis());
-    private Map<String, CommitStatus> commitStatus = new HashMap<String, CommitStatus>();
+    private Map<String, CommitStatus> commitStatus = new HashMap<>();
 
     public synchronized RepositoryCommit addRepositoryCommit() {
         User author = new User();

@@ -45,15 +45,15 @@ public final class FacebookMethodsTypeHelper {
 
     // maps method name to FacebookMethodsType
     private static final Map<String, List<FacebookMethodsType>> METHOD_MAP =
-        new HashMap<String, List<FacebookMethodsType>>();
+        new HashMap<>();
 
     // maps method name to method arguments of the form Class type1, String name1, Class type2, String name2,...
     private static final Map<String, List<Object>> ARGUMENTS_MAP =
-        new HashMap<String, List<Object>>();
+        new HashMap<>();
 
     // maps argument name to argument type
     private static final Map<String, Class<?>> VALID_ARGUMENTS =
-        new HashMap<String, Class<?>>();
+        new HashMap<>();
 
     static {
         final FacebookMethodsType[] methods = FacebookMethodsType.values();
@@ -64,7 +64,7 @@ public final class FacebookMethodsTypeHelper {
             final String name = method.getName();
             List<FacebookMethodsType> overloads = METHOD_MAP.get(name);
             if (overloads == null) {
-                overloads = new ArrayList<FacebookMethodsType>();
+                overloads = new ArrayList<>();
                 METHOD_MAP.put(method.getName(), overloads);
             }
             overloads.add(method);
@@ -72,7 +72,7 @@ public final class FacebookMethodsTypeHelper {
             // add arguments for this method
             List<Object> arguments = ARGUMENTS_MAP.get(name);
             if (arguments == null) {
-                arguments = new ArrayList<Object>();
+                arguments = new ArrayList<>();
                 ARGUMENTS_MAP.put(name, arguments);
             }
 
@@ -148,8 +148,8 @@ public final class FacebookMethodsTypeHelper {
                                                           String... argNames) {
         List<String> argsList = Arrays.asList(argNames);
         // list of methods that have all args in the given names
-        final List<FacebookMethodsType> result = new ArrayList<FacebookMethodsType>();
-        final List<FacebookMethodsType> extraArgs = new ArrayList<FacebookMethodsType>();
+        final List<FacebookMethodsType> result = new ArrayList<>();
+        final List<FacebookMethodsType> extraArgs = new ArrayList<>();
 
         for (FacebookMethodsType method : methods) {
             final List<String> methodArgs = method.getArgNames();
@@ -217,7 +217,7 @@ public final class FacebookMethodsTypeHelper {
             return getArguments(convertToSearchMethod(name));
         case GET_AND_SEARCH:
         default:
-            final List<Object> arguments = new ArrayList<Object>();
+            final List<Object> arguments = new ArrayList<>();
             arguments.addAll(getArguments(convertToGetMethod(name)));
             arguments.addAll(getArguments(convertToSearchMethod(name)));
             return Collections.unmodifiableList(arguments);
@@ -233,7 +233,7 @@ public final class FacebookMethodsTypeHelper {
      */
     public static Set<String> getMissingProperties(String methodName, FacebookNameStyle nameStyle, Set<String> argNames) {
         final List<Object> argsWithTypes = getArgumentsForNameStyle(methodName, nameStyle);
-        final Set<String> missingArgs = new HashSet<String>();
+        final Set<String> missingArgs = new HashSet<>();
 
         for (int i = 1; i < argsWithTypes.size(); i += 2) {
             final String name = (String) argsWithTypes.get(i);

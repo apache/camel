@@ -63,7 +63,7 @@ public class FileEndpointReferenceRouteTest extends Assert {
         @Provides
         @JndiBind("fileFilter")
         public GenericFileFilter<?> getfileFilter() {
-            return new MyFileFilter<Object>();
+            return new MyFileFilter<>();
         }
         
 
@@ -83,7 +83,7 @@ public class FileEndpointReferenceRouteTest extends Assert {
     
     @Test
     public void runTest() throws Exception {
-        Hashtable<String, Object> env = new Hashtable<String, Object>();
+        Hashtable<String, Object> env = new Hashtable<>();
         env.put(Context.PROVIDER_URL, GuiceInitialContextFactory.class.getName());
         env.put(Injectors.MODULE_CLASS_NAMES, MyModule.class.getName());
 

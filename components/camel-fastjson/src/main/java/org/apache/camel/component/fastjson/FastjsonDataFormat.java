@@ -19,7 +19,6 @@ package org.apache.camel.component.fastjson;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
@@ -30,7 +29,6 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -104,7 +102,7 @@ public class FastjsonDataFormat extends ServiceSupport implements DataFormat, Da
     @Override
     protected void doStart() throws Exception {
         if (config == null) {
-            List<SerializerFeature> serializerFeatureList = new ArrayList<SerializerFeature>();
+            List<SerializerFeature> serializerFeatureList = new ArrayList<>();
             config = new FastJsonConfig();
             if (prettyPrint) {
                 serializerFeatureList.add(SerializerFeature.PrettyFormat);

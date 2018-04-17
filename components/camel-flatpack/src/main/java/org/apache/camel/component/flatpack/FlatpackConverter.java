@@ -42,18 +42,18 @@ public final class FlatpackConverter {
 
     @Converter
     public static Map<String, Object> toMap(DataSet dataSet) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         putValues(map, dataSet);
         return map;
     }
 
     @Converter
     public static List<Map<String, Object>> toList(DataSet dataSet) {
-        List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> answer = new ArrayList<>();
         dataSet.goTop();
 
         while (dataSet.next()) {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             putValues(map, dataSet);
             answer.add(map);
         }

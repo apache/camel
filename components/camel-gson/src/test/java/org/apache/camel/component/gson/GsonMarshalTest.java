@@ -28,7 +28,7 @@ public class GsonMarshalTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-        Map<String, String> in = new HashMap<String, String>();
+        Map<String, String> in = new HashMap<>();
         in.put("name", "Camel");
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");

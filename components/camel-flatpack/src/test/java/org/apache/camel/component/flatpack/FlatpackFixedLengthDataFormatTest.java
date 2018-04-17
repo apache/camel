@@ -58,8 +58,8 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         // by default we get on big message
         mock.expectedMessageCount(1);
 
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-        Map<String, Object> row = new LinkedHashMap<String, Object>();
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<String, Object> row = new LinkedHashMap<>();
         row.put("FIRSTNAME", "JOHN");
         row.put("LASTNAME", "DOE");
         row.put("ADDRESS", "1234 CIRCLE CT");

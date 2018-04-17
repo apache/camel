@@ -42,7 +42,7 @@ public class CalendarCalendarsIntegrationTest extends AbstractGoogleCalendarTest
         Calendar calendarFromGet = requestBody("direct://GET", calendar.getId());
         assertTrue(calendar.getId().equals(calendarFromGet.getId()));
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleCalendar.calendarId", calendar.getId());
         // parameter type is com.google.api.services.calendar.model.Calendar

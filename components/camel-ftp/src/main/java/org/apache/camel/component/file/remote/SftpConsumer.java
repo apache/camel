@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
@@ -32,7 +31,6 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * Secure FTP consumer
@@ -134,7 +132,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 fileExpressionResult = evaluateFileExpression();
                 if (fileExpressionResult != null) {
                     SftpRemoteFile file = new SftpRemoteFileSingle(fileExpressionResult);
-                    files = new ArrayList<SftpRemoteFile>(1);
+                    files = new ArrayList<>(1);
                     files.add(file);
                 }
             }
@@ -221,7 +219,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     private RemoteFile<SftpRemoteFile> asRemoteFile(String absolutePath, SftpRemoteFile file, String charset) {
-        RemoteFile<SftpRemoteFile> answer = new RemoteFile<SftpRemoteFile>();
+        RemoteFile<SftpRemoteFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);

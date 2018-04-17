@@ -42,7 +42,7 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
         File folder = uploadTestFolder();
         File file = uploadTestFile();
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.folderId", folder.getId());
         
@@ -73,7 +73,7 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
     public void testUploadFileToRootFolder() throws Exception {
         File file = uploadTestFile();
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.folderId", ROOT_FOLDER);
         

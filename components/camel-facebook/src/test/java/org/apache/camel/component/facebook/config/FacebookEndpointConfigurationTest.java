@@ -24,8 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
 public class FacebookEndpointConfigurationTest extends CamelTestSupport {
 
     @Test

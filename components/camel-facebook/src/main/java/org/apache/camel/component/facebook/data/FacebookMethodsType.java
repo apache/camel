@@ -696,8 +696,8 @@ public enum FacebookMethodsType {
                     + "must be of the form 'Class arg1, String arg1Name, Class arg2, String arg2Name...");
         }
         int nArgs = args.length / 2;
-        this.argNames = new ArrayList<String>(nArgs);
-        this.argTypes = new ArrayList<Class<?>>(nArgs);
+        this.argNames = new ArrayList<>(nArgs);
+        this.argTypes = new ArrayList<>(nArgs);
         for (int i = 0; i < nArgs; i++) {
             this.argTypes.add((Class<?>) args[i * 2]);
             this.argNames.add((String) args[i * 2 + 1]);

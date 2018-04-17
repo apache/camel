@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
-    private final Set<String> noArgNames = new HashSet<String>();
+    private final Set<String> noArgNames = new HashSet<>();
 
     private final List<String> idExcludes;
     private final List<String> readingExcludes;
@@ -54,9 +54,9 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
             }
         }
 
-        idExcludes = new ArrayList<String>();
+        idExcludes = new ArrayList<>();
         idExcludes.addAll(Arrays.asList("me", "home", "searchCheckins", "taggableFriends"));
-        readingExcludes = new ArrayList<String>();
+        readingExcludes = new ArrayList<>();
         readingExcludes.addAll(Arrays.asList("pictureURL", "permissions", "taggableFriends", "sSLPictureURL"));
 
         for (FacebookMethodsType types : FacebookMethodsType.values()) {
