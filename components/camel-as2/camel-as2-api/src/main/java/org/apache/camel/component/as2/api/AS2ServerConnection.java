@@ -64,12 +64,13 @@ public class AS2ServerConnection {
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = new ImmutableHttpProcessor(
-                    new HttpResponseInterceptor[] { new ResponseContent(true), 
-                                                    new ResponseServer(originServer),
-                                                    new ResponseDate(), 
-                                                    new ResponseConnControl(),
-                                                    new ResponseMDN(as2Version, serverFqdn, signingCertificateChain, signingPrivateKey)});
+            final HttpProcessor inhttpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
+            new ResponseContent(true),
+            new ResponseServer(originServer),
+            new ResponseDate(),
+            new ResponseConnControl(),
+            new ResponseMDN(as2Version, serverFqdn, signingCertificateChain, signingPrivateKey)
+            });
 
             reqistry = new UriHttpRequestHandlerMapper();
 
@@ -165,7 +166,13 @@ public class AS2ServerConnection {
     private Certificate[] signingCertificateChain;
     private PrivateKey signingPrivateKey;
 
-    public AS2ServerConnection(String as2Version, String originServer, String serverFqdn, Integer serverPortNumber, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) throws IOException {
+    public AS2ServerConnection(String as2Version,
+                               String originServer,
+                               String serverFqdn,
+                               Integer serverPortNumber,
+                               Certificate[] signingCertificateChain,
+                               PrivateKey signingPrivateKey)
+            throws IOException {
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.originServer = Args.notNull(originServer, "userAgent");
         this.serverFqdn = Args.notNull(serverFqdn, "serverFqdn");

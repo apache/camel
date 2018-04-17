@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
-public class AS2Charset {
+public interface AS2Charset {
     
     /**
      * Name of charset parameter in Content-Type header values.

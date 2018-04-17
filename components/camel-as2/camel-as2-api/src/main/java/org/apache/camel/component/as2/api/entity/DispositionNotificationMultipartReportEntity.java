@@ -91,7 +91,7 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         charBuffer.append("  Received on: " + receivedDate + "\n");
         charBuffer.append(" Status: " + dispositionType + "\n");
 
-        return new TextPlainEntity(charBuffer.toString(), AS2Charset.US_ASCII, AS2TransferEncoding._7BIT, false);
+        return new TextPlainEntity(charBuffer.toString(), AS2Charset.US_ASCII, AS2TransferEncoding.SEVENBIT, false);
     }
     
     protected String getReportTypeValue(String boundary) {

@@ -43,7 +43,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a AS2 endpoint.
  */
-@UriEndpoint(scheme = "as2", title = "AS2", syntax="as2:name", consumerClass = AS2Consumer.class, label = "AS2")
+@UriEndpoint(scheme = "as2", title = "AS2", syntax = "as2:name", consumerClass = AS2Consumer.class, label = "AS2")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriPath @Metadata(required = "true")
@@ -61,13 +61,11 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     }
     
-    public AS2ClientConnection getAS2ClientConnection()
-    {
+    public AS2ClientConnection getAS2ClientConnection() {
         return as2ClientConnection;
     }
 
-    public AS2ServerConnection getAS2ServerConnection()
-    {
+    public AS2ServerConnection getAS2ServerConnection() {
         return as2ServerConnection;
     }
 

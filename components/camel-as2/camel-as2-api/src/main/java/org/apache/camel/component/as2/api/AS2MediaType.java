@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
-public class AS2MediaType {
+public interface AS2MediaType {
 
     /**
      * Media Type for Multipart Signed Data

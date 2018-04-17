@@ -1,11 +1,23 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api.util;
 
 import java.io.InputStream;
 import java.security.Security;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -24,40 +36,43 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class MicUtilsTest {
     
     public static final Logger LOG = LoggerFactory.getLogger(MicUtilsTest.class);
 
-    private static String DISPOSITION_NOTIFICATION_OPTIONS_VALUE = " signed-receipt-protocol   =   optional  , pkcs7-signature  ;    signed-receipt-micalg   =    required  ,  sha1  ";
-    private static String CONTENT_TYPE_VALUE = AS2MimeType.APPLICATION_EDIFACT;
-    private static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-            +"UNH+00000000000117+INVOIC:D:97B:UN'\n"
-            +"BGM+380+342459+9'\n"
-            +"DTM+3:20060515:102'\n"
-            +"RFF+ON:521052'\n"
-            +"NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-            +"NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-            +"CUX+1:USD'\n"
-            +"LIN+1++157870:IN'\n"
-            +"IMD+F++:::WIDGET'\n"
-            +"QTY+47:1020:EA'\n"
-            +"ALI+US'\n"
-            +"MOA+203:1202.58'\n"
-            +"PRI+INV:1.179'\n"
-            +"LIN+2++157871:IN'\n"
-            +"IMD+F++:::DIFFERENT WIDGET'\n"
-            +"QTY+47:20:EA'\n"
-            +"ALI+JP'\n"
-            +"MOA+203:410'\n"
-            +"PRI+INV:20.5'\n"
-            +"UNS+S'\n"
-            +"MOA+39:2137.58'\n"
-            +"ALC+C+ABG'\n"
-            +"MOA+8:525'\n"
-            +"UNT+23+00000000000117'\n"
-            +"UNZ+1+00000000000778'";
-    
+    private static final String DISPOSITION_NOTIFICATION_OPTIONS_VALUE = " signed-receipt-protocol   =   optional  , pkcs7-signature  ;    signed-receipt-micalg   =    required  ,  sha1  ";
+    private static final String CONTENT_TYPE_VALUE = AS2MimeType.APPLICATION_EDIFACT;
+    private static final String EDI_MESSAGE = 
+            "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n" 
+            + "BGM+380+342459+9'\n" 
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n" 
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n" 
+            + "CUX+1:USD'\n" 
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n" 
+            + "QTY+47:1020:EA'\n" 
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n" 
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n" 
+            + "IMD+F++:::DIFFERENT WIDGET'\n" 
+            + "QTY+47:20:EA'\n" 
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n" 
+            + "PRI+INV:20.5'\n" 
+            + "UNS+S'\n" 
+            + "MOA+39:2137.58'\n" 
+            + "ALC+C+ABG'\n" 
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n" 
+            + "UNZ+1+00000000000778'";
+
     private static final String EXPECTED_MESSAGE_DIGEST_ALGORITHM = "sha1";
     private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "PaQyByOuBL7XiYyts4Sdmvl1WME=";
 
@@ -77,7 +92,7 @@ public class MicUtilsTest {
         request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, DISPOSITION_NOTIFICATION_OPTIONS_VALUE);
         request.addHeader(AS2Header.CONTENT_TYPE, CONTENT_TYPE_VALUE);
         
-        ApplicationEDIFACTEntity edifactEntity = new ApplicationEDIFACTEntity( EDI_MESSAGE, AS2Charset.US_ASCII, AS2TransferEncoding.NONE, true);
+        ApplicationEDIFACTEntity edifactEntity = new ApplicationEDIFACTEntity(EDI_MESSAGE, AS2Charset.US_ASCII, AS2TransferEncoding.NONE, true);
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity();
         basicEntity.setContent(is);

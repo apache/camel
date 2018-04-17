@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.as2.api;
 
-public class AS2TransferEncoding {
+public interface AS2TransferEncoding {
     public static final String NONE = null; 
     public static final String BASE64 = "base64";
-    public static final String _7BIT = "7bit";
+    public static final String SEVENBIT = "7bit";
 }

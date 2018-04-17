@@ -38,7 +38,7 @@ import org.apache.http.StatusLine;
 /**
  * Utility Methods used in AS2 Component
  */
-public class Util {
+public final class Util {
     
     public static final String DQUOTE = "\"";
     public static final String BACKSLASH = "\\\\";
@@ -46,13 +46,16 @@ public class Util {
     public static final String AS2_QUOTED_TEXT_CHAR_SET = "[\u0020\u0021\u0023-\\\u005B\\\u005D-\u007E]";
     public static final String AS2_QUOTED_PAIR =  BACKSLASH + DQUOTE + "|" + BACKSLASH + BACKSLASH; 
     
-    public static final String AS2_QUOTED_NAME = DQUOTE + "(" + AS2_QUOTED_TEXT_CHAR_SET + "|" + AS2_QUOTED_PAIR +"){1,128}" + DQUOTE;
+    public static final String AS2_QUOTED_NAME = DQUOTE + "(" + AS2_QUOTED_TEXT_CHAR_SET + "|" + AS2_QUOTED_PAIR + "){1,128}" + DQUOTE;
     public static final String AS2_ATOMIC_NAME = "(" + AS2_TEXT_CHAR_SET + "){1,128}";
     public static final String AS2_NAME = AS2_ATOMIC_NAME + "|" + AS2_QUOTED_NAME;
     
     public static final Pattern AS_NAME_PATTERN = Pattern.compile(AS2_NAME);
     
     private static Random generator = new Random();
+    
+    private Util() {
+    }
     
     /**
      * Validates if the given <code>name</code> is a valid AS2 Name
@@ -65,7 +68,7 @@ public class Util {
         if (!matcher.matches()) {
             // if name does not match, determine where it fails to match.
             int i = 0;
-            for (i = name.length() -1; i > 0; i--) {
+            for (i = name.length() - 1; i > 0; i--) {
                 Matcher region = matcher.region(0, i);
                 if (region.matches() || region.hitEnd()) {
                     break;
@@ -91,12 +94,10 @@ public class Util {
      * @param c - the character to test
      * @return <code>true</code> if <code>c</code> is a printable character; <code>false</code> otherwise.
      */
-    public static boolean isPrintableChar( char c ) {
-        Character.UnicodeBlock block = Character.UnicodeBlock.of( c );
-        return (!Character.isISOControl(c)) &&
-                c != KeyEvent.CHAR_UNDEFINED &&
-                block != null &&
-                block != Character.UnicodeBlock.SPECIALS;
+    public static boolean isPrintableChar(char c) {
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+        return (!Character.isISOControl(c)) && c != KeyEvent.CHAR_UNDEFINED && block != null
+                && block != Character.UnicodeBlock.SPECIALS;
     }
     
     public static String printRequest(HttpRequest request) throws IOException {
@@ -120,25 +121,27 @@ public class Util {
     /**
      * Prints the contents of request to given print stream.
      * 
-     * @param out - the stream printed to.
-     * @param request - the request printed.
+     * @param out
+     *            - the stream printed to.
+     * @param request
+     *            - the request printed.
      * @throws IOException
      */
     public static void printRequest(PrintStream out, HttpRequest request) throws IOException {
         // Print request line
         RequestLine requestLine = request.getRequestLine();
         out.println(requestLine.getMethod() + ' ' + requestLine.getUri() + ' ' + requestLine.getProtocolVersion());
-        
+
         // Write headers
-        for (final HeaderIterator it = request.headerIterator(); it.hasNext(); ) {
+        for (final HeaderIterator it = request.headerIterator(); it.hasNext();) {
             Header header = it.nextHeader();
             out.println(header.getName() + ": " + (header.getValue() == null ? "" : header.getValue()));
         }
         out.println(); // write empty line separating header from body.
-        
+
         if (request instanceof HttpEntityEnclosingRequest) {
             // Write entity
-            HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
+            HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
             entity.writeTo(out);
         }
     }
@@ -160,7 +163,7 @@ public class Util {
             out.println(statusLine.toString());
         }
         // Write headers
-        for (final HeaderIterator it = message.headerIterator(); it.hasNext(); ) {
+        for (final HeaderIterator it = message.headerIterator(); it.hasNext();) {
             Header header = it.nextHeader();
             out.println(header.getName() + ": " + (header.getValue() == null ? "" : header.getValue()));
         }

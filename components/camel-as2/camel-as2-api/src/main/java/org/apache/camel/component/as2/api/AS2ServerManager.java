@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AS2ServerManager {
     
-    private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManager.class);
-    
     //
     // AS2 HTTP Context Attribute Keys
     //
@@ -58,6 +56,8 @@ public class AS2ServerManager {
      */
     public static final String FROM = CAMEL_AS2_SERVER_PREFIX + "from";
 
+    private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManager.class);
+    
     private AS2ServerConnection as2ServerConnection;
     
     public AS2ServerManager(AS2ServerConnection as2ServerConnection) {

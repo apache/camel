@@ -1,28 +1,18 @@
-/*
- * ====================================================================
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.as2.api.util;
 
@@ -40,7 +30,7 @@ import org.apache.http.message.TokenParser;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
-public class AS2HeaderUtils {
+public final class AS2HeaderUtils {
 
     public static class Parameter {
         private final String attribute;
@@ -81,16 +71,11 @@ public class AS2HeaderUtils {
         }
     }
 
-    public static class Field {
-        
-    }
+    private static final char PARAM_DELIMITER = ',';
+    private static final char ELEM_DELIMITER = ';';
+    private static final char NAME_VALUE_DELIMITER = '=';
 
-    
-    private static final TokenParser tokenParser = TokenParser.INSTANCE;
-
-    private final static char PARAM_DELIMITER = ',';
-    private final static char ELEM_DELIMITER = ';';
-    private final static char NAME_VALUE_DELIMITER = '=';
+    private static final TokenParser TOKEN_PARSER = TokenParser.INSTANCE;
 
     private static final BitSet TOKEN_DELIMS = TokenParser.INIT_BITSET(NAME_VALUE_DELIMITER, PARAM_DELIMITER,
             ELEM_DELIMITER);
@@ -99,11 +84,11 @@ public class AS2HeaderUtils {
     private AS2HeaderUtils() {
     }
     
-    public static Header createHeader(String headerName, String[] ... elements) {
+    public static Header createHeader(String headerName, String[]... elements) {
         StringBuilder sb = new StringBuilder();
         
         boolean firstElement = true;
-        for(String[] element: elements) {
+        for (String[] element: elements) {
             if (element.length == 0) {
                 continue;
             }
@@ -125,7 +110,7 @@ public class AS2HeaderUtils {
         Args.notNull(buffer, "Char array buffer");
         Args.notNull(cursor, "Parser cursor");
 
-        final String name = tokenParser.parseToken(buffer, cursor, TOKEN_DELIMS);
+        final String name = TOKEN_PARSER.parseToken(buffer, cursor, TOKEN_DELIMS);
         if (cursor.atEnd()) {
             return new Parameter(name, null, null);
         }
@@ -136,14 +121,14 @@ public class AS2HeaderUtils {
             return new Parameter(name, null, null);
         }
 
-        final String importance = tokenParser.parseValue(buffer, cursor, VALUE_DELIMS);
+        final String importance = TOKEN_PARSER.parseValue(buffer, cursor, VALUE_DELIMS);
         if (!cursor.atEnd()) {
             cursor.updatePos(cursor.getPos() + 1);
         }
 
         List<String> values = new ArrayList<String>();
         while (!cursor.atEnd()) {
-            String value = tokenParser.parseValue(buffer, cursor, VALUE_DELIMS);
+            String value = TOKEN_PARSER.parseValue(buffer, cursor, VALUE_DELIMS);
             values.add(value);
             if (cursor.atEnd()) {
                 break;
@@ -176,5 +161,5 @@ public class AS2HeaderUtils {
         }
         return null;
     }
-
+    
 }

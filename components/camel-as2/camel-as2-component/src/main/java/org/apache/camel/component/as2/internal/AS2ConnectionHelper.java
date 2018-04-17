@@ -28,7 +28,7 @@ import org.apache.camel.component.as2.api.AS2ServerConnection;
 /**
  * Utility class for creating AS2 connections.
  */
-public class AS2ConnectionHelper {
+public final class AS2ConnectionHelper {
     
     private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<Integer, AS2ServerConnection>(); 
     
@@ -59,10 +59,12 @@ public class AS2ConnectionHelper {
      * @throws IOException 
      */
     public static AS2ServerConnection createAS2ServerConnection(AS2Configuration configuration) throws IOException {
-        synchronized(serverConnections) {
+        synchronized (serverConnections) {
             AS2ServerConnection serverConnection = serverConnections.get(configuration.getServerPortNumber());
             if (serverConnection == null) {
-                serverConnection = new AS2ServerConnection(configuration.getAs2Version(), configuration.getServer(), configuration.getServerFqdn(), configuration.getServerPortNumber(), configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey());
+                serverConnection = new AS2ServerConnection(configuration.getAs2Version(), configuration.getServer(),
+                        configuration.getServerFqdn(), configuration.getServerPortNumber(),
+                        configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey());
                 serverConnections.put(configuration.getServerPortNumber(), serverConnection);
             }
             return serverConnection;

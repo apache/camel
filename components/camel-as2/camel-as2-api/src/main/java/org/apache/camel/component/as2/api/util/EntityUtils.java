@@ -43,13 +43,14 @@ import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EntityUtils {
+public final class EntityUtils {
     
     private static final Logger LOG = LoggerFactory.getLogger(EntityUtils.class);
 
     private static AtomicLong partNumber = new AtomicLong();
     
-    private EntityUtils() {}
+    private EntityUtils() {
+    }
 
     /**
      * Generated a unique value for a Multipart boundary string.
@@ -78,7 +79,7 @@ public class EntityUtils {
         return headerString + "; " + parameterName + "=" + parameterValue;
     }
     
-    public static byte[] encode(byte[] data, String encoding) throws Exception{
+    public static byte[] encode(byte[] data, String encoding) throws Exception {
         Args.notNull(data, "Data");
         
         if (encoding == null) {
@@ -97,7 +98,7 @@ public class EntityUtils {
         case "8bit":
             // Identity encoding
             return data;
-         default:
+        default:
             throw new Exception("Unknown encoding: " + encoding);
         }
     }

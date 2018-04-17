@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayInputStream;
@@ -42,14 +58,14 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     
     protected static final long RECALCULATE_CONTENT_LENGTH = -2;
 
-    protected boolean isMainBody = false;
+    protected boolean isMainBody;
 
-    private final HeaderGroup headergroup = new HeaderGroup();
-    
-    protected Header contentTransferEncoding = null;
+    protected Header contentTransferEncoding;
 
     protected long contentLength = RECALCULATE_CONTENT_LENGTH;
 
+    private final HeaderGroup headergroup = new HeaderGroup();
+    
     protected MimeEntity() {
     }
     
@@ -193,7 +209,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         if (name == null) {
             return;
         }
-        for (final HeaderIterator i = this.headergroup.iterator(); i.hasNext(); ) {
+        for (final HeaderIterator i = this.headergroup.iterator(); i.hasNext();) {
             final Header header = i.nextHeader();
             if (name.equalsIgnoreCase(header.getName())) {
                 i.remove();

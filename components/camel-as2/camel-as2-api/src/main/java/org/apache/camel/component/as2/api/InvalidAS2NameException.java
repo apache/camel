@@ -23,9 +23,9 @@ public class InvalidAS2NameException extends Exception {
 
     private static final long serialVersionUID = -6284079291785073089L;
 
-    String name;
+    private final String name;
     
-    int index;
+    private final int index;
     
     /**
      * Constructs an <code>InvalidAS2NameException</code> for the
@@ -48,8 +48,8 @@ public class InvalidAS2NameException extends Exception {
         char character = name.charAt(index);
         String invalidChar = "" + character;
         if (Character.isISOControl(character)) {
-            invalidChar = String.format("\\u%04x", (int)character);
-         }
+            invalidChar = String.format("\\u%04x", (int) character);
+        }
         return "Invalid character '" + invalidChar + "' at index " + index;
     }
 
@@ -70,5 +70,4 @@ public class InvalidAS2NameException extends Exception {
     public int getIndex() {
         return index;
     }
-
- }
+}

@@ -37,58 +37,47 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
-public class Utils {
+public final class Utils {
     //
     // certificate serial number seed.
     //
     static int  serialNo = 1;
 
-    public static AuthorityKeyIdentifier createAuthorityKeyId(
-            PublicKey pub) 
-            throws IOException
-        {
-            SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
+    private Utils() {
+    }
+    
+    public static AuthorityKeyIdentifier createAuthorityKeyId(PublicKey pub) throws IOException {
+        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
 
-            BcX509ExtensionUtils utils = new BcX509ExtensionUtils();
-            return utils.createAuthorityKeyIdentifier(info);
-        }
+        BcX509ExtensionUtils utils = new BcX509ExtensionUtils();
+        return utils.createAuthorityKeyIdentifier(info);
+    }
 
-        static SubjectKeyIdentifier createSubjectKeyId(
-            PublicKey pub) 
-            throws IOException
-        {
-            SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
+    static SubjectKeyIdentifier createSubjectKeyId(PublicKey pub) throws IOException {
+        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
 
-            return new BcX509ExtensionUtils().createSubjectKeyIdentifier(info);
-        }
+        return new BcX509ExtensionUtils().createSubjectKeyIdentifier(info);
+    }
 
     /**
      * create a basic X509 certificate from the given keys
      */
-    public static X509Certificate makeCertificate(
-        KeyPair subKP,
-        String  subDN,
-        KeyPair issKP,
-        String  issDN)
-        throws GeneralSecurityException, IOException, OperatorCreationException
-    {
-        PublicKey  subPub  = subKP.getPublic();
+    public static X509Certificate makeCertificate(KeyPair subKP, String subDN, KeyPair issKP, String issDN)
+            throws GeneralSecurityException, IOException, OperatorCreationException {
+        PublicKey subPub = subKP.getPublic();
         PrivateKey issPriv = issKP.getPrivate();
-        PublicKey  issPub  = issKP.getPublic();
-        
-        X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(new X500Name(issDN), BigInteger.valueOf(serialNo++), new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)), new X500Name(subDN), subPub);
+        PublicKey issPub = issKP.getPublic();
 
-        v3CertGen.addExtension(
-            Extension.subjectKeyIdentifier,
-            false,
-            createSubjectKeyId(subPub));
+        X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(new X500Name(issDN),
+                BigInteger.valueOf(serialNo++), new Date(System.currentTimeMillis()),
+                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)), new X500Name(subDN), subPub);
 
-        v3CertGen.addExtension(
-            Extension.authorityKeyIdentifier,
-            false,
-            createAuthorityKeyId(issPub));
+        v3CertGen.addExtension(Extension.subjectKeyIdentifier, false, createSubjectKeyId(subPub));
 
-        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(issPriv)));
+        v3CertGen.addExtension(Extension.authorityKeyIdentifier, false, createAuthorityKeyId(issPub));
+
+        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(
+                v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(issPriv)));
     }
 
 }

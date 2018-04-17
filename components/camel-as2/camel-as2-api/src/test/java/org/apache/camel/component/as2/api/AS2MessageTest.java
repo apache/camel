@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.as2.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -63,8 +58,40 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class AS2MessageTest {
     
+    public static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'";
+
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AS2MessageTest.class);
 
@@ -80,35 +107,8 @@ public class AS2MessageTest {
     private static final String CLIENT_FQDN = "client.example.org";
     private static final String SERVER_FQDN = "server.example.org";
     private static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
-    private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] {"sha1", "md5"};
     
-
-    public static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-            +"UNH+00000000000117+INVOIC:D:97B:UN'\n"
-            +"BGM+380+342459+9'\n"
-            +"DTM+3:20060515:102'\n"
-            +"RFF+ON:521052'\n"
-            +"NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-            +"NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-            +"CUX+1:USD'\n"
-            +"LIN+1++157870:IN'\n"
-            +"IMD+F++:::WIDGET'\n"
-            +"QTY+47:1020:EA'\n"
-            +"ALI+US'\n"
-            +"MOA+203:1202.58'\n"
-            +"PRI+INV:1.179'\n"
-            +"LIN+2++157871:IN'\n"
-            +"IMD+F++:::DIFFERENT WIDGET'\n"
-            +"QTY+47:20:EA'\n"
-            +"ALI+JP'\n"
-            +"MOA+203:410'\n"
-            +"PRI+INV:20.5'\n"
-            +"UNS+S'\n"
-            +"MOA+39:2137.58'\n"
-            +"ALC+C+ABG'\n"
-            +"MOA+8:525'\n"
-            +"UNT+23+00000000000117'\n"
-            +"UNZ+1+00000000000778'";
 
     private static AS2ServerConnection testServer;
 
@@ -179,20 +179,20 @@ public class AS2MessageTest {
         certList.add(issueCert);
 
         
-        testServer = new AS2ServerConnection(AS2_VERSION , "MyServer-HTTP/1.1", SERVER_FQDN, 8080, certList.toArray(new Certificate[0]), signingKP.getPrivate());
+        testServer = new AS2ServerConnection(AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, 8080, certList.toArray(new Certificate[0]), signingKP.getPrivate());
         testServer.listen("*", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context)
-                            throws HttpException, IOException {
-                        try {
-                            org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
-                            context.setAttribute(SUBJECT, SUBJECT);
-                            context.setAttribute(FROM, AS2_NAME);
-                        } catch (Exception e) {
-                            throw new HttpException("Failed to parse AS2 Message Entity", e);
-                        }
-                    }
-                });
+            @Override
+            public void handle(HttpRequest request, HttpResponse response, HttpContext context)
+                    throws HttpException, IOException {
+                try {
+                    org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
+                    context.setAttribute(SUBJECT, SUBJECT);
+                    context.setAttribute(FROM, AS2_NAME);
+                } catch (Exception e) {
+                    throw new HttpException("Failed to parse AS2 Message Entity", e);
+                }
+            }
+        });
     }
     
 
@@ -221,10 +221,13 @@ public class AS2MessageTest {
         attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
         
-        for (String signingAlgorithmName : AS2SignedDataGenerator.getSupportedSignatureAlgorithmNamesForKey(signingKP.getPrivate())) {
+        for (String signingAlgorithmName : AS2SignedDataGenerator
+                .getSupportedSignatureAlgorithmNamesForKey(signingKP.getPrivate())) {
             try {
                 this.gen = new AS2SignedDataGenerator();
-                this.gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC").setSignedAttributeGenerator(new AttributeTable(attributes)).build(signingAlgorithmName, signingKP.getPrivate(), signingCert));
+                this.gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
+                        .setSignedAttributeGenerator(new AttributeTable(attributes))
+                        .build(signingAlgorithmName, signingKP.getPrivate(), signingCert));
                 this.gen.addCertificates(certs);
                 break;
             } catch (Exception e) {
@@ -243,7 +246,9 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -276,7 +281,10 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
+                SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -322,7 +330,10 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
+                SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
@@ -345,7 +356,9 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null, DISPOSITION_NOTIFICATION_TO, null);
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                null, null, null, DISPOSITION_NOTIFICATION_TO, null);
         
         @SuppressWarnings("unused")
         HttpResponse response = httpContext.getResponse();

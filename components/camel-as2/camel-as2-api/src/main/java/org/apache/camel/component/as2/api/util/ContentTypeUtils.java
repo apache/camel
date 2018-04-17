@@ -20,9 +20,10 @@ import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.http.entity.ContentType;
 
-public class ContentTypeUtils {
+public final class ContentTypeUtils {
 
-    private ContentTypeUtils() {}
+    private ContentTypeUtils() {
+    }
 
     public static boolean isEDIMessageContentType(ContentType ediMessageContentType) {
         switch (ediMessageContentType.getMimeType().toLowerCase()) {

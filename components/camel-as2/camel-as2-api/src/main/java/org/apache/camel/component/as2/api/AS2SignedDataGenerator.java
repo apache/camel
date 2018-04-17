@@ -64,42 +64,42 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
         stdMicAlgs.put(CMSAlgorithm.GOST3411_2012_256, "gostr3411-2012-256");
         stdMicAlgs.put(CMSAlgorithm.GOST3411_2012_512, "gostr3411-2012-512");
 
-        STANDARD_MICALGS = Collections.unmodifiableMap(stdMicAlgs);;
+        STANDARD_MICALGS = Collections.unmodifiableMap(stdMicAlgs);
     }
     
     /**
      * Signing algorithms for DSA keys in order of preference
      */
     public static final String[] DSA_SIGNING_ALGORITHMS = {
-            "SHA512WITHDSA",
-            "SHA384WITHDSA",
-            "SHA256WITHDSA",
-            "SHA224WITHDSA",
-            "SHA1WITHDSA",
+    "SHA512WITHDSA",
+    "SHA384WITHDSA",
+    "SHA256WITHDSA",
+    "SHA224WITHDSA",
+    "SHA1WITHDSA",
     };
 
     /**
      * Signing algorithms for RSA keys in order of preference
      */
     public static final String[] RSA_SIGNING_ALGORITHMS = {
-            "SHA512WITHRSA",
-            "SHA384WITHRSA",
-            "SHA256WITHRSA",
-            "SHA224WITHRSA",
-            "SHA1WITHRSA",
-            "MD5WITHRSA",
-            "MD2WITHRSA",
+    "SHA512WITHRSA",
+    "SHA384WITHRSA",
+    "SHA256WITHRSA",
+    "SHA224WITHRSA",
+    "SHA1WITHRSA",
+    "MD5WITHRSA",
+    "MD2WITHRSA",
     };
     
     /**
      * Signing algorithms for EC keys in order of preference
      */
     public static final String[] EC_SIGNING_ALGORITHMS = {
-            "SHA512WITHECDSA",
-            "SHA384WITHECDSA", 
-            "SHA256WITHECDSA",
-            "SHA224WITHECDSA",
-            "SHA1WITHECDSA",
+    "SHA512WITHECDSA",
+    "SHA384WITHECDSA",
+    "SHA256WITHECDSA",
+    "SHA224WITHECDSA",
+    "SHA1WITHECDSA",
     };
 
     public AS2SignedDataGenerator() {

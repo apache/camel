@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api.util;
 
 import java.util.ArrayList;
@@ -19,17 +35,17 @@ import org.apache.http.message.TokenParser;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
-public class DispositionNotificationContentUtils {
+public final class DispositionNotificationContentUtils {
     
     private static final String REPORTING_UA = "reporting-ua";
-    private static final String MDN_GATEWAY ="mdn-gateway";
+    private static final String MDN_GATEWAY = "mdn-gateway";
     private static final String FINAL_RECIPIENT = "final-recipient";
     private static final String ORIGINAL_MESSAGE_ID = "original-message-id";
     private static final String DISPOSITION = "disposition";
     private static final String FAILURE = "failure";
     private static final String ERROR = "error";
     private static final String WARNING = "warning";
-    public static final String RECEIVED_CONTENT_MIC = "received-content-mic";
+    private static final String RECEIVED_CONTENT_MIC = "received-content-mic";
 
     public static class Field {
 
@@ -68,7 +84,7 @@ public class DispositionNotificationContentUtils {
 
         public Field(String name, String value) {
             this.name = Args.notNull(name, "name");
-            this.elements = new Element[] { new Element(value, null) };
+            this.elements = new Element[] {new Element(value, null)};
         }
 
         public String getName() {
@@ -111,10 +127,10 @@ public class DispositionNotificationContentUtils {
 
     }
 
-    private static final TokenParser tokenParser = TokenParser.INSTANCE;
+    private static final TokenParser TOKEN_PARSER = TokenParser.INSTANCE;
 
-    private final static char PARAM_DELIMITER = ',';
-    private final static char ELEM_DELIMITER = ';';
+    private static final char PARAM_DELIMITER = ',';
+    private static final char ELEM_DELIMITER = ';';
 
     private static final BitSet TOKEN_DELIMS = TokenParser.INIT_BITSET(PARAM_DELIMITER, ELEM_DELIMITER);
 
@@ -133,7 +149,7 @@ public class DispositionNotificationContentUtils {
         List<String> failures = new ArrayList<String>();
         List<String> errors = new ArrayList<String>();
         List<String> warnings = new ArrayList<String>();
-        Map<String,String> extensionFields = new HashMap<String,String>();
+        Map<String, String> extensionFields = new HashMap<String, String>();
         ReceivedContentMic receivedContentMic = null;
 
         for (int i = 0; i < dispositionNotificationFields.size(); i++) {
@@ -142,7 +158,7 @@ public class DispositionNotificationContentUtils {
             switch(field.getName().toLowerCase()) {
             case REPORTING_UA: {
                 if (field.getElements().length < 1) {
-                    throw new ParseException("Invalid '" + MDNField.REPORTING_UA +"' field: UA name is missing");
+                    throw new ParseException("Invalid '" + MDNField.REPORTING_UA + "' field: UA name is missing");
                 }
                 reportingUA = field.getValue();
                 break;
@@ -150,7 +166,7 @@ public class DispositionNotificationContentUtils {
             case MDN_GATEWAY: {
                 Element[] elements = field.getElements();
                 if (elements.length < 2) {
-                    throw new ParseException("Invalid '" + MDNField.MDN_GATEWAY +"' field: MTA name is missing");
+                    throw new ParseException("Invalid '" + MDNField.MDN_GATEWAY + "' field: MTA name is missing");
                 }
                 mtaName = elements[1].getValue();
                 break;
@@ -158,10 +174,10 @@ public class DispositionNotificationContentUtils {
             case FINAL_RECIPIENT: {
                 Element[] elements = field.getElements();
                 if (elements.length < 2) {
-                    throw new ParseException("Invalid '" + MDNField.FINAL_RECIPIENT +"' field: recipient address is missing");
+                    throw new ParseException("Invalid '" + MDNField.FINAL_RECIPIENT + "' field: recipient address is missing");
                 }
                 finalRecipient = elements[1].getValue();
-               break;
+                break;
             }
             case ORIGINAL_MESSAGE_ID: {
                 originalMessageId = field.getValue();
@@ -170,11 +186,11 @@ public class DispositionNotificationContentUtils {
             case DISPOSITION: {
                 Element[] elements = field.getElements();
                 if (elements.length < 2) {
-                    throw new ParseException("Invalid '" + MDNField.DISPOSITION +"' field: " + field.getValue());
+                    throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: " + field.getValue());
                 }
                 dispositionMode = DispositionMode.parseDispositionMode(elements[0].getValue());
                 if (dispositionMode == null) {
-                    throw new ParseException("Invalid '" + MDNField.DISPOSITION +"' field: invalid disposition mode '" + elements[0].getValue() + "'");
+                    throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '" + elements[0].getValue() + "'");
                 }
 
                 String dispositionTypeString = elements[1].getValue();
@@ -199,12 +215,12 @@ public class DispositionNotificationContentUtils {
             case RECEIVED_CONTENT_MIC: {
                 Element[] elements = field.getElements();
                 if (elements.length < 1) {
-                    throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC +"' field: MIC is missing");
+                    throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: MIC is missing");
                 }
                 Element element = elements[0];
                 String[] parameters = element.getParameters();
                 if (parameters.length < 1) {
-                    throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC +"' field: digest algorithm ID is missing");
+                    throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: digest algorithm ID is missing");
                 }
                 String digestAlgorithmId = parameters[0];
                 String encodedMessageDigest = element.getValue();
@@ -240,7 +256,7 @@ public class DispositionNotificationContentUtils {
         ParserCursor cursor = new ParserCursor(colon + 1, fieldLine.length());
         
         final List<Element> elements = new ArrayList<Element>();
-        while(!cursor.atEnd()) {
+        while (!cursor.atEnd()) {
             final Element element = parseDispositionFieldElement(fieldLine, cursor);
             if (element.getValue() != null) {
                 elements.add(element);
@@ -252,7 +268,7 @@ public class DispositionNotificationContentUtils {
 
     public static Element parseDispositionFieldElement(CharArrayBuffer fieldLine, ParserCursor cursor) {
         
-        final String value = tokenParser.parseToken(fieldLine, cursor, TOKEN_DELIMS);
+        final String value = TOKEN_PARSER.parseToken(fieldLine, cursor, TOKEN_DELIMS);
         if (cursor.atEnd()) {
             return new Element(value, null);
         }
@@ -265,13 +281,13 @@ public class DispositionNotificationContentUtils {
         
         final List<String> parameters = new ArrayList<String>();
         while (!cursor.atEnd()) {
-            final String parameter = tokenParser.parseToken(fieldLine, cursor, TOKEN_DELIMS);
+            final String parameter = TOKEN_PARSER.parseToken(fieldLine, cursor, TOKEN_DELIMS);
             parameters.add(parameter);
             if (cursor.atEnd()) {
                 break;
             }
             final char ch = fieldLine.charAt(cursor.getPos());
-            if(!cursor.atEnd()) {
+            if (!cursor.atEnd()) {
                 cursor.updatePos(cursor.getPos() + 1);
             }
             if (ch == ELEM_DELIMITER) {

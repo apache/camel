@@ -37,7 +37,7 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 
-public class SigningUtils {
+public final class SigningUtils {
 
     private SigningUtils() {
     }

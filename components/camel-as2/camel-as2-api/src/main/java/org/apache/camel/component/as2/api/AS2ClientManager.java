@@ -163,7 +163,20 @@ public class AS2ClientManager {
      *            - the subject sent in the interchange request.
      * @throws HttpException
      */
-    public HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, AS2MessageStructure as2MessageStructure, ContentType ediMessageContentType, String ediMessageTransferEncoding, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms) throws HttpException {
+    public HttpCoreContext send(String ediMessage,
+                                String requestUri,
+                                String subject,
+                                String from,
+                                String as2From,
+                                String as2To,
+                                AS2MessageStructure as2MessageStructure,
+                                ContentType ediMessageContentType,
+                                String ediMessageTransferEncoding,
+                                Certificate[] signingCertificateChain,
+                                PrivateKey signingPrivateKey,
+                                String dispositionNotificationTo,
+                                String[] signedReceiptMicAlgorithms)
+            throws HttpException {
         
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(as2MessageStructure, "AS2 Message Structure");
@@ -193,7 +206,7 @@ public class AS2ClientManager {
         try {
             applicationEDIEntity = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, ediMessageTransferEncoding, false);
         } catch (Exception e) {
-            throw new HttpException("Failed to create EDI message entity",e);
+            throw new HttpException("Failed to create EDI message entity", e);
         }
         switch (as2MessageStructure) {
         case PLAIN:
@@ -215,6 +228,8 @@ public class AS2ClientManager {
             break;
         case ENCRYPTED_SIGNED:
             break;
+        default:
+            throw new HttpException("Unknown AS2 Message Structure");
         }
 
         HttpResponse response;

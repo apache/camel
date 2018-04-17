@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
 
 public class ResponseMDN implements HttpResponseInterceptor {
     
-    private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
-    
     public static final String BOUNDARY_PARAM_NAME = "boundary";
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
     
     private final String as2Version;
     private final String serverFQDN;
@@ -72,8 +72,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
     public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
         
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode < 200 || statusCode >= 300 ) {
-            LOG.debug("MDN not added due to response status code: " + statusCode );
+        if (statusCode < 200 || statusCode >= 300) {
+            LOG.debug("MDN not added due to response status code: " + statusCode);
             return;
         }
         LOG.debug("Adding MDN to response: " + response);
@@ -134,9 +134,13 @@ public class ResponseMDN implements HttpResponseInterceptor {
         if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO) != null) {
             // Return a Message Disposition Notification Receipt in response body 
             String boundary = EntityUtils.createBoundaryValue();
-            DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true);
+            DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
+                    request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true);
 
-            DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
+            DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
+                    .parseDispositionNotificationOptions(
+                            HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
             
             String receiptAddress = HttpMessageUtils.getHeaderValue(request, AS2Header.RECEIPT_DELIVERY_OPTION);
             if (receiptAddress != null) { 
@@ -163,7 +167,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     }
                 } else {
                     // Create unsigned receipt
-                    Header reportTypeHeader = AS2HeaderUtils.createHeader(AS2Header.REPORT_TYPE, new String[][] { {AS2ReportType.DISPOSITION_NOTIFICATION }, {BOUNDARY_PARAM_NAME, boundary } });
+                    Header reportTypeHeader = AS2HeaderUtils.createHeader(AS2Header.REPORT_TYPE, new String[][] {{AS2ReportType.DISPOSITION_NOTIFICATION}, {BOUNDARY_PARAM_NAME, boundary}});
                     response.addHeader(reportTypeHeader);
                     response.setHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
                     EntityUtils.setMessageEntity(response, multipartReportEntity);

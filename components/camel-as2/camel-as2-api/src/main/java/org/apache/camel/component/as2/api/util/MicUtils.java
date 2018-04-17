@@ -1,28 +1,18 @@
-/*
- * ====================================================================
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.as2.api.util;
 
@@ -46,9 +36,12 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MicUtils {
+public final class MicUtils {
     private static final Logger LOG = LoggerFactory.getLogger(MicUtils.class);
     
+    private MicUtils() {
+    }
+
     public static class ReceivedContentMic {
         private final String digestAlgorithmId;
         private final String encodedMessageDigest;
@@ -104,14 +97,14 @@ public class MicUtils {
         }
 
         String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
-        if(contentTypeString == null) {
+        if (contentTypeString == null) {
             LOG.debug("can not create MIC: content type missing from request");
             return null;
         }
         ContentType contentType = ContentType.parse(contentTypeString);
         
         HttpEntity entity = null;
-        switch(contentType.getMimeType().toLowerCase()) {
+        switch (contentType.getMimeType().toLowerCase()) {
         case AS2MimeType.APPLICATION_EDIFACT:
         case AS2MimeType.APPLICATION_EDI_X12:
         case AS2MimeType.APPLICATION_EDI_CONSENT: {
@@ -121,18 +114,20 @@ public class MicUtils {
         }
         case AS2MimeType.MULTIPART_SIGNED: {
             EntityParser.parseAS2MessageEntity(request);
-            MultipartSignedEntity multipartSignedEntity = HttpMessageUtils.getEntity(request, MultipartSignedEntity.class);
+            MultipartSignedEntity multipartSignedEntity = HttpMessageUtils.getEntity(request,
+                    MultipartSignedEntity.class);
             entity = multipartSignedEntity.getSignedDataEntity();
             break;
         }
-         default:
-             LOG.debug("can not create MIC: invalid content type '" + contentType.getMimeType() + "' for message integrity check");
-             return null;
+        default:
+            LOG.debug("can not create MIC: invalid content type '" + contentType.getMimeType()
+                    + "' for message integrity check");
+            return null;
         }
         
         byte[] content = EntityUtils.getContent(entity);
         
-        String micAS2AlgorithmName = AS2MicAlgorithm.getAS2AlgorithmNake(micJdkAlgorithmName);
+        String micAS2AlgorithmName = AS2MicAlgorithm.getAS2AlgorithmName(micJdkAlgorithmName);
         byte[] mic = createMic(content, micJdkAlgorithmName);
         try {
             return new ReceivedContentMic(micAS2AlgorithmName, mic);
@@ -145,7 +140,7 @@ public class MicUtils {
         if (micAs2AlgorithmNames == null) {
             return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
         }
-        for(String micAs2AlgorithmName : micAs2AlgorithmNames) {
+        for (String micAs2AlgorithmName : micAs2AlgorithmNames) {
             String micJdkAlgorithmName = AS2MicAlgorithm.getJdkAlgorithmName(micAs2AlgorithmName);
             if (micJdkAlgorithmName != null) {
                 return micJdkAlgorithmName;
@@ -153,5 +148,4 @@ public class MicUtils {
         }    
         return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
     }
-    
 }

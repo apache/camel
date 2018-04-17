@@ -60,14 +60,19 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         }
     }
     
-    public ApplicationPkcs7SignatureEntity(String charset, String contentTransferEncoding, byte[] signature, boolean isMainBody) throws HttpException {
-            this.signature = signature;
-            ContentType contentType = ContentType.parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset",  charset));
-            setContentType(contentType.toString());
-            setContentTransferEncoding(contentTransferEncoding);
-            addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
-            addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
-            setMainBody(isMainBody);
+    public ApplicationPkcs7SignatureEntity(String charset,
+                                           String contentTransferEncoding,
+                                           byte[] signature,
+                                           boolean isMainBody)
+            throws HttpException {
+        this.signature = signature;
+        ContentType contentType = ContentType
+                .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));
+        setContentType(contentType.toString());
+        setContentTransferEncoding(contentTransferEncoding);
+        addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
+        addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
+        setMainBody(isMainBody);
     }
     
     public byte[] getSignature() {
