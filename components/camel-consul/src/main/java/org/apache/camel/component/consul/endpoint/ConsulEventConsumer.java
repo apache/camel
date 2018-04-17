@@ -18,7 +18,6 @@ package org.apache.camel.component.consul.endpoint;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -31,16 +30,19 @@ import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
 public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
+    private ExecutorServiceManager executorServiceManager;
     private ScheduledExecutorService scheduledExecutorService;
 
     public ConsulEventConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
         super(endpoint, configuration, processor, Consul::eventClient);
-        this.scheduledExecutorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
+        this.executorServiceManager = endpoint.getCamelContext().getExecutorServiceManager();
+        this.scheduledExecutorService = this.executorServiceManager.newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
     }
 
     @Override
