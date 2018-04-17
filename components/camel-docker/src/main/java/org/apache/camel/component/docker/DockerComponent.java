@@ -35,7 +35,7 @@ public class DockerComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private DockerConfiguration configuration = new DockerConfiguration();
-    private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
+    private Map<DockerClientProfile, DockerClient> clients = new HashMap<>();
 
     public DockerComponent() {
     }

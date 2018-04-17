@@ -94,7 +94,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
 
     public List<?> queryForList(ResultSet rs) throws SQLException {
         ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<>(rowMapper);
         List<Map<String, Object>> data = mapper.extractData(rs);
         return data;
     }

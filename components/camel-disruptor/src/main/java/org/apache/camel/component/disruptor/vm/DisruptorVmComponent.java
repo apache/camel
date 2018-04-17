@@ -31,7 +31,7 @@ import org.apache.camel.component.disruptor.DisruptorReference;
  * web application contexts, providing that camel-disruptor.jar is on the system classpath.
  */
 public class DisruptorVmComponent extends DisruptorComponent {
-    protected static final Map<String, DisruptorReference> DISRUPTORS = new HashMap<String, DisruptorReference>();
+    protected static final Map<String, DisruptorReference> DISRUPTORS = new HashMap<>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override

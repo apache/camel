@@ -47,7 +47,7 @@ public class XYZOrder {
     @JsonProperty("orderId")
     private String orderId;
     @JsonProperty("lineItems")
-    private List<LineItem> lineItems = new ArrayList<LineItem>();
+    private List<LineItem> lineItems = new ArrayList<>();
 
     /**
      * 

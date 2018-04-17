@@ -64,7 +64,7 @@ public class WikipediaEndpointTest extends CamelTestSupport {
                 return RESPONSE_MONKEY.equals(str);
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("term", "monkey");
         template.sendBodyAndHeaders(null, headers);
         resultEndpoint.assertIsSatisfied();

@@ -33,7 +33,7 @@ import org.dozer.ConfigurableCustomConverter;
  */
 public abstract class BaseConverter implements ConfigurableCustomConverter {
     
-    private ThreadLocal<String> localParameter = new ThreadLocal<String>();
+    private ThreadLocal<String> localParameter = new ThreadLocal<>();
     
     @Override
     public void setParameter(String parameter) {

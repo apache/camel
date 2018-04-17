@@ -54,7 +54,7 @@ public class DisruptorComponent extends UriEndpointComponent {
     private boolean defaultBlockWhenFull = true;
 
     //synchronized access guarded by this
-    private final Map<String, DisruptorReference> disruptors = new HashMap<String, DisruptorReference>();
+    private final Map<String, DisruptorReference> disruptors = new HashMap<>();
 
     public DisruptorComponent() {
         super(DisruptorEndpoint.class);

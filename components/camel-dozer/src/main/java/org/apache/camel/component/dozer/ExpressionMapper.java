@@ -34,7 +34,7 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class ExpressionMapper extends BaseConverter {
     
-    private ThreadLocal<Exchange> currentExchange = new ThreadLocal<Exchange>();
+    private ThreadLocal<Exchange> currentExchange = new ThreadLocal<>();
     
     @Override
     public Object convert(Object existingDestinationFieldValue, 
