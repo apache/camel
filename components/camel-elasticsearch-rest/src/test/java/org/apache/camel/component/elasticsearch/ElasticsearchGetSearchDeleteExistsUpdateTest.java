@@ -155,7 +155,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Exists);
@@ -174,7 +174,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Exists);

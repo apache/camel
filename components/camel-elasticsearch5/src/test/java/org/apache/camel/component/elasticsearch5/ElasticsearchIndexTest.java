@@ -41,7 +41,7 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
     @Test
     public void testIndexWithHeaders() throws Exception {
         Map<String, String> map = createIndexedData();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
@@ -53,7 +53,7 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
     @Test
     public void testIndexWithIDInHeader() throws Exception {
         Map<String, String> map = createIndexedData();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
