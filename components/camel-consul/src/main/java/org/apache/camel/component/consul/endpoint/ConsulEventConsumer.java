@@ -36,9 +36,11 @@ import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
 public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
+    private ScheduledExecutorService scheduledExecutorService;
 
     public ConsulEventConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
         super(endpoint, configuration, processor, Consul::eventClient);
+        this.scheduledExecutorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
     }
 
     @Override
@@ -46,16 +48,20 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         return new EventWatcher(client);
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        scheduledExecutorService.shutdown();
+        super.doStop();
+    }
+
     // *************************************************************************
     // Watch
     // *************************************************************************
 
     private class EventWatcher extends AbstractWatcher implements EventResponseCallback {
-        private ScheduledExecutorService scheduledExecutorService;
 
         EventWatcher(EventClient client) {
             super(client);
-            this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         }
 
         @Override
