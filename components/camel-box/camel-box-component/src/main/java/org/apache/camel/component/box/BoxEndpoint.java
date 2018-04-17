@@ -32,8 +32,6 @@ import org.apache.camel.component.box.api.BoxGroupsManager;
 import org.apache.camel.component.box.api.BoxSearchManager;
 import org.apache.camel.component.box.api.BoxTasksManager;
 import org.apache.camel.component.box.api.BoxUsersManager;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxConnectionHelper;
 import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.box.internal.BoxPropertiesHelper;

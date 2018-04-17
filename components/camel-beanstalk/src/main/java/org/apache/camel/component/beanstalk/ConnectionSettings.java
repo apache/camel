@@ -49,7 +49,7 @@ public class ConnectionSettings {
 
         final Scanner scanner = new Scanner(tube);
         scanner.useDelimiter("\\+");
-        final ArrayList<String> buffer = new ArrayList<String>();
+        final ArrayList<String> buffer = new ArrayList<>();
         while (scanner.hasNext()) {
             final String tubeRaw = scanner.next();
             try {

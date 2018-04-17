@@ -19,8 +19,6 @@ package org.apache.camel.component.braintree;
 import com.braintreegateway.CreditCardVerification;
 import com.braintreegateway.ResourceCollection;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
-import org.apache.camel.component.braintree.internal.CreditCardVerificationGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

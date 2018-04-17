@@ -60,7 +60,7 @@ public class BonitaAuthFilter implements ClientRequestFilter {
             Client client = clientBuilder.build();
             WebTarget webTarget =
                     client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");
-            MultivaluedMap<String, String> form = new MultivaluedHashMap<String, String>();
+            MultivaluedMap<String, String> form = new MultivaluedHashMap<>();
             form.add("username", username);
             form.add("password", password);
             form.add("redirect", "false");

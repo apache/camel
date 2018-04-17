@@ -52,7 +52,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     private EntityManagerTemplate entityManagerTemplate;
     private TransactionTemplate transactionTemplate;
     private String processName;
-    private final List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
+    private final List<ActivityBuilder> activityBuilders = new ArrayList<>();
     private Class<ProcessInstance> entityType = ProcessInstance.class;
     private final ProcessRules processRules = new ProcessRules();
     private volatile ProcessDefinition processDefinition;
@@ -181,7 +181,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     public ActivityDefinition findOrCreateActivityDefinition(String activityName) {
         ProcessDefinition definition = getProcessDefinition();
 
-        Map<String, Object> params = new HashMap<String, Object>(2);
+        Map<String, Object> params = new HashMap<>(2);
         params.put("definition", definition);
         params.put("name", activityName);
 
@@ -199,7 +199,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     protected ProcessDefinition findOrCreateProcessDefinition() {
-        Map<String, Object> params = new HashMap<String, Object>(1);
+        Map<String, Object> params = new HashMap<>(1);
         params.put("name", processName);
 
         List<ProcessDefinition> list = entityManagerTemplate.find(ProcessDefinition.class, "select x from "

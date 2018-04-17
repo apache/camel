@@ -26,8 +26,6 @@ import com.box.sdk.BoxFolder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxSearchManager;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxSearchManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +46,7 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testSearchFolder() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", "0");
         // parameter type is String

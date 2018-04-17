@@ -19,8 +19,6 @@ package org.apache.camel.component.box;
 import com.box.sdk.BoxAPIConnection;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxConnectionHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.component.AbstractApiComponent;

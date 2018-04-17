@@ -66,7 +66,7 @@ public class BoxGroupsManager {
         try {
             LOG.debug("Getting all groups");
 
-            Collection<BoxGroup> groups = new ArrayList<BoxGroup>();
+            Collection<BoxGroup> groups = new ArrayList<>();
             for (BoxGroup.Info groupInfo : BoxGroup.getAllGroups(boxConnection)) {
                 groups.add(groupInfo.getResource());
             }

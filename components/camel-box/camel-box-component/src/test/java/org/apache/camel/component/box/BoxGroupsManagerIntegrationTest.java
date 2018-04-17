@@ -26,8 +26,6 @@ import com.box.sdk.BoxGroupMembership;
 import com.box.sdk.BoxUser;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxGroupsManager;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxGroupsManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +49,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testAddGroupMembership() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.groupId", testGroup.getID());
         // parameter type is String
@@ -135,7 +133,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         info.setDescription(CAMEL_TEST_GROUP_DESCRIPTION);
 
         try {
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelBox.groupId", testGroup.getID());
             // parameter type is com.box.sdk.BoxGroup.Info
@@ -175,7 +173,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
         info.setRole(BoxGroupMembership.Role.ADMIN);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.groupMemebershipId", info.getID());
         // parameter type is com.box.sdk.BoxGroupMembership.Info

@@ -79,7 +79,7 @@ public class BoxSearchManager {
 
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
 
-            Collection<BoxItem> results = new ArrayList<BoxItem>();
+            Collection<BoxItem> results = new ArrayList<>();
             for (BoxItem.Info info : folder.search(query)) {
                 results.add((BoxItem) info.getResource());
             }

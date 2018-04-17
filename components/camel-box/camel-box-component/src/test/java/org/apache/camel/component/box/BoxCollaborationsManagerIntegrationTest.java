@@ -29,8 +29,6 @@ import com.box.sdk.CreateUserParams;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
-import org.apache.camel.component.box.internal.BoxApiCollection;
-import org.apache.camel.component.box.internal.BoxCollaborationsManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +55,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         // delete collaborator created by setupTest
         deleteTestCollaborator();
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
         // parameter type is String
@@ -83,7 +81,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
             params.setSpaceAmount(1073741824); // 1 GB
             user = BoxUser.createAppUser(getConnection(), CAMEL_TEST_COLLABORATOR_NAME, params).getResource();
 
-            final Map<String, Object> headers = new HashMap<String, Object>();
+            final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelBox.folderId", testFolder.getID());
             // parameter type is String
@@ -136,7 +134,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
 
     @Test
     public void testUpdateCollaborationInfo() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.collaborationId", testCollaboration.getID());
         // parameter type is com.box.sdk.BoxCollaboration.Info

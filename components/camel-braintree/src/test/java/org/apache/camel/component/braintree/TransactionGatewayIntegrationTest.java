@@ -30,8 +30,6 @@ import com.braintreegateway.TransactionRefundRequest;
 import com.braintreegateway.TransactionRequest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
-import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -437,7 +435,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     @Ignore
     @Test
     public void testSubmitForPartialSettlement() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.id", null);
         // parameter type is java.math.BigDecimal

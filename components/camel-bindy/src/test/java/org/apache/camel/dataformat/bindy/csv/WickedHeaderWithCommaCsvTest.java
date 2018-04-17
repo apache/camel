@@ -45,7 +45,7 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
         assertEquals("1,000.00", row1000.getFoo());
         assertEquals("1,500.00", row1000.getBar());
 
-        final WickedHeaderWithCommaCsv row2000 = (WickedHeaderWithCommaCsv) wickedHeaderWithCommaCsvs.get(1);
+        final WickedHeaderWithCommaCsv row2000 = wickedHeaderWithCommaCsvs.get(1);
         assertEquals("2,000.00", row2000.getFoo());
         assertEquals("2,700.00", row2000.getBar());
 

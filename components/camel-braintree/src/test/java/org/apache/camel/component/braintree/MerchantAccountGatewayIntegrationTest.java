@@ -24,9 +24,7 @@ import com.braintreegateway.MerchantAccount;
 import com.braintreegateway.MerchantAccountRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
-import org.apache.camel.component.braintree.internal.MerchantAccountGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 
