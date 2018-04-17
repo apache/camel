@@ -33,7 +33,7 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
     private static final int NUM_CONCURRENT = 10;
     private static final int NUM_MESSAGES = 100;
 
-    final Set<Long> threadNumbers = new HashSet<Long>();
+    final Set<Long> threadNumbers = new HashSet<>();
 
     @Test
     public void consumeMessagesFromQueue() throws Exception {

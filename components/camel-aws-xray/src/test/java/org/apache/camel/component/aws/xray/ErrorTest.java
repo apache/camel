@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class ErrorTest extends CamelAwsXRayTestSupport {
 

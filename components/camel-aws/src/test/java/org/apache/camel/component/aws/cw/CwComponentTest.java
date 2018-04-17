@@ -108,7 +108,7 @@ public class CwComponentTest extends CamelTestSupport {
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(CwConstants.METRIC_NAME, "errorCount");
-                Map<String, String> dimensionsMap = new LinkedHashMap<String, String>();
+                Map<String, String> dimensionsMap = new LinkedHashMap<>();
                 dimensionsMap.put("keyOne", "valueOne");
                 dimensionsMap.put("keyTwo", "valueTwo");
                 exchange.getIn().setHeader(CwConstants.METRIC_DIMENSIONS, dimensionsMap);

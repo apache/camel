@@ -82,7 +82,7 @@ public class EC2ProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
-                Collection<String> secGroups = new ArrayList<String>();
+                Collection<String> secGroups = new ArrayList<>();
                 secGroups.add("secgroup-1");
                 secGroups.add("secgroup-2");
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, secGroups);

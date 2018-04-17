@@ -160,7 +160,7 @@ public class SqsProducerTest {
     
     @Test
     public void isAttributeMessageStringHeaderOnTheRequest() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SAMPLE_MESSAGE_HEADER_NAME_1, SAMPLE_MESSAGE_HEADER_VALUE_1);
         when(inMessage.getHeaders()).thenReturn(headers);
         underTest.process(exchange);
@@ -174,7 +174,7 @@ public class SqsProducerTest {
     
     @Test
     public void isAttributeMessageByteBufferHeaderOnTheRequest() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SAMPLE_MESSAGE_HEADER_NAME_2, SAMPLE_MESSAGE_HEADER_VALUE_2);
         when(inMessage.getHeaders()).thenReturn(headers);
         underTest.process(exchange);
@@ -188,7 +188,7 @@ public class SqsProducerTest {
     
     @Test
     public void isAllAttributeMessagesOnTheRequest() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SAMPLE_MESSAGE_HEADER_NAME_1, SAMPLE_MESSAGE_HEADER_VALUE_1);
         headers.put(SAMPLE_MESSAGE_HEADER_NAME_2, SAMPLE_MESSAGE_HEADER_VALUE_2);
         headers.put(SAMPLE_MESSAGE_HEADER_NAME_3, SAMPLE_MESSAGE_HEADER_VALUE_3);

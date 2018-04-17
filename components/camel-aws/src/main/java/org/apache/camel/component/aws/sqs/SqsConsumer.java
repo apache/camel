@@ -132,7 +132,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Received {} messages in this poll", messages.size());
         }
         
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Queue<Exchange> answer = new LinkedList<>();
         for (Message message : messages) {
             Exchange exchange = getEndpoint().createExchange(message);
             answer.add(exchange);

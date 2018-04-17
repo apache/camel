@@ -126,7 +126,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
 
-        DatumWriter<Object> datum = new SpecificDatumWriter<Object>(useSchema);
+        DatumWriter<Object> datum = new SpecificDatumWriter<>(useSchema);
         Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
         datum.write(graph, encoder);
         encoder.flush();
@@ -142,7 +142,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
             classLoader = clazz.getClassLoader();
         }
         SpecificData specificData = new SpecificDataNoCache(classLoader);
-        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(null, null, specificData);
+        DatumReader<GenericRecord> reader = new SpecificDatumReader<>(null, null, specificData);
         reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         Object result = reader.read(null, decoder);
