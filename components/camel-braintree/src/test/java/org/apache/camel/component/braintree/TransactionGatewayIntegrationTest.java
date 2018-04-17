@@ -30,6 +30,8 @@ import com.braintreegateway.TransactionRefundRequest;
 import com.braintreegateway.TransactionRequest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
+import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

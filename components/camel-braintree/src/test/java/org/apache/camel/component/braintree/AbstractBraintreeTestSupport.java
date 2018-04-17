@@ -26,6 +26,8 @@ import com.braintreegateway.BraintreeGateway;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
+import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
 import org.apache.camel.test.junit4.CamelTestSupport;

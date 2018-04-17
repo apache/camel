@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.braintree;
 
+import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
 import org.apache.camel.util.component.AbstractApiProducer;
 

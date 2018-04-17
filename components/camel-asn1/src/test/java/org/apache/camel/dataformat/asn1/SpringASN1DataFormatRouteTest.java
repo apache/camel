@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;

@@ -29,6 +29,8 @@ import com.box.sdk.CreateUserParams;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
+import org.apache.camel.component.box.internal.BoxApiCollection;
+import org.apache.camel.component.box.internal.BoxCollaborationsManagerApiMethod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
