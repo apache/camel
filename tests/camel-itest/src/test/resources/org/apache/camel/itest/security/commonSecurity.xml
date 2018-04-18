@@ -28,7 +28,7 @@
 
     <spring-security:authentication-manager alias="authenticationManager">
     	<spring-security:authentication-provider user-service-ref="userDetailsService">
-    		<spring-security:password-encoder ref="passwordEncoder"/>
+            <spring-security:password-encoder ref="passwordEncoder"/>
     	</spring-security:authentication-provider>
     </spring-security:authentication-manager>
 
