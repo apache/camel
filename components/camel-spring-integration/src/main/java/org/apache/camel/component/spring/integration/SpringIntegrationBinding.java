@@ -38,11 +38,11 @@ public final class SpringIntegrationBinding {
 
     public static org.springframework.messaging.Message<?> createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
         org.apache.camel.Message message = exchange.getIn();
-        return new GenericMessage<Object>(message.getBody(), headers);
+        return new GenericMessage<>(message.getBody(), headers);
     }
 
     public static org.springframework.messaging.Message<?> storeToSpringIntegrationMessage(org.apache.camel.Message message) {
-        return new GenericMessage<Object>(message.getBody(), message.getHeaders());
+        return new GenericMessage<>(message.getBody(), message.getHeaders());
     }
 
     public static void storeToCamelMessage(org.springframework.messaging.Message<?> siMessage, org.apache.camel.Message cMessage) {

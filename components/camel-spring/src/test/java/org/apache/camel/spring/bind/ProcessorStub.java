@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
  * @version 
  */
 public class ProcessorStub implements Processor {
-    private List<Exchange> exchanges = new CopyOnWriteArrayList<Exchange>();
+    private List<Exchange> exchanges = new CopyOnWriteArrayList<>();
 
     public void process(Exchange exchange) throws Exception {
         exchanges.add(exchange);

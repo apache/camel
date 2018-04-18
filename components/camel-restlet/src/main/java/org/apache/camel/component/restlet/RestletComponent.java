@@ -259,7 +259,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     public void disconnect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = consumer.getEndpoint();
 
-        List<MethodBasedRouter> routesToRemove = new ArrayList<MethodBasedRouter>();
+        List<MethodBasedRouter> routesToRemove = new ArrayList<>();
 
         String pattern = endpoint.getUriPattern();
         if (pattern != null && !pattern.isEmpty()) {
@@ -754,7 +754,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             }
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals("restlet")) {
             // setup endpoint options

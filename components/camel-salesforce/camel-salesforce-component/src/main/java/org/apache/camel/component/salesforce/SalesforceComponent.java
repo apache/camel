@@ -278,7 +278,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
         // if operation is APEX call, map remaining parameters to query params
         if (operationName == OperationName.APEX_CALL && !parameters.isEmpty()) {
-            Map<String, Object> queryParams = new HashMap<String, Object>(copy.getApexQueryParams());
+            Map<String, Object> queryParams = new HashMap<>(copy.getApexQueryParams());
 
             // override component params with endpoint params
             queryParams.putAll(parameters);
@@ -291,7 +291,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     }
 
     private Map<String, Class<?>> parsePackages() {
-        Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> result = new HashMap<>();
         Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
                 findImplementations(AbstractSObjectBase.class, packages);
         for (Class<?> aClass : classes) {
@@ -365,7 +365,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
-            classMap = new HashMap<String, Class<?>>(0);
+            classMap = new HashMap<>(0);
         }
 
         if (subscriptionHelper != null) {
@@ -730,7 +730,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         // set HTTP client parameters
         final TypeConverter typeConverter = camelContext.getTypeConverter();
         IntrospectionSupport.setProperties(typeConverter, httpClient,
-            new HashMap<String, Object>(httpClientProperties));
+            new HashMap<>(httpClientProperties));
 
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
         final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));

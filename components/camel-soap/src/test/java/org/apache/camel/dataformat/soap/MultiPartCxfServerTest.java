@@ -122,7 +122,7 @@ public class MultiPartCxfServerTest extends RouteBuilder {
                 product.setName("Multiuse Product");
                 product.setDescription("Useful for lots of things.");
                 
-                Holder<Company> holder = new Holder<Company>();
+                Holder<Company> holder = new Holder<>();
                 
                 Object[] args = new Object[] {saveCustomer, product, holder};
                 beanInvocation.setArgs(args);
@@ -169,7 +169,7 @@ public class MultiPartCxfServerTest extends RouteBuilder {
                 product.setName("Multiuse Product");
                 product.setDescription("Useful for lots of things.");
                 
-                Holder<Company> holder = new Holder<Company>();
+                Holder<Company> holder = new Holder<>();
                 
                 Object[] args = new Object[] {saveCustomer, product, holder};
                 beanInvocation.setArgs(args);

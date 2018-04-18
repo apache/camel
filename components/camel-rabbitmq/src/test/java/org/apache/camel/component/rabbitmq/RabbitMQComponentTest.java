@@ -54,7 +54,7 @@ public class RabbitMQComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("username", "coldplay");
         params.put("password", "chrism");
         params.put("autoAck", true);
@@ -105,7 +105,7 @@ public class RabbitMQComponentTest {
 
         CamelContext defaultContext = new DefaultCamelContext(registry);
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("connectionFactory", "#connectionFactoryMock");
 
         RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", params);

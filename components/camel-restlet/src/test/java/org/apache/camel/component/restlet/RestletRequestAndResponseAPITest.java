@@ -38,7 +38,7 @@ public class RestletRequestAndResponseAPITest extends RestletTestSupport {
 
     @Test
     public void testRestletProducer() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 
@@ -48,7 +48,7 @@ public class RestletRequestAndResponseAPITest extends RestletTestSupport {
 
     @Test
     public void testRestletProducer2() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 

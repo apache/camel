@@ -58,7 +58,7 @@ public final class JmsMessageHelper {
         // as the JMS API is a bit strict as we are not allowed to
         // clear a single property, but must clear them all and redo
         // the properties
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         Enumeration<?> en = jmsMessage.getPropertyNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();

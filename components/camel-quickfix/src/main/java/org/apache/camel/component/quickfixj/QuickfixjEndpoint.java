@@ -51,7 +51,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
 
     private final QuickfixjEngine engine;
-    private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
+    private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
     @UriPath @Metadata(required = "true")
     private String configurationName;

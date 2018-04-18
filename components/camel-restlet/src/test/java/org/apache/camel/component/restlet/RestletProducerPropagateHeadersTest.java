@@ -34,7 +34,7 @@ public class RestletProducerPropagateHeadersTest extends RestletTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "bar");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("foo", "bar");
 

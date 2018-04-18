@@ -227,7 +227,7 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static <T> T configure(final CamelContext context, final T target, final Logger log, final boolean deep) {
         Class<?> clazz = target.getClass();
         log.debug("Configuring {}", clazz.getName());
-        Collection<Field> fields = new ArrayList<Field>();
+        Collection<Field> fields = new ArrayList<>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         if (deep) {
             fields.addAll(Arrays.asList(clazz.getFields()));

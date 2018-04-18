@@ -108,7 +108,7 @@ public class SjmsConsumer extends DefaultConsumer {
 
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         if (consumers == null) {
-            consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
+            consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
             consumers.setMaxActive(getConsumerCount());
             consumers.setMaxIdle(getConsumerCount());
             if (getEndpoint().isAsyncStartListener()) {

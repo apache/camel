@@ -131,7 +131,7 @@ public class SolrCloudFixture {
         throws Exception {
         zkClient = new SolrZkClient(zkAddress, 60000);
 
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("configName", "conf1");
 
         // for now, always upload the config and schema to the canonical names

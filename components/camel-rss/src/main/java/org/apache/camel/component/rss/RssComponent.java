@@ -51,7 +51,7 @@ public class RssComponent extends FeedComponent {
         // for the http feed
         String feedUri;
         if (!parameters.isEmpty()) {
-            Map<String, Object> options = new LinkedHashMap<String, Object>(parameters);
+            Map<String, Object> options = new LinkedHashMap<>(parameters);
             String query = URISupport.createQueryString(options);
             feedUri = remaining + "?" + query;
         } else {

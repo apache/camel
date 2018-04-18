@@ -105,7 +105,7 @@ public class RestSwaggerServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         Enumeration en = config.getInitParameterNames();
         while (en.hasMoreElements()) {
             String name = (String) en.nextElement();

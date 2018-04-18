@@ -121,7 +121,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
             return (Publisher<T>) fromStream(name);
         }
 
-        return new ConvertingPublisher<T>(fromStream(name), cls);
+        return new ConvertingPublisher<>(fromStream(name), cls);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
             return (Subscriber<T>) streamSubscriber(name);
         }
 
-        return new ConvertingSubscriber<T>(streamSubscriber(name), context);
+        return new ConvertingSubscriber<>(streamSubscriber(name), context);
     }
 
     @Override
@@ -222,7 +222,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public <T> Publisher<T> from(String uri, Class<T> type) {
-        return new ConvertingPublisher<T>(from(uri), type);
+        return new ConvertingPublisher<>(from(uri), type);
     }
 
     @Override
@@ -245,7 +245,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
-        return new ConvertingSubscriber<T>(subscriber(uri), context);
+        return new ConvertingSubscriber<>(subscriber(uri), context);
     }
 
     @Override
@@ -306,7 +306,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
-        process(uri, exPub -> processor.apply(new ConvertingPublisher<T>(exPub, type)));
+        process(uri, exPub -> processor.apply(new ConvertingPublisher<>(exPub, type)));
     }
 
     @Override

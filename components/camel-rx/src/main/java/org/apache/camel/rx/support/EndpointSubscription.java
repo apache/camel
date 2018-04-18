@@ -52,7 +52,7 @@ public class EndpointSubscription<T> extends ServiceSupport implements Subscript
         this.observer = observer;
 
         // lets create the consumer
-        Processor processor = new ProcessorToObserver<T>(func, observer);
+        Processor processor = new ProcessorToObserver<>(func, observer);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));

@@ -44,7 +44,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
     @Override
     public void execute(Exchange exchange) throws SmppException {
         SubmitSm[] submitSms = createSubmitSm(exchange);
-        List<String> messageIDs = new ArrayList<String>(submitSms.length);
+        List<String> messageIDs = new ArrayList<>(submitSms.length);
         
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];

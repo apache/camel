@@ -89,10 +89,10 @@ public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
     private void setRemoveHeaders(boolean isRemoved) {
         ClientInterceptor[] clientInterceptors = webServiceTemplate.getInterceptors();
         
-        for (int i = 0; i < clientInterceptors.length; i++) {
-            if (clientInterceptors[i] instanceof Wss4jSecurityInterceptor) {
+        for (ClientInterceptor clientInterceptor : clientInterceptors) {
+            if (clientInterceptor instanceof Wss4jSecurityInterceptor) {
                 Wss4jSecurityInterceptor wss4jSampleInterceptor 
-                                           = (Wss4jSecurityInterceptor) clientInterceptors[i];
+                                           = (Wss4jSecurityInterceptor) clientInterceptor;
                 wss4jSampleInterceptor.setRemoveSecurityHeader(isRemoved);
             }
         }

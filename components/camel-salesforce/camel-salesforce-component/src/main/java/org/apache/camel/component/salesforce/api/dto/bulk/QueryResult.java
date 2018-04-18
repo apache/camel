@@ -72,7 +72,7 @@ public class QueryResult {
      */
     public List<SObject> getRecords() {
         if (records == null) {
-            records = new ArrayList<SObject>();
+            records = new ArrayList<>();
         }
         return this.records;
     }

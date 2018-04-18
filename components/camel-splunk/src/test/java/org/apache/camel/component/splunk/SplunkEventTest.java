@@ -43,7 +43,7 @@ public class SplunkEventTest extends Assert {
     public void testEventDataFromMap() {
         String rawString = "2013-10-26    15:16:38:011+0200 name=\"twitter-message\" from_user=\"MyNameIsZack_98\" in_reply_to=\"null\" start_time=\"Sat Oct 26 15:16:21 CEST 2013\" "
                            + "event_id=\"394090123278974976\" text=\"RT @RGIII: Just something about music that it can vibe with your soul\" retweet_count=\"1393\"";
-        Map<String, String> eventData = new LinkedHashMap<String, String>();
+        Map<String, String> eventData = new LinkedHashMap<>();
         eventData.put("_subsecond", ".011");
         eventData.put("_raw", rawString);
         SplunkEvent splunkEvent = new SplunkEvent(eventData);

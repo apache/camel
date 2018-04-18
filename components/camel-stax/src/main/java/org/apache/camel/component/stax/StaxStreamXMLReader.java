@@ -72,7 +72,7 @@ public class StaxStreamXMLReader implements XMLReader {
 
 	private Boolean isStandalone;
 
-	private final Map<String, String> namespaces = new LinkedHashMap<String, String>();
+	private final Map<String, String> namespaces = new LinkedHashMap<>();
 
 	private final XMLStreamReader reader;
 

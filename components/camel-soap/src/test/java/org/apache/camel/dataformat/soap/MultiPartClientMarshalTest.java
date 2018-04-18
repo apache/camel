@@ -80,7 +80,7 @@ public class MultiPartClientMarshalTest extends CamelTestSupport {
             throw exchange.getException();
         }
            
-        Map<String, String> nsMap = new HashMap<String, String>();
+        Map<String, String> nsMap = new HashMap<>();
         nsMap.put("soap", "http://schemas.xmlsoap.org/soap/envelope/");
         nsMap.put("example", "http://multipart.customerservice.example.com/");
         XQueryBuilder builder = XQueryBuilder.xquery("//soap:Envelope/soap:Header/example:product/name");

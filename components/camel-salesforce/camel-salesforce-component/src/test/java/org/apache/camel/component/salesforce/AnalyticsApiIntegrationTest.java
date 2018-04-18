@@ -113,7 +113,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         LOG.debug("executeSyncReport: {}", reportResults);
 
         // execute with metadata
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.FALSE);
         Object body;
         if (!bodyMetadata) {

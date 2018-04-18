@@ -159,7 +159,7 @@ public class CamelSubscription implements Subscription {
                 return;
             }
 
-            int amount = (int) Math.min(requested, (long) buffer.size());
+            int amount = (int) Math.min(requested, buffer.size());
             if (amount > 0) {
                 this.requested -= amount;
                 sendingQueue = new LinkedList<>();

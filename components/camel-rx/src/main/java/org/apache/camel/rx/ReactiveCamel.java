@@ -101,7 +101,7 @@ public class ReactiveCamel {
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
     public <T> Observable<T> toObservable(Endpoint endpoint, final Class<T> bodyType) {
-        return createEndpointObservable(endpoint, new ExchangeToBodyFunc1<T>(bodyType));
+        return createEndpointObservable(endpoint, new ExchangeToBodyFunc1<>(bodyType));
     }
 
     /**
@@ -116,7 +116,7 @@ public class ReactiveCamel {
      */
     public <T> void sendTo(Observable<T> observable, Endpoint endpoint) {
         try {
-            ObserverSender<T> observer = new ObserverSender<T>(endpoint);
+            ObserverSender<T> observer = new ObserverSender<>(endpoint);
             observable.subscribe(observer);
         } catch (Exception e) {
             throw new RuntimeCamelRxException(e);
@@ -157,14 +157,14 @@ public class ReactiveCamel {
      */
     private <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
                                                        final Func1<Exchange, T> converter) {
-        Observable.OnSubscribe<T> func = new EndpointSubscribeFunc<T>(workerPool, endpoint, converter);
-        return new EndpointObservable<T>(endpoint, func);
+        Observable.OnSubscribe<T> func = new EndpointSubscribeFunc<>(workerPool, endpoint, converter);
+        return new EndpointObservable<>(endpoint, func);
     }
 
     /**
      * Return a newly created {@link Observable} without conversion
      */
     private Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
-        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(workerPool, endpoint, exchange -> exchange));
+        return new EndpointObservable<>(endpoint, new EndpointSubscribeFunc<Exchange>(workerPool, endpoint, exchange -> exchange));
     }
 }

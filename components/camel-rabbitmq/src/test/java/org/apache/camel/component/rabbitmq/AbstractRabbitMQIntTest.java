@@ -25,6 +25,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.qpid.server.SystemLauncher;
+import org.apache.qpid.server.model.ConfiguredObject;
 import org.apache.qpid.server.model.SystemConfig;
 
 public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
@@ -55,7 +56,7 @@ public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
     protected static Map<String, Object> createQpidSystemConfig() {
         Map<String, Object> attributes = new HashMap<>();
         URL initialConfig = AbstractRabbitMQIntTest.class.getClassLoader().getResource(INITIAL_CONFIGURATION);
-        attributes.put(SystemConfig.TYPE, "Memory");
+        attributes.put(ConfiguredObject.TYPE, "Memory");
         attributes.put(SystemConfig.INITIAL_CONFIGURATION_LOCATION, initialConfig.toExternalForm());
         attributes.put(SystemConfig.STARTUP_LOGGED_TO_SYSTEM_OUT, false);
 

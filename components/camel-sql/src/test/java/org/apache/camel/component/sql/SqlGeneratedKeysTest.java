@@ -136,7 +136,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:batch");
 
         Exchange exchange = endpoint.createExchange();
-        List<Object[]> payload = new ArrayList<Object[]>(4);
+        List<Object[]> payload = new ArrayList<>(4);
         payload.add(new Object[] {"project x", "ASF", "new project x"});
         payload.add(new Object[] {"project y", "ASF", "new project y"});
         payload.add(new Object[] {"project z", "ASF", "new project z"});

@@ -61,7 +61,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     private ServiceRegistration<LanguageResolver> registration;
 
     private Map<Long, List<BundleScriptEngineResolver>> resolvers 
-        = new ConcurrentHashMap<Long, List<BundleScriptEngineResolver>>();
+        = new ConcurrentHashMap<>();
 
     public static BundleContext getBundleContext() {
         return context;
@@ -88,7 +88,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
-        List<BundleScriptEngineResolver> r = new ArrayList<BundleScriptEngineResolver>();
+        List<BundleScriptEngineResolver> r = new ArrayList<>();
         registerScriptEngines(bundle, r);
         for (BundleScriptEngineResolver service : r) {
             service.register();
@@ -117,7 +117,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
 
     private String[] getAvailableScriptNames() {
         // use a set to avoid duplicate names
-        Set<String> names = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (List<BundleScriptEngineResolver> list : resolvers.values()) {
             for (BundleScriptEngineResolver r : list) {
                 names.addAll(r.getScriptNames());

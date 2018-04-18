@@ -281,7 +281,7 @@ public class SplunkDataReader {
     }
 
     private List<SplunkEvent> extractData(Job job, boolean realtime, SplunkResultProcessor callback) throws Exception {
-        List<SplunkEvent> result = new ArrayList<SplunkEvent>();
+        List<SplunkEvent> result = new ArrayList<>();
         HashMap<String, String> data;
         SplunkEvent splunkData;
         ResultsReader resultsReader = null;

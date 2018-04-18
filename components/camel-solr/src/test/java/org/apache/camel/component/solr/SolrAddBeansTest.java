@@ -33,7 +33,7 @@ public class SolrAddBeansTest extends SolrComponentTestSupport {
     @Test
     public void testAddBeans() throws Exception {
 
-        List<Item> beans = new ArrayList<Item>();
+        List<Item> beans = new ArrayList<>();
 
         //add bean1
         Item item1 = new Item();

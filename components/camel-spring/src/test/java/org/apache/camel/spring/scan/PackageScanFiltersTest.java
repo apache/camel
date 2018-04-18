@@ -45,7 +45,7 @@ public class PackageScanFiltersTest extends TestCase {
         filter = new AssignableToPackageScanFilter(ScanTargetOne.class);
         validateFilter(filter, ScanTargetTwo.class);
 
-        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+        Set<Class<?>> classes = new LinkedHashSet<>();
         classes.add(ScanTargetOne.class);
         classes.add(ScanTargetThree.class);
         filter = new AssignableToPackageScanFilter(classes);
@@ -58,7 +58,7 @@ public class PackageScanFiltersTest extends TestCase {
     }
 
     public void testAnnotatedWithAnyPackageScanFilter() {
-        Set<Class<? extends Annotation>> annotations = new LinkedHashSet<Class<? extends Annotation>>();
+        Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
         annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
         annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
 

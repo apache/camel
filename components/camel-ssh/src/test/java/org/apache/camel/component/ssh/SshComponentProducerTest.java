@@ -93,7 +93,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
         mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
         mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
         
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SshConstants.USERNAME_HEADER, "smx");
         headers.put(SshConstants.PASSWORD_HEADER, "smx");
 

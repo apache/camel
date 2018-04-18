@@ -33,7 +33,7 @@ public class CamelItemWriterTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        camelItemWriter = new CamelItemWriter<String>(template(), "seda:queue");
+        camelItemWriter = new CamelItemWriter<>(template(), "seda:queue");
     }
 
     // Tests

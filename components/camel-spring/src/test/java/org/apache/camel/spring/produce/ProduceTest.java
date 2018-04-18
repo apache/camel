@@ -35,7 +35,7 @@ public class ProduceTest extends SpringRunWithTestSupport {
 
     @Test
     public void testInvokeServiceWithMessageHeader() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("greeter", "Nihao ");
         String response = producer.greet(headers, "Willem");
         assertEquals("response is wrong", "Nihao Willem", response);

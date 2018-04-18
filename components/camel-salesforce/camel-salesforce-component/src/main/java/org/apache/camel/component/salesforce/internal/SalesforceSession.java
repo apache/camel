@@ -102,7 +102,7 @@ public class SalesforceSession implements Service {
         config.setLoginUrl(loginUrl.endsWith("/") ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl);
 
         this.objectMapper = JsonUtils.createObjectMapper();
-        this.listeners = new CopyOnWriteArraySet<SalesforceSessionListener>();
+        this.listeners = new CopyOnWriteArraySet<>();
     }
 
     public synchronized String login(String oldToken) throws SalesforceException {
@@ -272,7 +272,7 @@ public class SalesforceSession implements Service {
                 final String errorCode = error.getError();
                 final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(),
                     error.getErrorDescription());
-                final List<RestError> errors = new ArrayList<RestError>();
+                final List<RestError> errors = new ArrayList<>();
                 errors.add(new RestError(errorCode, msg));
                 throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 

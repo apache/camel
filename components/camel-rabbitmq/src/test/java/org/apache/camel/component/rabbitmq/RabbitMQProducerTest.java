@@ -172,7 +172,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesCustomHeaders() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        Map<String, Object> customHeaders = new HashMap<String, Object>();
+        Map<String, Object> customHeaders = new HashMap<>();
         customHeaders.put("stringHeader", "A string");
         customHeaders.put("bigDecimalHeader", new BigDecimal("12.34"));
         customHeaders.put("integerHeader", 42);

@@ -76,11 +76,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new EndpointDefinitionParser();
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
-    protected Set<String> parserElementNames = new HashSet<String>();
-    protected Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
+    protected Set<String> parserElementNames = new HashSet<>();
+    protected Map<String, BeanDefinitionParser> parserMap = new HashMap<>();
     
     private JAXBContext jaxbContext;
-    private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
+    private Map<String, BeanDefinition> autoRegisterMap = new HashMap<>();
 
     /**
      * Prepares the nodes before parsing.

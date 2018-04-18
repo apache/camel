@@ -49,10 +49,9 @@ public class CircularComponentCreationTest {
 
     private void doTest(String path) {
         AbstractXmlApplicationContext applicationContext = null;
-        CamelContext camelContext = null;
         try {
             applicationContext = new ClassPathXmlApplicationContext(path);
-            camelContext = new SpringCamelContext(applicationContext);
+            new SpringCamelContext(applicationContext);
         } finally {
             IOHelper.close(applicationContext);
         }

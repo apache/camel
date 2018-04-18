@@ -27,7 +27,7 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class MyEventNotifier extends EventNotifierSupport {
 
-    private List<EventObject> events = new ArrayList<EventObject>();
+    private List<EventObject> events = new ArrayList<>();
 
     public void notify(EventObject event) throws Exception {
         events.add(event);

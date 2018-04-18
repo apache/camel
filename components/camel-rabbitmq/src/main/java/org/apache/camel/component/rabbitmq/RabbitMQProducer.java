@@ -103,7 +103,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         log.debug("Created connection: {}", conn);
 
         log.trace("Creating channel pool...");
-        channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
+        channelPool = new GenericObjectPool<>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
                 GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
         attemptDeclaration();
     }
