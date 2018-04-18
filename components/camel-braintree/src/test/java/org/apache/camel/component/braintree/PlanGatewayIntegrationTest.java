@@ -21,7 +21,6 @@ import java.util.List;
 import com.braintreegateway.Plan;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.PlanGatewayApiMethod;
-import org.apache.camel.component.braintree.internal.PlanGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

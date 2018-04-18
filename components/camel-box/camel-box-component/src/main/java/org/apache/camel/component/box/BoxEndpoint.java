@@ -26,7 +26,6 @@ import org.apache.camel.component.box.api.BoxCollaborationsManager;
 import org.apache.camel.component.box.api.BoxCommentsManager;
 import org.apache.camel.component.box.api.BoxEventLogsManager;
 import org.apache.camel.component.box.api.BoxEventsManager;
-import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.api.BoxFilesManager;
 import org.apache.camel.component.box.api.BoxFoldersManager;
 import org.apache.camel.component.box.api.BoxGroupsManager;
