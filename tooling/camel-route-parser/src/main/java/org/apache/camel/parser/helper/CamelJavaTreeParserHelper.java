@@ -36,7 +36,6 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ITypeBinding;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.InfixExpression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodDeclaration;

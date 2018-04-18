@@ -139,8 +139,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Copying all Camel component json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> componentFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> componentFiles = new TreeSet<>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -180,8 +180,6 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         // make sure to create out dir
         componentsOutDir.mkdirs();
 
-        Set<String> alternativeSchemes = new HashSet<>();
-
         for (File file : jsonFiles) {
             File to = new File(componentsOutDir, file.getName());
             try {
@@ -196,7 +194,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = componentsOutDir.list();
-            List<String> components = new ArrayList<String>();
+            List<String> components = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {
@@ -223,8 +221,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Copying all Camel dataformat json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> dataFormatFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> dataFormatFiles = new TreeSet<>();
 
         // find all data formats from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -267,7 +265,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = dataFormatsOutDir.list();
-            List<String> dataFormats = new ArrayList<String>();
+            List<String> dataFormats = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {
@@ -294,8 +292,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Copying all Camel language json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> languageFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> languageFiles = new TreeSet<>();
 
         // find all languages from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -338,7 +336,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = languagesOutDir.list();
-            List<String> languages = new ArrayList<String>();
+            List<String> languages = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {
@@ -365,8 +363,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Copying all Camel other json descriptors");
 
         // lets use sorted set/maps
-        Set<File> jsonFiles = new TreeSet<File>();
-        Set<File> otherFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
+        Set<File> otherFiles = new TreeSet<>();
 
         // find all languages from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -422,7 +420,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             FileOutputStream fos = new FileOutputStream(all, false);
 
             String[] names = othersOutDir.list();
-            List<String> others = new ArrayList<String>();
+            List<String> others = new ArrayList<>();
             // sort the names
             for (String name : names) {
                 if (name.endsWith(".json")) {

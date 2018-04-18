@@ -114,8 +114,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        Set<File> javaFiles = new LinkedHashSet<File>();
-        Set<File> xmlFiles = new LinkedHashSet<File>();
+        Set<File> javaFiles = new LinkedHashSet<>();
+        Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
         List list = project.getCompileSourceRoots();

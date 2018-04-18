@@ -100,7 +100,7 @@ public class PackageModelMojo extends AbstractMojo {
         File camelMetaDir = new File(modelOutDir, "META-INF/services/org/apache/camel/");
         camelMetaDir.mkdirs();
 
-        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
         if (buildDir != null && buildDir.isDirectory()) {
@@ -108,7 +108,7 @@ public class PackageModelMojo extends AbstractMojo {
             PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
         }
 
-        List<String> models = new ArrayList<String>();
+        List<String> models = new ArrayList<>();
         // sort the names
         for (File file : jsonFiles) {
             String name = file.getName();

@@ -41,7 +41,7 @@ public class RoasterSimpleProcessorTest {
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/SimpleProcessorTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
-        List<CamelEndpointDetails> details = new ArrayList<CamelEndpointDetails>();
+        List<CamelEndpointDetails> details = new ArrayList<>();
         RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".", "src/test/java/org/apache/camel/parser/java/SimpleProcessorTest.java", details);
         LOG.info("{}", details);
 

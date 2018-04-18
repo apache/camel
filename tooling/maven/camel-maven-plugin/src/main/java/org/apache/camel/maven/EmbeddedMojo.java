@@ -171,7 +171,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
 
-        List<String> args = new ArrayList<String>(5);
+        List<String> args = new ArrayList<>(5);
 
         if (applicationContextUri != null) {
             args.add("-applicationContext");
