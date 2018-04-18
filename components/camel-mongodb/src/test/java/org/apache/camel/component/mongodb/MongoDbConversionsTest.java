@@ -34,8 +34,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     public void testInsertMap() throws InterruptedException {
         assertEquals(0, testCollection.count());
         
-        Map<String, Object> m1 = new HashMap<String, Object>();
-        Map<String, String> m1Nested = new HashMap<String, String>();
+        Map<String, Object> m1 = new HashMap<>();
+        Map<String, String> m1Nested = new HashMap<>();
 
         m1Nested.put("nested1", "nestedValue1");
         m1Nested.put("nested2", "nestedValue2");

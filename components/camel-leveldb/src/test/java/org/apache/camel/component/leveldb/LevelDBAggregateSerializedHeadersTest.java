@@ -58,7 +58,7 @@ public class LevelDBAggregateSerializedHeadersTest extends CamelTestSupport {
             HeaderDto headerDto = new HeaderDto("test", "company", 1);
             char id = 'A';
             LOG.debug("Sending {} with id {}", value, id);
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put("id", headerDto);
             template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
         }

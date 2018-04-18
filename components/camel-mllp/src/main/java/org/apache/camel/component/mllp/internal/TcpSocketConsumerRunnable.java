@@ -18,30 +18,17 @@
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.Route;
-import org.apache.camel.component.mllp.MllpAcknowledgementDeliveryException;
-import org.apache.camel.component.mllp.MllpConstants;
-import org.apache.camel.component.mllp.MllpInvalidAcknowledgementException;
 import org.apache.camel.component.mllp.MllpInvalidMessageException;
-import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.apache.camel.component.mllp.MllpReceiveException;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.MDCUnitOfWork;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
-import org.apache.camel.util.IOHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

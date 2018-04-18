@@ -53,7 +53,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World", "Bye World");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
         template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=true", "Hello World", headers);
@@ -82,7 +82,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
         template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=false", "Hello World", headers);

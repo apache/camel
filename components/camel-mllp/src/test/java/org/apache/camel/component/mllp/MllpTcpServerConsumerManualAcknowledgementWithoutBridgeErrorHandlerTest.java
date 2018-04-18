@@ -19,9 +19,6 @@ package org.apache.camel.component.mllp;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-
 
 public class MllpTcpServerConsumerManualAcknowledgementWithoutBridgeErrorHandlerTest extends TcpServerConsumerAcknowledgementTestSupport {
     @Override

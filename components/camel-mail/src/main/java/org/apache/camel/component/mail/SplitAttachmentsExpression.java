@@ -76,7 +76,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         }
 
         try {
-            List<Message> answer = new ArrayList<Message>();
+            List<Message> answer = new ArrayList<>();
             Message inMessage = exchange.getIn();
             for (Map.Entry<String, Attachment> entry : inMessage.getAttachmentObjects().entrySet()) {
                 Message attachmentMessage;

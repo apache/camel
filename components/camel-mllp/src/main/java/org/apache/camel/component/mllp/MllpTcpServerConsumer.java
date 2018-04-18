@@ -51,7 +51,6 @@ import org.apache.camel.component.mllp.internal.TcpSocketConsumerRunnable;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

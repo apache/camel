@@ -69,7 +69,7 @@ public class MetricsComponentTest {
         component.setCamelContext(camelContext);
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class)).thenReturn(metricRegistry);
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
         params.put("mark", value);
         Endpoint result = component.createEndpoint("metrics:meter:long.meter", "meter:long.meter", params);
@@ -90,7 +90,7 @@ public class MetricsComponentTest {
         component.setCamelContext(camelContext);
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class)).thenReturn(metricRegistry);
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
         params.put("mark", value);
         Endpoint result = component.createEndpoint("metrics:meter:long.meter", "meter:long.meter", params);
@@ -101,7 +101,7 @@ public class MetricsComponentTest {
         assertThat(me.getMetricsName(), is("long.meter"));
         assertThat(me.getRegistry(), is(metricRegistry));
 
-        params = new HashMap<String, Object>();
+        params = new HashMap<>();
         params.put("increment", value + 1);
         params.put("decrement", value - 1);
 

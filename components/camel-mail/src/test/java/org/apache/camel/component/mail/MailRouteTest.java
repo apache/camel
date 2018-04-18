@@ -45,7 +45,7 @@ public class MailRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("reply-to", "route-test-reply@localhost");
         template.sendBodyAndHeaders("smtp://route-test-james@localhost", "hello world!", headers);
 

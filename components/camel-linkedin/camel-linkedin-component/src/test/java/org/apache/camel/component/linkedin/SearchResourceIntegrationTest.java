@@ -40,7 +40,7 @@ public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     @Test
     public void testSearchCompanies() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
         // parameter type is String
@@ -70,7 +70,7 @@ public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore("Requires vetted API Access Program")
     @Test
     public void testSearchJobs() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
 /*
@@ -107,7 +107,7 @@ public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore("Requires vetted API Access Program")
     @Test
     public void testSearchPeople() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
 /*

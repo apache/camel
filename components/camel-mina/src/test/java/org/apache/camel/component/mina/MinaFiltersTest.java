@@ -83,7 +83,7 @@ public class MinaFiltersTest extends BaseMinaTest {
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         IoFilter myFilter = new TestFilter();
-        List<IoFilter> myFilters = new ArrayList<IoFilter>();
+        List<IoFilter> myFilters = new ArrayList<>();
         myFilters.add(myFilter);
 
         answer.bind("myFilters", myFilters);

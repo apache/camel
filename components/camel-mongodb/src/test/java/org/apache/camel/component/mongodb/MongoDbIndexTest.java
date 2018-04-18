@@ -46,11 +46,11 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : 1, \"b\" : 2}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
-        List<DBObject> objIndex = new ArrayList<DBObject>();
+        List<DBObject> objIndex = new ArrayList<>();
         DBObject index1 = new BasicDBObject();
         index1.put("a", 1);
         DBObject index2 = new BasicDBObject();
@@ -97,10 +97,10 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : 1, \"b\" : 2}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
-        List<DBObject> objIndex = new ArrayList<DBObject>();
+        List<DBObject> objIndex = new ArrayList<>();
         DBObject index1 = new BasicDBObject();
         index1.put("a", 1);
         DBObject index2 = new BasicDBObject();
@@ -143,7 +143,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : 1, \"b\" : 2}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabledWithIndexUri", body, headers);
@@ -176,7 +176,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").deleteOne(new BasicDBObject());
 
         String body = "{\"_id\": \"testInsertAutoCreateCollectionAndURIIndex\", \"a\" : 1, \"b\" : 2}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityDisabled", body, headers);
         assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
