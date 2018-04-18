@@ -57,7 +57,7 @@ public class CuratorLeaderRoutePolicy extends RoutePolicySupport implements Elec
     private static final Logger LOG = LoggerFactory.getLogger(CuratorLeaderRoutePolicy.class);
     private final String uri;
     private final Lock lock = new ReentrantLock();
-    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<Route>();
+    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<>();
     private final AtomicBoolean shouldProcessExchanges = new AtomicBoolean();
     private volatile boolean shouldStopRoute = true;
 

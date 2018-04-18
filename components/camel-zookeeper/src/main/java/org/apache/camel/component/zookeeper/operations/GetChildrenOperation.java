@@ -45,9 +45,9 @@ public class GetChildrenOperation extends ZooKeeperOperation<List<String>> {
                     LOG.debug(format("Received children from '%s' path ", node));
                 }
             }
-            return new OperationResult<List<String>>(children, statistics);
+            return new OperationResult<>(children, statistics);
         } catch (Exception e) {
-            return new OperationResult<List<String>>(e);
+            return new OperationResult<>(e);
         }
     }
 }

@@ -38,7 +38,7 @@ public class FutureEventDrivenOperationTest {
 
             @Override
             public OperationResult<String> getResult() {
-                return new OperationResult<String>(data, statistics);
+                return new OperationResult<>(data, statistics);
             }
         };
 

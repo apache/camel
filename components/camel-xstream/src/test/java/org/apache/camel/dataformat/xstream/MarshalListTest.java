@@ -42,7 +42,7 @@ public class MarshalListTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<?xml version='1.0' encoding='ISO-8859-1'?>"
             + "<list><string>Hello World</string></list>");
 
-        List<String> body = new ArrayList<String>();
+        List<String> body = new ArrayList<>();
         body.add("Hello World");
 
         template.sendBodyAndProperty("direct:in", body, Exchange.CHARSET_NAME, "ISO-8859-1");
@@ -57,8 +57,8 @@ public class MarshalListTest extends CamelTestSupport {
             "<?xml version='1.0' encoding='UTF-8'?><list><map><entry><string>city</string>"
                 + "<string>London\u0E08</string></entry></map></list>");
 
-        List<Map<Object, String>> body = new ArrayList<Map<Object, String>>();
-        Map<Object, String> row = new HashMap<Object, String>();
+        List<Map<Object, String>> body = new ArrayList<>();
+        Map<Object, String> row = new HashMap<>();
         row.put("city", "London\u0E08");
         body.add(row);
 
@@ -74,8 +74,8 @@ public class MarshalListTest extends CamelTestSupport {
             "<?xml version='1.0' encoding='UTF-8'?><list><map><entry><string>city</string>"
                 + "<string>London\u0E08</string></entry></map></list>");
 
-        List<Map<Object, String>> body = new ArrayList<Map<Object, String>>();
-        Map<Object, String> row = new HashMap<Object, String>();
+        List<Map<Object, String>> body = new ArrayList<>();
+        Map<Object, String> row = new HashMap<>();
         row.put("city", "London\u0E08");
         body.add(row);
 

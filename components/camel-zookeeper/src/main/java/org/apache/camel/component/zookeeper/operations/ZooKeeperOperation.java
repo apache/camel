@@ -41,7 +41,7 @@ public abstract class ZooKeeperOperation<ResultType> {
 
     protected ZooKeeper connection;
 
-    protected Set<Thread> waitingThreads = new CopyOnWriteArraySet<Thread>();
+    protected Set<Thread> waitingThreads = new CopyOnWriteArraySet<>();
     
     protected OperationResult<ResultType> result;
     

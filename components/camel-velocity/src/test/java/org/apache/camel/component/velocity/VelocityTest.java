@@ -55,8 +55,8 @@ public class VelocityTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader("name", "Christian");
-                Map<String, Object> variableMap = new HashMap<String, Object>();
-                Map<String, Object> headersMap = new HashMap<String, Object>();
+                Map<String, Object> variableMap = new HashMap<>();
+                Map<String, Object> headersMap = new HashMap<>();
                 headersMap.put("name", "Willem");
                 variableMap.put("headers", headersMap);
                 variableMap.put("body", "Monday");

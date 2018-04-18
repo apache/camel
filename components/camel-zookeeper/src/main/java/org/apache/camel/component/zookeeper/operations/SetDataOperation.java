@@ -48,9 +48,9 @@ public class SetDataOperation extends ZooKeeperOperation<byte[]> {
                     LOG.debug(format("Set data of node '%s' with '%d' bytes of data", node, data != null ? data.length : 0));
                 }
             }
-            return new OperationResult<byte[]>(data, statistics);
+            return new OperationResult<>(data, statistics);
         } catch (Exception e) {
-            return new OperationResult<byte[]>(e);
+            return new OperationResult<>(e);
         }
     }
 

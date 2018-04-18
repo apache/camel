@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.zendesk;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -54,7 +53,7 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
         final Properties properties = new Properties();
         try {
             properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap<>();
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 options.put(entry.getKey().toString(), entry.getValue());
             }

@@ -99,7 +99,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     private static final Logger LOG = LoggerFactory.getLogger(XAdESSignatureProperties.class);
 
-    private static final Set<String> SIG_POLICY_VALUES = new TreeSet<String>();
+    private static final Set<String> SIG_POLICY_VALUES = new TreeSet<>();
 
     private boolean addSigningTime = true;
 
@@ -222,7 +222,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         if (signingCertificateURIs == null) {
             throw new IllegalArgumentException("Parameter 'signingCertificateURIs' is null");
         }
-        this.signingCertificateURIs = new ArrayList<String>(signingCertificateURIs);
+        this.signingCertificateURIs = new ArrayList<>(signingCertificateURIs);
     }
 
     public List<String> getSigningCertificateURIs() {
@@ -371,7 +371,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new IllegalArgumentException("At least one of the policy qualifiers is null or empty");
             }
         }
-        this.sigPolicyQualifiers = new ArrayList<String>(sigPolicyQualifiers);
+        this.sigPolicyQualifiers = new ArrayList<>(sigPolicyQualifiers);
     }
 
     public String getDataObjectFormatDescription() {
@@ -441,7 +441,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new IllegalArgumentException("At least one reference of the identifier of the data object format is null or empty");
             }
         }
-        this.dataObjectFormatIdentifierDocumentationReferences = new ArrayList<String>(dataObjectFormatIdentifierDocumentationReferences);
+        this.dataObjectFormatIdentifierDocumentationReferences = new ArrayList<>(dataObjectFormatIdentifierDocumentationReferences);
     }
 
     public List<String> getSignerClaimedRoles() {
@@ -465,7 +465,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new IllegalArgumentException("At least one of the signer claimed roles is null or empty");
             }
         }
-        this.signerClaimedRoles = new ArrayList<String>(signerClaimedRoles);
+        this.signerClaimedRoles = new ArrayList<>(signerClaimedRoles);
     }
 
     public List<XAdESEncapsulatedPKIData> getSignerCertifiedRoles() {
@@ -487,7 +487,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new IllegalArgumentException("At least one of the signer certified roles is null");
             }
         }
-        this.signerCertifiedRoles = new ArrayList<XAdESEncapsulatedPKIData>(signerCertifiedRoles);
+        this.signerCertifiedRoles = new ArrayList<>(signerCertifiedRoles);
     }
 
     public String getSignatureProductionPlaceCity() {
@@ -573,7 +573,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new IllegalArgumentException("At least one documentation reference of the commitment type is null or empty");
             }
         }
-        this.commitmentTypeIdDocumentationReferences = new ArrayList<String>(commitmentTypeIdDocumentationReferences);
+        this.commitmentTypeIdDocumentationReferences = new ArrayList<>(commitmentTypeIdDocumentationReferences);
     }
 
     public List<String> getCommitmentTypeQualifiers() {
@@ -598,7 +598,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new IllegalArgumentException("At least one qualifier of the commitment type is null or empty");
             }
         }
-        this.commitmentTypeQualifiers = new ArrayList<String>(commitmentTypeQualifiers);
+        this.commitmentTypeQualifiers = new ArrayList<>(commitmentTypeQualifiers);
     }
 
     @Override
@@ -1011,7 +1011,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
         List<Element> childElements = getChildElements(el);
 
-        List<Element> collectedNewChildElements = new ArrayList<Element>();
+        List<Element> collectedNewChildElements = new ArrayList<>();
         for (; !childElements.isEmpty();) {
             collectedNewChildElements.clear();
             for (Element child : childElements) {
@@ -1019,12 +1019,12 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 List<Element> newChildElements = getChildElements(child);
                 collectedNewChildElements.addAll(newChildElements);
             }
-            childElements = new ArrayList<Element>(collectedNewChildElements);
+            childElements = new ArrayList<>(collectedNewChildElements);
         }
     }
 
     protected List<Element> getChildElements(Element el) {
-        List<Element> childElements = new ArrayList<Element>(5);
+        List<Element> childElements = new ArrayList<>(5);
         NodeList children = el.getChildNodes();
         int length = children.getLength();
         for (int i = 0; i < length; i++) {
@@ -1039,7 +1039,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     protected void replacePrefix(Element el, Input input) {
         replacePrefixForNode(el, input);
         NamedNodeMap nnm = el.getAttributes();
-        List<Attr> xmlnsToBeRemoved = new ArrayList<Attr>(2);
+        List<Attr> xmlnsToBeRemoved = new ArrayList<>(2);
         int length = nnm.getLength();
         for (int i = 0; i < length; i++) {
             Node attr = nnm.item(i);
