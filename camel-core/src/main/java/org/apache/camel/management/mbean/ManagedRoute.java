@@ -99,6 +99,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return id;
     }
 
+    public String getRouteGroup() {
+        return route.getGroup();
+    }
+
     public String getDescription() {
         return description;
     }
