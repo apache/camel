@@ -31,7 +31,7 @@ public class XmlSignature2Message2MessageWithTimestampProperty extends DefaultXm
 
     protected List<Reference> getReferencesForMessageMapping(Input input) throws Exception {
 
-        List<Reference> result = new ArrayList<Reference>(1);
+        List<Reference> result = new ArrayList<>(1);
         for (Reference ref : input.getReferences()) {
             if (ref.getURI() != null && ref.getURI().contains("propert")) {
                 // do not add 

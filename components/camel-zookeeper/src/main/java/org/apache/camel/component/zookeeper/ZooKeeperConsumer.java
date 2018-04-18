@@ -44,7 +44,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private final ZooKeeperConnectionManager zkm;
     private ZooKeeper connection;
     private ZooKeeperConfiguration configuration;
-    private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<ZooKeeperOperation>();
+    private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<>();
     private ExecutorService executor;
     private volatile boolean shuttingDown;
 

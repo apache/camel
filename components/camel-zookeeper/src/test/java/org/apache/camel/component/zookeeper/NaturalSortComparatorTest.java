@@ -35,7 +35,7 @@ public class NaturalSortComparatorTest {
         List<String> sorted = Arrays
             .asList(new String[] {"0", "1", "3", "4.0", "11", "30", "55", "225", "333", "camel-2.1.0", "camel-2.1.1", "camel-2.1.1-SNAPSHOT", "camel-2.2.0"});
 
-        List<String> unsorted = new ArrayList<String>(sorted);
+        List<String> unsorted = new ArrayList<>(sorted);
         Collections.shuffle(unsorted);
         Collections.sort(unsorted, new NaturalSortComparator());
         compareLists(sorted, unsorted);

@@ -36,7 +36,7 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
         mock.message(0).constant("Hello Claus");
         mock.message(0).constant("You have id: 123 if an id was assigned to you.");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Claus");
         headers.put("id", 123);
         template.sendBodyAndHeaders("direct:a", "", headers);
@@ -51,7 +51,7 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
         mock.message(0).constant("Hello Claus");
         mock.message(0).constant("You have id:  if an id was assigned to you.");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Claus");
         template.sendBodyAndHeaders("direct:a", "", headers);
 

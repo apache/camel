@@ -39,22 +39,22 @@ public class StaticManagedGroupFactory implements ManagedGroupFactory {
 
     @Override
     public <T extends NodeState> Group<T> createGroup(String path, Class<T> clazz) {
-        return new ZooKeeperGroup<T>(curator, path, clazz);
+        return new ZooKeeperGroup<>(curator, path, clazz);
     }
 
     @Override
     public <T extends NodeState> Group<T> createGroup(String path, Class<T> clazz, ThreadFactory threadFactory) {
-        return new ZooKeeperGroup<T>(curator, path, clazz, threadFactory);
+        return new ZooKeeperGroup<>(curator, path, clazz, threadFactory);
     }
 
     @Override
     public <T extends NodeState> Group<T> createMultiGroup(String path, Class<T> clazz) {
-        return new ZooKeeperMultiGroup<T>(curator, path, clazz);
+        return new ZooKeeperMultiGroup<>(curator, path, clazz);
     }
 
     @Override
     public <T extends NodeState> Group<T> createMultiGroup(String path, Class<T> clazz, ThreadFactory threadFactory) {
-        return new ZooKeeperMultiGroup<T>(curator, path, clazz, threadFactory);
+        return new ZooKeeperMultiGroup<>(curator, path, clazz, threadFactory);
     }
 
     @Override

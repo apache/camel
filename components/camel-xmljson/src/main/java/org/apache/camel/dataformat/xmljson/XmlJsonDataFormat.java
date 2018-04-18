@@ -423,13 +423,13 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, Dat
 
         public NamespacesPerElementMapping(String element, String prefix, String uri) {
             this.element = element;
-            this.namespaces = new HashMap<String, String>();
+            this.namespaces = new HashMap<>();
             this.namespaces.put(prefix, uri);
         }
 
         public NamespacesPerElementMapping(String element, String pipeSeparatedMappings) {
             this.element = element;
-            this.namespaces = new HashMap<String, String>();
+            this.namespaces = new HashMap<>();
             String[] origTokens = pipeSeparatedMappings.split("\\|");
             // drop the first token
             String[] tokens = Arrays.copyOfRange(origTokens, 1, origTokens.length);

@@ -79,7 +79,7 @@ public class OsgiManagedGroupFactory implements ManagedGroupFactory {
         private final BundleContext bundleContext;
         private final ServiceTracker<CuratorFramework, CuratorFramework> tracker;
         private CuratorFramework curator;
-        private final List<DelegateZooKeeperGroup<?>> groups = new ArrayList<DelegateZooKeeperGroup<?>>();
+        private final List<DelegateZooKeeperGroup<?>> groups = new ArrayList<>();
 
         OsgiTrackingManagedGroupFactory(ClassLoader loader) {
             this(getBundleContext(loader));
@@ -87,7 +87,7 @@ public class OsgiManagedGroupFactory implements ManagedGroupFactory {
 
         OsgiTrackingManagedGroupFactory(BundleContext bundleContext) {
             this.bundleContext = bundleContext;
-            this.tracker = new ServiceTracker<CuratorFramework, CuratorFramework>(
+            this.tracker = new ServiceTracker<>(
                 bundleContext, CuratorFramework.class, this);
             this.tracker.open();
         }

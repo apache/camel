@@ -44,9 +44,9 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
                     LOG.debug(format("Set data of node '%s'", node));
                 }
             }
-            return new OperationResult<Boolean>(true, null, true);
+            return new OperationResult<>(true, null, true);
         } catch (Exception e) {
-            return new OperationResult<Boolean>(e);
+            return new OperationResult<>(e);
         }
     }
 

@@ -40,7 +40,7 @@ public class DelegateZooKeeperGroup<T extends NodeState> implements Group<T> {
     private AtomicBoolean started = new AtomicBoolean();
 
     public DelegateZooKeeperGroup(String path, Class<T> clazz) {
-        this.listeners = new ArrayList<GroupListener<T>>();
+        this.listeners = new ArrayList<>();
         this.path = path;
         this.clazz = clazz;
     }
@@ -64,7 +64,7 @@ public class DelegateZooKeeperGroup<T extends NodeState> implements Group<T> {
     }
 
     protected Group<T> createGroup(CuratorFramework client, String path, Class<T> clazz) {
-        return new ZooKeeperGroup<T>(client, path, clazz);
+        return new ZooKeeperGroup<>(client, path, clazz);
     }
 
     @Override

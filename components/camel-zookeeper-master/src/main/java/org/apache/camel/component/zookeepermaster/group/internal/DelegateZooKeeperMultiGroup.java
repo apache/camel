@@ -28,7 +28,7 @@ public class DelegateZooKeeperMultiGroup<T extends NodeState> extends DelegateZo
     }
 
     protected Group<T> createGroup(CuratorFramework client, String path, Class<T> clazz) {
-        return new ZooKeeperMultiGroup<T>(client, path, clazz);
+        return new ZooKeeperMultiGroup<>(client, path, clazz);
     }
 
     @Override

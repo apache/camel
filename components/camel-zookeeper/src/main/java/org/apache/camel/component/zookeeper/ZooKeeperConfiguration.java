@@ -61,7 +61,7 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     public void addZookeeperServer(String server) {
         if (servers == null) {
-            servers = new ArrayList<String>();
+            servers = new ArrayList<>();
         }
         servers.add(server);
     }

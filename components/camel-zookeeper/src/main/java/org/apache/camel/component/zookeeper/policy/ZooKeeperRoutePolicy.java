@@ -54,7 +54,7 @@ public class ZooKeeperRoutePolicy extends RoutePolicySupport implements Election
     private final String uri;
     private final int enabledCount;
     private final Lock lock = new ReentrantLock();
-    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<Route>();
+    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<>();
     private final AtomicBoolean shouldProcessExchanges = new AtomicBoolean();
     private volatile boolean shouldStopConsumer = true;
 

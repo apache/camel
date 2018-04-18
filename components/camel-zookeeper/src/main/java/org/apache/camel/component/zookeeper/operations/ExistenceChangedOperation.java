@@ -48,9 +48,9 @@ public class ExistenceChangedOperation extends FutureEventDrivenOperation<String
         try {
             String path = getNode();
             Stat statistics = connection.exists(path, true);
-            return new OperationResult<String>(path, statistics);
+            return new OperationResult<>(path, statistics);
         } catch (Exception e) {
-            return new OperationResult<String>(e);
+            return new OperationResult<>(e);
         }
     }
 }

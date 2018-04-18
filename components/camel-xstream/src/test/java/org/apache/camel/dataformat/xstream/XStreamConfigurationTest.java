@@ -79,7 +79,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         mock.expectedMessageCount(2);
 
         PurchaseHistory history = new PurchaseHistory();
-        List<Double> list = new ArrayList<Double>();
+        List<Double> list = new ArrayList<>();
         list.add(11.5);
         list.add(97.5);
         history.setHistory(list);
@@ -136,19 +136,19 @@ public class XStreamConfigurationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 XStreamDataFormat xstreamDefinition = new XStreamDataFormat();
-                Map<String, String> aliases = new HashMap<String, String>();
+                Map<String, String> aliases = new HashMap<>();
                 aliases.put("purchase-order", PurchaseOrder.class.getName());
                 xstreamDefinition.setAliases(aliases);
                 xstreamDefinition.setPermissions(PurchaseOrder.class, PurchaseHistory.class);
 
-                List<String> converters = new ArrayList<String>();
+                List<String> converters = new ArrayList<>();
                 converters.add(PurchaseOrderConverter.class.getName());
                 converters.add(CheckMethodInjection.class.getName());
                 converters.add(CheckConstructorInjection.class.getName());
 
                 xstreamDefinition.setConverters(converters);
 
-                Map<String, String[]> implicits = new HashMap<String, String[]>();
+                Map<String, String[]> implicits = new HashMap<>();
                 implicits.put(PurchaseHistory.class.getName(), new String[] {"history"});
                 xstreamDefinition.setImplicitCollections(implicits);
 
@@ -157,12 +157,12 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
                 xstreamDefinition = new XStreamDataFormat();
                 xstreamDefinition.setDriver("json");
-                aliases = new HashMap<String, String>();
+                aliases = new HashMap<>();
                 aliases.put("purchase-order", PurchaseOrder.class.getName());
                 xstreamDefinition.setAliases(aliases);
                 xstreamDefinition.setPermissions(PurchaseOrder.class, PurchaseHistory.class);
 
-                converters = new ArrayList<String>();
+                converters = new ArrayList<>();
                 converters.add(PurchaseOrderConverter.class.getName());
                 xstreamDefinition.setConverters(converters);
                 from("direct:marshal-json").marshal(xstreamDefinition).to("mock:result");
