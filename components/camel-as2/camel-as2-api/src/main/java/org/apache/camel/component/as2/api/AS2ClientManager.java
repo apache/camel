@@ -225,8 +225,10 @@ public class AS2ClientManager {
             }
             break;
         case ENCRYPTED:
+            // TODO : Add code here to add application/pkcs7-mime entity when encryption facility available.
             break;
         case ENCRYPTED_SIGNED:
+            // TODO : Add code here to add application/pkcs7-mime entity when encryption facility available.
             break;
         default:
             throw new HttpException("Unknown AS2 Message Structure");
