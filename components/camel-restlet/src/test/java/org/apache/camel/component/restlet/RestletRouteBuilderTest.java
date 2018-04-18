@@ -94,7 +94,7 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
 
     @Test
     public void testProducer() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_XML);
         
         String response = template.requestBodyAndHeaders("direct:start", "<order foo='1'/>", headers, String.class);
@@ -162,7 +162,7 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
     
     @Test
     public void testFormsProducer() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
         
         String response = template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/login?restletMethod=post", "user=jaymandawg&passwd=secret$%", headers, String.class);
@@ -171,7 +171,7 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
     
     @Test
     public void testFormsProducerMapBody() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
         Map<String, String> body = new HashMap<>();
         body.put("user", "jaymandawg");

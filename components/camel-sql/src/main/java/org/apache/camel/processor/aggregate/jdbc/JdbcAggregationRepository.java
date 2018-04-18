@@ -362,7 +362,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                                 return id;
                             }
                         });
-                return new LinkedHashSet<String>(keys);
+                return new LinkedHashSet<>(keys);
             }
         });
     }

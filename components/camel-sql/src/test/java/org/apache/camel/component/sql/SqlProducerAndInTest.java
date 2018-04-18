@@ -71,7 +71,7 @@ public class SqlProducerAndInTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         names.add("Camel");
         names.add("AMQ");
 

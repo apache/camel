@@ -31,7 +31,7 @@ public class Records {
 
     public List<Record> getRecord() {
         if (record == null) {
-            record = new ArrayList<Record>();
+            record = new ArrayList<>();
         }
         return record;
     }

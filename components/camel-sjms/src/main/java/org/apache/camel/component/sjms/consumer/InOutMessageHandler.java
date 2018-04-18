@@ -40,7 +40,7 @@ import org.apache.camel.spi.Synchronization;
  */
 public class InOutMessageHandler extends AbstractMessageHandler {
 
-    private Map<String, MessageProducer> producerCache = new TreeMap<String, MessageProducer>();
+    private Map<String, MessageProducer> producerCache = new TreeMap<>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public InOutMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {

@@ -44,7 +44,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     /**
      * Running consumers
      */
-    private final List<RabbitConsumer> consumers = new ArrayList<RabbitConsumer>();
+    private final List<RabbitConsumer> consumers = new ArrayList<>();
 
     public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

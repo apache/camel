@@ -112,7 +112,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
             @Override
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                Queue<DataHolder> answer = new LinkedList<DataHolder>();
+                Queue<DataHolder> answer = new LinkedList<>();
 
                 log.debug("Executing query: {}", preparedQuery);
                 ResultSet rs = ps.executeQuery();

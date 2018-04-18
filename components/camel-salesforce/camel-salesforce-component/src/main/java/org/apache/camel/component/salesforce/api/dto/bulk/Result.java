@@ -79,7 +79,7 @@ public class Result {
      */
     public List<ResultError> getErrors() {
         if (errors == null) {
-            errors = new ArrayList<ResultError>();
+            errors = new ArrayList<>();
         }
         return this.errors;
     }

@@ -167,13 +167,13 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     protected List<Object> createContentFromObject(final Object inputObject, String soapAction,
                                                          List<Object> headerElements) {
-        List<Object> bodyParts = new ArrayList<Object>();
-        List<Object> headerParts = new ArrayList<Object>();
+        List<Object> bodyParts = new ArrayList<>();
+        List<Object> headerParts = new ArrayList<>();
         if (inputObject instanceof BeanInvocation) {
             BeanInvocation bi = (BeanInvocation)inputObject;
             Annotation[][] annotations = bi.getMethod().getParameterAnnotations();
 
-            List<WebParam> webParams = new ArrayList<WebParam>();
+            List<WebParam> webParams = new ArrayList<>();
             for (Annotation[] singleParameterAnnotations : annotations) {
                 for (Annotation annotation : singleParameterAnnotations) {
                     if (annotation instanceof WebParam) {
@@ -208,7 +208,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             bodyParts.add(inputObject);
         }
 
-        List<Object> bodyElements = new ArrayList<Object>();
+        List<Object> bodyElements = new ArrayList<>();
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {

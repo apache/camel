@@ -77,7 +77,7 @@ public class ApplicationContextRegistry implements Registry {
     @Override
     public <T> Set<T> findByType(Class<T> type) {
         Map<String, T> map = findByTypeWithName(type);
-        return new HashSet<T>(map.values());
+        return new HashSet<>(map.values());
     }
 
     @Override

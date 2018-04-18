@@ -54,7 +54,7 @@ import org.apache.camel.spi.RestConfiguration;
 @Deprecated
 public class RestSwaggerCorsFilter implements Filter {
 
-    private final Map<String, String> corsHeaders = new HashMap<String, String>();
+    private final Map<String, String> corsHeaders = new HashMap<>();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

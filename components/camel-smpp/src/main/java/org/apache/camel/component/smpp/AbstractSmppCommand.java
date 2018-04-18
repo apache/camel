@@ -57,7 +57,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     }
 
     protected List<OptionalParameter> createOptionalParametersByCode(Map<Short, Object> optinalParamaters) {
-        List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
+        List<OptionalParameter> optParams = new ArrayList<>();
 
         for (Entry<Short, Object> entry : optinalParamaters.entrySet()) {
             OptionalParameter optParam = null;
@@ -99,7 +99,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     @Deprecated
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected List<OptionalParameter> createOptionalParametersByName(Map<String, String> optinalParamaters) {
-        List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
+        List<OptionalParameter> optParams = new ArrayList<>();
 
         for (Entry<String, String> entry : optinalParamaters.entrySet()) {
             OptionalParameter optParam = null;
@@ -109,7 +109,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
                 Tag tag = Tag.valueOf(entry.getKey());
                 Class type = determineTypeClass(tag);
 
-                Set<Class> ancestorClasses = new HashSet<Class>(2);
+                Set<Class> ancestorClasses = new HashSet<>(2);
                 Class superclass = type.getSuperclass();
                 ancestorClasses.add(superclass);
                 if (superclass != Object.class) {

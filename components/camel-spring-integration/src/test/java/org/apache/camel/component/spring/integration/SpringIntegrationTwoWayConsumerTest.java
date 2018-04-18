@@ -39,9 +39,9 @@ public class SpringIntegrationTwoWayConsumerTest extends CamelSpringTestSupport 
     public void testSendingTwoWayMessage() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         MessageChannel requestChannel = getMandatoryBean(MessageChannel.class, "requestChannel");
-        Map<String, Object> maps = new HashMap<String, Object>();
+        Map<String, Object> maps = new HashMap<>();
         maps.put(MessageHeaders.REPLY_CHANNEL, "responseChannel");
-        Message<String> message = new GenericMessage<String>(MESSAGE_BODY, maps);
+        Message<String> message = new GenericMessage<>(MESSAGE_BODY, maps);
 
         DirectChannel responseChannel = getMandatoryBean(DirectChannel.class, "responseChannel");
         responseChannel.subscribe(new MessageHandler() {

@@ -55,8 +55,8 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.passPhrase = bits128;
         // Set up AES encryption based cipher service, by default 
         cipherService = new AesCipherService();
-        permissionsList = new ArrayList<Permission>();
-        rolesList = new ArrayList<String>();
+        permissionsList = new ArrayList<>();
+        rolesList = new ArrayList<>();
         alwaysReauthenticate = true;
     }   
     

@@ -94,7 +94,7 @@ public class SubscriptionHelper extends ServiceSupport {
         this.component = component;
         this.session = component.getSession();
 
-        this.listenerMap = new ConcurrentHashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
+        this.listenerMap = new ConcurrentHashMap<>();
 
         restartBackoff = new AtomicLong(0);
         backoffIncrement = component.getConfig().getBackoffIncrement();
@@ -176,7 +176,7 @@ public class SubscriptionHelper extends ServiceSupport {
                         LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
                         // reconnected to Salesforce, subscribe to existing channels
                         final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map =
-                                new HashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
+                                new HashMap<>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
                         for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {

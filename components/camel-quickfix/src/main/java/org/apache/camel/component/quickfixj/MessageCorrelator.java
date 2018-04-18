@@ -30,7 +30,7 @@ import quickfix.SessionID;
 
 public class MessageCorrelator implements QuickfixjEventListener {
     public static final long DEFAULT_CORRELATION_TIMEOUT = 1000L;
-    private final List<MessageCorrelationRule> rules = new CopyOnWriteArrayList<MessageCorrelationRule>();
+    private final List<MessageCorrelationRule> rules = new CopyOnWriteArrayList<>();
 
     public Callable<Message> getReply(SessionID sessionID, Exchange exchange)
         throws InterruptedException, ExchangeTimedOutException {

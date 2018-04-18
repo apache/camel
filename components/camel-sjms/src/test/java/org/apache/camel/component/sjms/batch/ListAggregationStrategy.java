@@ -28,7 +28,7 @@ public class ListAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         String body = newExchange.getIn().getBody(String.class);
         if (oldExchange == null) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             list.add(body);
             newExchange.getIn().setBody(list);
             return newExchange;

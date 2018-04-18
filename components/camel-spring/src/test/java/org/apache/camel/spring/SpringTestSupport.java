@@ -109,7 +109,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
-        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+        excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
         return routeExcludingContext;
     }

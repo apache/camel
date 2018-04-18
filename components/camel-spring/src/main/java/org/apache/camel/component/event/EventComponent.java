@@ -37,7 +37,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class EventComponent extends UriEndpointComponent implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);
     private ApplicationContext applicationContext;
-    private final Set<EventEndpoint> endpoints = new LinkedHashSet<EventEndpoint>();
+    private final Set<EventEndpoint> endpoints = new LinkedHashSet<>();
 
     public EventComponent() {
         super(EventEndpoint.class);

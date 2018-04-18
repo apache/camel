@@ -54,9 +54,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
     @UriParam(label = "advanced")
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new HashMap<>();
     @UriParam
-    private Map<String, String> namespacePrefixes = new HashMap<String, String>();
+    private Map<String, String> namespacePrefixes = new HashMap<>();
     @UriParam(defaultValue = "DOM")
     private ResultFormat resultsFormat = ResultFormat.DOM;
     @UriParam(label = "advanced")

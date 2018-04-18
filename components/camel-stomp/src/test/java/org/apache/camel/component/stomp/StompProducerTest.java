@@ -53,7 +53,7 @@ public class StompProducerTest extends StompBaseTest {
         StompFrame frame = new StompFrame(SUBSCRIBE);
         frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
         frame.addHeader(ID, subscribeConnection.nextId());
-        StompFrame response = subscribeConnection.request(frame);
+        subscribeConnection.request(frame);
 
         final CountDownLatch latch = new CountDownLatch(numberOfMessages);
 

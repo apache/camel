@@ -34,7 +34,7 @@ public class Orders {
 
     public List<Order> getOrders() {
         if (orders == null) {
-            orders = new ArrayList<Order>();
+            orders = new ArrayList<>();
         }
         return orders;
     }

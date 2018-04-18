@@ -109,7 +109,7 @@ public class Main extends org.apache.camel.spring.Main {
     }
 
     private Class<?>[] getConfigClasses(String configureClasses) {
-        List<Class<?>> answer = new ArrayList<Class<?>>();
+        List<Class<?>> answer = new ArrayList<>();
         String[] classes =  configureClasses.split("(;|,)");
         for (String className :  classes) {
             className = className.trim();

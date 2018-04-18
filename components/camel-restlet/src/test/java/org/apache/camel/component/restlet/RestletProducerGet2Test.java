@@ -31,7 +31,7 @@ public class RestletProducerGet2Test extends RestletTestSupport {
 
     @Test
     public void testRestletProducerGet2() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 

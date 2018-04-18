@@ -80,7 +80,7 @@ public class ResultError {
      */
     public List<String> getFields() {
         if (fields == null) {
-            fields = new ArrayList<String>();
+            fields = new ArrayList<>();
         }
         return this.fields;
     }

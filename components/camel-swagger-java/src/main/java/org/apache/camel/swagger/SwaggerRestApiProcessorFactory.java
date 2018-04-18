@@ -30,7 +30,7 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
     public Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing,
                                         RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
-        Map<String, Object> options = new HashMap<String, Object>(parameters);
+        Map<String, Object> options = new HashMap<>(parameters);
         if (configuration.getApiProperties() != null) {
             options.putAll(configuration.getApiProperties());
         }

@@ -36,7 +36,7 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
     /**
      * Maps primitive type names to corresponding class objects.
      */
-    private static final HashMap<String, Class> PRIM_CLASSES = new HashMap<String, Class>(8, 1.0F);
+    private static final HashMap<String, Class> PRIM_CLASSES = new HashMap<>(8, 1.0F);
 
     private CamelContext camelContext;
     private final ClassLoader inLoader;

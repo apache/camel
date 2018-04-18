@@ -33,7 +33,7 @@ public class CamelItemProcessorTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        camelItemProcessor = new CamelItemProcessor<String, String>(template(), "direct:start");
+        camelItemProcessor = new CamelItemProcessor<>(template(), "direct:start");
     }
 
     @Override

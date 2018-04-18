@@ -220,7 +220,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // get outgoing custom http headers from the exchange if they exists
         Series<Header> restletHeaders = exchange.getIn().getHeader(HeaderConstants.ATTRIBUTE_HEADERS, Series.class);
         if (restletHeaders == null) {
-            restletHeaders = new Series<Header>(Header.class);
+            restletHeaders = new Series<>(Header.class);
             request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, restletHeaders);
         } else {
             // if the restlet headers already exists on the exchange, we need to filter them
@@ -322,7 +322,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             ClientInfo clientInfo = request.getClientInfo();
             List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
             for (MediaType acceptedMediaType : acceptedMediaTypes) {
-                acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
+                acceptedMediaTypesList.add(new Preference<>(acceptedMediaType));
             }
         }
     }
@@ -350,7 +350,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
                 MediaType[] acceptedMediaTypes = exchange.getContext().getTypeConverter().tryConvertTo(MediaType[].class, exchange, value);
                 for (MediaType acceptedMediaType : acceptedMediaTypes) {
-                    acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
+                    acceptedMediaTypesList.add(new Preference<>(acceptedMediaType));
                 }
             } else if ("Accept-Encoding".equalsIgnoreCase(key)) {
                 // assume only accepting one encoding
@@ -473,7 +473,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // set headers at the end, as the entity must be set first
         // NOTE: setting HTTP headers on restlet is cumbersome and its API is "weird" and has some flaws
         // so we need to headers two times, and the 2nd time we add the non-internal headers once more
-        Series<Header> series = new Series<Header>(Header.class);
+        Series<Header> series = new Series<>(Header.class);
         for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -612,7 +612,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     message.setCacheDirectives((List<CacheDirective>) value);
                 }
                 if (value instanceof String) {
-                    List<CacheDirective> list = new ArrayList<CacheDirective>();
+                    List<CacheDirective> list = new ArrayList<>();
                     // set the cache control value directive
                     list.add(new CacheDirective((String) value));
                     message.setCacheDirectives(list);

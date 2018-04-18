@@ -55,7 +55,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private StreamEndpoint endpoint;
     private String uri;
     private boolean initialPromptDone;
-    private final List<String> lines = new CopyOnWriteArrayList<String>();
+    private final List<String> lines = new CopyOnWriteArrayList<>();
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -201,7 +201,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             // should we flush lines?
             if (!lines.isEmpty() && (lines.size() >= endpoint.getGroupLines() || last)) {
                 // spit out lines as we hit the size, or it was the last
-                List<String> copy = new ArrayList<String>(lines);
+                List<String> copy = new ArrayList<>(lines);
                 Object body = endpoint.getGroupStrategy().groupLines(copy);
                 // remember to inc index when we create an exchange
                 Exchange exchange = endpoint.createExchange(body, index++, last);

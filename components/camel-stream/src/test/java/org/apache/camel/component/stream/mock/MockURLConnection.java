@@ -23,7 +23,7 @@ import java.net.URLConnection;
 
 public class MockURLConnection extends URLConnection {
 
-    private static final ThreadLocal<OutputStream> THREAD_OUTPUT_STREAM = new ThreadLocal<OutputStream>();
+    private static final ThreadLocal<OutputStream> THREAD_OUTPUT_STREAM = new ThreadLocal<>();
 
     public MockURLConnection(URL url) {
         super(url);

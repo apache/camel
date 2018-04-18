@@ -246,7 +246,7 @@ public class CamelAutoConfiguration {
     @ConditionalOnMissingBean(RoutesCollector.class)
     RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), config);
+        return new RoutesCollector(applicationContext, new ArrayList<>(configurations), config);
     }
 
     /**
@@ -539,7 +539,7 @@ public class CamelAutoConfiguration {
     }
 
     private static void initThreadPoolProfiles(ApplicationContext applicationContext, CamelContext camelContext) {
-        Set<String> defaultIds = new HashSet<String>();
+        Set<String> defaultIds = new HashSet<>();
 
         // lookup and use custom profiles from the registry
         Map<String, ThreadPoolProfile> profiles = applicationContext.getBeansOfType(ThreadPoolProfile.class);

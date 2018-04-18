@@ -44,13 +44,13 @@ public class RouteboxDispatchMapTest extends RouteboxDemoTestSupport {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
         
         // Wire the routeDefinitions & dispatchStrategy to the outer camelContext where the routebox is declared
-        List<RouteBuilder> routes = new ArrayList<RouteBuilder>();
+        List<RouteBuilder> routes = new ArrayList<>();
         routes.add(new SimpleRouteBuilder());
         registry.bind("registry", createInnerRegistry());
         registry.bind("routes", routes);
         
         // Wire a dispatch map to registry
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("addToCatalog", "seda:addToCatalog");
         map.put("findBook", "seda:findBook");
         registry.bind("map", map);

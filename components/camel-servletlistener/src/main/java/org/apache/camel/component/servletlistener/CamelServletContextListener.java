@@ -238,7 +238,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
      */
     private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
         // configure CamelContext with the init parameter
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         Enumeration<?> names = sce.getServletContext().getInitParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
@@ -393,8 +393,8 @@ public abstract class CamelServletContextListener<R extends Registry> implements
      * @return a list of routes, which can be of different types. See source code for more details.
      */
     private List<Object> extractRoutes(Map<String, Object> map) {
-        List<Object> answer = new ArrayList<Object>();
-        List<String> names = new ArrayList<String>();
+        List<Object> answer = new ArrayList<>();
+        List<String> names = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getKey().toLowerCase(Locale.UK).startsWith("routebuilder")) {
@@ -429,7 +429,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
                             String path = value.substring(12);
                             Set<Class<?>> classes = camelContext.getPackageScanClassResolver().findImplementations(RouteBuilder.class, path);
                             if (!classes.isEmpty()) {
-                                Set<RouteBuilder> builders = new LinkedHashSet<RouteBuilder>();
+                                Set<RouteBuilder> builders = new LinkedHashSet<>();
                                 target = builders;
                                 for (Class<?> clazz : classes) {
                                     try {

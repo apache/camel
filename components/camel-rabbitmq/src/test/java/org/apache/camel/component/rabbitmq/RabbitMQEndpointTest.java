@@ -111,7 +111,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
         Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
 
-        Map<String, Object> customHeaders = new HashMap<String, Object>();
+        Map<String, Object> customHeaders = new HashMap<>();
         customHeaders.put("stringHeader", "A string");
         customHeaders.put("bigDecimalHeader", new BigDecimal("12.34"));
         customHeaders.put("integerHeader", 42);

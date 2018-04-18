@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.util.LRUSoftCache;
 
 public final class StAXUtil {
-    private static final Map<Class<?>, String> TAG_NAMES = new LRUSoftCache<Class<?>, String>(1000);
+    private static final Map<Class<?>, String> TAG_NAMES = new LRUSoftCache<>(1000);
 
     private StAXUtil() {
         // no-op

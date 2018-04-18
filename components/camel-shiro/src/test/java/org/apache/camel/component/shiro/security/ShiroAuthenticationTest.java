@@ -91,7 +91,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         successEndpoint.expectedMessageCount(1);
         failureEndpoint.expectedMessageCount(0);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
         template.sendBodyAndHeaders("direct:secureEndpoint", "Beatle Mania", headers);

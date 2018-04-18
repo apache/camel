@@ -43,7 +43,7 @@ public final class SparkHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);

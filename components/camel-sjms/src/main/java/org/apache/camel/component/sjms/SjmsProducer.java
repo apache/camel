@@ -86,7 +86,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
-            setProducers(new GenericObjectPool<MessageProducerResources>(new MessageProducerResourcesFactory()));
+            setProducers(new GenericObjectPool<>(new MessageProducerResourcesFactory()));
             getProducers().setMaxActive(getProducerCount());
             getProducers().setMaxIdle(getProducerCount());
             getProducers().setLifo(false);

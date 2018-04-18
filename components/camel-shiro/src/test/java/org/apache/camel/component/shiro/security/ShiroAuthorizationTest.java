@@ -146,7 +146,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() {
                 
-                List<Permission> permissionsList = new ArrayList<Permission>();
+                List<Permission> permissionsList = new ArrayList<>();
                 Permission permission = new WildcardPermission("zone1:readwrite:*");
                 permissionsList.add(permission);
                 
@@ -164,7 +164,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 
-                List<Permission> permissionsList = new ArrayList<Permission>();
+                List<Permission> permissionsList = new ArrayList<>();
                 Permission permission = new WildcardPermission("zone1:readonly:*");
                 permissionsList.add(permission);
                 permission = new WildcardPermission("zone1:writeonly:*");
@@ -184,7 +184,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 
-                List<Permission> permissionsList = new ArrayList<Permission>();
+                List<Permission> permissionsList = new ArrayList<>();
                 Permission permission = new WildcardPermission("zone1:readonly:*");
                 permissionsList.add(permission);
                 permission = new WildcardPermission("zone1:writeonly:*");

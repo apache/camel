@@ -142,7 +142,7 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         final SalesforceComponent salesforce = (SalesforceComponent) context().getComponent("salesforce");
 
         // set HTTP client properties
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         properties.put("timeout", "60000");
         properties.put("removeIdleDestinations", "true");
         salesforce.setHttpClientProperties(properties);

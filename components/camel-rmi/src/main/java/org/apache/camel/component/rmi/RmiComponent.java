@@ -38,7 +38,7 @@ public class RmiComponent extends UriEndpointComponent {
         RmiEndpoint rmi = new RmiEndpoint(uri, this);
 
         // lookup remote interfaces
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         Iterator<?> it = getAndRemoveParameter(parameters, "remoteInterfaces", Iterator.class);
         while (it != null && it.hasNext()) {
             Object next = it.next();

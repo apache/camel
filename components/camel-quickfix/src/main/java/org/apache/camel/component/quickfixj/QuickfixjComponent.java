@@ -37,11 +37,11 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
     private final Object engineInstancesLock = new Object();
-    private final Map<String, QuickfixjEngine> engines = new HashMap<String, QuickfixjEngine>();
-    private final Map<String, QuickfixjEngine> provisionalEngines = new HashMap<String, QuickfixjEngine>();
-    private final Map<String, QuickfixjEndpoint> endpoints = new HashMap<String, QuickfixjEndpoint>();
+    private final Map<String, QuickfixjEngine> engines = new HashMap<>();
+    private final Map<String, QuickfixjEngine> provisionalEngines = new HashMap<>();
+    private final Map<String, QuickfixjEndpoint> endpoints = new HashMap<>();
 
-    private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
+    private Map<String, QuickfixjConfiguration> configurations = new HashMap<>();
 
     @Metadata(label = "advanced")
     private MessageStoreFactory messageStoreFactory;

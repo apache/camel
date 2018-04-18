@@ -255,7 +255,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             config = camelContext.getRestConfiguration("servlet", true);
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals("servlet")) {
             // setup endpoint options

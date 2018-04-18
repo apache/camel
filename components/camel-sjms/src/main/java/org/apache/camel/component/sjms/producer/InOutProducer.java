@@ -50,7 +50,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public class InOutProducer extends SjmsProducer {
 
-    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<String, Exchanger<Object>>();
+    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<>();
 
     private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
     private UuidGenerator uuidGenerator;
@@ -152,7 +152,7 @@ public class InOutProducer extends SjmsProducer {
             uuidGenerator = getEndpoint().getCamelContext().getUuidGenerator();
         }
         if (consumers == null) {
-            consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
+            consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
             consumers.setMaxActive(getConsumerCount());
             consumers.setMaxIdle(getConsumerCount());
             while (consumers.getNumIdle() < consumers.getMaxIdle()) {
@@ -186,7 +186,7 @@ public class InOutProducer extends SjmsProducer {
         }
 
         Object responseObject = null;
-        Exchanger<Object> messageExchanger = new Exchanger<Object>();
+        Exchanger<Object> messageExchanger = new Exchanger<>();
         JmsMessageHelper.setCorrelationId(request, correlationId);
         EXCHANGERS.put(correlationId, messageExchanger);
 

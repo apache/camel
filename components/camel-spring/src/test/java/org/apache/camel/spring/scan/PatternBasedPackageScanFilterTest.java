@@ -35,7 +35,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
 
     public void setUp() throws Exception {
         // use classes that are pretty much constants
-        allClasses = new HashSet<Class<?>>();
+        allClasses = new HashSet<>();
         allClasses.add(List.class);
         allClasses.add(ArrayList.class);
         allClasses.add(LinkedList.class);

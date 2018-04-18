@@ -614,7 +614,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public Map<String, Object> toValueMap() {
 
-        final Map<String, Object> valueMap = new HashMap<String, Object>();
+        final Map<String, Object> valueMap = new HashMap<>();
         valueMap.put(FORMAT, format.toString().toLowerCase());
         valueMap.put(API_VERSION, apiVersion);
 

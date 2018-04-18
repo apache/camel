@@ -94,7 +94,7 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> row = new HashMap<String, Object>();
+        Map<String, Object> row = new HashMap<>();
         row.put("lic", "ASF");
         template.sendBodyAndHeader("direct:start", null, SqlConstants.SQL_PARAMETERS, row);
 
@@ -124,13 +124,13 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
-        Map<String, Object> row = new HashMap<String, Object>();
+        List<Map<String, Object>> rows = new ArrayList<>();
+        Map<String, Object> row = new HashMap<>();
         row.put("id", 200);
         row.put("project", "MyProject1");
         row.put("lic", "OPEN1");
         rows.add(row);
-        row = new HashMap<String, Object>();
+        row = new HashMap<>();
         row.put("id", 201);
         row.put("project", "MyProject2");
         row.put("lic", "OPEN1");

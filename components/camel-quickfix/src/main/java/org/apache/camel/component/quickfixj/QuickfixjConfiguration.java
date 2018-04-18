@@ -50,7 +50,7 @@ public class QuickfixjConfiguration {
 
     public void addSessionSetting(SessionID sessionID, Map<Object, Object> settings) {
         if (sessionSettings == null) {
-            sessionSettings = new HashMap<SessionID, Map<Object, Object>>();
+            sessionSettings = new HashMap<>();
         }
         sessionSettings.put(sessionID, settings);
     }

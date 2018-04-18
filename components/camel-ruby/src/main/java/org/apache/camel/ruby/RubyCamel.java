@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 public final class RubyCamel {
     
     private static CamelContext camelContext;
-    private static List<RouteBuilder> routes = new ArrayList<RouteBuilder>();
+    private static List<RouteBuilder> routes = new ArrayList<>();
 
     private RubyCamel() {
         // helper class

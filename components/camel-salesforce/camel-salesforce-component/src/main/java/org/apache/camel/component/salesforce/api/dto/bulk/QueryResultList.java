@@ -70,7 +70,7 @@ public class QueryResultList {
      */
     public List<String> getResult() {
         if (result == null) {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         return this.result;
     }

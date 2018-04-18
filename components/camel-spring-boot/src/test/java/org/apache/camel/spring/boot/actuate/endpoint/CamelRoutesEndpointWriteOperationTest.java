@@ -16,15 +16,9 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.ReadAction;
-import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteDetailsEndpointInfo;
-import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.TimeInfo;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.WriteAction;
 import org.junit.Assert;

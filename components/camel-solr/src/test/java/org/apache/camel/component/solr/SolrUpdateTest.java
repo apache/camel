@@ -91,7 +91,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
     @Test
     public void testInsertSolrInputDocumentList() throws Exception {
-        List<SolrInputDocument> docList = new ArrayList<SolrInputDocument>(2);
+        List<SolrInputDocument> docList = new ArrayList<>(2);
 
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField("id", "MA147LL/A", 1.0f);

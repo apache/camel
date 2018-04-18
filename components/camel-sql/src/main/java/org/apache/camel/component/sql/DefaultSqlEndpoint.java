@@ -457,7 +457,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             return data;
         } else {
             ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<>(rowMapper);
             List<Map<String, Object>> data = mapper.extractData(rs);
             return data;
         }

@@ -37,7 +37,7 @@ class MethodBasedRouter extends Restlet {
     private static final Logger LOG = LoggerFactory.getLogger(MethodBasedRouter.class);
     private String uriPattern;
     
-    private Map<Method, Restlet> routes = new ConcurrentHashMap<Method, Restlet>();
+    private Map<Method, Restlet> routes = new ConcurrentHashMap<>();
     private AtomicBoolean hasBeenAttachedFlag = new AtomicBoolean(false);
 
     MethodBasedRouter(String uriPattern) {
