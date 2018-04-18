@@ -229,7 +229,7 @@ public class S3Producer extends DefaultProducer {
         }
 
         String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
-        if (bucketName == null){
+        if (bucketName == null) {
             LOG.trace("Bucket name is not in header, using default one  [{}]...", getConfiguration().getBucketName());
             bucketName = getConfiguration().getBucketName();
         }
