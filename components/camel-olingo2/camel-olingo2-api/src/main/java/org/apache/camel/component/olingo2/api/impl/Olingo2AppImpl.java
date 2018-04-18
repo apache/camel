@@ -259,7 +259,7 @@ public final class Olingo2AppImpl implements Olingo2App {
     private Map<String, String> encodeQueryParams(Map<String, String> queryParams) {
         Map<String, String> encodedQueryParams = queryParams;
         if (queryParams != null) {
-            encodedQueryParams = new HashMap<String, String>(queryParams.size());
+            encodedQueryParams = new HashMap<>(queryParams.size());
             for (Map.Entry<String, String> entry : queryParams.entrySet()) {
                 encodedQueryParams.put(entry.getKey(), URLEncoder.encode(entry.getValue()));
             }
@@ -536,8 +536,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                                 result.getEntity().getContent(), type);
 
                             // parse batch response bodies
-                            final List<Olingo2BatchResponse> responses = new ArrayList<Olingo2BatchResponse>();
-                            Map<String, String> contentIdLocationMap = new HashMap<String, String>();
+                            final List<Olingo2BatchResponse> responses = new ArrayList<>();
+                            Map<String, String> contentIdLocationMap = new HashMap<>();
 
                             final List<Olingo2BatchRequest> batchRequests = (List<Olingo2BatchRequest>) content;
                             final Iterator<Olingo2BatchRequest> iterator = batchRequests.iterator();
@@ -733,10 +733,10 @@ public final class Olingo2AppImpl implements Olingo2App {
         throws IOException, EntityProviderException, ODataApplicationException, EdmException, URISyntaxException {
 
         // create Batch request from parts
-        final ArrayList<BatchPart> parts = new ArrayList<BatchPart>();
-        final ArrayList<BatchChangeSetPart> changeSetParts = new ArrayList<BatchChangeSetPart>();
+        final ArrayList<BatchPart> parts = new ArrayList<>();
+        final ArrayList<BatchChangeSetPart> changeSetParts = new ArrayList<>();
 
-        final Map<String, String> contentIdMap = new HashMap<String, String>();
+        final Map<String, String> contentIdMap = new HashMap<>();
 
         for (Olingo2BatchRequest batchPart : batchParts) {
 
@@ -796,7 +796,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
         // serialize data into ODataResponse object, if set in request and this is not a DELETE request
-        final Map<String, String> headers = new HashMap<String, String>();
+        final Map<String, String> headers = new HashMap<>();
         byte[] body = null;
 
         if (batchRequest.getBody() != null
@@ -843,7 +843,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     private BatchQueryPart createBatchQueryPart(UriInfoWithType uriInfo, Olingo2BatchQueryRequest batchRequest) {
 
-        final Map<String, String> headers = new HashMap<String, String>(batchRequest.getHeaders());
+        final Map<String, String> headers = new HashMap<>(batchRequest.getHeaders());
         final ContentType contentType = getResourceContentType(uriInfo);
         final Charset charset = contentType.getCharset();
         if (!headers.containsKey(HttpHeaders.ACCEPT)) {
@@ -1030,7 +1030,7 @@ public final class Olingo2AppImpl implements Olingo2App {
     private static UriInfoWithType parseUri(Edm edm, String resourcePath, Map<String, String> queryParams) {
         UriInfoWithType result;
         try {
-            final List<PathSegment> pathSegments = new ArrayList<PathSegment>();
+            final List<PathSegment> pathSegments = new ArrayList<>();
             final String[] segments = new URI(resourcePath).getPath().split(SEPARATOR);
             if (queryParams == null) {
                 queryParams = Collections.emptyMap();
@@ -1045,12 +1045,12 @@ public final class Olingo2AppImpl implements Olingo2App {
                     final String[] splitSegment = segment.split(";");
                     segment = splitSegment[0];
 
-                    Map<String, List<String>> matrixParams = new HashMap<String, List<String>>();
+                    Map<String, List<String>> matrixParams = new HashMap<>();
                     for (int i = 1; i < splitSegment.length; i++) {
                         final String[] param = splitSegment[i].split("=");
                         List<String> values = matrixParams.get(param[0]);
                         if (values == null) {
-                            values = new ArrayList<String>();
+                            values = new ArrayList<>();
                             matrixParams.put(param[0], values);
                         }
                         if (param[1].indexOf(',') == -1) {

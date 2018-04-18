@@ -48,7 +48,7 @@ public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTest
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(null);
                 exchange.getIn().setHeader("from", "me");
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("foo");
                 list.add("bar");
                 exchange.getIn().setHeader("to", list);
@@ -86,7 +86,7 @@ public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTest
                         // response
                         exchange.getOut().setBody("OK");
                         // use multiple values for the foo header in the reply
-                        List<Integer> list = new ArrayList<Integer>();
+                        List<Integer> list = new ArrayList<>();
                         list.add(123);
                         list.add(456);
                         exchange.getOut().setHeader("foo", list);

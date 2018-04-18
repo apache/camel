@@ -70,7 +70,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         this.configuration = endpointConfiguration;
 
         // get all endpoint property names
-        endpointPropertyNames = new HashSet<String>(getPropertiesHelper().getValidEndpointProperties(configuration));
+        endpointPropertyNames = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(configuration));
         // avoid adding edm as queryParam
         endpointPropertyNames.add(EDM_PROPERTY);
         endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
@@ -190,7 +190,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private void parseQueryParams(Map<String, Object> options) {
         // extract non-endpoint properties as query params
-        final Map<String, String> queryParams = new HashMap<String, String>();
+        final Map<String, String> queryParams = new HashMap<>();
         for (Iterator<Map.Entry<String, Object>> it = options.entrySet().iterator(); it.hasNext();) {
 
             final Map.Entry<String, Object> entry = it.next();

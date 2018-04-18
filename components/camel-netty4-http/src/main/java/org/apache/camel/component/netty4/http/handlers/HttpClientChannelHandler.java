@@ -54,7 +54,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
         if (producer.getEndpoint().getCookieHandler() != null) {
             String actualUri = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
             URI uri = new URI(actualUri);
-            Map<String, List<String>> m = new HashMap<String, List<String>>();
+            Map<String, List<String>> m = new HashMap<>();
             for (String name : response.headers().names()) {
                 m.put(name, response.headers().getAll(name));
             }

@@ -34,7 +34,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
 public class OptaPlannerEndpoint extends DefaultEndpoint {
-    private static final Map<String, Solver<Object>> SOLVERS = new HashMap<String, Solver<Object>>();
+    private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
 
     @UriParam
     private OptaPlannerConfiguration configuration;

@@ -87,7 +87,7 @@ public class RestSpanDecoratorTest {
         SpanDecorator decorator = new RestSpanDecorator();
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, exchange, endpoint);
 

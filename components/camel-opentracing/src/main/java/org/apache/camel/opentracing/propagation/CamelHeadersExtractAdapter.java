@@ -23,7 +23,7 @@ import java.util.Map;
 import io.opentracing.propagation.TextMap;
 
 public final class CamelHeadersExtractAdapter implements TextMap {
-    private final Map<String, String> map = new HashMap<String, String>();
+    private final Map<String, String> map = new HashMap<>();
 
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries

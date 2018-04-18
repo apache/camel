@@ -34,7 +34,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(new HttpContentDecompressor());
         registry.bind("myDecoders", decoders);
         return registry;
@@ -45,7 +45,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
     public void testContentType() throws Exception {
         
         byte[] data = "Hello World".getBytes(Charset.forName("UTF-8"));
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("content-type", "text/plain; charset=\"UTF-8\"");
         headers.put("Accept-Encoding", "compress, gzip");
         String out = template.requestBodyAndHeaders("netty-http:http://localhost:9001/foo?decoders=#myDecoders", data,

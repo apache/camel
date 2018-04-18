@@ -54,7 +54,7 @@ public class DatagramPacketStringDecoder extends MessageToMessageDecoder<Address
         if (msg.content() instanceof ByteBuf) {
             ByteBuf payload = (ByteBuf)msg.content();
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(payload.toString(charset), msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(payload.toString(charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
     }

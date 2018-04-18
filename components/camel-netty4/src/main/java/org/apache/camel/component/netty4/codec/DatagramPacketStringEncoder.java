@@ -61,7 +61,7 @@ public class DatagramPacketStringEncoder extends
                 return;
             }
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
     }

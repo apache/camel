@@ -25,7 +25,7 @@ import java.util.Map;
 public abstract class Olingo2BatchRequest {
 
     protected String resourcePath;
-    protected Map<String, String> headers = new HashMap<String, String>();
+    protected Map<String, String> headers = new HashMap<>();
 
     public String getResourcePath() {
         return resourcePath;

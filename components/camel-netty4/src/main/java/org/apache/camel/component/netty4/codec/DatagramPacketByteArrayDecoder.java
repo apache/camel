@@ -36,7 +36,7 @@ public class DatagramPacketByteArrayDecoder extends MessageToMessageDecoder<Addr
         if (msg.content() instanceof ByteBuf) {
             delegateDecoder.decode(ctx, (ByteBuf) msg.content(), out);
             byte[] content = (byte[]) out.remove(out.size() - 1);
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<Object, InetSocketAddress>(content, msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<>(content, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
     }

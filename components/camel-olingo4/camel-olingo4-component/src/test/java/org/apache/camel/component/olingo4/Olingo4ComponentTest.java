@@ -75,7 +75,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
     @Test
     public void testRead() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
 
         // Read metadata ($metadata) object
         final Edm metadata = (Edm)requestBodyAndHeaders("direct://readmetadata", null, headers);
@@ -199,7 +199,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
     @Test
     public void testBatch() throws Exception {
-        final List<Olingo4BatchRequest> batchParts = new ArrayList<Olingo4BatchRequest>();
+        final List<Olingo4BatchRequest> batchParts = new ArrayList<>();
 
         // 1. Edm query
         batchParts.add(Olingo4BatchQueryRequest.resourcePath(Constants.METADATA).resourceUri(TEST_SERVICE_BASE_URL).build());
@@ -211,7 +211,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).build());
 
         // 4. Read with $top
-        final HashMap<String, String> queryParams = new HashMap<String, String>();
+        final HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put(SystemQueryOptionKind.TOP.toString(), "5");
         batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).queryParams(queryParams).build());
 
@@ -274,7 +274,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testEndpointHttpHeaders() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct://read-etag", null, headers);
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:check-etag-header");
@@ -284,7 +284,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         Map<String, String> responseHttpHeaders = (Map<String, String>)mockEndpoint.getExchanges().get(0).getIn().getHeader("CamelOlingo4.responseHttpHeaders");
         assertEquals(responseHttpHeaders.get("ETag"), entity.getETag());
         
-        Map<String, String> endpointHttpHeaders = new HashMap<String, String>();
+        Map<String, String> endpointHttpHeaders = new HashMap<>();
         endpointHttpHeaders.put("If-Match", entity.getETag());
         headers.put("CamelOlingo4.endpointHttpHeaders", endpointHttpHeaders);
         requestBodyAndHeaders("direct://delete-with-etag", null, headers);

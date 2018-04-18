@@ -59,7 +59,7 @@ public class AbstractMessagingSpanDecoratorTest {
         };
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, null, endpoint);
 
@@ -86,11 +86,11 @@ public class AbstractMessagingSpanDecoratorTest {
         };
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, exchange, endpoint);
 
-        assertEquals(messageId, span.tags().get(AwsSqsSpanDecorator.MESSAGE_BUS_ID));
+        assertEquals(messageId, span.tags().get(AbstractMessagingSpanDecorator.MESSAGE_BUS_ID));
     }
 
 }

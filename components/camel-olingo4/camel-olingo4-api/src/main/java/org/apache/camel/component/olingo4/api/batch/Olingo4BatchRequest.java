@@ -26,7 +26,7 @@ public abstract class Olingo4BatchRequest {
 
     protected String resourceUri;
     protected String resourcePath;
-    protected Map<String, String> headers = new HashMap<String, String>();
+    protected Map<String, String> headers = new HashMap<>();
 
     public String getResourceUri() {
         return resourceUri;

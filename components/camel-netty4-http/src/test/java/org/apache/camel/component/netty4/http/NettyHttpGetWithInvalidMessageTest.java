@@ -49,10 +49,10 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         StringEncoder stringEncoder = new StringEncoder();
         registry.bind("string-encoder", stringEncoder);
 
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(stringDecoder);
 
-        List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(stringEncoder);
 
         registry.bind("encoders", encoders);

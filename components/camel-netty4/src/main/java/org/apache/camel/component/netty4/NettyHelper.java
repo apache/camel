@@ -95,7 +95,7 @@ public final class NettyHelper {
             }
             // Need to create AddressedEnvelope to setup the address information here
             DefaultAddressedEnvelope<Object, InetSocketAddress> ae =
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(body, (InetSocketAddress)remoteAddress);
+                new DefaultAddressedEnvelope<>(body, (InetSocketAddress)remoteAddress);
             future = channel.writeAndFlush(ae);
         } else {
             if (log.isDebugEnabled()) {

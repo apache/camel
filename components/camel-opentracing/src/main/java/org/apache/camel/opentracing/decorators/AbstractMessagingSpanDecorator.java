@@ -37,7 +37,7 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
 
         span.setTag(Tags.MESSAGE_BUS_DESTINATION.getKey(), getDestination(exchange, endpoint));
 
-        String messageId = (String)getMessageId(exchange);
+        String messageId = getMessageId(exchange);
         if (messageId != null) {
             span.setTag(MESSAGE_BUS_ID, messageId);
         }
