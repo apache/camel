@@ -36,7 +36,7 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
  * @param <W> Writer class
  */
 final class Marshaller<W extends AbstractWriter<?>> {
-    private final LinkedHashSet<String> headers = new LinkedHashSet<String>();
+    private final LinkedHashSet<String> headers = new LinkedHashSet<>();
     private final boolean adaptHeaders;
 
     /**

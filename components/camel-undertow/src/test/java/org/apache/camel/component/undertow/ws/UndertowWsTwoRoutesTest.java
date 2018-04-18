@@ -37,7 +37,7 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
 
         // We call the route WebSocket BAR
         {
-            final List<String> received = new ArrayList<String>();
+            final List<String> received = new ArrayList<>();
             final CountDownLatch latch = new CountDownLatch(1);
             final AsyncHttpClient c = new DefaultAsyncHttpClient();
             final WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/bar").execute(
@@ -77,7 +77,7 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
 
         // We call the route WebSocket PUB
         {
-            final List<String> received = new ArrayList<String>();
+            final List<String> received = new ArrayList<>();
             final CountDownLatch latch = new CountDownLatch(1);
             final AsyncHttpClient c = new DefaultAsyncHttpClient();
             final WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/pub").execute(

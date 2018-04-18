@@ -17,15 +17,12 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
-import java.util.function.Supplier;
 
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
-import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
 
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
-import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

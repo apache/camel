@@ -62,11 +62,11 @@ public abstract class WordpressMockServerTestSupport {
     }
 
     private static HttpServer createServer(int port) {
-        final Map<String, String> postsListCreateRequestHandlers = new HashMap<String, String>();
+        final Map<String, String> postsListCreateRequestHandlers = new HashMap<>();
         postsListCreateRequestHandlers.put("GET", "/data/posts/list.json");
         postsListCreateRequestHandlers.put("POST", "/data/posts/create.json");
 
-        final Map<String, String> postsSingleUpdateRequestHandlers = new HashMap<String, String>();
+        final Map<String, String> postsSingleUpdateRequestHandlers = new HashMap<>();
         postsSingleUpdateRequestHandlers.put("GET", "/data/posts/single.json");
         postsSingleUpdateRequestHandlers.put("POST", "/data/posts/update.json");
         postsSingleUpdateRequestHandlers.put("DELETE", "/data/posts/delete.json");
@@ -75,7 +75,7 @@ public abstract class WordpressMockServerTestSupport {
         usersListCreateRequestHandlers.put("GET", "/data/users/list.json");
         usersListCreateRequestHandlers.put("POST", "/data/users/create.json");
 
-        final Map<String, String> usersSingleUpdateRequestHandlers = new HashMap<String, String>();
+        final Map<String, String> usersSingleUpdateRequestHandlers = new HashMap<>();
         usersSingleUpdateRequestHandlers.put("GET", "/data/users/single.json");
         usersSingleUpdateRequestHandlers.put("POST", "/data/users/update.json");
         usersSingleUpdateRequestHandlers.put("DELETE", "/data/users/delete.json");

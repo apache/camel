@@ -72,7 +72,7 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
         serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, InetAddress.getByName("localhost"), sslParams);
         ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(serverTransport);
 
-        args.processor((TProcessor)processor);
+        args.processor(processor);
         args.executorService(this.context().getExecutorServiceManager().newThreadPool(this, "test-server-invoker", 1, 10));
         args.startThreadPool(this.context().getExecutorServiceManager().newSingleThreadExecutor(this, "test-start-thread"));
         args.context(this.context());

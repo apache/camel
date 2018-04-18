@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public class WebsocketComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
-    protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
+    protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
 
     protected Map<String, WebSocketFactory> socketFactory;
     protected Server staticResourcesServer;
@@ -92,7 +92,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
     /**
      * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
      */
-    private Map<String, WebsocketComponentServlet> servlets = new HashMap<String, WebsocketComponentServlet>();
+    private Map<String, WebsocketComponentServlet> servlets = new HashMap<>();
 
     class ConnectorRef {
         Server server;
@@ -126,7 +126,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
         super(WebsocketEndpoint.class);
 
         if (this.socketFactory == null) {
-            this.socketFactory = new HashMap<String, WebSocketFactory>();
+            this.socketFactory = new HashMap<>();
             this.socketFactory.put("default", new DefaultWebsocketFactory());
         }
     }

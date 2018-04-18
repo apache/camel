@@ -58,7 +58,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      */
     public Object unmarshal(Reader reader, P parser, HeaderRowProcessor headerRowProcessor) {
         parser.beginParsing(reader);
-        Iterator<?> iterator = asMap ? new MapRowIterator<P>(parser, headerRowProcessor) : new ListRowIterator<P>(parser);
+        Iterator<?> iterator = asMap ? new MapRowIterator<>(parser, headerRowProcessor) : new ListRowIterator<>(parser);
         return lazyLoad ? iterator : convertToList(iterator);
     }
 
@@ -70,7 +70,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * @return a list that contains all the items of the iterator
      */
     private static <T> List<T> convertToList(Iterator<T> iterator) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         while (iterator.hasNext()) {
             result.add(iterator.next());
         }
@@ -187,7 +187,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
             String[] headers = headerRowProcessor.getHeaders();
 
             int size = Math.min(row.length, headers.length);
-            Map<String, String> result = new LinkedHashMap<String, String>(size);
+            Map<String, String> result = new LinkedHashMap<>(size);
             for (int i = 0; i < size; i++) {
                 result.put(headers[i], row[i]);
             }

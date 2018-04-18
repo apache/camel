@@ -37,7 +37,7 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
     public void testWSHttpCallEcho() throws Exception {
 
         // We call the route WebSocket BAR
-        final List<String> received = new ArrayList<String>();
+        final List<String> received = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(2);
 
         DefaultAsyncHttpClient c = new DefaultAsyncHttpClient();

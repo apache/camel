@@ -135,10 +135,10 @@ public class CamelKarafTestSupport extends CamelTestSupport {
 
         FutureTask<String> commandFuture;
         if (principals.length == 0) {
-            commandFuture = new FutureTask<String>(commandCallable);
+            commandFuture = new FutureTask<>(commandCallable);
         } else {
             // If principals are defined, run the command callable via Subject.doAs()
-            commandFuture = new FutureTask<String>(new Callable<String>() {
+            commandFuture = new FutureTask<>(new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     Subject subject = new Subject();
@@ -333,7 +333,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     protected void installAssertAndUninstallFeature(String feature) throws Exception {
-        Set<Feature> featuresBefore = new HashSet<Feature>(Arrays.asList(featuresService.listInstalledFeatures()));
+        Set<Feature> featuresBefore = new HashSet<>(Arrays.asList(featuresService.listInstalledFeatures()));
         try {
             featuresService.installFeature(feature);
             assertFeatureInstalled(feature);
@@ -343,7 +343,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     protected void installAssertAndUninstallFeature(String feature, String version) throws Exception {
-        Set<Feature> featuresBefore = new HashSet<Feature>(Arrays.asList(featuresService.listInstalledFeatures()));
+        Set<Feature> featuresBefore = new HashSet<>(Arrays.asList(featuresService.listInstalledFeatures()));
         try {
             featuresService.installFeature(feature, version);
             assertFeatureInstalled(feature, version);
@@ -353,7 +353,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     }
 
     protected void installAssertAndUninstallFeatures(String... feature) throws Exception {
-        Set<Feature> featuresBefore = new HashSet<Feature>(Arrays.asList(featuresService.listInstalledFeatures()));
+        Set<Feature> featuresBefore = new HashSet<>(Arrays.asList(featuresService.listInstalledFeatures()));
         try {
             for (String curFeature : feature) {
                 featuresService.installFeature(curFeature);

@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
+    private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
@@ -83,8 +83,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // Sa ve a copy of the parameters.
-        Map<String, Object> healthCheckOptions = new HashMap<>(parameters);
+        new HashMap<>(parameters);
 
         URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
@@ -200,7 +199,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             }
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals("undertow")) {
             // setup endpoint options

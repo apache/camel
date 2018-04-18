@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<String>();
+    private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(1);
 
     protected int port;

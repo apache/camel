@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class WebsocketTwoRoutesToSameEndpointExampleTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<String>();
+    private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch;
     private int port;
 

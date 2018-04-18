@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.twitter.data.EndpointType;
-
 /**
  * @deprecated This has been introduced to just keep deprecated endpoints working as is.
  * Remove this once Endpoint{Direct,Event,Polling} is removed.

@@ -107,7 +107,7 @@ public class ThriftConsumer extends DefaultConsumer {
             Class serverInterface = ThriftUtils.getServerInterface(endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.isSynchronous(), endpoint.getCamelContext());
             serviceProxy.setInterfaces(new Class[] {serverInterface});
             serverImplementationClass = serviceProxy.createClass();
-            serverImplementationInstance = (Object)serverImplementationClass.getConstructor().newInstance();
+            serverImplementationInstance = serverImplementationClass.getConstructor().newInstance();
             ((Proxy)serverImplementationInstance).setHandler(methodHandler);
 
             serverProcessor = ThriftUtils.constructServerProcessor(endpoint.getServicePackage(), endpoint.getServiceName(), serverImplementationInstance, endpoint.isSynchronous(),

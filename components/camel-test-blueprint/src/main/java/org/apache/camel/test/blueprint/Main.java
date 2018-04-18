@@ -105,7 +105,6 @@ public class Main extends MainSupport {
             } else {
                 bundleContext = createBundleContext(bundleName);
             }
-            Set<Long> eventHistory = new HashSet<>();
 
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
@@ -152,7 +151,7 @@ public class Main extends MainSupport {
 
     @Override
     protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> map = new HashMap<String, CamelContext>(1);
+        Map<String, CamelContext> map = new HashMap<>(1);
         if (camelContext != null) {
             map.put(camelContext.getName(), camelContext);
         }

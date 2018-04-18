@@ -191,7 +191,7 @@ public final class CamelBlueprintHelper {
         }
 
         // setup felix-connect to use our bundles
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 
         // create pojorsr osgi service registry
@@ -202,7 +202,7 @@ public final class CamelBlueprintHelper {
     public static void disposeBundleContext(BundleContext bundleContext) throws BundleException {
         try {
             if (bundleContext != null) {
-                List<Bundle> bundles = new ArrayList<Bundle>();
+                List<Bundle> bundles = new ArrayList<>();
                 bundles.addAll(Arrays.asList(bundleContext.getBundles()));
                 Collections.reverse(bundles);
                 for (Bundle bundle : bundles) {
@@ -299,7 +299,7 @@ public final class CamelBlueprintHelper {
                 flt = "(" + Constants.OBJECTCLASS + "=" + type.getName() + ")";
             }
             Filter osgiFilter = FrameworkUtil.createFilter(flt);
-            tracker = new ServiceTracker<T, T>(bundleContext, osgiFilter, null);
+            tracker = new ServiceTracker<>(bundleContext, osgiFilter, null);
             tracker.open(true);
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
@@ -432,7 +432,7 @@ public final class CamelBlueprintHelper {
      * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        return references  == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
+        return references  == null ? new ArrayList<>(0) : Arrays.asList(references);
     }
 
     /**
@@ -454,7 +454,7 @@ public final class CamelBlueprintHelper {
      * @throws FileNotFoundException is thrown if a bundle descriptor cannot be found
      */
     protected static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException, MalformedURLException {
-        List<URL> answer = new ArrayList<URL>();
+        List<URL> answer = new ArrayList<>();
         if (descriptors != null) {
             // there may be more resources separated by comma
             Iterator<Object> it = ObjectHelper.createIterator(descriptors);
@@ -528,7 +528,7 @@ public final class CamelBlueprintHelper {
         try {
             fis = new FileInputStream(file);
             jis = new JarInputStream(fis);
-            Map<String, String> headers = new HashMap<String, String>();
+            Map<String, String> headers = new HashMap<>();
             for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
                 headers.put(entry.getKey().toString(), entry.getValue().toString());
             }

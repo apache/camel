@@ -57,7 +57,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         assertTrue("Should be a file in target/out directory", files.length > 0);
 
         File resultFile = files[0];
-        Set<String> expectedTarFiles = new HashSet<String>(Arrays.asList("another/hello.txt",
+        Set<String> expectedTarFiles = new HashSet<>(Arrays.asList("another/hello.txt",
                 "other/greetings.txt",
                 "chiau.txt", "hi.txt", "hola.txt"));
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));
