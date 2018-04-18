@@ -377,7 +377,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 } else if (forceCommit) {
                     log.debug("Forcing commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
                     consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
-                } else if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
+                } else if (endpoint.getConfiguration().isAutoCommitEnable()) {
                     log.debug("Auto commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
                     consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
                 }
