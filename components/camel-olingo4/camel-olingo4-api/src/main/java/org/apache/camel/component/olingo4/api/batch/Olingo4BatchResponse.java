@@ -37,7 +37,7 @@ public class Olingo4BatchResponse {
         this.statusCode = statusCode;
         this.statusInfo = statusInfo;
         this.contentId = contentId;
-        this.headers = Collections.unmodifiableMap(new HashMap<String, String>(headers));
+        this.headers = Collections.unmodifiableMap(new HashMap<>(headers));
         this.body = body;
     }
 

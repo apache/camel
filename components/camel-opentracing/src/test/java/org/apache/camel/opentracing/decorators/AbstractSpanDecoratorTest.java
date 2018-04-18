@@ -63,7 +63,7 @@ public class AbstractSpanDecoratorTest {
         };
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, null, endpoint);
 
@@ -87,7 +87,7 @@ public class AbstractSpanDecoratorTest {
         };
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.post(span, exchange, null);
 

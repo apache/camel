@@ -43,7 +43,7 @@ public class DatagramPacketDelimiterDecoder extends MessageToMessageDecoder<Addr
             ByteBuf payload = (ByteBuf)msg.content();
             Object result = delegateDecoder.decode(ctx, payload);
             AddressedEnvelope<Object, InetSocketAddress> addressEvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(result, msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(result, msg.recipient(), msg.sender());
             out.add(addressEvelop);
         }
         

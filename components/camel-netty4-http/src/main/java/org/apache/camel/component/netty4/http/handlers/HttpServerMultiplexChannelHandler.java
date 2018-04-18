@@ -54,7 +54,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private static final AttributeKey<HttpServerChannelHandler> SERVER_HANDLER_KEY = AttributeKey.valueOf("serverHandler");
-    private final Set<HttpServerChannelHandler> consumers = new CopyOnWriteArraySet<HttpServerChannelHandler>();
+    private final Set<HttpServerChannelHandler> consumers = new CopyOnWriteArraySet<>();
     private int port;
     private String token;
     private int len;
@@ -163,7 +163,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<RestConsumerContextPathMatcher.ConsumerPath>();
+        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
         for (final HttpServerChannelHandler handler : consumers) {
             paths.add(new HttpRestConsumerPath(handler));
         }

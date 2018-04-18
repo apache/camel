@@ -62,7 +62,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:downstream")
     private MockEndpoint downstream;
 
-    private Deque<Callable<?>> tasks = new LinkedBlockingDeque<Callable<?>>();
+    private Deque<Callable<?>> tasks = new LinkedBlockingDeque<>();
     private int port;
     private boolean alive = true;
 

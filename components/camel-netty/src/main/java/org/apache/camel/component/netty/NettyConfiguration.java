@@ -60,12 +60,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @Deprecated
     private ChannelHandler encoder;
     @UriParam(label = "codec", javaType = "java.lang.String")
-    private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+    private List<ChannelHandler> encoders = new ArrayList<>();
     @UriParam(label = "codec", description = "To use a single decoder. This options is deprecated use encoders instead.")
     @Deprecated
     private ChannelHandler decoder;
     @UriParam(label = "codec", javaType = "java.lang.String")
-    private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+    private List<ChannelHandler> decoders = new ArrayList<>();
     @UriParam
     private boolean disconnect;
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -116,9 +116,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(encoders);
+            List<ChannelHandler> encodersCopy = new ArrayList<>(encoders);
             answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<ChannelHandler>(decoders);
+            List<ChannelHandler> decodersCopy = new ArrayList<>(decoders);
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {

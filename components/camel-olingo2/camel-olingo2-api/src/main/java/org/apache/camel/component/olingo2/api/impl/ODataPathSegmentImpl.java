@@ -34,7 +34,7 @@ public class ODataPathSegmentImpl implements PathSegment {
     public ODataPathSegmentImpl(final String path, final Map<String, List<String>> matrixParameters) {
         this.path = path;
 
-        Map<String, List<String>> unmodifiableMap = new HashMap<String, List<String>>();
+        Map<String, List<String>> unmodifiableMap = new HashMap<>();
         if (matrixParameters != null) {
             for (String key : matrixParameters.keySet()) {
                 List<String> values = Collections.unmodifiableList(matrixParameters.get(key));

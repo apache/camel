@@ -90,7 +90,7 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
                     scoreDirector.afterVariableChanged(process, "computer");
                 }
             }
-            cloudBalance.setComputerList(new ArrayList<CloudComputer>(cloudBalance.getComputerList()));
+            cloudBalance.setComputerList(new ArrayList<>(cloudBalance.getComputerList()));
             for (Iterator<CloudComputer> it = cloudBalance.getComputerList().iterator(); it.hasNext();) {
                 CloudComputer workingComputer = it.next();
                 if (Objects.equals(workingComputer, removingComputer)) {

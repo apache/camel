@@ -31,6 +31,6 @@ public class PatternSplitStrategyTest {
     public void testSplit() throws Exception {
         Collection<String> split = patternSplitStrategy.split("hello" + PATTERN + "world");
         assertEquals(2, split.size());
-        assertEquals("world", new ArrayList<String>(split).get(1));
+        assertEquals("world", new ArrayList<>(split).get(1));
     }
 }

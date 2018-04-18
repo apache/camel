@@ -83,7 +83,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         // start the executor before the registration
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
 
-        Dictionary<String, String> props = new Hashtable<String, String>();
+        Dictionary<String, String> props = new Hashtable<>();
         props.put("org.ops4j.pax.logging.appender.name", endpoint.getAppender());
         registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
     }
