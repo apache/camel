@@ -69,7 +69,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
     
     @Test
     public void testSearchTimelineWithDynamicQuerySinceId() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
         headers.put(TwitterConstants.TWITTER_SINCEID, new Long(258347905419730944L));
         templateHeader.sendBodyAndHeaders(null, headers);
@@ -85,7 +85,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
     
     @Test
     public void testSearchTimelineWithDynamicQuerySinceIdAndMaxId() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
         headers.put(TwitterConstants.TWITTER_SINCEID, new Long(258347905419730944L));
         headers.put(TwitterConstants.TWITTER_MAXID, new Long(258348815243960320L));

@@ -62,9 +62,9 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
         
         serverTransport = new TServerSocket(new InetSocketAddress(InetAddress.getByName("localhost"), THRIFT_TEST_PORT), THRIFT_CLIENT_TIMEOUT);
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-        args.processor((TProcessor)processor);
+        args.processor(processor);
         args.protocolFactory(new TBinaryProtocol.Factory());
-        args.transportFactory((TTransportFactory)new TZlibTransport.Factory());
+        args.transportFactory(new TZlibTransport.Factory());
         server = new TThreadPoolServer(args);
         
         Runnable simple = new Runnable() {
@@ -92,7 +92,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
 
         List requestBody = new ArrayList();
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY));
 
         Object responseBody = template.requestBody("direct:thrift-zlib-calculate", requestBody);

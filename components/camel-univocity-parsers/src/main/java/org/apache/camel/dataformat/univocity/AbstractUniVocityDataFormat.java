@@ -84,7 +84,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
             synchronized (writerSettingsToken) {
                 if (writerSettings == null) {
                     writerSettings = createAndConfigureWriterSettings();
-                    marshaller = new Marshaller<W>(headers, headers == null);
+                    marshaller = new Marshaller<>(headers, headers == null);
                 }
             }
         }
@@ -111,7 +111,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
                             return createAndConfigureParserSettings();
                         }
                     };
-                    unmarshaller = new Unmarshaller<P>(lazyLoad, asMap);
+                    unmarshaller = new Unmarshaller<>(lazyLoad, asMap);
                 }
             }
         }

@@ -39,7 +39,7 @@ import org.springframework.context.support.GenericApplicationContext;
  * Do <tt>not</tt> use this class for Spring Boot testing, instead use <code>@RunWith(CamelSpringBootRunner.class)</code>.
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
-    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<AbstractApplicationContext>();
+    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<>();
     protected static Object lock = new Object();
     
     protected AbstractApplicationContext applicationContext;
@@ -158,7 +158,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
-        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+        excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
         return routeExcludingContext;
     }

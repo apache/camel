@@ -56,7 +56,7 @@ public class WebsocketComponentServletTest {
 
     @Before
     public void setUp() throws Exception {
-        socketFactory = new HashMap<String, WebSocketFactory>();
+        socketFactory = new HashMap<>();
         socketFactory.put("default", new DefaultWebsocketFactory());
         
         websocketComponentServlet = new WebsocketComponentServlet(sync, null, socketFactory);

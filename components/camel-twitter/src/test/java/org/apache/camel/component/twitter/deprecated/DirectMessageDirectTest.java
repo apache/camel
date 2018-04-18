@@ -16,15 +16,9 @@
  */
 package org.apache.camel.component.twitter.deprecated;
 
-import java.util.Date;
-
 import org.apache.camel.component.twitter.CamelTwitterConsumerTestSupport;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 /**
  * consumes tweets

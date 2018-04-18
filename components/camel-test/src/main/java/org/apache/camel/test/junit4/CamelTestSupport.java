@@ -98,12 +98,12 @@ public abstract class CamelTestSupport extends TestSupport {
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
-    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
-    private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<ModelCamelContext>();
-    private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<ProducerTemplate>();
-    private static ThreadLocal<FluentProducerTemplate> threadFluentTemplate = new ThreadLocal<FluentProducerTemplate>();
-    private static ThreadLocal<ConsumerTemplate> threadConsumer = new ThreadLocal<ConsumerTemplate>();
-    private static ThreadLocal<Service> threadService = new ThreadLocal<Service>();
+    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<>();
+    private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<>();
+    private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<>();
+    private static ThreadLocal<FluentProducerTemplate> threadFluentTemplate = new ThreadLocal<>();
+    private static ThreadLocal<ConsumerTemplate> threadConsumer = new ThreadLocal<>();
+    private static ThreadLocal<Service> threadService = new ThreadLocal<>();
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile FluentProducerTemplate fluentTemplate;
@@ -113,7 +113,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
-    private final Map<String, String> fromEndpoints = new HashMap<String, String>();
+    private final Map<String, String> fromEndpoints = new HashMap<>();
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
     /**
@@ -748,7 +748,7 @@ public abstract class CamelTestSupport extends TestSupport {
         } else {
             properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
         }
-        return new InitialContext(new Hashtable<Object, Object>(properties));
+        return new InitialContext(new Hashtable<>(properties));
     }
 
     /**

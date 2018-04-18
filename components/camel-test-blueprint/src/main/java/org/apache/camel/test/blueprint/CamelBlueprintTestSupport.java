@@ -62,9 +62,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     /** Name of a system property that sets camel context creation timeout. */
     public static final String SPROP_CAMEL_CONTEXT_CREATION_TIMEOUT = "org.apache.camel.test.blueprint.camelContextCreationTimeout";
 
-    private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
+    private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<>();
     private volatile BundleContext bundleContext;
-    private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
+    private final Set<ServiceRegistration<?>> services = new LinkedHashSet<>();
 
     /**
      * Override this method if you don't want CamelBlueprintTestSupport create the test bundle
@@ -135,10 +135,10 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             answer.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
         }
 
-        Map<String, KeyValueHolder<Object, Dictionary>> map = new LinkedHashMap<String, KeyValueHolder<Object, Dictionary>>();
+        Map<String, KeyValueHolder<Object, Dictionary>> map = new LinkedHashMap<>();
         addServicesOnStartup(map);
 
-        List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> servicesList = new LinkedList<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>>();
+        List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> servicesList = new LinkedList<>();
         for (Map.Entry<String, KeyValueHolder<Object, Dictionary>> entry : map.entrySet()) {
             servicesList.add(asKeyValueService(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
         }
@@ -229,7 +229,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         System.setProperty("skipStartingCamelContext", "true");
         System.setProperty("registerBlueprintCamelContextEager", "true");
 
-        String symbolicName = getClass().getSimpleName();
         if (isCreateCamelContextPerClass()) {
             // test is per class, so only setup once (the first time)
             boolean first = threadLocalBundleContext.get() == null;
@@ -321,14 +320,14 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
     protected KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
-        return new KeyValueHolder<Object, Dictionary>(service, dict);
+        return new KeyValueHolder<>(service, dict);
     }
 
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.List)}
      */
     protected KeyValueHolder<String, KeyValueHolder<Object, Dictionary>> asKeyValueService(String name, Object service, Dictionary dict) {
-        return new KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>(name, new KeyValueHolder<Object, Dictionary>(service, dict));
+        return new KeyValueHolder<>(name, new KeyValueHolder<>(service, dict));
     }
 
 
@@ -340,7 +339,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         if (key != null && value != null) {
             prop.put(key, value);
         }
-        return new KeyValueHolder<Object, Dictionary>(service, prop);
+        return new KeyValueHolder<>(service, prop);
     }
 
     /**

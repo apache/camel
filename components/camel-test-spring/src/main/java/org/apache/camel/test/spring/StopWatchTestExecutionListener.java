@@ -28,7 +28,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  */
 public class StopWatchTestExecutionListener extends AbstractTestExecutionListener {
     
-    protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<StopWatch>();
+    protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();
     
     /**
      * Exists primarily for testing purposes, but allows for access to the underlying stop watch instance for a test.

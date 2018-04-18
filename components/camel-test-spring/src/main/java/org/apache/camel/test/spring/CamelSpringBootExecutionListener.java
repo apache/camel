@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

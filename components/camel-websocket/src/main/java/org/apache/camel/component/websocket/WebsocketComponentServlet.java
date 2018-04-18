@@ -35,7 +35,7 @@ public class WebsocketComponentServlet extends WebSocketServlet {
     private WebsocketConsumer consumer;
     private String pathSpec;
 
-    private ConcurrentMap<String, WebsocketConsumer> consumers = new ConcurrentHashMap<String, WebsocketConsumer>();
+    private ConcurrentMap<String, WebsocketConsumer> consumers = new ConcurrentHashMap<>();
     private Map<String, WebSocketFactory> socketFactory;
 
     public WebsocketComponentServlet(NodeSynchronization sync, String pathSpec, Map<String, WebSocketFactory> socketFactory) {

@@ -97,7 +97,7 @@ public final class CamelAnnotationsHandler {
 
     public static void handleProvidesBreakpoint(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         Collection<Method> methods = getAllMethods(testClass);
-        final List<Breakpoint> breakpoints = new LinkedList<Breakpoint>();
+        final List<Breakpoint> breakpoints = new LinkedList<>();
 
         for (Method method : methods) {
             if (AnnotationUtils.findAnnotation(method, ProvidesBreakpoint.class) != null) {
@@ -224,7 +224,7 @@ public final class CamelAnnotationsHandler {
      */
     public static void handleUseOverridePropertiesWithPropertiesComponent(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         Collection<Method> methods = getAllMethods(testClass);
-        final List<Properties> properties = new LinkedList<Properties>();
+        final List<Properties> properties = new LinkedList<>();
 
         for (Method method : methods) {
             if (AnnotationUtils.findAnnotation(method, UseOverridePropertiesWithPropertiesComponent.class) != null) {

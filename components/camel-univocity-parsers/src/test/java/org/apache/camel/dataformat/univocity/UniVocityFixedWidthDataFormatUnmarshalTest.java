@@ -147,7 +147,7 @@ public final class UniVocityFixedWidthDataFormatUnmarshalTest extends CamelTestS
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<String, DataFormat>();
+        final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default reading of fixed-width
         tests.put("default", new UniVocityFixedWidthDataFormat()

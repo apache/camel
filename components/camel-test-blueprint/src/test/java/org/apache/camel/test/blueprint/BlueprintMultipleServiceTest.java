@@ -47,10 +47,10 @@ public class BlueprintMultipleServiceTest extends CamelBlueprintTestSupport {
     @Override
     @SuppressWarnings("rawtypes")
     protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
-        Dictionary<String, String> dict1 = new Hashtable<String, String>();
+        Dictionary<String, String> dict1 = new Hashtable<>();
         dict1.put("component", "fakeservice1");
 
-        Dictionary<String, String> dict2 = new Hashtable<String, String>();
+        Dictionary<String, String> dict2 = new Hashtable<>();
         dict2.put("component", "fakeservice2");
 
         services.add(asKeyValueService(ComponentResolver.class.getName(), mockComponentOne, dict1));

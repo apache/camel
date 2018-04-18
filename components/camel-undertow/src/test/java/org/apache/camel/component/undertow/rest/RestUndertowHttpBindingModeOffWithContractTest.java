@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.undertow.rest;
 
-import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.apache.camel.model.rest.RestDefinition;
 import org.junit.Test;
 
 public class RestUndertowHttpBindingModeOffWithContractTest extends BaseUndertowTest {

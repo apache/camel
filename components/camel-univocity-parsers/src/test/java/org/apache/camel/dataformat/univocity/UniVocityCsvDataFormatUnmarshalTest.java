@@ -148,7 +148,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<String, DataFormat>();
+        final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default reading of CSV
         tests.put("default", new UniVocityCsvDataFormat());
