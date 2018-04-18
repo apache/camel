@@ -40,7 +40,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityDisabled\", \"a\" : \"1\"}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         template.requestBodyAndHeaders("direct:noDynamicity", body, headers);
@@ -70,7 +70,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBOnly\", \"a\" : \"1\"}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
         
@@ -98,7 +98,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnly\", \"a\" : \"1\"}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
         
@@ -125,7 +125,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
                         .anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : \"1\"}";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);

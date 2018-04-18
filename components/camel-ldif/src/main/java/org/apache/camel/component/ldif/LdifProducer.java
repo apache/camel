@@ -106,7 +106,7 @@ public class LdifProducer extends DefaultProducer {
         LdapConnection conn = getLdapConnection();
         LdifReader ldifReader;
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
 
         // Create the reader
         try {

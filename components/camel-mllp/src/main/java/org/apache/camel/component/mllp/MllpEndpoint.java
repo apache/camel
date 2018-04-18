@@ -21,11 +21,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -33,14 +29,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.mllp.internal.Hl7Util;
-import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -313,6 +306,7 @@ public class MllpEndpoint extends DefaultEndpoint {
      *
      * @param bufferWrites
      */
+    @Deprecated
     public void setBufferWrites(Boolean bufferWrites) {
         configuration.setBufferWrites(bufferWrites);
     }

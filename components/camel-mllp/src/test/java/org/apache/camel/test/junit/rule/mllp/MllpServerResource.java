@@ -562,8 +562,6 @@ public class MllpServerResource extends ExternalResource {
             throw new IllegalArgumentException("Acknowledgemnt Code must be AA, AE or AR: " + acknowledgementCode);
         }
 
-        String messageControlId;
-
         int endOfMshSegment = hl7Message.indexOf(MllpProtocolConstants.SEGMENT_DELIMITER);
         if (-1 != endOfMshSegment) {
             String mshSegment = hl7Message.substring(0, endOfMshSegment);

@@ -39,7 +39,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
     @Override
     public void doPostSetup() {
         super.doPostSetup();
-        repo = new MongoDbIdempotentRepository<>((MongoClient)mongo, testCollectionName, dbName);
+        repo = new MongoDbIdempotentRepository<>(mongo, testCollectionName, dbName);
     }
 
     @Test

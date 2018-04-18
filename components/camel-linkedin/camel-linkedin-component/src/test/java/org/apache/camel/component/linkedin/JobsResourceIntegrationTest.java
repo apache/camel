@@ -49,7 +49,7 @@ public class JobsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testEditJob() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.partner_job_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.Job
         headers.put("CamelLinkedIn.job", null);
@@ -61,7 +61,7 @@ public class JobsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetJob() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.job_id", 0L);
         // parameter type is String
         headers.put("CamelLinkedIn.fields", null);

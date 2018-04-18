@@ -77,7 +77,6 @@ public class JavaSocketTests {
 
             @Override
             public void run() {
-                boolean running = true;
                 try {
                     Socket echoSocket = serverSocket.accept();
 
@@ -109,7 +108,6 @@ public class JavaSocketTests {
                                             log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
                                         }
                                     }
-                                    running = false;
                                     break;
                                 case 10:
                                     log.info("Complete Message - Sending Response");
@@ -184,7 +182,6 @@ public class JavaSocketTests {
 
             @Override
             public void run() {
-                boolean running = true;
                 try {
                     Socket echoSocket = serverSocket.accept();
 
@@ -216,7 +213,6 @@ public class JavaSocketTests {
                                             log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
                                         }
                                     }
-                                    running = false;
                                     break;
                                 case 27: // Escape
                                     log.info("Received Escape - closing connection");
@@ -278,7 +274,6 @@ public class JavaSocketTests {
 
         log.info("Message send loop complete - closing connection");
         log.info("Client Socket available() returned {} before close", clientSocket.getInputStream().available());
-        byte[] buffer = new byte[0];
         try {
             clientSocket.getInputStream().read();
             fail("read should have timed-out");
@@ -288,7 +283,6 @@ public class JavaSocketTests {
         clientSocket.getOutputStream().write(27);
         Thread.sleep(1000);
         log.info("Client Socket available() returned {} after close", clientSocket.getInputStream().available());
-        buffer = new byte[0];
         log.info("Client Socket read() returned {} after close", clientSocket.getInputStream().read());
         // Javadoc for Socket says closing the InputStream will close the connection
         clientSocket.getInputStream().close();

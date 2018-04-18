@@ -48,7 +48,7 @@ public class AbstractLinkedInTestSupport extends CamelTestSupport {
                 e);
         }
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
         }

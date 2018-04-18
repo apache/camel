@@ -237,7 +237,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         if (hits == null) {
-                            HashMap<String, String> map = new HashMap<String, String>();
+                            HashMap<String, String> map = new HashMap<>();
                             map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
                             exchange.getContext().setProperties(map);
                         }

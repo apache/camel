@@ -154,7 +154,7 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         int numToSkip = 0;
         final int limit = 100;
         for (int i = 0; i < 10; i++) {
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put(MongoDbConstants.NUM_TO_SKIP, numToSkip);
             headers.put(MongoDbConstants.LIMIT, 100);
             Object result = template.requestBodyAndHeaders("direct:findAll", (Object) null, headers);

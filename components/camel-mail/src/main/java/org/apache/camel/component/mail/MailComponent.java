@@ -111,7 +111,7 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
 
     private void configureAdditionalJavaMailProperties(MailConfiguration config, Map<String, Object> parameters) {
         // we cannot remove while iterating, as we will get a modification exception
-        Set<Object> toRemove = new HashSet<Object>();
+        Set<Object> toRemove = new HashSet<>();
 
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getKey().toString().startsWith("mail.")) {

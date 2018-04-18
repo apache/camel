@@ -59,7 +59,7 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private IoConnectorConfig connectorConfig;
     @UriParam
     private MinaConfiguration configuration;
-    private final List<ExecutorService> executors = new ArrayList<ExecutorService>();
+    private final List<ExecutorService> executors = new ArrayList<>();
 
     public MinaEndpoint() {
     }

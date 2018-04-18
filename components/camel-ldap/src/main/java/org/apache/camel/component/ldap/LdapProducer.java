@@ -116,7 +116,7 @@ public class LdapProducer extends DefaultProducer {
     }
 
     private List<SearchResult> simpleSearch(DirContext ldapContext, String searchFilter) throws NamingException {
-        List<SearchResult> data = new ArrayList<SearchResult>();
+        List<SearchResult> data = new ArrayList<>();
         NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, searchFilter, searchControls);
         while (namingEnumeration != null && namingEnumeration.hasMore()) {
             data.add(namingEnumeration.next());
@@ -125,7 +125,7 @@ public class LdapProducer extends DefaultProducer {
     }
 
     private List<SearchResult> pagedSearch(LdapContext ldapContext, String searchFilter) throws Exception {
-        List<SearchResult> data = new ArrayList<SearchResult>();
+        List<SearchResult> data = new ArrayList<>();
 
         log.trace("Using paged ldap search, pageSize={}", pageSize);
 

@@ -17,13 +17,7 @@
 
 package org.apache.camel.component.mllp;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Tests for the MllpEndpoint class.

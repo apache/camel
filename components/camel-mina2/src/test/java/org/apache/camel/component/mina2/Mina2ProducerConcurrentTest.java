@@ -51,7 +51,7 @@ public class Mina2ProducerConcurrentTest extends BaseMina2Test {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation
-        Map<Integer, Future<String>> responses = new HashMap<Integer, Future<String>>();
+        Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
@@ -66,7 +66,7 @@ public class Mina2ProducerConcurrentTest extends BaseMina2Test {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set<String> unique = new HashSet<String>();
+        Set<String> unique = new HashSet<>();
         for (Future<String> future : responses.values()) {
             unique.add(future.get());
         }

@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -72,7 +72,7 @@ public class GridFsConsumerTest extends AbstractMongoDbTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(data);
         
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         String fn = "filename.for.db.txt";
         assertEquals(0, gridfs.find(fn).size());
         

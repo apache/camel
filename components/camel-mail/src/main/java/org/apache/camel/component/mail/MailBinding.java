@@ -94,7 +94,7 @@ public class MailBinding {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
         if (replyTo != null) {
-            List<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
+            List<InternetAddress> replyToAddresses = new ArrayList<>();
             for (String reply : splitRecipients(replyTo)) {
                 replyToAddresses.add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
@@ -596,7 +596,7 @@ public class MailBinding {
     }
 
     protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException, IOException {
-        Map<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, Object> answer = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         Enumeration<?> names = mailMessage.getAllHeaders();
 
         MailConfiguration mailConfiguration = ((MailEndpoint) exchange.getFromEndpoint()).getConfiguration();
@@ -642,7 +642,7 @@ public class MailBinding {
 
     private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange,
                                                      String type, String recipient) throws MessagingException, IOException {
-        List<InternetAddress> recipientsAddresses = new ArrayList<InternetAddress>();
+        List<InternetAddress> recipientsAddresses = new ArrayList<>();
         for (String line : splitRecipients(recipient)) {
             String address = line.trim();
             // Only add the address which is not empty

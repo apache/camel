@@ -110,8 +110,8 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
     private void assertNoDuplicates() {
         List<Exchange> exchanges = resultEndpoint.getExchanges();
         Assert.assertTrue("No message was delivered - something wrong happened", exchanges.size() > 0);
-        Set<String> values = new HashSet<String>();
-        List<String> duplicates = new ArrayList<String>();
+        Set<String> values = new HashSet<>();
+        List<String> duplicates = new ArrayList<>();
         for (Exchange e : exchanges) {
             String body = e.getIn().getBody(String.class);
             if (values.contains(body)) {

@@ -18,7 +18,6 @@
 package org.apache.camel.test.executor;
 
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;

@@ -23,7 +23,6 @@ import java.util.Objects;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mllp.internal.Hl7Util;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.IOHelper;
@@ -436,6 +435,7 @@ public class MllpConfiguration implements Cloneable {
      *
      * @deprecated Use the idleTimeout URI parameter
      */
+    @Deprecated
     public boolean hasMaxReceiveTimeouts() {
         return maxReceiveTimeouts != null;
     }
@@ -447,6 +447,7 @@ public class MllpConfiguration implements Cloneable {
      *
      * @deprecated Use the idleTimeout URI parameter
      */
+    @Deprecated
     public Integer getMaxReceiveTimeouts() {
         return maxReceiveTimeouts;
     }
@@ -459,6 +460,7 @@ public class MllpConfiguration implements Cloneable {
      * @deprecated Use the idleTimeout URI parameter.  For backward compibility, setting this parameter will result in an
      * idle timeout of maxReceiveTimeouts * receiveTimeout.  If idleTimeout is also specified, this parameter will be ignored.
      */
+    @Deprecated
     public void setMaxReceiveTimeouts(Integer maxReceiveTimeouts) {
         this.maxReceiveTimeouts = maxReceiveTimeouts;
     }
@@ -677,6 +679,7 @@ public class MllpConfiguration implements Cloneable {
      *
      * @param bufferWrites enabled if true, otherwise disabled
      */
+    @Deprecated
     public void setBufferWrites(boolean bufferWrites) {
         this.bufferWrites = bufferWrites;
     }
