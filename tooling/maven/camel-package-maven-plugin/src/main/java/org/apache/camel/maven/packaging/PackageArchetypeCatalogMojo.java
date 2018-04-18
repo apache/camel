@@ -100,7 +100,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         });
 
 
-        List<ArchetypeModel> models = new ArrayList<ArchetypeModel>();
+        List<ArchetypeModel> models = new ArrayList<>();
 
         for (File dir : dirs) {
             File pom = new File(dir, "pom.xml");
@@ -192,7 +192,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
                 if (projectHelper != null) {
                     log.info("Attaching archetype catalog to Maven project: " + project.getArtifactId());
 
-                    List<String> includes = new ArrayList<String>();
+                    List<String> includes = new ArrayList<>();
                     includes.add("archetype-catalog.xml");
                     projectHelper.addResource(project, outDir.getPath(), includes, new ArrayList<String>());
                     projectHelper.attachArtifact(project, "xml", "archetype-catalog", out);

@@ -117,7 +117,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return;
         }
 
-        Map<String, String> javaTypes = new HashMap<String, String>();
+        Map<String, String> javaTypes = new HashMap<>();
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;

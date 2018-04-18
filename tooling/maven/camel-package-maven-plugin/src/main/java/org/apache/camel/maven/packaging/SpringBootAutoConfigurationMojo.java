@@ -555,7 +555,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // find the component names
         List<String> componentNames = findComponentNames();
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // create auto configuration for the components
@@ -603,7 +603,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // find the data format names
         List<String> dataFormatNames = findDataFormatNames();
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
         // we can reuse the component model filter
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
@@ -649,7 +649,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // find the language names
         List<String> languageNames = findLanguageNames();
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
         // we can reuse the component model filter
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
@@ -1983,7 +1983,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private List<String> findComponentNames() {
-        List<String> componentNames = new ArrayList<String>();
+        List<String> componentNames = new ArrayList<>();
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
             if (!f.exists()) {
@@ -2011,7 +2011,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private List<String> findDataFormatNames() {
-        List<String> dataFormatNames = new ArrayList<String>();
+        List<String> dataFormatNames = new ArrayList<>();
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
             if (!f.exists()) {
@@ -2039,7 +2039,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private List<String> findLanguageNames() {
-        List<String> languageNames = new ArrayList<String>();
+        List<String> languageNames = new ArrayList<>();
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
             if (!f.exists()) {

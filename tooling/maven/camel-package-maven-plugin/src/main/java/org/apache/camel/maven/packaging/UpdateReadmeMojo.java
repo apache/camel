@@ -115,7 +115,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         // find the component names
         List<String> componentNames = findComponentNames();
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // only if there is components we should update the documentation files
@@ -184,7 +184,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         // find the dataformat names
         List<String> dataFormatNames = findDataFormatNames();
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // only if there is dataformat we should update the documentation files
@@ -245,7 +245,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         // find the language names
         List<String> languageNames = findLanguageNames();
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // only if there is language we should update the documentation files
@@ -295,7 +295,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             return;
         }
 
-        final Set<File> jsonFiles = new TreeSet<File>();
+        final Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
         File coreDir = new File(".");
@@ -1164,7 +1164,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private List<String> findComponentNames() {
-        List<String> componentNames = new ArrayList<String>();
+        List<String> componentNames = new ArrayList<>();
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
             if (!f.exists()) {
@@ -1192,7 +1192,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private List<String> findDataFormatNames() {
-        List<String> dataFormatNames = new ArrayList<String>();
+        List<String> dataFormatNames = new ArrayList<>();
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
             if (!f.exists()) {
@@ -1219,7 +1219,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return dataFormatNames;
     }
     private List<String> findLanguageNames() {
-        List<String> languageNames = new ArrayList<String>();
+        List<String> languageNames = new ArrayList<>();
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
             if (!f.exists()) {

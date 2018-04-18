@@ -38,7 +38,7 @@ public class LanguageModel {
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<LanguageOptionModel> languageOptions = new ArrayList<LanguageOptionModel>();
+    private final List<LanguageOptionModel> languageOptions = new ArrayList<>();
 
     public LanguageModel() {
         this(false);

@@ -42,9 +42,9 @@ public class ComponentModel {
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
-    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<EndpointOptionModel>();
-    private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
+    private final List<ComponentOptionModel> componentOptions = new ArrayList<>();
+    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<>();
+    private final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
 
     public ComponentModel(boolean coreOnly) {
         this.coreOnly = coreOnly;

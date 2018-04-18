@@ -109,7 +109,7 @@ public final class PackageHelper {
      * @return the map
      */
     public static Map<String, String> parseAsMap(String data) {
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         if (data != null) {
             String[] lines = data.split("\n");
             for (String line : lines) {
