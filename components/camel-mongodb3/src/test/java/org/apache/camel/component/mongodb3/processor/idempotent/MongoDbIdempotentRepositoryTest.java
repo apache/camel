@@ -18,8 +18,6 @@ package org.apache.camel.component.mongodb3.processor.idempotent;
 
 import java.util.UUID;
 
-import com.mongodb.MongoClient;
-
 import org.apache.camel.component.mongodb3.AbstractMongoDbTest;
 import org.bson.Document;
 import org.junit.After;

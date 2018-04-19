@@ -26,7 +26,6 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.PushResult;
 import org.junit.Ignore;
 import org.junit.Test;
 
