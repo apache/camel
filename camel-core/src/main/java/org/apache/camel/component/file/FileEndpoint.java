@@ -67,14 +67,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private String chmodDirectory;
 
     public FileEndpoint() {
-        // use marker file as default exclusive read locks
-        this.readLock = "markerFile";
     }
 
     public FileEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        // use marker file as default exclusive read locks
-        this.readLock = "markerFile";
     }
 
     public FileConsumer createConsumer(Processor processor) throws Exception {
