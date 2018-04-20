@@ -398,6 +398,7 @@
 
 <!-- others: START -->
 * Miscellaneous Components
+	* [As2 Parent](as2-parent.adoc)
 	* [BAM](bam.adoc)
 	* [Blueprint](blueprint.adoc)
 	* [CDI](cdi.adoc)
