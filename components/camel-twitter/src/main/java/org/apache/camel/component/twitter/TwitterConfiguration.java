@@ -114,10 +114,10 @@ public class TwitterConfiguration {
             confBuilder.setHttpProxyHost(getHttpProxyHost());
         }
         if (getHttpProxyUser() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyUser());
+            confBuilder.setHttpProxyUser(getHttpProxyUser());
         }
         if (getHttpProxyPassword() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyPassword());
+            confBuilder.setHttpProxyPassword(getHttpProxyPassword());
         }
         if (httpProxyPort != null) {
             confBuilder.setHttpProxyPort(httpProxyPort);
