@@ -24,6 +24,9 @@ import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.camel.util.UnitOfWorkHelper;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -170,6 +173,15 @@ public final class CxfUtils {
             }
         }
     }
-    
 
+
+    public static void closeCamelUnitOfWork(Message message) {
+        Exchange cxfExchange = null;
+        if ((cxfExchange = message.getExchange()) != null) {
+            org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+            if (exchange != null) {
+                UnitOfWorkHelper.doneUow(exchange.getUnitOfWork(), exchange);
+            }
+        }
+    }
 }

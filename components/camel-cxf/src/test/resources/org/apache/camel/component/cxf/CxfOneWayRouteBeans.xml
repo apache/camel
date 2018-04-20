@@ -34,7 +34,11 @@
   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfOneWayRouteTest/router"
     serviceClass="org.apache.hello_world_soap_http.GreeterImpl"
     endpointName="s:SoapPort"
-    serviceName="s:SOAPService"/>
+    serviceName="s:SOAPService">
+    <cxf:properties>
+      <entry key="org.apache.cxf.oneway.robust" value="true"/>
+    </cxf:properties>
+  </cxf:cxfEndpoint>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
