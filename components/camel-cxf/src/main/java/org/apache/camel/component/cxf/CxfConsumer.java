@@ -19,11 +19,8 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.ws.WebFault;
 
-import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.w3c.dom.Element;
 
 import org.apache.camel.AsyncCallback;
@@ -31,9 +28,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.endpoint.Server;
@@ -50,7 +48,6 @@ import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF
