@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.interceptor.OutFaultChainInitiatorObserver;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.MessageObserver;
 
@@ -56,7 +53,9 @@ public class CxfRsConsumer extends DefaultConsumer {
         }
 
         svrBean.setInvoker(cxfRsInvoker);
-
+        // setup the UnitOfWorkCloserInterceptor for OneWayMessageProcessor
+        svrBean.getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));
+        // close the UnitOfWork normally
         svrBean.getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
 
 
@@ -65,35 +64,11 @@ public class CxfRsConsumer extends DefaultConsumer {
         final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
         //proxy OutFaultObserver so we can close org.apache.camel.spi.UnitOfWork in case of error
         server.getEndpoint().setOutFaultObserver(message -> {
-            org.apache.cxf.message.Exchange cxfExchange = null;
-            if ((cxfExchange = message.getExchange()) != null) {
-                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
-                if (exchange != null) {
-                    doneUoW(exchange);
-                }
-            }
+            CxfUtils.closeCamelUnitOfWork(message);
             originalOutFaultObserver.onMessage(message);
         });
 
         return server;
-    }
-
-    //closes UnitOfWork in good case
-    private class UnitOfWorkCloserInterceptor extends AbstractPhaseInterceptor<Message> {
-        public UnitOfWorkCloserInterceptor() {
-            super(Phase.POST_LOGICAL_ENDING);
-        }
-
-        @Override
-        public void handleMessage(Message message) throws Fault {
-            org.apache.cxf.message.Exchange cxfExchange = null;
-            if ((cxfExchange = message.getExchange()) != null) {
-                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
-                if (exchange != null) {
-                    doneUoW(exchange);
-                }
-            }
-        }
     }
 
     @Override
