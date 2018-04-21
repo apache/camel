@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class SendDynamicAwareResolver {
 
-    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/send-dynamic-aware/";
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/send-dynamic/";
 
     private static final Logger LOG = LoggerFactory.getLogger(SendDynamicAwareResolver.class);
 
