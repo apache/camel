@@ -14,24 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.bar;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultProducer;
 
-/**
- * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD)
- * to reuse a static endpoint and producer that supports using headers to provide the dynamic parts.
- * For example HTTP components typically supports this.
- */
-public interface SendDynamicAware {
+public class BarProducer extends DefaultProducer {
 
-    void setScheme(String scheme);
+    public BarProducer(BarEndpoint endpoint) {
+        super(endpoint);
+    }
 
-    String getScheme();
+    @Override
+    public BarEndpoint getEndpoint() {
+        return (BarEndpoint) super.getEndpoint();
+    }
 
-    Processor createPreProcessor(Exchange exchange, Object recipient) throws Exception;
-
-    String resolveStaticUri(Exchange exchange, Object recipient) throws Exception;
-
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // is there a header with the drink
+        String drink = exchange.getIn().getHeader(BarConstants.DRINK, String.class);
+        if (drink == null) {
+            drink = getEndpoint().getDrink();
+        }
+        
+        String order = exchange.getIn().getBody(String.class) + " ordered " + drink;
+        exchange.getIn().setBody(order);
+    }
 }

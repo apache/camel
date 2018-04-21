@@ -26,14 +26,14 @@ import org.slf4j.LoggerFactory;
 
 public class SendDynamicAwareResolver {
 
-    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/";
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/send-dynamic-aware/";
 
     private static final Logger LOG = LoggerFactory.getLogger(SendDynamicAwareResolver.class);
 
     private FactoryFinder factoryFinder;
 
     public SendDynamicAware resolve(CamelContext context, String scheme) {
-        String name = scheme + "-send-dynamic-aware";
+        String name = scheme;
 
         // use factory finder to find a custom implementations
         Class<?> type = null;

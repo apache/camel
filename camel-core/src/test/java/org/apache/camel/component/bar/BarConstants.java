@@ -14,24 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.bar;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+public class BarConstants {
 
-/**
- * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD)
- * to reuse a static endpoint and producer that supports using headers to provide the dynamic parts.
- * For example HTTP components typically supports this.
- */
-public interface SendDynamicAware {
+    public static final String DRINK = "CamelBarDrink";
 
-    void setScheme(String scheme);
-
-    String getScheme();
-
-    Processor createPreProcessor(Exchange exchange, Object recipient) throws Exception;
-
-    String resolveStaticUri(Exchange exchange, Object recipient) throws Exception;
-
+    private BarConstants() {
+    }
 }

@@ -14,24 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.bar;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import java.util.Map;
 
-/**
- * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD)
- * to reuse a static endpoint and producer that supports using headers to provide the dynamic parts.
- * For example HTTP components typically supports this.
- */
-public interface SendDynamicAware {
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
-    void setScheme(String scheme);
+public class BarComponent extends DefaultComponent {
 
-    String getScheme();
-
-    Processor createPreProcessor(Exchange exchange, Object recipient) throws Exception;
-
-    String resolveStaticUri(Exchange exchange, Object recipient) throws Exception;
-
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        BarEndpoint answer = new BarEndpoint(uri, this);
+        answer.setName(remaining);
+        setProperties(answer, parameters);
+        return answer;
+    }
 }
