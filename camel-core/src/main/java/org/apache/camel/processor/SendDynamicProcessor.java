@@ -39,6 +39,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,7 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
     protected String id;
     protected boolean ignoreInvalidEndpoint;
     protected int cacheSize;
+    protected boolean allowOptimisedComponents = true;
 
     public SendDynamicProcessor(Expression expression) {
         this.uri = null;
@@ -103,7 +105,8 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
-        Processor awareProcessor = null;
+        Processor preAwareProcessor = null;
+        Processor postAwareProcessor = null;
         String staticUri = null;
         try {
             recipient = expression.evaluate(exchange, Object.class);
@@ -111,7 +114,8 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                 // if its the same scheme as the pre-resolved dynamic aware then we can optimise to use it
                 String scheme = resolveScheme(exchange, recipient);
                 if (dynamicAware.getScheme().equals(scheme)) {
-                    awareProcessor = dynamicAware.createPreProcessor(exchange, recipient);
+                    preAwareProcessor = dynamicAware.createPreProcessor(exchange, recipient);
+                    postAwareProcessor = dynamicAware.createPostProcessor(exchange, recipient);
                     staticUri = dynamicAware.resolveStaticUri(exchange, recipient);
                     LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, staticUri);
                 }
@@ -143,7 +147,8 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
         }
 
         // send the exchange to the destination using the producer cache
-        final Processor preProcessor = awareProcessor;
+        final Processor preProcessor = preAwareProcessor;
+        final Processor postProcessor = postAwareProcessor;
         return producerCache.doInAsyncProducer(endpoint, exchange, pattern, callback, new AsyncProducerCallback() {
             public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
                                              ExchangePattern pattern, final AsyncCallback callback) {
@@ -166,6 +171,13 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                     public void done(boolean doneSync) {
                         // restore previous MEP
                         target.setPattern(existingPattern);
+                        try {
+                            if (postProcessor != null) {
+                                postProcessor.process(target);
+                            }
+                        } catch (Throwable e) {
+                            target.setException(e);
+                        }
                         // signal we are done
                         callback.done(doneSync);
                     }
@@ -244,7 +256,7 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
             }
         }
 
-        if (uri != null) {
+        if (isAllowOptimisedComponents() && uri != null) {
             try {
                 // in case path has property placeholders then try to let property component resolve those
                 String u = camelContext.resolvePropertyPlaceholders(uri);
@@ -254,9 +266,14 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                     // find out if the component can be optimised for send-dynamic
                     SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
                     dynamicAware = resolver.resolve(camelContext, scheme);
+                    if (dynamicAware != null) {
+                        LOG.info("Detected SendDynamicAware component: {} optimising toD: {}", scheme, URISupport.sanitizeUri(uri));
+                    }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 // ignore
+                LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: " + uri
+                    + " due to " + e.getMessage() + ". This exception is ignored", e);
             }
         }
 
@@ -277,6 +294,10 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public SendDynamicAware getDynamicAware() {
+        return dynamicAware;
     }
 
     public String getUri() {
@@ -309,5 +330,13 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
     public void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
+    }
+
+    public boolean isAllowOptimisedComponents() {
+        return allowOptimisedComponents;
+    }
+
+    public void setAllowOptimisedComponents(boolean allowOptimisedComponents) {
+        this.allowOptimisedComponents = allowOptimisedComponents;
     }
 }

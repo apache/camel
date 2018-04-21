@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.bar;
 
-public class BarConstants {
+public final class BarConstants {
 
     public static final String DRINK = "CamelBarDrink";
 

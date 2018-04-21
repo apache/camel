@@ -654,6 +654,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the exchange to the given dynamic endpoint
      *
      * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @param cacheSize sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used to cache and reuse producers.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toD(@AsEndpointUri String uri, int cacheSize) {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        answer.setUri(uri);
+        answer.setCacheSize(cacheSize);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @param ignoreInvalidEndpoint ignore the invalidate endpoint exception when try to create a producer with that endpoint
      * @return the builder
      */
     @SuppressWarnings("unchecked")

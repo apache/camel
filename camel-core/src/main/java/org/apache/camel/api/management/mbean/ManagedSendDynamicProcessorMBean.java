@@ -35,6 +35,12 @@ public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean,
     @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoint();
 
+    @ManagedAttribute(description = "Whether to allow components to optimise toD if they are SendDynamicAware")
+    Boolean isAllowOptimisedComponents();
+
+    @ManagedAttribute(description = "Whether an optimised component (SendDynamicAware) is in use")
+    Boolean isOptimised();
+
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
 

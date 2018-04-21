@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.util.StringHelper;
@@ -55,6 +56,12 @@ public class BarSendDynamicAware implements SendDynamicAware {
         }
 
         return null;
+    }
+
+    @Override
+    public Processor createPostProcessor(Exchange exchange, Object recipient) throws Exception {
+        // remove header after use
+        return new RemoveHeaderProcessor(BarConstants.DRINK);
     }
 
     @Override
