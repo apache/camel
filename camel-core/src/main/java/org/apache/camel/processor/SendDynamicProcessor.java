@@ -26,11 +26,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -46,6 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SendDynamicProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendDynamicProcessor.class);
+    protected SendDynamicAware dynamicAware;
     protected CamelContext camelContext;
     protected final String uri;
     protected final Expression expression;
@@ -99,9 +103,24 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
+        Processor awareProcessor = null;
+        String staticUri = null;
         try {
             recipient = expression.evaluate(exchange, Object.class);
-            endpoint = resolveEndpoint(exchange, recipient);
+            if (dynamicAware != null) {
+                // if its the same scheme as the pre-resolved dynamic aware then we can optimise to use it
+                String scheme = resolveScheme(exchange, recipient);
+                if (dynamicAware.getScheme().equals(scheme)) {
+                    awareProcessor = dynamicAware.createPreProcessor(exchange, recipient);
+                    staticUri = dynamicAware.resolveStaticUri(exchange, recipient);
+                    LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, staticUri);
+                }
+            }
+            if (staticUri != null) {
+                endpoint = resolveEndpoint(exchange, staticUri);
+            } else {
+                endpoint = resolveEndpoint(exchange, recipient);
+            }
             if (endpoint == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Send dynamic evaluated as null so cannot send to any endpoint");
@@ -124,10 +143,24 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
         }
 
         // send the exchange to the destination using the producer cache
+        final Processor preProcessor = awareProcessor;
         return producerCache.doInAsyncProducer(endpoint, exchange, pattern, callback, new AsyncProducerCallback() {
             public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
                                              ExchangePattern pattern, final AsyncCallback callback) {
                 final Exchange target = configureExchange(exchange, pattern, destinationExchangePattern, endpoint);
+
+                try {
+                    if (preProcessor != null) {
+                        preProcessor.process(target);
+                    }
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                    // restore previous MEP
+                    target.setPattern(existingPattern);
+                    // we failed
+                    callback.done(true);
+                }
+
                 LOG.debug(">>>> {} {}", endpoint, exchange);
                 return asyncProducer.process(target, new AsyncCallback() {
                     public void done(boolean doneSync) {
@@ -139,6 +172,32 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                 });
             }
         });
+    }
+
+    protected static String resolveScheme(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient == null) {
+            return null;
+        }
+
+        String uri;
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof String) {
+            uri = ((String) recipient).trim();
+        } else if (recipient instanceof Endpoint) {
+            uri = ((Endpoint) recipient).getEndpointKey();
+        } else {
+            // convert to a string type we can work with
+            uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+        }
+
+        // in case path has property placeholders then try to let property component resolve those
+        try {
+            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+
+        return ExchangeHelper.resolveScheme(uri);
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
@@ -184,7 +243,24 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                 LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, cacheSize);
             }
         }
-        ServiceHelper.startService(producerCache);
+
+        if (uri != null) {
+            try {
+                // in case path has property placeholders then try to let property component resolve those
+                String u = camelContext.resolvePropertyPlaceholders(uri);
+                // find out which component it is
+                String scheme = ExchangeHelper.resolveScheme(u);
+                if (scheme != null) {
+                    // find out if the component can be optimised for send-dynamic
+                    SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
+                    dynamicAware = resolver.resolve(camelContext, scheme);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+
+        ServiceHelper.startServices(producerCache);
     }
 
     protected void doStop() throws Exception {
