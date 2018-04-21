@@ -426,7 +426,7 @@
     <!-- spring-boot uses json-smart 2.2.x -->
     <json-smart-version>2.2.1</json-smart-version>
     <json-smart-karaf-version>2.3</json-smart-karaf-version>
-    <jsoup-version>1.11.2</jsoup-version>
+    <jsoup-version>1.11.3</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
     <jt400-version>9.4</jt400-version>
