@@ -112,13 +112,17 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
             recipient = expression.evaluate(exchange, Object.class);
             if (dynamicAware != null) {
                 // if its the same scheme as the pre-resolved dynamic aware then we can optimise to use it
-                String scheme = resolveScheme(exchange, recipient);
+                String uri = resolveUri(exchange, recipient);
+                String scheme = resolveScheme(exchange, uri);
                 if (dynamicAware.getScheme().equals(scheme)) {
-                    preAwareProcessor = dynamicAware.createPreProcessor(exchange, recipient);
-                    postAwareProcessor = dynamicAware.createPostProcessor(exchange, recipient);
-                    staticUri = dynamicAware.resolveStaticUri(exchange, recipient);
-                    if (staticUri != null) {
-                        LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, staticUri);
+                    SendDynamicAware.DynamicAwareEntry entry = dynamicAware.prepare(exchange, uri);
+                    if (entry != null) {
+                        staticUri = dynamicAware.resolveStaticUri(exchange, entry);
+                        if (staticUri != null) {
+                            preAwareProcessor = dynamicAware.createPreProcessor(exchange, entry);
+                            postAwareProcessor = dynamicAware.createPostProcessor(exchange, entry);
+                            LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, staticUri);
+                        }
                     }
                 }
             }
@@ -188,7 +192,7 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
         });
     }
 
-    protected static String resolveScheme(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+    protected static String resolveUri(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
         if (recipient == null) {
             return null;
         }
@@ -211,6 +215,10 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
             throw new ResolveEndpointFailedException(uri, e);
         }
 
+        return uri;
+    }
+
+    protected static String resolveScheme(Exchange exchange, String uri) {
         return ExchangeHelper.resolveScheme(uri);
     }
 

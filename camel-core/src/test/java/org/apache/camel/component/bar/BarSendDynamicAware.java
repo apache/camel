@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bar;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -42,32 +43,37 @@ public class BarSendDynamicAware implements SendDynamicAware {
     }
 
     @Override
-    public Processor createPreProcessor(Exchange exchange, Object recipient) throws Exception {
-        // after the ?
-        String uri = recipient.toString();
-        uri = StringHelper.after(uri, "?");
-        if (uri != null) {
-            Map<String, Object> map = URISupport.parseQuery(uri);
-            if (map.containsKey("drink")) {
-                Object value = map.get("drink");
-                return new SetHeaderProcessor(ExpressionBuilder.constantExpression(BarConstants.DRINK),
-                    ExpressionBuilder.constantExpression(value));
-            }
+    public DynamicAwareEntry prepare(Exchange exchange, String uri) throws Exception {
+        String query = StringHelper.after(uri, "?");
+        if (query != null) {
+            Map<String, String> map = new LinkedHashMap(URISupport.parseQuery(query));
+            return new DynamicAwareEntry(uri, map, null);
+        } else {
+            return new DynamicAwareEntry(uri, null, null);
         }
-
-        return null;
     }
 
     @Override
-    public Processor createPostProcessor(Exchange exchange, Object recipient) throws Exception {
+    public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
+        if (entry.getProperties().containsKey("drink")) {
+            Object value = entry.getProperties().get("drink");
+            return new SetHeaderProcessor(ExpressionBuilder.constantExpression(BarConstants.DRINK),
+                ExpressionBuilder.constantExpression(value));
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
         // remove header after use
         return new RemoveHeaderProcessor(BarConstants.DRINK);
     }
 
     @Override
-    public String resolveStaticUri(Exchange exchange, Object recipient) throws Exception {
+    public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception {
         // before the ?
-        String uri = recipient.toString();
+        String uri = entry.getOriginalUri();
         return StringHelper.before(uri, "?");
     }
 }

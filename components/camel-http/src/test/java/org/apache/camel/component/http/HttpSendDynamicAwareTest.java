@@ -35,7 +35,8 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = new Server(PORT);
         localServer.setHandler(handlers(
-            contextHandler("/bar", new DrinkValidationHandler("GET", null, null, "drink"))
+            contextHandler("/moes", new DrinkValidationHandler("GET", null, null, "drink")),
+            contextHandler("/joes", new DrinkValidationHandler("GET", null, null, "drink"))
         ));
         localServer.start();
 
@@ -57,26 +58,29 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("http://localhost:" + PORT + "/bar?throwExceptionOnFailure=false&drink=${header.drink}");
+                from("direct:moes")
+                    .toD("http://localhost:" + PORT + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+
+                from("direct:joes")
+                    .toD("http://localhost:" + PORT + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
             }
         };
     }
 
     @Test
     public void testDynamicAware() throws Exception {
-        String out = fluentTemplate.to("direct:start").withHeader("drink", "beer").request(String.class);
+        String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
-        out = fluentTemplate.to("direct:start").withHeader("drink", "wine").request(String.class);
+        out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
-        // and there should only be one http endpoint
-        boolean found = context.getEndpointMap().containsKey("http://localhost:" + PORT + "/bar?throwExceptionOnFailure=false");
+        // and there should only be one http endpoint as they are both on same host
+        boolean found = context.getEndpointMap().containsKey("http://localhost:" + PORT + "?throwExceptionOnFailure=false");
         assertTrue("Should find static uri", found);
 
-        // we only have direct and http
-        assertEquals(2, context.getEndpointMap().size());
+        // we only have 2xdirect and 1xhttp
+        assertEquals(3, context.getEndpointMap().size());
     }
 
 }

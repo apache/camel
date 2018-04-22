@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,36 +42,76 @@ public interface SendDynamicAware {
     String getScheme();
 
     /**
-     * Creates the pre {@link Processor} that will prepare the {@link Exchange}
-     * with dynamic details from the given recipient.
-     *
-     * @param exchange    the exchange
-     * @param recipient   the uri of the recipient
-     * @return the processor, or <tt>null</tt> to not let toD use this optimisation.
-     * @throws Exception is thrown if error creating the pre processor.
+     * An entry of detailed information from the recipient uri, which allows the {@link SendDynamicAware}
+     * implementation to prepare pre- and post- processor and the static uri to be used for the optimised dynamic to.
      */
-    Processor createPreProcessor(Exchange exchange, Object recipient) throws Exception;
+    class DynamicAwareEntry {
+
+        private final String originalUri;
+        private final Map<String, String> properties;
+        private final Map<String, String> lenientProperties;
+
+        public DynamicAwareEntry(String originalUri, Map<String, String> properties, Map<String, String> lenientProperties) {
+            this.originalUri = originalUri;
+            this.properties = properties;
+            this.lenientProperties = lenientProperties;
+        }
+
+        public String getOriginalUri() {
+            return originalUri;
+        }
+
+        public Map<String, String> getProperties() {
+            return properties;
+        }
+
+        public Map<String, String> getLenientProperties() {
+            return lenientProperties;
+        }
+    }
 
     /**
-     * Creates an optional post {@link Processor} that will be executed afterwards
-     * when the message has been sent dynamic.
+     * Prepares for using optimised dynamic to by parsing the uri and returning an entry of details that are
+     * used for creating the pre and post processors, and the static uri.
      *
      * @param exchange    the exchange
-     * @param recipient   the uri of the recipient
-     * @return the post processor, or <tt>null</tt> if no post processor is needed.
-     * @throws Exception is thrown if error creating the post processor.
+     * @param uri         the original uri
+     * @return prepared information about the dynamic endpoint to use
+     * @throws Exception is thrown if error parsing the uri
      */
-    Processor createPostProcessor(Exchange exchange, Object recipient) throws Exception;
+    DynamicAwareEntry prepare(Exchange exchange, String uri) throws Exception;
 
     /**
      * Resolves the static part of the uri that are used for creating a single {@link org.apache.camel.Endpoint}
      * and {@link Producer} that will be reused for processing the optimised toD.
      *
      * @param exchange    the exchange
-     * @param recipient   the uri of the recipient
+     * @param entry       prepared information about the dynamic endpoint to use
      * @return the static uri, or <tt>null</tt> to not let toD use this optimisation.
      * @throws Exception is thrown if error resolving the static uri.
      */
-    String resolveStaticUri(Exchange exchange, Object recipient) throws Exception;
+    String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception;
+
+    /**
+     * Creates the pre {@link Processor} that will prepare the {@link Exchange}
+     * with dynamic details from the given recipient.
+     *
+     * @param exchange    the exchange
+     * @param entry       prepared information about the dynamic endpoint to use
+     * @return the processor, or <tt>null</tt> to not let toD use this optimisation.
+     * @throws Exception is thrown if error creating the pre processor.
+     */
+    Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
+
+    /**
+     * Creates an optional post {@link Processor} that will be executed afterwards
+     * when the message has been sent dynamic.
+     *
+     * @param exchange    the exchange
+     * @param entry       prepared information about the dynamic endpoint to use
+     * @return the post processor, or <tt>null</tt> if no post processor is needed.
+     * @throws Exception is thrown if error creating the post processor.
+     */
+    Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
 
 }
