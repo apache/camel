@@ -31,13 +31,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Testing monitoring items over multiple connections
  */
-@Ignore("This test always fails on builds.apache.org")
 public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest {
 
     private static final String DIRECT_START_1 = "direct:start1";
