@@ -121,7 +121,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     }
 
     /**
-     * To use the given EventExecutorGroup
+     * To use the given EventExecutorGroup.
      */
     public void setExecutorService(EventExecutorGroup executorService) {
         this.executorService = executorService;

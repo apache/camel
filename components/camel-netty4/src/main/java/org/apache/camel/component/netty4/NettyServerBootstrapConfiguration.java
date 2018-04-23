@@ -134,7 +134,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     /**
      * The hostname.
      * <p/>
-     * For the consumer the hostname is localhost or 0.0.0.0
+     * For the consumer the hostname is localhost or 0.0.0.0. 
      * For the producer the hostname is the remote host to connect to
      */
     public void setHost(String host) {
@@ -201,8 +201,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads*2.
-     * User can use this operation to override the default workerCount from Netty
+     * When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads x 2.
+     * User can use this operation to override the default workerCount from Netty.
      */
     public void setWorkerCount(int workerCount) {
         this.workerCount = workerCount;
@@ -258,7 +258,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * Time to wait for a socket connection to be available. Value is in millis.
+     * Time to wait for a socket connection to be available. Value is in milliseconds.
      */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
