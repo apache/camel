@@ -42,6 +42,8 @@ import org.apache.camel.util.URISupport;
  */
 public class HttpSendDynamicAware implements SendDynamicAware {
 
+    // TODO: optimise and use our own pre-processor implementation
+
     private String scheme;
 
     @Override
@@ -64,7 +66,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
 
     @Override
     public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception {
-        String[] hostAndPath = parseUri(entry.getOriginalUri());
+        String[] hostAndPath = parseUri(entry);
         String host = hostAndPath[0];
         String path = hostAndPath[1];
         if (path != null || !entry.getLenientProperties().isEmpty()) {
@@ -80,6 +82,9 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.put("httpUri", host);
                 } else if (params.containsKey("httpURI")) {
                     params.put("httpURI", host);
+                } else if ("netty4-http".equals(scheme)) {
+                    // the netty4-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
+                    params.remove("path");
                 }
             }
             RuntimeCamelCatalog catalog = exchange.getContext().getRuntimeCamelCatalog();
@@ -95,7 +100,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         Processor pathProcessor = null;
         Processor lenientProcessor = null;
 
-        String[] hostAndPath = parseUri(entry.getOriginalUri());
+        String[] hostAndPath = parseUri(entry);
         String path = hostAndPath[1];
 
         if (path != null) {
@@ -132,18 +137,18 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         return null;
     }
 
-    private String[] parseUri(String uri) {
-        String u = uri;
+    protected String[] parseUri(DynamicAwareEntry entry) {
+        String u = entry.getOriginalUri();
 
         // remove scheme prefix (unless its camel-http or camel-http4)
         boolean httpComponent = "http".equals(scheme) || "https".equals(scheme) || "http4".equals(scheme) || "https4".equals(scheme);
         if (!httpComponent) {
             String prefix = scheme + "://";
             String prefix2 = scheme + ":";
-            if (uri.startsWith(prefix)) {
-                u = uri.substring(prefix.length());
-            } else if (uri.startsWith(prefix2)) {
-                u = uri.substring(prefix2.length());
+            if (u.startsWith(prefix)) {
+                u = u.substring(prefix.length());
+            } else if (u.startsWith(prefix2)) {
+                u = u.substring(prefix2.length());
             }
         }
 
