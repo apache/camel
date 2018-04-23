@@ -18,16 +18,11 @@ package org.apache.camel.http.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.util.StringHelper;
@@ -42,7 +37,7 @@ import org.apache.camel.util.URISupport;
  */
 public class HttpSendDynamicAware implements SendDynamicAware {
 
-    // TODO: optimise and use our own pre-processor implementation
+    private final Processor postProcessor = new HttpSendDynamicPostProcessor();
 
     private String scheme;
 
@@ -97,44 +92,25 @@ public class HttpSendDynamicAware implements SendDynamicAware {
 
     @Override
     public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
-        Processor pathProcessor = null;
-        Processor lenientProcessor = null;
-
         String[] hostAndPath = parseUri(entry);
         String path = hostAndPath[1];
-
-        if (path != null) {
-            pathProcessor = new SetHeaderProcessor(ExpressionBuilder.constantExpression(Exchange.HTTP_PATH), ExpressionBuilder.constantExpression(path));
-        }
-
+        String query = null;
         if (!entry.getLenientProperties().isEmpty()) {
             // all lenient properties can be dynamic and provided in the HTTP_QUERY header
-            String query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
-            lenientProcessor = new SetHeaderProcessor(ExpressionBuilder.constantExpression(Exchange.HTTP_QUERY), ExpressionBuilder.constantExpression(query));
+            query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
         }
 
-        if (pathProcessor != null || lenientProcessor != null) {
-            List<Processor> list = new ArrayList<>(2);
-            if (pathProcessor != null) {
-                list.add(pathProcessor);
-            }
-            if (lenientProcessor != null) {
-                list.add(lenientProcessor);
-            }
-            if (list.size() == 2) {
-                return new Pipeline(exchange.getContext(), list);
-            } else {
-                return list.get(0);
-            }
+        if (path != null || query != null) {
+            return new HttpSendDynamicPreProcessor(path, query);
+        } else {
+            // no optimisation
+            return null;
         }
-
-        return null;
     }
 
     @Override
     public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
-        // no need to cleanup
-        return null;
+        return postProcessor;
     }
 
     protected String[] parseUri(DynamicAwareEntry entry) {
