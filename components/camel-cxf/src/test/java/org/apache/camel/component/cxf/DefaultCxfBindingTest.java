@@ -205,6 +205,24 @@ public class DefaultCxfBindingTest extends Assert {
     }
     
     @Test
+    public void testPopulateCxfSoapHeaderRequestFromExchangeWithExplicitOperationName() {
+        DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
+        cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        Exchange exchange = new DefaultExchange(context);
+        org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
+        Map<String, Object> requestContext = new HashMap<>();
+
+        String expectedSoapActionHeader = "urn:hello:world";
+        exchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, "http://test123");
+        exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "testOperation");
+
+        cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
+
+        String actualSoapActionHeader = (String)requestContext.get(SoapBindingConstants.SOAP_ACTION);
+        assertNull(actualSoapActionHeader);
+    }
+    
+    @Test
     public void testPopupalteExchangeFromCxfResponse() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
