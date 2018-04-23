@@ -121,7 +121,9 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                         if (staticUri != null) {
                             preAwareProcessor = dynamicAware.createPreProcessor(exchange, entry);
                             postAwareProcessor = dynamicAware.createPostProcessor(exchange, entry);
-                            LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, staticUri);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, URISupport.sanitizeUri(staticUri));
+                            }
                         }
                     }
                 }
