@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.http.common;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,9 +31,14 @@ import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
+/**
+ * HTTP based {@link SendDynamicAware} which allows to optimise HTTP components
+ * with the toD (dynamic to) DSL in Camel. This implementation optimises by allowing
+ * to provide dynamic parameters via {@link Exchange#HTTP_PATH} and {@link Exchange#HTTP_QUERY} headers
+ * instead of the endpoint uri. That allows to use a static endpoint and its producer to service
+ * dynamic requests.
+ */
 public class HttpSendDynamicAware implements SendDynamicAware {
-
-    // TODO: Move to camel-http-common
 
     private String scheme;
 

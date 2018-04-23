@@ -277,13 +277,17 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                     SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
                     dynamicAware = resolver.resolve(camelContext, scheme);
                     if (dynamicAware != null) {
-                        LOG.info("Detected SendDynamicAware component: {} optimising toD: {}", scheme, URISupport.sanitizeUri(uri));
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme, URISupport.sanitizeUri(uri));
+                        }
                     }
                 }
             } catch (Throwable e) {
                 // ignore
-                LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: " + uri
-                    + " due to " + e.getMessage() + ". This exception is ignored", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: " + URISupport.sanitizeUri(uri)
+                        + " due to " + e.getMessage() + ". This exception is ignored", e);
+                }
             }
         }
 
