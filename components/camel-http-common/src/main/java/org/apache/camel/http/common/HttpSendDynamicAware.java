@@ -16,6 +16,8 @@
  */
 package org.apache.camel.http.common;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,8 +75,12 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                 params.remove(k);
             }
             if (path != null) {
-                // httpUri contains the host and path, so replace it with just the host as the context-path is dynamic
-                params.put("httpUri", host);
+                // httpUri/httpURI contains the host and path, so replace it with just the host as the context-path is dynamic
+                if (params.containsKey("httpUri")) {
+                    params.put("httpUri", host);
+                } else if (params.containsKey("httpURI")) {
+                    params.put("httpURI", host);
+                }
             }
             RuntimeCamelCatalog catalog = exchange.getContext().getRuntimeCamelCatalog();
             return catalog.asEndpointUri(scheme, params, false);
@@ -129,26 +135,48 @@ public class HttpSendDynamicAware implements SendDynamicAware {
     private String[] parseUri(String uri) {
         String u = uri;
 
-        // remove scheme prefix
-        String prefix = scheme + "://";
-        if (uri.startsWith(prefix)) {
-            u = uri.substring(prefix.length());
+        // remove scheme prefix (unless its camel-http or camel-http4)
+        boolean httpComponent = "http".equals(scheme) || "https".equals(scheme) || "http4".equals(scheme) || "https4".equals(scheme);
+        if (!httpComponent) {
+            String prefix = scheme + "://";
+            String prefix2 = scheme + ":";
+            if (uri.startsWith(prefix)) {
+                u = uri.substring(prefix.length());
+            } else if (uri.startsWith(prefix2)) {
+                u = uri.substring(prefix2.length());
+            }
         }
+
         // remove query parameters
         if (u.indexOf('?') > 0) {
             u = StringHelper.before(u, "?");
+        }
 
-        }
-        // split into host and context-path
-        int dash = u.indexOf('/');
-        if (dash > 0) {
-            String host = u.substring(0, dash);
-            String path = u.substring(dash);
+        // favour using java.net.URI for parsing into host and context-path
+        try {
+            URI parse = new URI(u);
+            String host = parse.getHost();
+            String path = parse.getPath();
             // if the path is just a trailing slash then skip it (eg it must be longer than just the slash itself)
-            if (path.length() > 1) {
-                return new String[] {host, path};
+            if (path != null && path.length() > 1) {
+                int port = parse.getPort();
+                if (port != 80 && port != 443) {
+                    host += ":" + port;
+                }
+                if (!httpComponent) {
+                    // include scheme for components that are not camel-http
+                    String scheme = parse.getScheme();
+                    if (scheme != null) {
+                        host = scheme + "://" + host;
+                    }
+                }
+                return new String[]{host, path};
             }
+        } catch (URISyntaxException e) {
+            // ignore
+            return new String[]{u, null};
         }
+
         // no context path
         return new String[]{u, null};
     }

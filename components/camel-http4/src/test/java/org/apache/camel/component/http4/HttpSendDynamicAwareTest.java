@@ -82,7 +82,7 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         boolean found = context.getEndpointMap().containsKey("http4://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
         assertTrue("Should find static uri", found);
 
-        // we only have 2xdirect and 1xhttp
+        // we only have 2xdirect and 1xhttp4
         assertEquals(3, context.getEndpointMap().size());
     }
 
