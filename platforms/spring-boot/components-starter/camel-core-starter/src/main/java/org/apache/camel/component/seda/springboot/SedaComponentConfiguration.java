@@ -50,6 +50,14 @@ public class SedaComponentConfiguration
     @NestedConfigurationProperty
     private BlockingQueueFactory<Exchange> defaultQueueFactory;
     /**
+     * Whether a thread that sends messages to a full SEDA queue will block
+     * until the queue's capacity is no longer exhausted. By default, an
+     * exception will be thrown stating that the queue is full. By enabling this
+     * option, the calling thread will instead block and wait until the message
+     * can be accepted.
+     */
+    private Boolean defaultBlockWhenFull = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -79,6 +87,14 @@ public class SedaComponentConfiguration
     public void setDefaultQueueFactory(
             BlockingQueueFactory<Exchange> defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
+    }
+
+    public Boolean getDefaultBlockWhenFull() {
+        return defaultBlockWhenFull;
+    }
+
+    public void setDefaultBlockWhenFull(Boolean defaultBlockWhenFull) {
+        this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
