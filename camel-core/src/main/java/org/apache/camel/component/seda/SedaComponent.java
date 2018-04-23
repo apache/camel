@@ -43,6 +43,8 @@ public class SedaComponent extends UriEndpointComponent {
     protected int queueSize;
     @Metadata(label = "advanced")
     protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<>();
+    @Metadata(label = "producer")
+    private boolean defaultBlockWhenFull;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
 
@@ -85,6 +87,19 @@ public class SedaComponent extends UriEndpointComponent {
      */
     public void setDefaultQueueFactory(BlockingQueueFactory<Exchange> defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
+    }
+
+    public boolean isDefaultBlockWhenFull() {
+        return defaultBlockWhenFull;
+    }
+
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
+     * By default, an exception will be thrown stating that the queue is full.
+     * By enabling this option, the calling thread will instead block and wait until the message can be accepted.
+     */
+    public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
+        this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 
     /**
@@ -189,6 +204,11 @@ public class SedaComponent extends UriEndpointComponent {
         } else {
             answer = createEndpoint(uri, this, queue, consumers);
         }
+
+        // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
+        boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
+
+        answer.setBlockWhenFull(blockWhenFull);
         answer.configureProperties(parameters);
         answer.setConcurrentConsumers(consumers);
         answer.setLimitConcurrentConsumers(limitConcurrentConsumers);
