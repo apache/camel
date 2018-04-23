@@ -52,6 +52,7 @@
     <module>camel-example-cdi-rest-servlet</module>
     <module>camel-example-cdi-test</module>
     <module>camel-example-cdi-xml</module>
+    <module>camel-example-ceylon</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-proxy</module>
