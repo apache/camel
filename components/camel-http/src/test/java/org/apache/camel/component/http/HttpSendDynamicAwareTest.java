@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.DrinkValidationHandler;
@@ -63,6 +64,12 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
 
                 from("direct:joes")
                     .toD("http://localhost:" + PORT + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+
+                from("direct:vokda")
+                    // these 2 headers should not be in use when using toD
+                    .setHeader(Exchange.HTTP_PATH, constant("shouldnotcauseproblems"))
+                    .setHeader(Exchange.HTTP_QUERY, constant("drink=coke"))
+                    .toD("http://localhost:" + PORT + "/joes?throwExceptionOnFailure=false&drink=vodka");
             }
         };
     }
@@ -75,12 +82,15 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
+        out = fluentTemplate.to("direct:vokda").clearHeaders().request(String.class);
+        assertEquals("Drinking vodka", out);
+
         // and there should only be one http endpoint as they are both on same host
         boolean found = context.getEndpointMap().containsKey("http://localhost:" + PORT + "?throwExceptionOnFailure=false");
         assertTrue("Should find static uri", found);
 
-        // we only have 2xdirect and 1xhttp
-        assertEquals(3, context.getEndpointMap().size());
+        // we only have 3xdirect and 1xhttp
+        assertEquals(4, context.getEndpointMap().size());
     }
 
 }

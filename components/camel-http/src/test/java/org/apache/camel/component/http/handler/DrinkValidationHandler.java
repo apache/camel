@@ -18,6 +18,8 @@ package org.apache.camel.component.http.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.util.StringHelper;
+
 public class DrinkValidationHandler extends BasicValidationHandler {
 
     private final String header;
@@ -29,6 +31,10 @@ public class DrinkValidationHandler extends BasicValidationHandler {
 
     @Override
     protected String buildResponse(HttpServletRequest request) {
-        return "Drinking " + request.getHeader(header);
+        String value = request.getHeader(header);
+        if (value == null) {
+            value = StringHelper.after(request.getQueryString(), "drink=");
+        }
+        return "Drinking " + value;
     }
 }

@@ -138,7 +138,28 @@ from("direct:login")
   .toD("http:myloginserver:8080/login?cacheSize=10&userid=${header.userName}");
 ----
 
-Where the cache is 10.
+where the cache is 10. *Important* this will only reduce the endpoint cache of the `toD` that has a chance
+of being reused in case a message is routed with the same `userName` header. Therefore reducing the cache size
+will not solve the _endless dynamic endoints_ problem. Instead you should use static endpoints with `to` and
+provide the dynamic parts in Camel message headers (if possible).
+
+The example above can resolve via static endpoints, or from Camel 2.22 onwards via optimised components (see further below)
+
+==== Using static endpoints
+
+In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
+for each different userid. To avoid having too dynamic endpoints you use a single static endpoint and use headers to provide the dynamic parts:
+
+[source,java]
+----
+from("direct:login")
+  .setHeader(Exchange.HTTP_PATH, constant("/login"))
+  .setHeader(Exchange.HTTP_QUERY, simple("userid=${header.userName}"))
+  .toD("http:myloginserver:8080");
+----
+
+If you are using Camel 2.22 onwards then you can use its optimised components for `toD` that can _solve_ this out of the box,
+as documented next.
 
 === Using optimised components
 
@@ -147,6 +168,7 @@ This is now possible with *Camel 2.22* onwards, where the following components h
 
 - camel-http
 - camel-http4
+- camel-jetty
 - camel-netty4-http
 - camel-undertow
 
@@ -174,7 +196,9 @@ will essentially be optimised to (pseudo route):
 from("direct:login")
   .setHeader(Exchange.HTTP_PATH, expression("/login"))
   .setHeader(Exchange.HTTP_QUERY, expression("userid=${header.userName}"))
-  .toD("http:myloginserver:8080");
+  .toD("http:myloginserver:8080")
+  .removeHeader(Exchange.HTTP_PATH)
+  .removeHeader(Exchange.HTTP_QUERY);
 ----
 
 Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`http:myloginserver:8080`).
@@ -183,6 +207,7 @@ This yields much lower resource overhead as the same http producer will be used 
 
 NOTE: When the optimised component is in use, then you cannot use the headers `Exchange.HTTP_PATH` and `Exchange.HTTP_QUERY`
 to provide dynamic values to override the uri in `toD`. If you want to use these headers, then use the plain `to` DSL instead.
+In other words these headers are used internally by `toD` to carry the dynamic details of the endpoint.
 
 In case of problems then you can turn on DEBUG logging level on `org.apache.camel.processor.SendDynamicProcessor` which will log
 during startup if `toD` was optimised, or if there was a failure loading the optimised component, with a stacktrace logged.
