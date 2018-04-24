@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.seda;
 
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -25,6 +24,7 @@ import org.apache.camel.impl.JndiRegistry;
  * Tests that a Seda component properly set blockWhenFull on endpoints.
  */
 public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
+
     private static final int QUEUE_SIZE = 1;
     private static final int DELAY = 10;
     private static final int DELAY_LONG = 100;
@@ -32,7 +32,6 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
     private static final String SIZE_PARAM = "?size=%d";
     private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&timeout=0";
     private static final String DEFAULT_URI = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=false&timeout=0";
-
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
