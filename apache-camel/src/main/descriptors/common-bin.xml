@@ -357,6 +357,7 @@
         <include>org.apache.camel:camel-avro-starter</include>
         <include>org.apache.camel:camel-aws-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
+        <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-bam-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
         <include>org.apache.camel:camel-base64-starter</include>
