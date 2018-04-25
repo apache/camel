@@ -5009,6 +5009,9 @@
               <target>${jdk.version}</target>
               <maxmem>512M</maxmem>
               <fork>${compiler.fork}</fork>
+              <compilerArgs>
+                <arg>-parameters</arg>
+              </compilerArgs>
           </configuration>
         </plugin>
         <plugin>
@@ -5687,6 +5690,7 @@
                 <compilerArgs>
                   <arg>-J--add-modules</arg>
                   <arg>-Jjava.xml.bind</arg>
+                  <arg>-parameters</arg>
                 </compilerArgs>
               </configuration>
             </plugin>
