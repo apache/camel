@@ -306,6 +306,7 @@
     <module>camel-vertx</module>
     <module>camel-weather</module>
     <module>camel-websocket</module>
+    <module>camel-web3j</module>
     <module>camel-wordpress</module>
     <module>camel-xchange</module>
     <module>camel-xmlbeans</module>
