@@ -65,7 +65,7 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
                 from("direct:joes")
                     .toD("http://localhost:" + PORT + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
 
-                from("direct:vokda")
+                from("direct:vodka")
                     // these 2 headers should not be in use when using toD
                     .setHeader(Exchange.HTTP_PATH, constant("shouldnotcauseproblems"))
                     .setHeader(Exchange.HTTP_QUERY, constant("drink=coke"))
@@ -82,7 +82,7 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
-        out = fluentTemplate.to("direct:vokda").clearHeaders().request(String.class);
+        out = fluentTemplate.to("direct:vodka").clearHeaders().request(String.class);
         assertEquals("Drinking vodka", out);
 
         // and there should only be one http endpoint as they are both on same host
