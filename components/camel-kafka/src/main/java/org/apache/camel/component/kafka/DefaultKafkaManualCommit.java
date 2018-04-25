@@ -62,11 +62,7 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
                 consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
             }
         }
-/*        else
-        {
-            consumer.commitSync();
-        }
-*/    }
+    }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {
         return topicPartition.topic() + '/' + topicPartition.partition();
