@@ -50,6 +50,8 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     public void commitSync() {
         commitOffset(offsetRepository, partition, partitionLastOffset);
     }
+    
+  
 
     protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
         if (partitionLastOffset != -1) {
@@ -60,7 +62,11 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
                 consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
             }
         }
-    }
+/*        else
+        {
+            consumer.commitSync();
+        }
+*/    }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {
         return topicPartition.topic() + '/' + topicPartition.partition();
