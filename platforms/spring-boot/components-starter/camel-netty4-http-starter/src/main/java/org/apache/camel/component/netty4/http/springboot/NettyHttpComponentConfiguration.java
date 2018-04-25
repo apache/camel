@@ -70,7 +70,7 @@ public class NettyHttpComponentConfiguration
      */
     private Integer maximumPoolSize = 16;
     /**
-     * To use the given EventExecutorGroup
+     * To use the given EventExecutorGroup.
      */
     @NestedConfigurationProperty
     private EventExecutorGroup executorService;
