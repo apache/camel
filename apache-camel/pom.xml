@@ -1127,11 +1127,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-websocket</artifactId>
+      <artifactId>camel-web3j</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-web3j</artifactId>
+      <artifactId>camel-websocket</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
