@@ -18,7 +18,7 @@ For spring-boot there is a `camel-headersmap-starter` dependency you should use.
 
 ### Manual enabling
 
-If you use OSGi or the implementation is not added to the classpath, you need to enable this explict such .Title
+If you use OSGi or the implementation is not added to the classpath, you need to enable this explict such:
 
 ```
 CamelContext camel = ...
@@ -26,10 +26,10 @@ CamelContext camel = ...
 camel.setHeadersMapFactory(new FastHeadersMapFactory());
 ```
 
-Or in XML DSL (spring or blueprint XML file) you can declare the factory as a `<bean>`
+Or in XML DSL (spring or blueprint XML file) you can declare the factory as a `<bean>`:
 
 ```
 <bean id="fastMapFactory" class="org.apache.camel.component.headersmap.FastHeadersMapFactory"/>
 ```
 
-and then Camel should detect the bean and use the factory, which is logged:
+and then Camel should detect the bean and use the factory.
