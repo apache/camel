@@ -41,6 +41,7 @@ import org.web3j.protocol.ipc.UnixIpcService;
 import org.web3j.protocol.ipc.WindowsIpcService;
 
 // TODO: should it say web3j compliant content repository. Should it not say something about blockchain,bitcoin
+// TODO: label should be bitcoin,blockchain   (web3j is already in the JAR name)
 
 /**
  * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
