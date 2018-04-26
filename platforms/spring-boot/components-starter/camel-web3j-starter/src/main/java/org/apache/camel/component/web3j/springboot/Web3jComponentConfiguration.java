@@ -94,7 +94,10 @@ public class Web3jComponentConfiguration
         private List topics;
         private String address;
         private Boolean fullTransactionObjects;
-        private String operation;
+        /**
+         * Operation to use.
+         */
+        private String operation = "transaction";
 
         public Web3j getWeb3j() {
             return web3j;

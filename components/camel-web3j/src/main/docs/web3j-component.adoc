@@ -1,26 +1,24 @@
 [[web3j-component]]
 == web3j Component
 
-*Available as of Camel version 2.20*
-
-*Available as of Camel version 2.20*
+*Available as of Camel version 2.22*
 
 
 The web3j component uses the
 https://github.com/web3j/web3j[web3j] client
 API and allows you to read/write from geth/parity compatible Ethereum nodes.
 
-### URI Format
+=== URI Format
 
-[source,java]
-------------------------------
+[source,text]
+----
 web3j://ethereumServerUrl[?options]
-------------------------------
+----
 
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### Web3j Options
+=== Web3j Options
 
 // component options: START
 The web3j component supports 2 options which are listed below.
@@ -54,7 +52,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+==== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -63,35 +61,9 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *operation* (producer) | Operation to use. | transaction | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
 
-### Usage
-
-
-### Dependencies
-
-Maven users will need to add the following dependency to their pom.xml.
-
-*pom.xml*
-
-[source,xml]
----------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-web3j</artifactId>
-    <version>${camel-version}</version>
-</dependency>
----------------------------------------
-
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.22 or higher).
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
