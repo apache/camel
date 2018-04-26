@@ -91,6 +91,10 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         return processor.isCopy();
     }
 
+    public Boolean isDynamicUri() {
+        return processor.isDynamicUri();
+    }
+
     public Integer getTaskSize() {
         return processor.getPendingExchangesSize();
     }

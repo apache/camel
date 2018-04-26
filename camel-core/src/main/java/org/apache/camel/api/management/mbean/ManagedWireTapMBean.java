@@ -35,6 +35,9 @@ public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExten
     @ManagedAttribute(description = "Uses a copy of the original exchange")
     Boolean isCopy();
 
+    @ManagedAttribute(description = "Whether the uri is dynamic or static")
+    Boolean isDynamicUri();
+
     @ManagedAttribute(description = "Current size of inflight wire tapped exchanges.")
     Integer getTaskSize();
 
