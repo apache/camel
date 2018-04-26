@@ -2174,12 +2174,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-websocket</artifactId>
+        <artifactId>camel-web3j</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-web3j</artifactId>
+        <artifactId>camel-websocket</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
