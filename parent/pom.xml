@@ -5010,6 +5010,7 @@
               <maxmem>512M</maxmem>
               <fork>${compiler.fork}</fork>
               <compilerArgs>
+                <!-- SB2 actuator endpoint requires MethodParameter metadata -->
                 <arg>-parameters</arg>
               </compilerArgs>
           </configuration>
@@ -5690,6 +5691,7 @@
                 <compilerArgs>
                   <arg>-J--add-modules</arg>
                   <arg>-Jjava.xml.bind</arg>
+                  <!-- SB2 actuator endpoint requires MethodParameter metadata -->
                   <arg>-parameters</arg>
                 </compilerArgs>
               </configuration>
