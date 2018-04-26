@@ -34,13 +34,13 @@ curl -XGET -s http://localhost:8080/actuator/health
 To show a summary of all the routes
 
 ----
-curl -XGET -s http://localhost:8080/actuator/camel/routes
+curl -XGET -s http://localhost:8080/actuator/camelroutes
 ----
 
 To show detailed information for a specific route
 
 ----
-curl -XGET -s http://localhost:8080/actuator/camel/routes/{id}/info
+curl -XGET -s http://localhost:8080/actuator/camelroutes/{id}/detail
 ----
 
 
