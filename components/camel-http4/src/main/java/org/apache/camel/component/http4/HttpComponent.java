@@ -40,6 +40,7 @@ import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
@@ -415,7 +416,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                                    String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
