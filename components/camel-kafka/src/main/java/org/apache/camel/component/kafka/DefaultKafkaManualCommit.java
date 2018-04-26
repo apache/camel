@@ -50,6 +50,8 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     public void commitSync() {
         commitOffset(offsetRepository, partition, partitionLastOffset);
     }
+    
+  
 
     protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
         if (partitionLastOffset != -1) {

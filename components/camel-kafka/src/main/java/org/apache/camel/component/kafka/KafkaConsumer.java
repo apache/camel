@@ -287,8 +287,9 @@ public class KafkaConsumer extends DefaultConsumer {
                                 if (endpoint.getConfiguration().isAllowManualCommit()) {
                                     // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
                                     KafkaManualCommit manual = endpoint.getComponent().getKafkaManualCommitFactory().newInstance(exchange, consumer, topicName, threadId,
-                                        offsetRepository, partition, partitionLastOffset);
+                                        offsetRepository, partition, record.offset());
                                     exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+                                    
                                 }
 
                                 try {
