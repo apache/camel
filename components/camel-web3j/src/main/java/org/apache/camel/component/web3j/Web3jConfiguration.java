@@ -28,8 +28,11 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 
 @UriParams
 public class Web3jConfiguration implements Cloneable {
+
+    // TODO: Add javadoc for setter for documentation and add @UriParam to each option
+
     @UriParam(label = "producer", defaultValue = "transaction")
-    private String operation = Web3jConstants.TRANSACTION.toLowerCase();
+    private String operation = Web3jConstants.TRANSACTION.toLowerCase(); // TODO: Make this an enum
     private DefaultBlockParameter fromBlock;
     private DefaultBlockParameter toBlock;
     private DefaultBlockParameter atBlock;
@@ -331,6 +334,9 @@ public class Web3jConfiguration implements Cloneable {
         return operation;
     }
 
+    /**
+     * Operation to use.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }

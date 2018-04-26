@@ -24,6 +24,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,16 +40,19 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.protocol.ipc.UnixIpcService;
 import org.web3j.protocol.ipc.WindowsIpcService;
 
+// TODO: should it say web3j compliant content repository. Should it not say something about blockchain,bitcoin
+
 /**
  * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "web3j", title = "web3j", syntax = "web3j:cmsUrl", consumerClass = Web3jConsumer.class, label = "web3j,blockchain")
+@UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "web3j", syntax = "web3j:cmsUrl", consumerClass = Web3jConsumer.class, label = "web3j,blockchain")
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
     @UriPath(description = "URL to the web3j repository")
     @Metadata(required = "true")
     private final Web3j web3j;
+    @UriParam
     private Web3jConfiguration configuration;
 
     public Web3jEndpoint(String uri, String remaining, Web3jComponent component, Web3jConfiguration configuration) {
