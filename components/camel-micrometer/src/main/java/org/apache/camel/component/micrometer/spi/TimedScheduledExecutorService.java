@@ -1,0 +1,48 @@
+package org.apache.camel.component.micrometer.spi;
+
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.internal.TimedExecutorService;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author Christian Ohr
+ */
+public class TimedScheduledExecutorService extends TimedExecutorService implements ScheduledExecutorService {
+
+    private final ScheduledExecutorService delegate;
+    private final Timer timer;
+
+    public TimedScheduledExecutorService(MeterRegistry registry, ScheduledExecutorService delegate, String executorServiceName, Iterable<Tag> tags) {
+        super(registry, delegate, executorServiceName, tags);
+        this.delegate = delegate;
+        this.timer = registry.timer("executor",
+                Tags.concat(tags, "name", executorServiceName));
+    }
+
+    @Override
+    public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+        return delegate.schedule(timer.wrap(command), delay, unit);
+    }
+
+    @Override
+    public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
+        return delegate.schedule(timer.wrap(callable), delay, unit);
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+        return delegate.scheduleAtFixedRate(timer.wrap(command), initialDelay, period, unit);
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
+        return delegate.scheduleWithFixedDelay(timer.wrap(command), initialDelay, delay, unit);
+    }
+}
