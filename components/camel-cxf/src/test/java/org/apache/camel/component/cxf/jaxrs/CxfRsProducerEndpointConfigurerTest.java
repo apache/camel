@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import javax.ws.rs.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -29,8 +30,6 @@ import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.message.MessageContentsList;
 import org.junit.Test;
-
-import javax.ws.rs.HttpMethod;
 
 public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
 
