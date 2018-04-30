@@ -32,6 +32,7 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.Args;
 
 public abstract class MimeEntity extends AbstractHttpEntity {
@@ -92,7 +93,11 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     @Override
     public void setContentType(Header contentType) {
         super.setContentType(contentType);
-        addHeader(contentType);
+        if (contentType != null) {
+        	addHeader(contentType);
+        } else {
+        	removeHeaders(AS2Header.CONTENT_TYPE);
+        }
     }
     
     public String getContentEncodingValue() {
@@ -106,7 +111,11 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     @Override
     public void setContentEncoding(Header contentEncoding) {
         super.setContentEncoding(contentEncoding);
-        addHeader(contentEncoding);
+        if (contentEncoding != null) {
+        	addHeader(contentEncoding);
+        } else {
+        	removeHeaders(HTTP.CONTENT_ENCODING);
+        }
     }
 
     public String getContentTransferEncodingValue() {
@@ -133,12 +142,16 @@ public abstract class MimeEntity extends AbstractHttpEntity {
      * The default implementation sets the value of the
      * {@link #contentTranferEncoding contentTransferEncoding} attribute.
      *
-     * @param contentEncoding   the new Content-Transfer-Encoding header, or
+     * @param contentTransferEncoding   the new Content-Transfer-Encoding header, or
      *                          {@code null} to unset
      */
-    public void setContentTranserEncoding(final Header contentEncoding) {
-        this.contentTransferEncoding = contentEncoding;
-        addHeader(contentTransferEncoding);
+    public void setContentTranserEncoding(final Header contentTransferEncoding) {
+        this.contentTransferEncoding = contentTransferEncoding;
+        if (contentTransferEncoding != null) {
+        	addHeader(contentTransferEncoding);
+        } else {
+        	removeHeaders(AS2Header.CONTENT_TRANSFER_ENCODING);
+        }
     }
 
     /**

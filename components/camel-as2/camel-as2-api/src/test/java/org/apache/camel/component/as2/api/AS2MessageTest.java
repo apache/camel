@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.as2.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -29,6 +34,7 @@ import java.util.List;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
@@ -57,11 +63,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class AS2MessageTest {
     
@@ -340,14 +341,16 @@ public class AS2MessageTest {
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
         assertNotNull("Request does not contain entity", entity);
         assertTrue("Unexpected request entity type", entity instanceof MultipartSignedEntity);
-        MultipartSignedEntity signedEntity = (MultipartSignedEntity)entity;
-        ApplicationEDIEntity ediMessageEntity = signedEntity.getSignedDataEntity();
+        MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity)entity;
+        MimeEntity signedEntity = multipartSignedEntity.getSignedDataEntity();
+        assertTrue("Signed entity wrong type", signedEntity instanceof ApplicationEDIEntity);
+        ApplicationEDIEntity ediMessageEntity = (ApplicationEDIEntity) signedEntity;
         assertNotNull("Multipart signed entity does not contain EDI message entity", ediMessageEntity);
-        ApplicationPkcs7SignatureEntity signatureEntity = signedEntity.getSignatureEntity();
+        ApplicationPkcs7SignatureEntity signatureEntity = multipartSignedEntity.getSignatureEntity();
         assertNotNull("Multipart signed entity does not contain signature entity", signatureEntity);
         
         // Validate Signature
-        assertTrue("Signature is invalid", signedEntity.isValid());
+        assertTrue("Signature is invalid", multipartSignedEntity.isValid());
 
     }
     

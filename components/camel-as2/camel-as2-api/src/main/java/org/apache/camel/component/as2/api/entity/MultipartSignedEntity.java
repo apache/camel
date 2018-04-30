@@ -53,16 +53,16 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
     }
     
     public boolean isValid()  {
-        ApplicationEDIEntity applicationEDIEntity = getSignedDataEntity();
+    	MimeEntity signedEntity = getSignedDataEntity();
         ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = getSignatureEntity();
         
-        if (applicationEDIEntity == null || applicationPkcs7SignatureEntity == null) {
+        if (signedEntity == null || applicationPkcs7SignatureEntity == null) {
             return false;
         }
         
         try {
             ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-            applicationEDIEntity.writeTo(outstream);
+            signedEntity.writeTo(outstream);
             CMSProcessable signedContent = new CMSProcessableByteArray(outstream.toByteArray());
 
             byte[] signature = applicationPkcs7SignatureEntity.getSignature();
@@ -90,9 +90,9 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
         return true;
     }
     
-    public ApplicationEDIEntity getSignedDataEntity() {
-        if (getPartCount() > 0 && getPart(0) instanceof ApplicationEDIEntity) {
-            return (ApplicationEDIEntity)  getPart(0);
+    public MimeEntity getSignedDataEntity() {
+        if (getPartCount() > 0) {
+            return getPart(0);
         }
         
         return null;
