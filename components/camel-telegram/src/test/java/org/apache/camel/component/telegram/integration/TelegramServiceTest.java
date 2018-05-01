@@ -131,6 +131,23 @@ public class TelegramServiceTest {
         
         service.sendMessage(authorizationToken, msg);        
     }
+    
+    @Test
+    public void testSendMessageDisablingCustomKeyboard() {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("Your answer was accepted!");
+        
+        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
+                .removeKeyboard(true)
+                .build();
+        
+        msg.setReplyKeyboardMarkup(replyMarkup);
+        
+        service.sendMessage(authorizationToken, msg);        
+    }    
 
     @Test
     public void testSendFull() {
