@@ -27,6 +27,7 @@ public abstract class OutgoingMessage implements Serializable {
 
     private static final long serialVersionUID = -5958829164103569292L;
 
+    @JsonProperty("chat_id")
     protected String chatId;
 
     @JsonProperty("disable_notification")
