@@ -235,8 +235,7 @@
     <fop-bundle-version>2.2_1</fop-bundle-version>
     <fop-version>2.2</fop-version>
     <ftpserver-version>1.1.1</ftpserver-version>
-    <freemarker-bundle-version>2.3.23_1</freemarker-bundle-version>
-    <freemarker-version>2.3.23</freemarker-version>
+    <freemarker-version>2.3.28</freemarker-version>
     <generex-bundle-version>1.0.1_2</generex-bundle-version>
     <gentlyweb-bundle-version>1.5_1</gentlyweb-bundle-version>
     <geocoder-java-version>0.16</geocoder-java-version>
