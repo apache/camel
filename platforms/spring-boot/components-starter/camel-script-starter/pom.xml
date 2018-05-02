@@ -50,13 +50,4 @@
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
-  <!--START OF GENERATED CODE-->
-  <repositories>
-    <repository>
-      <id>servicemix</id>
-      <name>ServiceMix Repository</name>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-    </repository>
-  </repositories>
-  <!--END OF GENERATED CODE-->
 </project>
