@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.micrometer.spi;
 
-import java.util.Collections;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
-
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.binder.jvm.ExecutorServiceMetrics;
 import org.apache.camel.impl.DefaultThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This implements a {@link ThreadPoolFactory} and generates an Instrumented versions of ExecutorService used to
@@ -64,8 +66,8 @@ public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
         ScheduledExecutorService executorService = threadPoolFactory.newScheduledThreadPool(profile, threadFactory);
-        new ExecutorServiceMetrics(executorService, name(profile.getId()), Collections.emptySet()).bindTo(meterRegistry);
-        return new TimedScheduledExecutorService(meterRegistry, executorService, name(prefix), Collections.emptySet());
+        String executorServiceName = name(profile.getId());
+        return new TimedScheduledExecutorService(meterRegistry, executorService, executorServiceName, Tags.empty());
     }
 
     public void setPrefix(String prefix) {
@@ -74,6 +76,10 @@ public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
 
     private String name(String prefix) {
         return prefix + counter.incrementAndGet();
+    }
+
+    void reset() {
+        counter.set(0L);
     }
 
 }

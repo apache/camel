@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.micrometer;
 
-import io.micrometer.core.instrument.Clock;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.search.Search;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -35,8 +32,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,12 +43,10 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_M
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 @RunWith(CamelSpringRunner.class)
 @ContextConfiguration(
-        classes = { TimerRouteTest.TestConfig.class },
+        classes = {TimerRouteTest.TestConfig.class},
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
 public class TimerRouteTest {
@@ -101,7 +94,7 @@ public class TimerRouteTest {
                     from("direct:in-3")
                             .to("micrometer:timer:C?action=start")
                             .delay(100L)
-                            .to("micrometer:timer:C?action=stop")
+                            .to("micrometer:timer:C?action=stop&tags=a=b")
                             .to("mock:out");
                 }
             };
@@ -151,9 +144,10 @@ public class TimerRouteTest {
         Object body = new Object();
         endpoint.expectedBodiesReceived(body);
         producer3.sendBody(body);
-        Timer timer = registry.find(MicrometerConstants.HEADER_PREFIX + "." + "A").timer();
+        Timer timer = registry.find(MicrometerConstants.HEADER_PREFIX + "." + "C").timer();
         assertEquals(1L, timer.count());
         assertTrue(timer.max(TimeUnit.MILLISECONDS) > 0.0D);
+        assertEquals("b", timer.getId().getTag("a"));
         endpoint.assertIsSatisfied();
     }
 }

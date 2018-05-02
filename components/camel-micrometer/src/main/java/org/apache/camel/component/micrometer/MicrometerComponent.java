@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,7 +69,7 @@ public class MicrometerComponent extends UriEndpointComponent {
         }
         String metricsName = getMetricsName(remaining, prefix);
         MetricsType metricsType = getMetricsType(remaining);
-        List<Tag> tags = getMetricsTag(parameters);
+        Iterable<Tag> tags = getMetricsTag(parameters);
 
         LOG.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
         Endpoint endpoint = new MicrometerEndpoint(uri, this, metricsRegistry, metricsType, metricsName, tags);
@@ -94,16 +96,15 @@ public class MicrometerComponent extends UriEndpointComponent {
         return type;
     }
 
-    List<Tag> getMetricsTag(Map<String, Object> parameters) {
-        String tagString = getAndRemoveParameter(parameters, "tags", String.class, "");
-        if (tagString != null && !tagString.isEmpty()) {
-            String[] tags = tagString.split("/s*,/s*");
-            return Stream.of(tags)
-                    .map(s -> s.split(":"))
-                    .map(s -> Tag.of(s[0], s[1]))
-                    .collect(Collectors.toList());
+    Iterable<Tag> getMetricsTag(Map<String, Object> parameters) {
+        String tagsString = getAndRemoveParameter(parameters, "tags", String.class, "");
+        if (tagsString != null && !tagsString.isEmpty()) {
+            String[] tagStrings = tagsString.split("\\s*,\\s*");
+            return Stream.of(tagStrings)
+                    .map(s -> Tags.of(s.split("\\s*=\\s*")))
+                    .reduce(Tags.empty(), Tags::and);
         }
-        return Collections.emptyList();
+        return Tags.empty();
     }
 
     MeterRegistry getOrCreateMeterRegistry(Registry camelRegistry, String registryName) {

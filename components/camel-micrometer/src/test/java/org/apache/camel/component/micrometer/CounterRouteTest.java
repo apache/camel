@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.EndpointInject;
@@ -35,16 +36,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.apache.camel.component.micrometer.MicrometerComponent.METRICS_REGISTRY;
 import static org.apache.camel.component.micrometer.MicrometerConstants.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(CamelSpringRunner.class)
 @ContextConfiguration(
-        classes = { CounterRouteTest.TestConfig.class },
+        classes = {CounterRouteTest.TestConfig.class},
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
 public class CounterRouteTest {
@@ -92,7 +90,7 @@ public class CounterRouteTest {
 
                     from("direct:in-4")
                             .setHeader(HEADER_COUNTER_INCREMENT, simple("${body.length}"))
-                            .to("micrometer:counter:D")
+                            .to("micrometer:counter:D?tags=a=b")
                             .to("mock:out");
                 }
             };
@@ -151,7 +149,9 @@ public class CounterRouteTest {
         endpoint.expectedMessageCount(1);
         String message = "Hello from Camel Metrics!";
         producer4.sendBody(message);
-        assertEquals(message.length(), registry.find(MicrometerConstants.HEADER_PREFIX + "." + "D").counter().count(), 0.01D);
+        Counter counter = registry.find(MicrometerConstants.HEADER_PREFIX + "." + "D").counter();
+        assertEquals(message.length(), counter.count(), 0.01D);
+        assertEquals("b", counter.getId().getTag("a"));
         endpoint.assertIsSatisfied();
     }
 }

@@ -63,7 +63,7 @@ public class MicrometerComponentTest {
     private MicrometerComponent component;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         component = new MicrometerComponent();
         inOrder = Mockito.inOrder(camelContext, camelRegistry, metricRegistry, typeConverter);
     }
@@ -73,11 +73,11 @@ public class MicrometerComponentTest {
         component.setCamelContext(camelContext);
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.getTypeConverter()).thenReturn(typeConverter);
-        when(typeConverter.convertTo(String.class, "key:value")).thenReturn("key:value");
+        when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
         when(camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class)).thenReturn(metricRegistry);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("tags", "key:value");
+        params.put("tags", "key=value");
         Endpoint result = component.createEndpoint("micrometer:counter:counter", "counter:counter", params);
         assertThat(result, is(notNullValue()));
         assertThat(result, is(instanceOf(MicrometerEndpoint.class)));
@@ -87,58 +87,58 @@ public class MicrometerComponentTest {
         inOrder.verify(camelContext, times(1)).getRegistry();
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class);
         inOrder.verify(camelContext, times(1)).getTypeConverter();
-        inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key:value");
+        inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
         inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testCreateNewEndpointForCounter() throws Exception {
+    public void testCreateNewEndpointForCounter() {
         Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.COUNTER, "a name", Collections.emptyList());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
-    public void testCreateNewEndpointForGauge() throws Exception {
+    public void testCreateNewEndpointForGauge() {
         MicrometerEndpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.GAUGE, "a name", Collections.emptyList());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
-    public void testCreateNewEndpointForHistogram() throws Exception {
+    public void testCreateNewEndpointForHistogram() {
         Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.DISTRIBUTION_SUMMARY, "a name", Collections.emptyList());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
-    public void testCreateNewEndpointForTimer() throws Exception {
+    public void testCreateNewEndpointForTimer() {
         Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.TIMER, "a name", Collections.emptyList());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
-    public void testGetMetricsType() throws Exception {
+    public void testGetMetricsType() {
         for (MetricsType type : EnumSet.allOf(MetricsType.class)) {
             assertThat(component.getMetricsType(type.toString() + ":metrics-name"), is(type));
         }
     }
 
     @Test
-    public void testGetMetricsTypeNotSet() throws Exception {
+    public void testGetMetricsTypeNotSet() {
         assertThat(component.getMetricsType("no-metrics-type"), is(MicrometerComponent.DEFAULT_METER_TYPE));
     }
 
     @Test(expected = RuntimeCamelException.class)
-    public void testGetMetricsTypeNotFound() throws Exception {
+    public void testGetMetricsTypeNotFound() {
         component.getMetricsType("unknown-metrics:metrics-name");
     }
 
     @Test
-    public void testGetOrCreateMetricRegistryFoundInCamelRegistry() throws Exception {
+    public void testGetOrCreateMetricRegistryFoundInCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
         MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
@@ -147,7 +147,7 @@ public class MicrometerComponentTest {
     }
 
     @Test
-    public void testGetOrCreateMetricRegistryFoundInCamelRegistryByType() throws Exception {
+    public void testGetOrCreateMetricRegistryFoundInCamelRegistryByType() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.singleton(metricRegistry));
         MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
@@ -158,7 +158,7 @@ public class MicrometerComponentTest {
     }
 
     @Test
-    public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() throws Exception {
+    public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.<MeterRegistry>emptySet());
         MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
@@ -170,7 +170,7 @@ public class MicrometerComponentTest {
     }
 
     @Test
-    public void testGetMetricRegistryFromCamelRegistry() throws Exception {
+    public void testGetMetricRegistryFromCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
         MeterRegistry result = component.getMeterRegistryFromCamelRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
@@ -179,7 +179,7 @@ public class MicrometerComponentTest {
     }
 
     @Test
-    public void testCreateMetricRegistry() throws Exception {
+    public void testCreateMetricRegistry() {
         MeterRegistry registry = component.createMeterRegistry();
         assertThat(registry, is(notNullValue()));
     }

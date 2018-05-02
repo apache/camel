@@ -25,8 +25,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-import java.util.List;
-
 /**
  * To collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
@@ -42,7 +40,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @Metadata(required = "true")
     protected final String metricsName;
     @UriPath(description = "Tags of metrics")
-    protected final List<Tag> tags;
+    protected final Iterable<Tag> tags;
     @UriParam(description = "Action when using timer type")
     private MicrometerTimerAction action;
     @UriParam(description = "Value value when using histogram type")
@@ -52,7 +50,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @UriParam(description = "Decrement value when using counter type")
     private Double decrement;
 
-    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, MetricsType metricsType, String metricsName, List<Tag> tags) {
+    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, MetricsType metricsType, String metricsName, Iterable<Tag> tags) {
         super(uri, component);
         this.registry = registry;
         this.metricsType = metricsType;
@@ -91,7 +89,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
         return metricsName;
     }
 
-    public List<Tag> getTags() {
+    public Iterable<Tag> getTags() {
         return tags;
     }
 

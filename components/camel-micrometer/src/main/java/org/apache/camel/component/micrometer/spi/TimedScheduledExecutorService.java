@@ -17,32 +17,35 @@ import java.util.concurrent.TimeUnit;
 public class TimedScheduledExecutorService extends TimedExecutorService implements ScheduledExecutorService {
 
     private final ScheduledExecutorService delegate;
-    private final Timer timer;
+    private final MeterRegistry registry;
 
     public TimedScheduledExecutorService(MeterRegistry registry, ScheduledExecutorService delegate, String executorServiceName, Iterable<Tag> tags) {
         super(registry, delegate, executorServiceName, tags);
+        this.registry = registry;
         this.delegate = delegate;
-        this.timer = registry.timer("executor",
-                Tags.concat(tags, "name", executorServiceName));
     }
 
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-        return delegate.schedule(timer.wrap(command), delay, unit);
+        return delegate.schedule(meter().wrap(command), delay, unit);
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-        return delegate.schedule(timer.wrap(callable), delay, unit);
+        return delegate.schedule(meter().wrap(callable), delay, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        return delegate.scheduleAtFixedRate(timer.wrap(command), initialDelay, period, unit);
+        return delegate.scheduleAtFixedRate(meter().wrap(command), initialDelay, period, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        return delegate.scheduleWithFixedDelay(timer.wrap(command), initialDelay, delay, unit);
+        return delegate.scheduleWithFixedDelay(meter().wrap(command), initialDelay, delay, unit);
+    }
+
+    private Timer meter() {
+        return registry.find("executor").timer();
     }
 }

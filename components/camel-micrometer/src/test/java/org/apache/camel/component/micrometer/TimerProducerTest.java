@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,28 +16,21 @@
  */
 package org.apache.camel.component.micrometer;
 
-import io.micrometer.core.instrument.Clock;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.search.Search;
+import io.micrometer.core.instrument.*;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static org.apache.camel.component.micrometer.AbstractMicrometerProducer.HEADER_PATTERN;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TimerProducerTest {
@@ -61,9 +54,6 @@ public class TimerProducerTest {
     private Clock clock;
 
     @Mock
-    private Search search;
-
-    @Mock
     private Timer timer;
 
     @Mock
@@ -74,14 +64,10 @@ public class TimerProducerTest {
 
     private TimerProducer producer;
 
-    @Mock
-    private InOrder inOrder;
-
     @Before
     public void setUp() throws Exception {
         producer = new TimerProducer(endpoint);
-        inOrder = Mockito.inOrder(endpoint, exchange, registry, timer, sample, in, search, config, clock);
-
+        when(endpoint.getRegistry()).thenReturn(registry);
         when(exchange.getIn()).thenReturn(in);
     }
 
@@ -96,47 +82,9 @@ public class TimerProducerTest {
         when(endpoint.getAction()).thenReturn(MicrometerTimerAction.start);
         when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(registry, times(1)).timer(METRICS_NAME);
-        // inOrder.verify(timer, times(1)).time();
-        inOrder.verify(exchange, times(1)).setProperty(PROPERTY_NAME, sample);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testProcessStartWithOverride() throws Exception {
-        when(endpoint.getAction()).thenReturn(MicrometerTimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.stop);
-        when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(sample, times(1)).stop(timer);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testProcessStop() throws Exception {
-        when(endpoint.getAction()).thenReturn(MicrometerTimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.stop);
-        when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(sample, times(1)).stop(timer);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
+        when(registry.config()).thenReturn(config);
+        when(config.clock()).thenReturn(clock);
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
     }
 
     @Test
@@ -144,94 +92,57 @@ public class TimerProducerTest {
         when(endpoint.getAction()).thenReturn(MicrometerTimerAction.stop);
         when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(registry, times(1)).timer(METRICS_NAME);
-        // inOrder.verify(timer, times(1)).time();
-        inOrder.verify(exchange, times(1)).setProperty(PROPERTY_NAME, sample);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
+        when(registry.config()).thenReturn(config);
+        when(config.clock()).thenReturn(clock);
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
     }
 
-    @Test
-    public void testProcessNoAction() throws Exception {
-        when(endpoint.getAction()).thenReturn(null);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, (Object) null, MicrometerTimerAction.class);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
-    }
 
     @Test
     public void testProcessNoActionOverride() throws Exception {
         Object action = null;
         when(endpoint.getAction()).thenReturn(null);
         when(in.getHeader(HEADER_TIMER_ACTION, action, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.start);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, action, MicrometerTimerAction.class);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(registry, times(1)).timer(METRICS_NAME);
-        // inOrder.verify(timer, times(1)).time();
-        inOrder.verify(exchange, times(1)).setProperty(PROPERTY_NAME, sample);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testHandleStart() throws Exception {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
         when(registry.config()).thenReturn(config);
         when(config.clock()).thenReturn(clock);
-        doNothing().when(exchange).setProperty(ArgumentMatchers.eq(METRICS_NAME), ArgumentMatchers.any(Timer.Sample.class));
-        producer.handleStart(exchange, registry, METRICS_NAME);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(exchange, times(1)).setProperty(ArgumentMatchers.eq(METRICS_NAME), ArgumentMatchers.any(Timer.Sample.class));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
     }
 
     @Test
-    public void testHandleStartAlreadyRunning() throws Exception {
+    public void testProcessStartWithOverride() throws Exception {
+        when(endpoint.getAction()).thenReturn(MicrometerTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
-        producer.handleStart(exchange, registry, METRICS_NAME);
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testHandleStop() throws Exception {
+        when(endpoint.getRegistry()).thenReturn(registry);
+        when(registry.timer(METRICS_NAME, Tags.empty())).thenReturn(timer);
+        when(timer.getId()).thenReturn(new Meter.Id(METRICS_NAME, Collections.emptyList(), null, null, Meter.Type.TIMER));
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(sample, times(1)).stop(timer);
-        inOrder.verify(exchange, times(1)).removeProperty(PROPERTY_NAME);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
+        when(sample.stop(timer)).thenReturn(0L);
+        when(exchange.removeProperty(PROPERTY_NAME)).thenReturn(null);
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
     }
 
     @Test
-    public void testHandleStopContextNotFound() throws Exception {
-        when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
+    public void testProcessStop() throws Exception {
+        when(endpoint.getAction()).thenReturn(MicrometerTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.stop);
+        when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
+        when(endpoint.getRegistry()).thenReturn(registry);
+        when(registry.timer(METRICS_NAME, Tags.empty())).thenReturn(timer);
+        when(timer.getId()).thenReturn(new Meter.Id(METRICS_NAME, Collections.emptyList(), null, null, Meter.Type.TIMER));
+        when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
+        when(sample.stop(timer)).thenReturn(0L);
+        when(exchange.removeProperty(PROPERTY_NAME)).thenReturn(null);
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
     }
+
+    @Test
+    public void testProcessNoAction() throws Exception {
+        when(endpoint.getAction()).thenReturn(null);
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
+    }
+
 
     @Test
     public void testGetPropertyName() throws Exception {
@@ -242,19 +153,11 @@ public class TimerProducerTest {
     public void testGetTimerContextFromExchange() throws Exception {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
         assertThat(producer.getTimerSampleFromExchange(exchange, PROPERTY_NAME), is(sample));
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        //inOrder.verify(exchange, times(1)).getIn();
-        //inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testGetTimerContextFromExchangeNotFound() throws Exception {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
         assertThat(producer.getTimerSampleFromExchange(exchange, PROPERTY_NAME), is(nullValue()));
-        inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Sample.class);
-        //inOrder.verify(exchange, times(1)).getIn();
-        //inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
-        inOrder.verifyNoMoreInteractions();
     }
 }

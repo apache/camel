@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer;
 
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -52,9 +53,6 @@ public class DistributionSummaryProducerTest {
     private MeterRegistry registry;
 
     @Mock
-    private Search search;
-
-    @Mock
     private DistributionSummary histogram;
 
     @Mock
@@ -71,10 +69,9 @@ public class DistributionSummaryProducerTest {
     public void setUp() throws Exception {
         endpoint = mock(MicrometerEndpoint.class);
         producer = new DistributionSummaryProducer(endpoint);
-        inOrder = Mockito.inOrder(endpoint, registry, histogram, search, exchange, in);
+        inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange, in);
         when(endpoint.getRegistry()).thenReturn(registry);
-        when(registry.find(METRICS_NAME)).thenReturn(search);
-        when(search.summary()).thenReturn(histogram);
+        when(registry.summary(METRICS_NAME, Tags.empty())).thenReturn(histogram);
         when(exchange.getIn()).thenReturn(in);
     }
 
@@ -87,9 +84,8 @@ public class DistributionSummaryProducerTest {
     public void testProcessValueSet() throws Exception {
         when(endpoint.getValue()).thenReturn(VALUE);
         when(in.getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Double.class)).thenReturn(VALUE);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).summary();
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
+        inOrder.verify(registry, times(1)).summary(METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getValue();
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Double.class);
@@ -103,9 +99,8 @@ public class DistributionSummaryProducerTest {
     public void testProcessValueNotSet() throws Exception {
         Object action = null;
         when(endpoint.getValue()).thenReturn(null);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).summary();
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
+        inOrder.verify(registry, times(1)).summary(METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getValue();
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, action, Double.class);
@@ -118,9 +113,8 @@ public class DistributionSummaryProducerTest {
     public void testProcessOverrideValue() throws Exception {
         when(endpoint.getValue()).thenReturn(VALUE);
         when(in.getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Double.class)).thenReturn(VALUE + 3.0d);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).summary();
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
+        inOrder.verify(registry, times(1)).summary(METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getValue();
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Double.class);

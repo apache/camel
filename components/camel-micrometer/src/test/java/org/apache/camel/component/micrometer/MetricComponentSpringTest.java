@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -79,15 +80,12 @@ public class MetricComponentSpringTest {
     public void testMetricsRegistryFromCamelRegistry() throws Exception {
         MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class);
         Counter mockCounter = Mockito.mock(Counter.class);
-        Search mockSearch = Mockito.mock(Search.class);
-        InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter, mockSearch);
-        when(mockRegistry.find(MicrometerConstants.HEADER_PREFIX + "." + "A")).thenReturn(mockSearch);
-        when(mockSearch.counter()).thenReturn(mockCounter);
+        InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
+        when(mockRegistry.counter(MicrometerConstants.HEADER_PREFIX + "." + "A", Tags.empty())).thenReturn(mockCounter);
         endpoint.expectedMessageCount(1);
         producer.sendBody(new Object());
         endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).find(MicrometerConstants.HEADER_PREFIX + "." + "A");
-        inOrder.verify(mockSearch, times(1)).counter();
+        inOrder.verify(mockRegistry, times(1)).counter(MicrometerConstants.HEADER_PREFIX + "." + "A", Tags.empty());
         inOrder.verify(mockCounter, times(1)).increment(512D);
         inOrder.verifyNoMoreInteractions();
     }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package org.apache.camel.component.micrometer;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.search.Search;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.Before;
@@ -28,8 +28,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
 
 import static org.apache.camel.component.micrometer.AbstractMicrometerProducer.HEADER_PATTERN;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
@@ -55,9 +53,6 @@ public class CounterProducerTest {
     private MeterRegistry registry;
 
     @Mock
-    private Search search;
-
-    @Mock
     private Counter counter;
 
     @Mock
@@ -71,10 +66,9 @@ public class CounterProducerTest {
     public void setUp() throws Exception {
         endpoint = mock(MicrometerEndpoint.class);
         producer = new CounterProducer(endpoint);
-        inOrder = Mockito.inOrder(endpoint, exchange, registry, counter, search, in);
+        inOrder = Mockito.inOrder(endpoint, exchange, registry, counter, in);
         when(endpoint.getRegistry()).thenReturn(registry);
-        when(registry.find(METRICS_NAME)).thenReturn(search);
-        when(search.counter()).thenReturn(counter);
+        when(registry.counter(METRICS_NAME, Tags.empty())).thenReturn(counter);
         when(exchange.getIn()).thenReturn(in);
     }
 
@@ -89,10 +83,9 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(INCREMENT);
         when(endpoint.getDecrement()).thenReturn(null);
         when(in.getHeader(HEADER_COUNTER_INCREMENT, INCREMENT, Double.class)).thenReturn(INCREMENT);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).counter();
+        inOrder.verify(registry, times(1)).counter(METRICS_NAME, Tags.empty());
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getIncrement();
         inOrder.verify(endpoint, times(1)).getDecrement();
@@ -110,10 +103,9 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(null);
         when(endpoint.getDecrement()).thenReturn(DECREMENT);
         when(in.getHeader(HEADER_COUNTER_DECREMENT, DECREMENT, Double.class)).thenReturn(DECREMENT);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).counter();
+        inOrder.verify(registry, times(1)).counter(METRICS_NAME, Tags.empty());
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getIncrement();
         inOrder.verify(endpoint, times(1)).getDecrement();
@@ -132,10 +124,9 @@ public class CounterProducerTest {
         when(in.getHeader(HEADER_COUNTER_INCREMENT, INCREMENT, Double.class)).thenReturn(INCREMENT);
         when(in.getHeader(HEADER_COUNTER_DECREMENT, DECREMENT, Double.class)).thenReturn(DECREMENT);
 
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).counter();
+        inOrder.verify(registry, times(1)).counter(METRICS_NAME, Tags.empty());
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getIncrement();
         inOrder.verify(endpoint, times(1)).getDecrement();
@@ -152,10 +143,9 @@ public class CounterProducerTest {
         Object action = null;
         when(endpoint.getIncrement()).thenReturn(null);
         when(endpoint.getDecrement()).thenReturn(null);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).counter();
+        inOrder.verify(registry, times(1)).counter(METRICS_NAME, Tags.empty());
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getIncrement();
         inOrder.verify(endpoint, times(1)).getDecrement();
@@ -173,10 +163,9 @@ public class CounterProducerTest {
         when(endpoint.getDecrement()).thenReturn(DECREMENT);
         when(in.getHeader(HEADER_COUNTER_INCREMENT, INCREMENT, Double.class)).thenReturn(INCREMENT + 1);
         when(in.getHeader(HEADER_COUNTER_DECREMENT, DECREMENT, Double.class)).thenReturn(DECREMENT);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).counter();
+        inOrder.verify(registry, times(1)).counter(METRICS_NAME, Tags.empty());
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getIncrement();
         inOrder.verify(endpoint, times(1)).getDecrement();
@@ -194,10 +183,9 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(null);
         when(endpoint.getDecrement()).thenReturn(DECREMENT);
         when(in.getHeader(HEADER_COUNTER_DECREMENT, DECREMENT, Double.class)).thenReturn(DECREMENT - 1);
-        producer.doProcess(exchange, METRICS_NAME, Collections.emptyList());
+        producer.doProcess(exchange, METRICS_NAME, Tags.empty());
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(registry, times(1)).find(METRICS_NAME);
-        inOrder.verify(search, times(1)).counter();
+        inOrder.verify(registry, times(1)).counter(METRICS_NAME, Tags.empty());
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getIncrement();
         inOrder.verify(endpoint, times(1)).getDecrement();
