@@ -27,7 +27,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -60,8 +59,8 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         Message in = exchange.getIn();
         String defaultMetricsName = getEndpoint().getMetricsName();
         String finalMetricsName = getMetricsName(in, defaultMetricsName);
-        List<Tag> defaultTags = getEndpoint().getTags();
-        List<Tag> finalTags = getTags(in, defaultTags);
+        Iterable<Tag> defaultTags = getEndpoint().getTags();
+        Iterable<Tag> finalTags = getTags(in, defaultTags);
         try {
             doProcess(exchange, finalMetricsName, finalTags);
         } catch (Exception e) {
@@ -71,11 +70,9 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         }
     }
 
-    protected abstract Function<Search, T> search();
+    protected abstract Function<MeterRegistry, T> registrar(String name, Iterable<Tag> tags);
 
-    protected abstract Function<MeterRegistry, T> register(String name, List<Tag> tags);
-
-    protected void doProcess(Exchange exchange, String name, List<Tag> tags) {
+    protected void doProcess(Exchange exchange, String name, Iterable<Tag> tags) {
         T meter = getMeter(name, tags);
         try {
             doProcess(exchange, getEndpoint(), meter);
@@ -86,12 +83,9 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         }
     }
 
-    protected T getMeter(String name, List<Tag> tags) {
+    protected T getMeter(String name, Iterable<Tag> tags) {
         MeterRegistry registry = getEndpoint().getRegistry();
-        return Optional.ofNullable(
-                search().apply(registry.find(name))
-        ).orElseGet(() ->
-                register(name, tags).apply(registry));
+        return registrar(name, tags).apply(registry);
     }
 
     protected abstract void doProcess(Exchange exchange, MicrometerEndpoint endpoint, T meter);
@@ -100,7 +94,7 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         return getStringHeader(in, MicrometerConstants.HEADER_METRIC_NAME, defaultValue);
     }
 
-    public List<Tag> getTags(Message in, List<Tag> defaultTags) {
+    public Iterable<Tag> getTags(Message in, Iterable<Tag> defaultTags) {
         return getTagHeader(in, MicrometerConstants.HEADER_METRIC_TAGS, defaultTags);
     }
 
@@ -117,8 +111,8 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         return in.getHeader(header, defaultValue, Double.class);
     }
 
-    public List<Tag> getTagHeader(Message in, String header, List<Tag> defaultTags) {
-        return in.getHeader(header, defaultTags, List.class);
+    public Iterable<Tag> getTagHeader(Message in, String header, Iterable<Tag> defaultTags) {
+        return in.getHeader(header, defaultTags, Iterable.class);
     }
 
     protected boolean clearMetricsHeaders(Message in) {

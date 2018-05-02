@@ -19,14 +19,10 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
@@ -40,12 +36,7 @@ public class DistributionSummaryProducer extends AbstractMicrometerProducer<Dist
     }
 
     @Override
-    protected Function<Search, DistributionSummary> search() {
-        return Search::summary;
-    }
-
-    @Override
-    protected Function<MeterRegistry, DistributionSummary> register(String name, List<Tag> tags) {
+    protected Function<MeterRegistry, DistributionSummary> registrar(String name, Iterable<Tag> tags) {
         return meterRegistry -> meterRegistry.summary(name, tags);
     }
 

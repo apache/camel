@@ -17,10 +17,12 @@
 package org.apache.camel.component.micrometer.spi;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.internal.TimedExecutorService;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,12 +39,13 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InstrumentedThreadPoolFactoryTest {
 
-    private static final String METRICS_NAME = "metrics.name";
+    private static final String METRICS_NAME = "metrics.name.";
 
     @Mock
     private MeterRegistry registry;
@@ -60,7 +63,7 @@ public class InstrumentedThreadPoolFactoryTest {
     private InOrder inOrder;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         profile = new ThreadPoolProfile(METRICS_NAME);
         profile.setDefaultProfile(false);
         profile.setMaxPoolSize(10);
@@ -75,14 +78,19 @@ public class InstrumentedThreadPoolFactoryTest {
         inOrder = Mockito.inOrder(registry);
     }
 
+    @After
+    public void tearDown() {
+        instrumentedThreadPoolFactory.reset();
+    }
+
     @Test
-    public void testNewCacheThreadPool() throws Exception {
+    public void testNewCachedThreadPool() throws Exception {
         final ExecutorService executorService = instrumentedThreadPoolFactory.newCachedThreadPool(threadFactory);
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(TimedExecutorService.class)));
 
-        inOrder.verify(registry, times(1)).counter(anyString());
-        inOrder.verify(registry, times(1)).timer(anyString());
+        Tags tags = Tags.of("name", "instrumented-delegate-1");
+        inOrder.verify(registry, times(1)).timer("executor", tags);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -91,8 +99,8 @@ public class InstrumentedThreadPoolFactoryTest {
         final ExecutorService executorService = instrumentedThreadPoolFactory.newThreadPool(profile, threadFactory);
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(TimedExecutorService.class)));
-
-        inOrder.verify(registry, times(1)).timer("executor");
+        Tags tags = Tags.of("name", METRICS_NAME + "1");
+        inOrder.verify(registry, times(1)).timer("executor", tags);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -103,10 +111,8 @@ public class InstrumentedThreadPoolFactoryTest {
         assertThat(scheduledExecutorService, is(notNullValue()));
         assertThat(scheduledExecutorService, is(instanceOf(TimedExecutorService.class)));
 
-        inOrder.verify(registry, times(1)).counter("running");
-        inOrder.verify(registry, times(1)).timer("duration");
-        inOrder.verify(registry, times(1)).counter("scheduled.overrun");
-        inOrder.verify(registry, times(1)).summary("scheduled.percent-of-period");
+        Tags tags = Tags.of("name", METRICS_NAME + "1");
+        inOrder.verify(registry, times(1)).timer("executor", tags);
         inOrder.verifyNoMoreInteractions();
     }
 

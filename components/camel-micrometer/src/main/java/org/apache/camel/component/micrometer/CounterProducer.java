@@ -19,12 +19,9 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
@@ -37,12 +34,7 @@ public class CounterProducer extends AbstractMicrometerProducer<Counter> {
     }
 
     @Override
-    protected Function<Search, Counter> search() {
-        return Search::counter;
-    }
-
-    @Override
-    protected Function<MeterRegistry, Counter> register(String name, List<Tag> tags) {
+    protected Function<MeterRegistry, Counter> registrar(String name, Iterable<Tag> tags) {
         return meterRegistry -> meterRegistry.counter(name, tags);
     }
 

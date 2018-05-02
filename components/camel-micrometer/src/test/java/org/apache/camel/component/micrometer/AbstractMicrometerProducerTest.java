@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
 import java.util.function.Function;
 
 import static org.apache.camel.component.micrometer.AbstractMicrometerProducer.HEADER_PATTERN;
@@ -59,23 +58,18 @@ public class AbstractMicrometerProducerTest {
     @Mock
     private MeterRegistry registry;
 
-    private AbstractMicrometerProducer okProducer;
+    private AbstractMicrometerProducer<Meter> okProducer;
 
-    private AbstractMicrometerProducer failProducer;
+    private AbstractMicrometerProducer<Meter> failProducer;
 
     private InOrder inOrder;
 
     @Before
     public void setUp() throws Exception {
-        okProducer = new AbstractMicrometerProducer(endpoint) {
+        okProducer = new AbstractMicrometerProducer<Meter>(endpoint) {
 
             @Override
-            protected Function search() {
-                return null;
-            }
-
-            @Override
-            protected Function register(String name, List list) {
+            protected Function registrar(String name, Iterable<Tag> list) {
                 return null;
             }
 
@@ -83,15 +77,10 @@ public class AbstractMicrometerProducerTest {
             protected void doProcess(Exchange exchange, MicrometerEndpoint endpoint, Meter meter) {
             }
         };
-        failProducer = new AbstractMicrometerProducer(endpoint) {
+        failProducer = new AbstractMicrometerProducer<Meter>(endpoint) {
 
             @Override
-            protected Function search() {
-                return null;
-            }
-
-            @Override
-            protected Function register(String name, List list) {
+            protected Function registrar(String name, Iterable<Tag> list) {
                 return null;
             }
 
