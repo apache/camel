@@ -113,7 +113,7 @@
 			hz.HIGHER_HITS ; entry with the higher hits wins. hz.LATEST_UPDATE ;
 			entry with the latest update wins.
 		-->
-		<merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+		<merge-policy>DiscardMergePolicy</merge-policy>
 	</map>
 
 </hazelcast>
