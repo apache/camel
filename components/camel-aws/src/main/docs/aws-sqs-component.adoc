@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (46 parameters):
+==== Query Parameters (47 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,6 +78,7 @@ with the following path and query parameters:
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | AmazonSQS
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
+| *queueUrl* (common) | To define the queueUrl explicitly. All other parameters which would influence the queueUrl are ignored. |  | String
 | *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
