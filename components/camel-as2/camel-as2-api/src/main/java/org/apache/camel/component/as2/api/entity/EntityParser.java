@@ -446,7 +446,14 @@ public final class EntityParser {
             applicationPkcs7SignatureEntity.setHeaders(headers);
             multipartSignedEntity.addPart(applicationPkcs7SignatureEntity);
 
+            //
+            // End Signature Body Part
+
+            ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_SIGNED, charset);
+            multipartSignedEntity.setContentType(contentType);
+            multipartSignedEntity.setContentTransferEncoding(contentTransferEncoding);
             return multipartSignedEntity;
+            
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse text entity");
             parseException.initCause(e);
@@ -560,7 +567,10 @@ public final class EntityParser {
 
             //
             // End Disposition Notification Body Part
-          
+            
+            ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_REPORT, charset);
+            dispositionNotificationMultipartReportEntity.setContentType(contentType);
+            dispositionNotificationMultipartReportEntity.setContentTransferEncoding(contentTransferEncoding);
             return dispositionNotificationMultipartReportEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse text entity");
