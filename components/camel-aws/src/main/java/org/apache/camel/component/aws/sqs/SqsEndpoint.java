@@ -121,28 +121,30 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             headerFilterStrategy = new SqsHeaderFilterStrategy();
         }
 
-        // If both region and Account ID is provided the queue URL can be built manually.
-        // This allows accessing queues where you don't have permission to list queues or query queues
-        if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-            String host = configuration.getAmazonAWSHost();
-            host = FileUtil.stripTrailingSeparator(host);
-            queueUrl = "https://sqs." + configuration.getRegion() + "." + host + "/"
-                +  configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
-        } else if (configuration.getQueueOwnerAWSAccountId() != null) {
-            GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
-            getQueueUrlRequest.setQueueName(configuration.getQueueName());
-            getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
-            GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
-            queueUrl = getQueueUrlResult.getQueueUrl();
+        if (configuration.getQueueUrl() != null) {
+            queueUrl = configuration.getQueueUrl();
         } else {
-            // check whether the queue already exists
-            ListQueuesResult listQueuesResult = client.listQueues();
-            for (String url : listQueuesResult.getQueueUrls()) {
-                if (url.endsWith("/" + configuration.getQueueName())) {
-                    queueUrl = url;
-                    LOG.trace("Queue available at '{}'.", queueUrl);
-                    break;
-                }
+            // If both region and Account ID is provided the queue URL can be built manually.
+            // This allows accessing queues where you don't have permission to list queues or query queues
+            if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
+                queueUrl = "https://sqs." + configuration.getRegion() + ".amazonaws.com/"
+                        + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+            } else if (configuration.getQueueOwnerAWSAccountId() != null) {
+                GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
+                getQueueUrlRequest.setQueueName(configuration.getQueueName());
+                getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
+                GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
+                queueUrl = getQueueUrlResult.getQueueUrl();
+            } else {
+                // check whether the queue already exists
+                ListQueuesResult listQueuesResult = client.listQueues();
+                for (String url : listQueuesResult.getQueueUrls()) {
+                    if (url.endsWith("/" + configuration.getQueueName())) {
+                        queueUrl = url;
+                        LOG.trace("Queue available at '{}'.", queueUrl);
+                        break;
+                    }
+				}
             }
         }
 
