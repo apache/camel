@@ -1254,6 +1254,26 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             url += "/" + uriTemplate;
         }
 
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("jetty", true);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        // build query string, and append any endpoint configuration properties
+        if (config.getComponent() == null || config.getComponent().equals("jetty")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        // get the endpoint
+        String query = URISupport.createQueryString(map);
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
             setProperties(camelContext, endpoint, parameters);
