@@ -19,13 +19,11 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.function.Function;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
@@ -39,12 +37,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
     }
 
     @Override
-    protected Function<Search, Timer> search() {
-        return Search::timer;
-    }
-
-    @Override
-    protected Function<MeterRegistry, Timer> register(String name, List<Tag> tags) {
+    protected Function<MeterRegistry, Timer> registrar(String name, Iterable<Tag> tags) {
         return meterRegistry -> meterRegistry.timer(name, tags);
     }
 
@@ -57,7 +50,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, String metricsName, List<Tag> tags) {
+    protected void doProcess(Exchange exchange, String metricsName, Iterable<Tag> tags) {
         MeterRegistry registry = getEndpoint().getRegistry();
         Message in = exchange.getIn();
         MicrometerTimerAction action = getEndpoint().getAction();
@@ -65,11 +58,15 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
         if (finalAction == MicrometerTimerAction.start) {
             handleStart(exchange, registry, metricsName);
         } else if (finalAction == MicrometerTimerAction.stop) {
-            if (getTimerSampleFromExchange(exchange, getPropertyName(metricsName)) != null) {
-                doProcess(exchange, getEndpoint(), getMeter(metricsName, tags));
-            }
+            handleStop(exchange, metricsName, tags);
         } else {
             LOG.warn("No action provided for timer \"{}\"", metricsName);
+        }
+    }
+
+    private void handleStop(Exchange exchange, String metricsName, Iterable<Tag> tags) {
+        if (getTimerSampleFromExchange(exchange, getPropertyName(metricsName)) != null) {
+            doProcess(exchange, getEndpoint(), getMeter(metricsName, tags));
         }
     }
 
