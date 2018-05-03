@@ -63,7 +63,7 @@ public class SqsConfiguration implements Cloneable {
     private boolean extendMessageVisibility;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-	@UriParam
+    @UriParam
     private String queueUrl;
 
     // producer properties
@@ -348,7 +348,7 @@ public class SqsConfiguration implements Cloneable {
         this.concurrentConsumers = concurrentConsumers;
     }
 	
-	/**
+    /**
      *  To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored.
      */
     public String getQueueUrl() {
