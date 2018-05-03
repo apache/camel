@@ -424,6 +424,13 @@ public final class IOConverter {
         return os.toByteArray();
     }
 
+    @Converter
+    public static ByteBuffer covertToByteBuffer(InputStream is) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        return ByteBuffer.wrap(os.toByteArray());
+    }
+
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */

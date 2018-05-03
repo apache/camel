@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.undertow;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -75,14 +78,30 @@ public class UndertowProducerTest extends BaseUndertowTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testHttpInputStream() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port2}}/bar", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
+        assertEquals("This is the InputStream", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            private InputStream is = new ByteArrayInputStream("This is the InputStream".getBytes());
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/foo")
                     .to("mock:input")
                     .transform().constant("Bye World");
+
+                from("undertow:http://localhost:{{port2}}/bar")
+                    .to("mock:input")
+                    .transform().constant(is);
             }
         };
     }
