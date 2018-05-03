@@ -18,6 +18,7 @@ package org.apache.camel.util.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.util.component.ArgumentSubstitutionParser.Substitution;
 import org.junit.Test;
@@ -49,14 +50,27 @@ public class ArgumentSubstitutionParserTest {
         signatures.add("public final java.util.Map<String, String> greetAll(java.util.Map<String> nameMap);");
         signatures.add("public final String[] greetTimes(String name, int times);");
         signatures.add("public final String greetInnerChild(org.apache.camel.util.component.TestProxy.InnerChild child);");
+        signatures.add("public final <T extends java.util.Date> T sayHiResource(java.util.Set<T> resourceType, String resourceId);");
+        signatures.add("public final <T extends java.util.Date> T with(T theDate);");
         parser.setSignatures(signatures);
 
         final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
-        assertEquals(9, methodModels.size());
+        assertEquals(11, methodModels.size());
 
         final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(8);
         assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
         assertEquals("SAYHI_1", sayHi1.getUniqueName());
+
+        ApiMethodParser.ApiMethodModel sayHiResource = methodModels.get(9);
+        assertEquals(java.util.Date.class, sayHiResource.getResultType());
+        assertEquals(java.util.Set.class, sayHiResource.getArguments().get(0).getType());
+        assertEquals("resourceType", sayHiResource.getArguments().get(0).getName());
+        assertEquals("resourceId", sayHiResource.getArguments().get(1).getName());
+        assertEquals(String.class, sayHiResource.getArguments().get(1).getType());
+
+        ApiMethodParser.ApiMethodModel with = methodModels.get(10);
+        assertEquals(java.util.Date.class, with.getResultType());
+        assertEquals(java.util.Date.class, with.getArguments().get(0).getType());
 
         final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(4);
         assertEquals(PERSON, greetMe.getArguments().get(0).getName());
