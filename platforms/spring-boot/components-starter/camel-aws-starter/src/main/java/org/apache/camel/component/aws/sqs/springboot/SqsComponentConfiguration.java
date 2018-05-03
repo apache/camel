@@ -208,6 +208,7 @@ public class SqsComponentConfiguration
          */
         private String region;
         private Integer concurrentConsumers = 1;
+        private String queueUrl;
         private String proxyHost;
         private Integer proxyPort;
 
@@ -386,6 +387,14 @@ public class SqsComponentConfiguration
 
         public void setConcurrentConsumers(Integer concurrentConsumers) {
             this.concurrentConsumers = concurrentConsumers;
+        }
+
+        public String getQueueUrl() {
+            return queueUrl;
+        }
+
+        public void setQueueUrl(String queueUrl) {
+            this.queueUrl = queueUrl;
         }
 
         public String getProxyHost() {

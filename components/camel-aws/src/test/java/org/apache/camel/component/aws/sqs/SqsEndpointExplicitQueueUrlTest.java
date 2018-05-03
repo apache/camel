@@ -18,10 +18,10 @@ package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.mockito.Mockito;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
 public class SqsEndpointExplicitQueueUrlTest extends Assert {

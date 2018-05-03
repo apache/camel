@@ -347,7 +347,7 @@ public class SqsConfiguration implements Cloneable {
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
-	
+
     /**
      *  To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored.
      *  This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes.
