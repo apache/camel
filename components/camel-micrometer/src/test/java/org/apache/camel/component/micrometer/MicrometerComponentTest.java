@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -34,7 +33,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -74,7 +72,7 @@ public class MicrometerComponentTest {
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.getTypeConverter()).thenReturn(typeConverter);
         when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
-        when(camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class)).thenReturn(metricRegistry);
+        when(camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class)).thenReturn(metricRegistry);
 
         Map<String, Object> params = new HashMap<>();
         params.put("tags", "key=value");
@@ -85,7 +83,7 @@ public class MicrometerComponentTest {
         assertThat(me.getMetricsName(), is(MicrometerConstants.HEADER_PREFIX + "." + "counter"));
         assertThat(me.getRegistry(), is(metricRegistry));
         inOrder.verify(camelContext, times(1)).getRegistry();
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class);
         inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
         inOrder.verify(camelContext, times(1)).getTypeConverter();
@@ -160,7 +158,7 @@ public class MicrometerComponentTest {
     @Test
     public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
-        when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.<MeterRegistry>emptySet());
+        when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.emptySet());
         MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(metricRegistry)));

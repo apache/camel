@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.Producer;
 import org.junit.After;
@@ -26,9 +27,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;

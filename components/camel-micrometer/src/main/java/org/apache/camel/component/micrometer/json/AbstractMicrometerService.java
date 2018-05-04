@@ -1,5 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.micrometer.json;
 
+import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -11,18 +28,11 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
-
-/**
- * @author Christian Ohr
- */
 public class AbstractMicrometerService extends ServiceSupport {
 
     private CamelContext camelContext;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint = true;
-    private boolean supportAggregablePercentiles;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private transient ObjectMapper mapper;
     private transient ObjectMapper secondsMapper;
@@ -59,14 +69,6 @@ public class AbstractMicrometerService extends ServiceSupport {
         this.durationUnit = durationUnit;
     }
 
-    public boolean isSupportAggregablePercentiles() {
-        return supportAggregablePercentiles;
-    }
-
-    public void setSupportAggregablePercentiles(boolean supportAggregablePercentiles) {
-        this.supportAggregablePercentiles = supportAggregablePercentiles;
-    }
-
     public String dumpStatisticsAsJson() {
         ObjectWriter writer = mapper.writer();
         if (isPrettyPrint()) {
@@ -92,10 +94,10 @@ public class AbstractMicrometerService extends ServiceSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         if (meterRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            meterRegistry = camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class);
+            meterRegistry = camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class);
             // create a new metricsRegistry by default
             if (meterRegistry == null) {
                 meterRegistry = new SimpleMeterRegistry();
@@ -103,14 +105,14 @@ public class AbstractMicrometerService extends ServiceSupport {
         }
 
         // json mapper
-        this.mapper = new ObjectMapper().registerModule(new MicrometerModule(getDurationUnit(), supportAggregablePercentiles));
-        this.secondsMapper = getDurationUnit() == TimeUnit.SECONDS ?
-                this.mapper :
-                new ObjectMapper().registerModule(new MicrometerModule(TimeUnit.SECONDS, supportAggregablePercentiles));
+        this.mapper = new ObjectMapper().registerModule(new MicrometerModule(getDurationUnit()));
+        this.secondsMapper = getDurationUnit() == TimeUnit.SECONDS
+                ? this.mapper
+                : new ObjectMapper().registerModule(new MicrometerModule(TimeUnit.SECONDS));
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doStop() {
 
     }
 }

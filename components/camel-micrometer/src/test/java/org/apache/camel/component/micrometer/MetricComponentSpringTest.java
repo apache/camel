@@ -19,7 +19,6 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -36,7 +35,6 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -62,7 +60,7 @@ public class MetricComponentSpringTest {
             return new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:in")
                             .to("micrometer:counter:A?increment=512")
                             .to("mock:out");
@@ -70,7 +68,7 @@ public class MetricComponentSpringTest {
             };
         }
 
-        @Bean(name = MicrometerComponent.METRICS_REGISTRY)
+        @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
         public MeterRegistry getMetricRegistry() {
             return Mockito.mock(MeterRegistry.class);
         }
@@ -78,7 +76,7 @@ public class MetricComponentSpringTest {
 
     @Test
     public void testMetricsRegistryFromCamelRegistry() throws Exception {
-        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY, MeterRegistry.class);
+        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class);
         Counter mockCounter = Mockito.mock(Counter.class);
         InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
         when(mockRegistry.counter(MicrometerConstants.HEADER_PREFIX + "." + "A", Tags.empty())).thenReturn(mockCounter);

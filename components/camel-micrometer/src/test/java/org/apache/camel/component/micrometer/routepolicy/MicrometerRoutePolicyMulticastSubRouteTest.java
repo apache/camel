@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
+import java.util.List;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
@@ -50,10 +49,10 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").to("mock:foo");
 
                 from("direct:bar").routeId("bar").multicast().to("mock:bar1", "mock:bar2");

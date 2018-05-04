@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.CamelContext;
@@ -27,9 +29,6 @@ import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link MeterRegistry}.
  * <p/>
@@ -38,7 +37,6 @@ import java.util.regex.Matcher;
 public class MicrometerRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
     private MeterRegistry meterRegistry;
-    private MicrometerRegistryService registryService;
     private boolean prettyPrint;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
@@ -48,6 +46,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
 
     private static final class MetricsStatistics {
+        private static final String MICROMETER_ROUTE_POLICY = "MicrometerRoutePolicy-";
         private final MeterRegistry meterRegistry;
         private final Route route;
         private final String name;
@@ -60,16 +59,17 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
         public void onExchangeBegin(Exchange exchange) {
             Timer.Sample sample = Timer.start(meterRegistry);
-            exchange.setProperty("MicrometerRoutePolicy-" + route.getId(), sample);
+            exchange.setProperty(MICROMETER_ROUTE_POLICY + route.getId(), sample);
         }
 
         public void onExchangeDone(Exchange exchange) {
-            Timer.Sample sample = (Timer.Sample) exchange.removeProperty("MicrometerRoutePolicy-" + route.getId());
+            Timer.Sample sample = (Timer.Sample) exchange.removeProperty(MICROMETER_ROUTE_POLICY + route.getId());
             if (sample != null) {
                 Timer timer = Timer.builder(name)
                         .description(route.getDescription())
                         .tag("camelService", "routePolicy")
                         .tag("route", route.getId())
+                        .tag("failed", Boolean.toString(exchange.isFailed()))
                         .register(meterRegistry);
                 sample.stop(timer);
             }
@@ -129,6 +129,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         super.onInit(route);
 
         this.route = route;
+        MicrometerRegistryService registryService;
         try {
             registryService = route.getRouteContext().getCamelContext().hasService(MicrometerRegistryService.class);
             if (registryService == null) {
@@ -169,7 +170,6 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
-
         if (statistics != null) {
             statistics.onExchangeBegin(exchange);
         }
