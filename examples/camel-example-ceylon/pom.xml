@@ -111,6 +111,28 @@
         </configuration>
         <executions>
           <execution>
+            <id>dependency</id>
+            <goals>
+              <goal>import-dependency</goal>
+            </goals>
+            <configuration>
+              <moduleImports>
+                <moduleImport>
+                  <!-- Import Maven dependencies as Ceylon modules -->
+                  <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-core</artifactId>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-jetty</artifactId>
+                  </dependency>
+                </moduleImport>
+              </moduleImports>
+            </configuration>
+          </execution>
+          <execution>
+            <id>compile</id>
             <goals>
               <goal>compile</goal>
             </goals>
