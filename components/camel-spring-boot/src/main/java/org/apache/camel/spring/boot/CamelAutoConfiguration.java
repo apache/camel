@@ -44,6 +44,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -532,6 +533,13 @@ public class CamelAutoConfiguration {
                     camelContext.addLogListener(logListener);
                 }
             }
+        }
+
+        // ExecutorServiceManager
+        final ExecutorServiceManager executorServiceManager = getSingleBeanOfType(applicationContext, ExecutorServiceManager.class);
+        if (executorServiceManager != null) {
+            LOG.info("Using custom ExecutorServiceManager: {}", executorServiceManager);
+            camelContext.setExecutorServiceManager(executorServiceManager);
         }
 
         // set the default thread pool profile if defined
