@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -30,21 +32,13 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * Represents the component that manages metrics endpoints.
  */
 public class MicrometerComponent extends UriEndpointComponent {
 
-    public static final String METRICS_REGISTRY = "metricsRegistry";
-    public static final MetricsType DEFAULT_METER_TYPE = MetricsType.TIMER;
+    public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
+    public static final MetricsType DEFAULT_METER_TYPE = MetricsType.COUNTER;
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerComponent.class);
 
@@ -62,7 +56,7 @@ public class MicrometerComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, METRICS_REGISTRY);
+            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, METRICS_REGISTRY_NAME);
         }
         if (prefix == null) {
             prefix = MicrometerConstants.HEADER_PREFIX;

@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
+import java.util.List;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePolicyTest {
 
@@ -42,10 +40,10 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo")
                     .to("direct:bar")
                     .to("mock:foo");

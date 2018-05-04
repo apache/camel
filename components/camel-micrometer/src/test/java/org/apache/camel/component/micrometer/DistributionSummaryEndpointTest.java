@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.Producer;
 import org.junit.After;
@@ -26,10 +27,10 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,18 +47,18 @@ public class DistributionSummaryEndpointTest {
     private InOrder inOrder;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.DISTRIBUTION_SUMMARY, METRICS_NAME, Collections.emptyList());
         inOrder = Mockito.inOrder(registry);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testHistogramEndpoint() throws Exception {
+    public void testHistogramEndpoint() {
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
@@ -71,12 +72,12 @@ public class DistributionSummaryEndpointTest {
     }
 
     @Test
-    public void testGetValue() throws Exception {
+    public void testGetValue() {
         assertThat(endpoint.getValue(), is(nullValue()));
     }
 
     @Test
-    public void testSetValue() throws Exception {
+    public void testSetValue() {
         assertThat(endpoint.getValue(), is(nullValue()));
         endpoint.setValue(VALUE);
         assertThat(endpoint.getValue(), is(VALUE));

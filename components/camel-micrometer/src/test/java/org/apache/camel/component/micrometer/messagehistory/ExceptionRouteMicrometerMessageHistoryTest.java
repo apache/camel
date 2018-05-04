@@ -17,7 +17,6 @@
 package org.apache.camel.component.micrometer.messagehistory;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -74,10 +73,10 @@ public class ExceptionRouteMicrometerMessageHistoryTest extends CamelTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .routeId("ExceptionRoute")
                         .log("Exception received.")
@@ -88,11 +87,8 @@ public class ExceptionRouteMicrometerMessageHistoryTest extends CamelTestSupport
 
                 from("seda:bar")
                         .to("mock:bar").id("bar")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                throw new Exception("Metrics Exception");
-                            }
+                        .process(exchange -> {
+                            throw new Exception("Metrics Exception");
                         })
                         .to("mock:baz").id("baz");
             }

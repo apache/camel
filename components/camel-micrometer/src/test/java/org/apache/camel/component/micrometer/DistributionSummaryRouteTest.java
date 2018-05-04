@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,8 +36,7 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.component.micrometer.MicrometerComponent.METRICS_REGISTRY;
+import static org.apache.camel.component.micrometer.MicrometerComponent.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.junit.Assert.assertEquals;
@@ -66,7 +65,7 @@ public class DistributionSummaryRouteTest {
             return new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:in")
                             .to("micrometer:summary:A?value=332491")
                             .to("mock:out");
@@ -74,7 +73,7 @@ public class DistributionSummaryRouteTest {
             };
         }
 
-        @Bean(name = METRICS_REGISTRY)
+        @Bean(name = METRICS_REGISTRY_NAME)
         public MeterRegistry getMetricRegistry() {
             return new SimpleMeterRegistry();
         }
@@ -82,7 +81,7 @@ public class DistributionSummaryRouteTest {
 
     @Before
     public void setup() {
-        registry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRICS_REGISTRY, MeterRegistry.class);
+        registry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRICS_REGISTRY_NAME, MeterRegistry.class);
     }
 
     @After

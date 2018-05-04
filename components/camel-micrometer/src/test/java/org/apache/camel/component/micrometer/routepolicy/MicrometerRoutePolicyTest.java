@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
+import java.util.List;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.util.List;
 
 public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest {
 
@@ -46,10 +45,10 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo")
                     .to("mock:result");
 

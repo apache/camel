@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.micrometer;
 
-import io.micrometer.core.instrument.*;
+import java.util.Collections;
+import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.Before;
@@ -24,11 +29,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -65,20 +69,20 @@ public class TimerProducerTest {
     private TimerProducer producer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         producer = new TimerProducer(endpoint);
         when(endpoint.getRegistry()).thenReturn(registry);
         when(exchange.getIn()).thenReturn(in);
     }
 
     @Test
-    public void testTimerProducer() throws Exception {
+    public void testTimerProducer() {
         assertThat(producer, is(notNullValue()));
         assertThat(producer.getEndpoint().equals(endpoint), is(true));
     }
 
     @Test
-    public void testProcessStart() throws Exception {
+    public void testProcessStart() {
         when(endpoint.getAction()).thenReturn(MicrometerTimerAction.start);
         when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
@@ -88,7 +92,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testProcessStopWithOverride() throws Exception {
+    public void testProcessStopWithOverride() {
         when(endpoint.getAction()).thenReturn(MicrometerTimerAction.stop);
         when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
@@ -99,7 +103,7 @@ public class TimerProducerTest {
 
 
     @Test
-    public void testProcessNoActionOverride() throws Exception {
+    public void testProcessNoActionOverride() {
         Object action = null;
         when(endpoint.getAction()).thenReturn(null);
         when(in.getHeader(HEADER_TIMER_ACTION, action, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.start);
@@ -110,7 +114,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testProcessStartWithOverride() throws Exception {
+    public void testProcessStartWithOverride() {
         when(endpoint.getAction()).thenReturn(MicrometerTimerAction.start);
         when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.start, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
@@ -124,7 +128,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testProcessStop() throws Exception {
+    public void testProcessStop() {
         when(endpoint.getAction()).thenReturn(MicrometerTimerAction.stop);
         when(in.getHeader(HEADER_TIMER_ACTION, MicrometerTimerAction.stop, MicrometerTimerAction.class)).thenReturn(MicrometerTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
@@ -138,25 +142,25 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testProcessNoAction() throws Exception {
+    public void testProcessNoAction() {
         when(endpoint.getAction()).thenReturn(null);
         producer.doProcess(exchange, METRICS_NAME, Tags.empty());
     }
 
 
     @Test
-    public void testGetPropertyName() throws Exception {
+    public void testGetPropertyName() {
         assertThat(producer.getPropertyName(METRICS_NAME), is("timer" + ":" + METRICS_NAME));
     }
 
     @Test
-    public void testGetTimerContextFromExchange() throws Exception {
+    public void testGetTimerContextFromExchange() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(sample);
         assertThat(producer.getTimerSampleFromExchange(exchange, PROPERTY_NAME), is(sample));
     }
 
     @Test
-    public void testGetTimerContextFromExchangeNotFound() throws Exception {
+    public void testGetTimerContextFromExchangeNotFound() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Sample.class)).thenReturn(null);
         assertThat(producer.getTimerSampleFromExchange(exchange, PROPERTY_NAME), is(nullValue()));
     }

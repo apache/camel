@@ -17,16 +17,14 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.EnumSet;
-
 import org.junit.Test;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class MetricsTypeTest {
 
     @Test
-    public void testGetByName() throws Exception {
+    public void testGetByName() {
         for (MetricsType type : EnumSet.allOf(MetricsType.class)) {
             MetricsType t = MetricsType.getByName(type.toString());
             assertThat(t, is(type));
