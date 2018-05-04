@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.Producer;
 import org.junit.After;
@@ -26,10 +27,10 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,7 +47,7 @@ public class CounterEndpointTest {
     private InOrder inOrder;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Collections.emptyList());
         inOrder = Mockito.inOrder(registry);
     }
@@ -57,7 +58,7 @@ public class CounterEndpointTest {
     }
 
     @Test
-    public void testCounterEndpoint() throws Exception {
+    public void testCounterEndpoint() {
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
         assertThat(endpoint.getIncrement(), is(nullValue()));
@@ -72,24 +73,24 @@ public class CounterEndpointTest {
     }
 
     @Test
-    public void testGetIncrement() throws Exception {
+    public void testGetIncrement() {
         assertThat(endpoint.getIncrement(), is(nullValue()));
     }
 
     @Test
-    public void testSetIncrement() throws Exception {
+    public void testSetIncrement() {
         assertThat(endpoint.getIncrement(), is(nullValue()));
         endpoint.setIncrement(VALUE);
         assertThat(endpoint.getIncrement(), is(VALUE));
     }
 
     @Test
-    public void testGetDecrement() throws Exception {
+    public void testGetDecrement() {
         assertThat(endpoint.getDecrement(), is(nullValue()));
     }
 
     @Test
-    public void testSetDecrement() throws Exception {
+    public void testSetDecrement() {
         assertThat(endpoint.getDecrement(), is(nullValue()));
         endpoint.setDecrement(VALUE);
         assertThat(endpoint.getDecrement(), is(VALUE));

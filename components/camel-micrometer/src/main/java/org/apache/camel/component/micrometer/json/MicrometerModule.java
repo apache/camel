@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,37 +16,46 @@
  */
 package org.apache.camel.component.micrometer.json;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import io.micrometer.core.instrument.*;
+import io.micrometer.core.instrument.AbstractDistributionSummary;
+import io.micrometer.core.instrument.AbstractTimer;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.FunctionCounter;
+import io.micrometer.core.instrument.FunctionTimer;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.LongTaskTimer;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.distribution.HistogramSnapshot;
+import io.micrometer.core.instrument.distribution.ValueAtPercentile;
 import io.micrometer.core.instrument.search.Search;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-/**
- * @author Christian Ohr
- */
 public class MicrometerModule extends Module {
 
     static final Version VERSION = new Version(1, 0, 2, "", "io.micrometer", "micrometer-core");
 
     private final TimeUnit timeUnit;
-    private final boolean supportAggregablePercentiles;
 
-    public MicrometerModule(TimeUnit timeUnit, boolean supportAggregablePercentiles) {
+    public MicrometerModule(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
-        this.supportAggregablePercentiles = supportAggregablePercentiles;
     }
 
     @Override
@@ -60,7 +69,7 @@ public class MicrometerModule extends Module {
     }
 
 
-    private static class IdSerializer extends StdSerializer<Meter.Id> {
+    private static final class IdSerializer extends StdSerializer<Meter.Id> {
         private IdSerializer() {
             super(Meter.Id.class);
         }
@@ -74,7 +83,7 @@ public class MicrometerModule extends Module {
         }
     }
 
-    private static class TagSerializer extends StdSerializer<Tag> {
+    private static final class TagSerializer extends StdSerializer<Tag> {
         private TagSerializer() {
             super(Tag.class);
         }
@@ -102,9 +111,20 @@ public class MicrometerModule extends Module {
         }
 
         protected abstract void serializeStatistics(T meter, JsonGenerator json, SerializerProvider provider) throws IOException;
+
+        protected static void serializeSnapshot(JsonGenerator json, HistogramSnapshot snapshot, TimeUnit timeUnit) throws IOException {
+            json.writeNumberField("count", snapshot.count());
+            json.writeNumberField("max", snapshot.max(timeUnit));
+            json.writeNumberField("mean", snapshot.mean(timeUnit));
+            json.writeNumberField("total", snapshot.total(timeUnit));
+            ValueAtPercentile[] percentiles = snapshot.percentileValues();
+            for (ValueAtPercentile percentile : percentiles) {
+                json.writeNumberField(String.format("p%0.3d", percentile.percentile()), percentile.value(timeUnit));
+            }
+        }
     }
 
-    private static class GaugeSerializer extends MeterSerializer<Gauge> {
+    private static final class GaugeSerializer extends MeterSerializer<Gauge> {
         private GaugeSerializer() {
             super(Gauge.class);
         }
@@ -115,7 +135,7 @@ public class MicrometerModule extends Module {
         }
     }
 
-    private static class CounterSerializer extends MeterSerializer<Counter> {
+    private static final class CounterSerializer extends MeterSerializer<Counter> {
         private CounterSerializer() {
             super(Counter.class);
         }
@@ -126,7 +146,7 @@ public class MicrometerModule extends Module {
         }
     }
 
-    private static class FunctionCounterSerializer extends MeterSerializer<FunctionCounter> {
+    private static final class FunctionCounterSerializer extends MeterSerializer<FunctionCounter> {
         private FunctionCounterSerializer() {
             super(FunctionCounter.class);
         }
@@ -137,32 +157,23 @@ public class MicrometerModule extends Module {
         }
     }
 
-    private static class TimerSerializer extends MeterSerializer<AbstractTimer> {
+    private static final class TimerSerializer extends MeterSerializer<AbstractTimer> {
 
         private final TimeUnit timeUnit;
-        private final boolean supportAggregablePercentiles;
 
-        private TimerSerializer(TimeUnit timeUnit, boolean supportAggregablePercentiles) {
+        private TimerSerializer(TimeUnit timeUnit) {
             super(AbstractTimer.class);
             this.timeUnit = timeUnit;
-            this.supportAggregablePercentiles = supportAggregablePercentiles;
         }
 
         @Override
         protected void serializeStatistics(AbstractTimer timer, JsonGenerator json, SerializerProvider provider) throws IOException {
-            HistogramSnapshot snapshot = timer.takeSnapshot(supportAggregablePercentiles);
-            json.writeNumberField("count", snapshot.count());
-            json.writeNumberField("max", snapshot.max(timeUnit));
-            json.writeNumberField("mean", snapshot.mean(timeUnit));
-            json.writeNumberField("total", snapshot.total(timeUnit));
-            double[] percentiles = timer.statsConfig().getPercentiles();
-            for (int idx = 0; idx < percentiles.length; idx++) {
-                json.writeNumberField(String.format("p%0.3d", percentiles[idx]), snapshot.percentileValues()[idx].value(timeUnit));
-            }
+            serializeSnapshot(json, timer.takeSnapshot(), timeUnit);
         }
+
     }
 
-    private static class FunctionTimerSerializer extends MeterSerializer<FunctionTimer> {
+    private static final class FunctionTimerSerializer extends MeterSerializer<FunctionTimer> {
 
         private final TimeUnit timeUnit;
 
@@ -179,7 +190,7 @@ public class MicrometerModule extends Module {
         }
     }
 
-    private static class LongTaskTimerSerializer extends MeterSerializer<LongTaskTimer> {
+    private static final class LongTaskTimerSerializer extends MeterSerializer<LongTaskTimer> {
 
         private final TimeUnit timeUnit;
 
@@ -195,35 +206,25 @@ public class MicrometerModule extends Module {
         }
     }
 
-    private static class DistributionSummarySerializer extends MeterSerializer<AbstractDistributionSummary> {
+    private static final class DistributionSummarySerializer extends MeterSerializer<AbstractDistributionSummary> {
 
         private final TimeUnit timeUnit;
-        private final boolean supportAggregablePercentiles;
 
-        public DistributionSummarySerializer(TimeUnit timeUnit, boolean supportAggregablePercentiles) {
+        private DistributionSummarySerializer(TimeUnit timeUnit) {
             super(AbstractDistributionSummary.class);
             this.timeUnit = timeUnit;
-            this.supportAggregablePercentiles = supportAggregablePercentiles;
         }
 
         @Override
         protected void serializeStatistics(AbstractDistributionSummary distributionSummary,
                                            JsonGenerator json,
                                            SerializerProvider provider) throws IOException {
-            HistogramSnapshot snapshot = distributionSummary.takeSnapshot(supportAggregablePercentiles);
-            json.writeNumberField("count", snapshot.count());
-            json.writeNumberField("max", snapshot.max(timeUnit));
-            json.writeNumberField("mean", snapshot.mean(timeUnit));
-            json.writeNumberField("total", snapshot.total(timeUnit));
-            double[] percentiles = distributionSummary.statsConfig().getPercentiles();
-            for (int idx = 0; idx < percentiles.length; idx++) {
-                json.writeNumberField(String.format("p%0.3d", percentiles[idx]), snapshot.percentileValues()[idx].value(timeUnit));
-            }
+            serializeSnapshot(json, distributionSummary.takeSnapshot(), timeUnit);
         }
     }
 
 
-    private static class MeterRegistrySerializer extends StdSerializer<MeterRegistry> {
+    private static final class MeterRegistrySerializer extends StdSerializer<MeterRegistry> {
 
         private MeterRegistrySerializer() {
             super(MeterRegistry.class);
@@ -251,17 +252,15 @@ public class MicrometerModule extends Module {
             if (meterRegistry instanceof CompositeMeterRegistry) {
                 Map<String, List<Meter>> map = new TreeMap<>();
                 ((CompositeMeterRegistry) meterRegistry).getRegistries().forEach(reg ->
-                        meters(meterRegistry, clazz).entrySet().forEach(
-                                entry -> map.merge(entry.getKey(), entry.getValue(), (m1, m2) ->
-                                        Stream.concat(m1.stream(), m2.stream()).collect(Collectors.toList()))
-                        ));
+                        meters(meterRegistry, clazz).forEach((key, value) -> map.merge(key, value, (m1, m2) ->
+                                Stream.concat(m1.stream(), m2.stream()).collect(Collectors.toList()))));
                 return map;
             }
             return Search.in(meterRegistry).meters().stream()
                     .filter(clazz::isInstance)
                     .collect(Collectors.toMap(
-                            meter -> meter.getId().getName(),
-                            meter -> Collections.singletonList(meter)));
+                        meter -> meter.getId().getName(),
+                        Collections::singletonList));
         }
     }
 
@@ -274,10 +273,10 @@ public class MicrometerModule extends Module {
                 new GaugeSerializer(),
                 new CounterSerializer(),
                 new FunctionCounterSerializer(),
-                new TimerSerializer(timeUnit, supportAggregablePercentiles),
+                new TimerSerializer(timeUnit),
                 new FunctionTimerSerializer(timeUnit),
                 new LongTaskTimerSerializer(timeUnit),
-                new DistributionSummarySerializer(timeUnit, supportAggregablePercentiles),
+                new DistributionSummarySerializer(timeUnit),
                 new MeterRegistrySerializer()
         )));
     }

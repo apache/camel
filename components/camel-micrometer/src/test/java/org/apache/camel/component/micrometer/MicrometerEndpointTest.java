@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.camel.*;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +31,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -54,10 +56,10 @@ public class MicrometerEndpointTest {
     private InOrder inOrder;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Collections.emptyList()) {
             @Override
-            public Producer createProducer() throws Exception {
+            public Producer createProducer() {
                 return null;
             }
 
@@ -70,12 +72,12 @@ public class MicrometerEndpointTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testAbstractMetricsEndpoint() throws Exception {
+    public void testAbstractMetricsEndpoint() {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
         assertThat(endpoint.getRegistry(), is(registry));
     }
@@ -86,17 +88,17 @@ public class MicrometerEndpointTest {
     }
 
     @Test
-    public void testIsSingleton() throws Exception {
+    public void testIsSingleton() {
         assertThat(endpoint.isSingleton(), is(true));
     }
 
     @Test
-    public void testGetRegistry() throws Exception {
+    public void testGetRegistry() {
         assertThat(endpoint.getRegistry(), is(registry));
     }
 
     @Test
-    public void testGetMetricsName() throws Exception {
+    public void testGetMetricsName() {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
     }
 }

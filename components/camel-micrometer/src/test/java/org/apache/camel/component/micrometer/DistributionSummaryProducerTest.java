@@ -19,7 +19,6 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.search.Search;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.Before;
@@ -29,9 +28,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
 import static org.apache.camel.component.micrometer.AbstractMicrometerProducer.HEADER_PATTERN;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 import static org.hamcrest.Matchers.is;
@@ -66,7 +62,7 @@ public class DistributionSummaryProducerTest {
     private InOrder inOrder;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = mock(MicrometerEndpoint.class);
         producer = new DistributionSummaryProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange, in);
@@ -76,12 +72,12 @@ public class DistributionSummaryProducerTest {
     }
 
     @Test
-    public void testHistogramProducer() throws Exception {
+    public void testHistogramProducer() {
         assertThat(producer.getEndpoint().equals(endpoint), is(true));
     }
 
     @Test
-    public void testProcessValueSet() throws Exception {
+    public void testProcessValueSet() {
         when(endpoint.getValue()).thenReturn(VALUE);
         when(in.getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Double.class)).thenReturn(VALUE);
         producer.doProcess(exchange, METRICS_NAME, Tags.empty());
@@ -96,7 +92,7 @@ public class DistributionSummaryProducerTest {
     }
 
     @Test
-    public void testProcessValueNotSet() throws Exception {
+    public void testProcessValueNotSet() {
         Object action = null;
         when(endpoint.getValue()).thenReturn(null);
         producer.doProcess(exchange, METRICS_NAME, Tags.empty());
@@ -110,7 +106,7 @@ public class DistributionSummaryProducerTest {
     }
 
     @Test
-    public void testProcessOverrideValue() throws Exception {
+    public void testProcessOverrideValue() {
         when(endpoint.getValue()).thenReturn(VALUE);
         when(in.getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Double.class)).thenReturn(VALUE + 3.0d);
         producer.doProcess(exchange, METRICS_NAME, Tags.empty());

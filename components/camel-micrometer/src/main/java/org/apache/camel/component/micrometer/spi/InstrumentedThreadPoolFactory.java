@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.micrometer.spi;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.binder.jvm.ExecutorServiceMetrics;
@@ -24,18 +28,13 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * This implements a {@link ThreadPoolFactory} and generates an Instrumented versions of ExecutorService used to
  * monitor performance of each thread using Metrics.
  */
 public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
 
-    private static final AtomicLong counter = new AtomicLong();
+    private static final AtomicLong COUNTER = new AtomicLong();
     private MeterRegistry meterRegistry;
     private ThreadPoolFactory threadPoolFactory;
     private String prefix = "instrumented-delegate-";
@@ -75,11 +74,11 @@ public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
     }
 
     private String name(String prefix) {
-        return prefix + counter.incrementAndGet();
+        return prefix + COUNTER.incrementAndGet();
     }
 
     void reset() {
-        counter.set(0L);
+        COUNTER.set(0L);
     }
 
 }
