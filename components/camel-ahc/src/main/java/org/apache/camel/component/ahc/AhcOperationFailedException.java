@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 public class AhcOperationFailedException extends CamelException {
     private static final long serialVersionUID = -6731281444593522633L;
@@ -31,8 +32,9 @@ public class AhcOperationFailedException extends CamelException {
     private final String responseBody;
 
     public AhcOperationFailedException(String url, int statusCode, String statusText, String location, Map<String, String> responseHeaders, String responseBody) {
-        super("HTTP operation failed invoking " + url + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
-        this.url = url;
+        // sanitize url so we do not show sensitive information such as passwords
+        super("HTTP operation failed invoking " + URISupport.sanitizeUri(url) + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
+        this.url = URISupport.sanitizeUri(url);
         this.statusCode = statusCode;
         this.statusText = statusText;
         this.redirectLocation = location;
