@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
@@ -32,8 +33,9 @@ public class NettyHttpOperationFailedException extends CamelException {
     private final transient HttpResponse response;
 
     public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location, HttpResponse response) {
-        super("Netty HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
-        this.uri = uri;
+        // sanitize uri so we do not show sensitive information such as passwords
+        super("Netty HTTP operation failed invoking " + URISupport.sanitizeUri(uri) + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
+        this.uri = URISupport.sanitizeUri(uri);
         this.statusCode = statusCode;
         this.statusText = statusText;
         this.redirectLocation = location;
