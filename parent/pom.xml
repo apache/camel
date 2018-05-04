@@ -499,7 +499,7 @@
     <mchange-commons-java-version>0.2.11</mchange-commons-java-version>
     <!-- TODO: spring-boot uses metrics 3.1.x -->
     <metrics-version>3.1.5</metrics-version>
-	<micrometer-version>1.0.2</micrometer-version>
+	<micrometer-version>1.0.3</micrometer-version>
     <milo-version>0.2.1</milo-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>

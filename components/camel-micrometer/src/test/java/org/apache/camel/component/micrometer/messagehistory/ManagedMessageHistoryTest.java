@@ -19,9 +19,7 @@ package org.apache.camel.component.micrometer.messagehistory;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -49,7 +47,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind(MicrometerComponent.METRICS_REGISTRY, registry);
+        registry.bind(MicrometerComponent.METRICS_REGISTRY_NAME, registry);
         return registry;
     }
 
@@ -119,10 +117,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo")
                         .to("mock:foo").id("foo");
 

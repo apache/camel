@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.micrometer.spi;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.internal.TimedExecutorService;
@@ -30,16 +34,10 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -84,7 +82,7 @@ public class InstrumentedThreadPoolFactoryTest {
     }
 
     @Test
-    public void testNewCachedThreadPool() throws Exception {
+    public void testNewCachedThreadPool() {
         final ExecutorService executorService = instrumentedThreadPoolFactory.newCachedThreadPool(threadFactory);
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(TimedExecutorService.class)));
@@ -95,7 +93,7 @@ public class InstrumentedThreadPoolFactoryTest {
     }
 
     @Test
-    public void testNewThreadPool() throws Exception {
+    public void testNewThreadPool() {
         final ExecutorService executorService = instrumentedThreadPoolFactory.newThreadPool(profile, threadFactory);
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(TimedExecutorService.class)));
@@ -105,7 +103,7 @@ public class InstrumentedThreadPoolFactoryTest {
     }
 
     @Test
-    public void testNewScheduledThreadPool() throws Exception {
+    public void testNewScheduledThreadPool() {
         final ScheduledExecutorService scheduledExecutorService = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
 
         assertThat(scheduledExecutorService, is(notNullValue()));
