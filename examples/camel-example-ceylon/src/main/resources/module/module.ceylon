@@ -18,6 +18,9 @@ native("jvm")
 module org.apache.camel.example "${project.version}" {
 
     shared import "ceylon.interop.java" "${ceylon.version}";
-    shared import maven:"org.apache.camel:camel-core" "${project.version}";
-    shared import maven:"org.apache.camel:camel-jetty" "${project.version}";
+    shared import "org.apache.camel.camel-core" "${project.version}";
+    shared import "org.apache.camel.camel-jetty" "${project.version}";
+    // Camel module imports above are used like this allow compiling against Camel snapshot versions, in general you should use:
+    // shared import maven "org.apache.camel:camel-jetty" "$CAMEL-VERSION";
+    // shared import maven:"org.apache.camel:camel-jetty" "$CAMEL-VERSION";
 }
