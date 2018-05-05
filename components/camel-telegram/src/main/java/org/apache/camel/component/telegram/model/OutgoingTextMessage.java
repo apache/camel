@@ -37,6 +37,15 @@ public class OutgoingTextMessage extends OutgoingMessage {
     private ReplyKeyboardMarkup replyKeyboardMarkup;
 
     public OutgoingTextMessage() {
+        
+    }
+
+    public OutgoingTextMessage(String text, String parseMode, Boolean disableWebPagePreview, ReplyKeyboardMarkup replyKeyboardMarkup) {
+        
+        this.text = text;
+        this.parseMode = parseMode;
+        this.disableWebPagePreview = disableWebPagePreview;
+        this.replyKeyboardMarkup = replyKeyboardMarkup;
     }
 
     public String getText() {
@@ -70,6 +79,48 @@ public class OutgoingTextMessage extends OutgoingMessage {
     public void setReplyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
         this.replyKeyboardMarkup = replyKeyboardMarkup;
     }
+    
+    public static Builder builder() {
+
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private String text;
+        private String parseMode;
+        private Boolean disableWebPagePreview;
+        private ReplyKeyboardMarkup replyKeyboardMarkup;
+
+        public Builder text(String text) {
+
+            this.text = text;
+            return this;
+        }
+        
+        public Builder parseMode(String parseMode) {
+
+            this.parseMode = parseMode;
+            return this;
+        }
+        
+        public Builder disableWebPagePreview(Boolean disableWebPagePreview) {
+
+            this.disableWebPagePreview = disableWebPagePreview;
+            return this;
+        }
+        
+        public Builder replyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
+
+            this.replyKeyboardMarkup = replyKeyboardMarkup;
+            return this;
+        }        
+
+        public OutgoingTextMessage build() {
+            
+            return new OutgoingTextMessage(text, parseMode, disableWebPagePreview, replyKeyboardMarkup);
+        }
+    }    
 
     @Override
     public String toString() {
