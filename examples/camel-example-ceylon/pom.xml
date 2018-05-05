@@ -116,13 +116,17 @@
               <goal>import-dependency</goal>
             </goals>
             <configuration>
+              <!-- Import Maven dependencies as Ceylon modules -->
               <moduleImports>
                 <moduleImport>
-                  <!-- Import Maven dependencies as Ceylon modules -->
                   <dependency>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-core</artifactId>
                   </dependency>
+                  <!-- otherwise ceylon complains about undeclared imports -->
+                  <force>true</force>
+                </moduleImport>
+                <moduleImport>
                   <dependency>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-jetty</artifactId>
