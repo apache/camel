@@ -396,7 +396,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @After
     public void tearDown() throws Exception {
-        long time = watch.stop();
+        long time = watch.taken();
 
         log.info("********************************************************************************");
         log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
@@ -408,7 +408,7 @@ public abstract class CamelTestSupport extends TestSupport {
             String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
 
-            ManagedCamelContextMBean managedCamelContext = context.getManagedCamelContext();
+            ManagedCamelContextMBean managedCamelContext = context != null ? context.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
