@@ -172,9 +172,9 @@
       </dependencies>
     </profile>
     <profile>
-      <id>jdk9-build-jetty</id>
+      <id>jdk9+-build-jetty</id>
       <activation>
-        <jdk>9</jdk>
+        <jdk>[9,)</jdk>
       </activation>
       <dependencies>
         <dependency>

@@ -220,9 +220,9 @@
             (https://github.com/mojohaus/jaxb2-maven-plugin/issues/43). We need to add the plugin back
             once we are sure it works on both JDK8 and JDK9.
             See https://issues.apache.org/jira/browse/CAMEL-10141 for more info. -->
-            <id>jdk9-build</id>
+            <id>jdk9+-build</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>[9,)</jdk>
             </activation>
             <build>
                 <plugins>
