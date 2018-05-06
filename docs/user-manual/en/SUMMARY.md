@@ -40,7 +40,6 @@
     * [Lifecycle](lifecycle.adoc)
     * [OnCompletion](oncompletion.adoc)
     * [Registry](registry.adoc)
-    * [RX](rx.adoc)
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
@@ -59,7 +58,6 @@
     * [URIs](.adoc)
     * [Xml Configuration](.adoc)
     * [ProcessorFactory](.adoc)
-    * [Asynchronous Routing Engine](.adoc)
     * [Security](.adoc)
     * [UuidGenerator](.adoc)
     * [Binding](.adoc)

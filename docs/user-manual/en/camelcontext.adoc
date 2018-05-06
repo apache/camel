@@ -17,6 +17,6 @@ See Also
 
 * RouteBuilder
 * Routes
-* Lifecycle
-* Architecture
+* link:lifecycle.adoc[Lifecycle]
+* link:architecture.adoc[Architecture]
 

@@ -37,7 +37,7 @@ See Also
 
 For more examples of the DSL in action see
 
-* link:enterprise-integration-patterns.html[Enterprise Integration
+* link:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns]
 * Examples
 * Routes
