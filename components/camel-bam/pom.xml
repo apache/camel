@@ -210,9 +210,9 @@
     </profile>
     
     <profile>
-      <id>jdk9-hibernate</id>
+      <id>jdk9+-hibernate</id>
       <activation>
-        <jdk>9</jdk>
+        <jdk>[9,)</jdk>
       </activation>
       <build>
         <testResources>
