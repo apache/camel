@@ -17,14 +17,9 @@
 package org.apache.camel.component.jolt;
 
 import java.io.InputStream;
+import java.util.Map;
 
-import com.bazaarvoice.jolt.Chainr;
-import com.bazaarvoice.jolt.Defaultr;
-import com.bazaarvoice.jolt.JsonUtils;
-import com.bazaarvoice.jolt.Removr;
-import com.bazaarvoice.jolt.Shiftr;
-import com.bazaarvoice.jolt.Sortr;
-import com.bazaarvoice.jolt.Transform;
+import com.bazaarvoice.jolt.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -32,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,8 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, label = "transformation")
 public class JoltEndpoint extends ResourceEndpoint {
     
-    private Transform transform;
-    
+    private JoltTransform transform;
+
     @UriParam(defaultValue = "Hydrated")
     private JoltInputOutputType outputType;
     
@@ -73,7 +69,7 @@ public class JoltEndpoint extends ResourceEndpoint {
         return "jolt:" + getResourceUri();
     }
 
-    private synchronized Transform getTransform() throws Exception {
+    private synchronized JoltTransform getTransform() throws Exception {
         if (transform == null) {
             if (log.isDebugEnabled()) {
                 String path = getResourceUri();
@@ -110,7 +106,7 @@ public class JoltEndpoint extends ResourceEndpoint {
     /**
      * Sets the Transform to use. If not set a Transform specified by the transformDsl will be created
      */
-    public void setTransform(Transform transform) {
+    public void setTransform(JoltTransform transform) {
         this.transform = transform;
     }
     
@@ -167,14 +163,24 @@ public class JoltEndpoint extends ResourceEndpoint {
             newEndpoint.onExchange(exchange);
             return;
         }
+
         Object input;
         if (getInputType() == JoltInputOutputType.JsonString) {
             input = JsonUtils.jsonToObject(exchange.getIn().getBody(InputStream.class));
         } else {
             input = exchange.getIn().getBody();
         }
-        Object output = getTransform().transform(input);
-                
+
+        Object output;
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> inputContextMap = exchange.getIn().getHeader(JoltConstants.JOLT_CONTEXT, Map.class);
+        if (inputContextMap != null) {
+            output = ((ContextualTransform)getTransform()).transform(input, inputContextMap);
+        } else {
+            output = ((Transform)getTransform()).transform(input);
+        }
+
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         if (getOutputType() == JoltInputOutputType.JsonString) {
