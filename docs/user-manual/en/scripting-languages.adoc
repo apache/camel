@@ -170,6 +170,6 @@ See Also
 ~~~~~~~~
 
 * Languages
-* DSL
+* link:dsl.adoc[DSL]
 * Xml Configuration
 

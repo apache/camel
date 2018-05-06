@@ -269,6 +269,6 @@ Endpoint then the `interceptFrom` is not triggered.
 See Also
 ^^^^^^^^
 
-* Architecture
-* AOP
+* link:architecture.adoc[Architecture]
+
 
