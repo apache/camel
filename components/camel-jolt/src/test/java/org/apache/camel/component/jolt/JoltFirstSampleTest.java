@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.jolt;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Unit test based on the first sample test from the JOLT project.
@@ -46,9 +51,19 @@ public class JoltFirstSampleTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final Processor processor = new Processor() {
+            public void process(Exchange exchange) {
+                Map<String, String> contextMap = new HashMap<>();
+                contextMap.put("contextB", "bb");
+
+                exchange.getIn().setHeader(JoltConstants.JOLT_CONTEXT, contextMap);
+            }
+        };
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
+                        .process(processor)
                     .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
                     .to("mock:result");
             }
