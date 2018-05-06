@@ -242,10 +242,11 @@ public class S3Producer extends DefaultProducer {
             message.setHeader(S3Constants.VERSION_ID, putObjectResult.getVersionId());
         }
 
+        // close streams
+        IOHelper.close(putObjectRequest.getInputStream());
+        IOHelper.close(is);
+
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
-            // close streams
-            IOHelper.close(putObjectRequest.getInputStream());
-            IOHelper.close(is);
             FileUtil.deleteFile(filePayload);
         }
     }
