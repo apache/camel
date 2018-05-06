@@ -42,7 +42,7 @@
     <repository>
       <id>maven-restlet</id>
       <name>Public online Restlet repository</name>
-      <url>http://maven.restlet.org</url>
+      <url>https://maven.restlet.com</url>
     </repository>
   </repositories>
 
