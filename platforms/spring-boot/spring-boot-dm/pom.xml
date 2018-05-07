@@ -58,7 +58,7 @@
     <groovy-version>2.4.15</groovy-version>
 
     <!-- Plugin versions -->
-    <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
+    <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
 
   </properties>
@@ -90,12 +90,16 @@
               <includeResources>false</includeResources>
               <configLocation>camel-checkstyle.xml</configLocation>
               <consoleOutput>true</consoleOutput>
-              <failsOnError>true</failsOnError>
+              <failsOnError>${checkstyle.failOnViolation}</failsOnError>
               <linkXRef>false</linkXRef>
               <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
               <encoding>UTF-8</encoding>
-              <sourceDirectory>${basedir}/src</sourceDirectory>
-              <excludes>**/archetype-resources/**/*.java</excludes>
+              <sourceDirectories>
+                <sourceDirectory>${basedir}/src</sourceDirectory>
+              </sourceDirectories>
+              <headerLocation>header-java.txt</headerLocation>
+              <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
+              <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
             </configuration>
             <goals>
               <goal>checkstyle</goal>
