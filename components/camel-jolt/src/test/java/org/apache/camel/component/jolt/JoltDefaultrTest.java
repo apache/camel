@@ -29,7 +29,7 @@ import org.junit.Test;
  * Unit test testing the Removr.
  */
 public class JoltDefaultrTest extends CamelTestSupport {
-    
+
     @Test
     public void testFirstSampleJolt() throws Exception {
         Exchange exchange = template.request("direct://start", new Processor() {
@@ -40,14 +40,14 @@ public class JoltDefaultrTest extends CamelTestSupport {
                 exchange.getIn().setBody(body);
             }
         });
-        
+
         assertEquals(3, exchange.getOut().getBody(Map.class).size());
         assertEquals("aa", exchange.getOut().getBody(Map.class).get("a"));
         assertEquals("bb", exchange.getOut().getBody(Map.class).get("b"));
         assertEquals("World", exchange.getOut().getBody(Map.class).get("Hello"));
-        
+
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

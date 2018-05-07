@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jolt;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +27,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Unit test based on the first sample test from the JOLT project.
  */
@@ -34,18 +34,18 @@ public class JoltFirstSampleTest extends CamelTestSupport {
 
     @Test
     public void testFirstSampleJolt() throws Exception {
-        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);     
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
             IOHelper.loadText(
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                     context, "org/apache/camel/component/jolt/firstSample/output.json")
             ).trim() // Remove the last newline added by IOHelper.loadText()
         );
-        
-        sendBody("direct://start", 
+
+        sendBody("direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jolt/firstSample/input.json"));
-        
+
         assertMockEndpointsSatisfied();
     }
 

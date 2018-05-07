@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.http.BaseNettyTest;
 import org.junit.Test;
 
-public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest{
+public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest {
     
     @Test
     public void testUndertowProducerOk() throws Exception {

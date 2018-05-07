@@ -19,7 +19,15 @@ package org.apache.camel.component.jolt;
 import java.io.InputStream;
 import java.util.Map;
 
-import com.bazaarvoice.jolt.*;
+import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.ContextualTransform;
+import com.bazaarvoice.jolt.Defaultr;
+import com.bazaarvoice.jolt.JoltTransform;
+import com.bazaarvoice.jolt.JsonUtils;
+import com.bazaarvoice.jolt.Removr;
+import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.Sortr;
+import com.bazaarvoice.jolt.Transform;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,7 +35,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,18 +42,18 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, label = "transformation")
 public class JoltEndpoint extends ResourceEndpoint {
-    
+
     private JoltTransform transform;
 
     @UriParam(defaultValue = "Hydrated")
     private JoltInputOutputType outputType;
-    
+
     @UriParam(defaultValue = "Hydrated")
     private JoltInputOutputType inputType;
-    
+
     @UriParam(defaultValue = "Chainr")
     private JoltTransformType transformDsl = JoltTransformType.Chainr;
-    
+
     public JoltEndpoint() {
     }
 
@@ -98,7 +105,7 @@ public class JoltEndpoint extends ResourceEndpoint {
                     break;
                 }
             }
-            
+
         }
         return transform;
     }
@@ -109,40 +116,40 @@ public class JoltEndpoint extends ResourceEndpoint {
     public void setTransform(JoltTransform transform) {
         this.transform = transform;
     }
-    
+
     public JoltInputOutputType getOutputType() {
         return outputType;
     }
-    
+
     /**
      * Specifies if the output should be hydrated JSON or a JSON String.
      */
     public void setOutputType(JoltInputOutputType outputType) {
         this.outputType = outputType;
     }
-    
+
     public JoltInputOutputType getInputType() {
         return inputType;
     }
-    
+
     /**
      * Specifies if the input is hydrated JSON or a JSON String.
      */
     public void setInputType(JoltInputOutputType inputType) {
         this.inputType = inputType;
     }
-    
+
     public JoltTransformType getTransformDsl() {
         return transformDsl;
     }
-    
+
     /**
      * Specifies the Transform DSL of the endpoint resource. If none is specified <code>Chainr</code> will be used.
      */
     public void setTransformDsl(JoltTransformType transformType) {
         this.transformDsl = transformType;
     }
-    
+
     public JoltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
