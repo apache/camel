@@ -77,7 +77,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-box-api</artifactId>
       <version>${project.version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
 
@@ -86,7 +86,7 @@
       <groupId>com.box</groupId>
       <artifactId>box-java-sdk</artifactId>
       <version>${box-java-sdk-version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
 

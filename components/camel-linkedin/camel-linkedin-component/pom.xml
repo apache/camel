@@ -65,7 +65,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
       <version>${project.version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
 

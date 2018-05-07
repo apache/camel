@@ -96,7 +96,7 @@
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-gmail</artifactId>
         <version>${google-api-services-mail-version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
 

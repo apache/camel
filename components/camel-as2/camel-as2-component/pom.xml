@@ -63,7 +63,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-as2-api</artifactId>
       <version>${project.version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
     
