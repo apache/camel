@@ -569,7 +569,7 @@
     <pubnub-version>4.19.0</pubnub-version>
     <qpid-broker-version>7.0.3</qpid-broker-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
-    <qpid-proton-j-version>0.26.0</qpid-proton-j-version>
+    <qpid-proton-j-version>0.27.1</qpid-proton-j-version>
     <qpid-jms-client-version>0.32.0</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
