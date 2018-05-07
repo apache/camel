@@ -33,10 +33,10 @@ import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
 
 /**
- * Base class for Simple language parser.
+ * Base class for Simple language parse.
  * <p/>
- * This parser is based on the principles of a
- * <a href="http://en.wikipedia.org/wiki/Recursive_descent_parser">recursive descent parser</a>.
+ * This parse is based on the principles of a
+ * <a href="http://en.wikipedia.org/wiki/Recursive_descent_parser">recursive descent parse</a>.
  */
 public abstract class BaseSimpleParser {
 
@@ -54,7 +54,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Advances the parser position to the next known {@link SimpleToken}
+     * Advances the parse position to the next known {@link SimpleToken}
      * in the input.
      */
     protected void nextToken() {
@@ -73,7 +73,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Advances the parser position to the next known {@link SimpleToken}
+     * Advances the parse position to the next known {@link SimpleToken}
      * in the input.
      *
      * @param filter filter for accepted token types
@@ -94,7 +94,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Clears the parser state, which means it can be used for parsing a new input.
+     * Clears the parse state, which means it can be used for parsing a new input.
      */
     protected void clear() {
         token = null;

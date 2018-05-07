@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * A base class for a parser for a bean.
+ * A base class for a parse for a bean.
  *
  * @version
  */
@@ -36,7 +36,7 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private final boolean assignId;
 
     /**
-     * Bean definition parser
+     * Bean definition parse
      *
      * @param type     the type, can be null
      * @param assignId whether to allow assigning id from the id attribute on the type

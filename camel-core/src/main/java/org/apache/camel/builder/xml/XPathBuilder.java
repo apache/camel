@@ -355,7 +355,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
 
     /**
      * Configures to use Saxon as the XPathFactory which allows you to use XPath 2.0 functions
-     * which may not be part of the build in JDK XPath parser.
+     * which may not be part of the build in JDK XPath parse.
      *
      * @return the current builder
      */

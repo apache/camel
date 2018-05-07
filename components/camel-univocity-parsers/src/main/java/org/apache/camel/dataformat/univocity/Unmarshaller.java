@@ -29,7 +29,7 @@ import com.univocity.parsers.common.AbstractParser;
 
 
 /**
- * This class unmarshalls the exchange body using an uniVocity parser.
+ * This class unmarshalls the exchange body using an uniVocity parse.
  *
  * @param <P> Parser class
  */
@@ -52,7 +52,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * Unmarshal from the given reader.
      *
      * @param reader             reader to read from
-     * @param parser             uniVocity parser to use
+     * @param parser             uniVocity parse to use
      * @param headerRowProcessor Row processor that retrieves the header
      * @return Unmarshalled data
      */
@@ -90,7 +90,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
         /**
          * Creates a new instance.
          *
-         * @param parser parser to use
+         * @param parser parse to use
          */
         protected RowIterator(P parser) {
             this.parser = parser;
@@ -145,7 +145,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
         /**
          * Creates a new instance.
          *
-         * @param parser parser to use
+         * @param parser parse to use
          */
         protected ListRowIterator(P parser) {
             super(parser);
@@ -171,7 +171,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
         /**
          * Creates a new instance
          *
-         * @param parser             parser to use
+         * @param parser             parse to use
          * @param headerRowProcessor row processor to use in order to retrieve the headers
          */
         protected MapRowIterator(P parser, HeaderRowProcessor headerRowProcessor) {

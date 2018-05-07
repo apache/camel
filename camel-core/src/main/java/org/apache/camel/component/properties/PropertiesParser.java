@@ -19,7 +19,7 @@ package org.apache.camel.component.properties;
 import java.util.Properties;
 
 /**
- * A parser to parse properties for a given input
+ * A parse to parse properties for a given input
  */
 public interface PropertiesParser {
 

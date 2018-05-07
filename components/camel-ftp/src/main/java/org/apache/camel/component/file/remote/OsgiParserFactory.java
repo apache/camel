@@ -94,7 +94,7 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
                     + " does not implement the interface "
                     + "org.apache.commons.net.ftp.FTPFileEntryParser.", e);
             } catch (Exception | ExceptionInInitializerError e) {
-                throw new ParserInitializationException("Error initializing parser", e);
+                throw new ParserInitializationException("Error initializing parse", e);
             }
         }
         if (parser == null) {
@@ -122,7 +122,7 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
             } else if (ukey.contains("TYPE: L8")) {
                 parser = new UnixFTPEntryParser(config);
             } else {
-                throw new ParserInitializationException("Unknown parser type: " + key);
+                throw new ParserInitializationException("Unknown parse type: " + key);
             }
         }
 
@@ -134,11 +134,11 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
     }
 
     /**
-     * Creates an NT FTP parser: if the config exists, and the system key equals
+     * Creates an NT FTP parse: if the config exists, and the system key equals
      * {@link FTPClientConfig#SYST_NT} then a plain {@link NTFTPEntryParser} is used,
      * otherwise a composite of {@link NTFTPEntryParser} and {@link UnixFTPEntryParser} is used.
      * @param config the config to use, may be {@code null}
-     * @return the parser
+     * @return the parse
      */
     private FTPFileEntryParser createNTFTPEntryParser(FTPClientConfig config) {
         if (config != null && FTPClientConfig.SYST_NT.equals(
@@ -153,11 +153,11 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
     }
 
     /**
-     * Creates an OS400 FTP parser: if the config exists, and the system key equals
+     * Creates an OS400 FTP parse: if the config exists, and the system key equals
      * {@link FTPClientConfig#SYST_OS400} then a plain {@link OS400FTPEntryParser} is used,
      * otherwise a composite of {@link OS400FTPEntryParser} and {@link UnixFTPEntryParser} is used.
      * @param config the config to use, may be {@code null}
-     * @return the parser
+     * @return the parse
      */
     private FTPFileEntryParser createOS400FTPEntryParser(FTPClientConfig config) {
         if (config != null

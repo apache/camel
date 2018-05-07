@@ -35,14 +35,14 @@ public class XmlParseTreeTest {
 
     @Test
     public void testXmlTree() throws Exception {
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel.xml");
-        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/mycamel.xml";
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parse/xml/mycamel.xml");
+        String fqn = "src/test/resources/org/apache/camel/camel/parse/xml/mycamel.xml";
         String baseDir = "src/test/resources";
         List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(is, baseDir, fqn);
 
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
-        assertEquals("src/test/resources/org/apache/camel/camel/parser/xml/mycamel.xml", details.getFileName());
+        assertEquals("src/test/resources/org/apache/camel/camel/parse/xml/mycamel.xml", details.getFileName());
         assertEquals("myRoute", details.getRouteId());
         assertEquals(null, details.getMethodName());
         assertEquals(null, details.getClassName());

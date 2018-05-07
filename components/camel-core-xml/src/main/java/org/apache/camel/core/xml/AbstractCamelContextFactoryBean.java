@@ -40,6 +40,7 @@ import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesFunction;
@@ -341,6 +342,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (Entry<String, CamelClusterService> entry : clusterServices.entrySet()) {
                 CamelClusterService service = entry.getValue();
                 LOG.info("Using CamelClusterService with id: {} and implementation: {}", service.getId(), service);
+                getContext().addService(service);
+            }
+        }
+        // service registry
+        Map<String, ServiceRegistry> serviceRegistries = getContext().getRegistry().findByTypeWithName(ServiceRegistry.class);
+        if (serviceRegistries != null && !serviceRegistries.isEmpty()) {
+            for (Map.Entry<String, ServiceRegistry> entry : serviceRegistries.entrySet()) {
+                ServiceRegistry service = entry.getValue();
+                LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
                 getContext().addService(service);
             }
         }
@@ -691,7 +701,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 pc.setPropertiesResolver(resolver);
             }
 
-            // if using a custom parser
+            // if using a custom parse
             if (ObjectHelper.isNotEmpty(def.getPropertiesParserRef())) {
                 PropertiesParser parser = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesParserRef(),
                                                                              PropertiesParser.class);

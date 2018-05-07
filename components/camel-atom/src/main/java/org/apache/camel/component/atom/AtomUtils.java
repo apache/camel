@@ -38,7 +38,7 @@ public final class AtomUtils {
     }
 
     /**
-     * Gets the Atom parser.
+     * Gets the Atom parse.
      */
     public static Parser getAtomParser() {
         return Abdera.getInstance().getParser();

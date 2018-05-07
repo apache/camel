@@ -39,23 +39,23 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
 
     @Test
     public void parseTree() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/TwoRoutesRouteBuilder.java"));
 
         List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".",
-            "src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java", true);
+            "src/test/java/org/apache/camel/parse/java/TwoRoutesRouteBuilder.java", true);
         assertEquals(2, list.size());
 
         CamelNodeDetails details = list.get(0);
         CamelNodeDetails details2 = list.get(1);
-        assertEquals("src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java", details.getFileName());
-        assertEquals("src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java", details2.getFileName());
+        assertEquals("src/test/java/org/apache/camel/parse/java/TwoRoutesRouteBuilder.java", details.getFileName());
+        assertEquals("src/test/java/org/apache/camel/parse/java/TwoRoutesRouteBuilder.java", details2.getFileName());
 
         assertEquals("foo", details.getRouteId());
-        assertEquals("org.apache.camel.parser.java.TwoRoutesRouteBuilder", details.getClassName());
+        assertEquals("org.apache.camel.parse.java.TwoRoutesRouteBuilder", details.getClassName());
         assertEquals("configure", details.getMethodName());
         assertEquals("bar", details2.getRouteId());
         assertEquals("configure", details2.getMethodName());
-        assertEquals("org.apache.camel.parser.java.TwoRoutesRouteBuilder", details2.getClassName());
+        assertEquals("org.apache.camel.parse.java.TwoRoutesRouteBuilder", details2.getClassName());
 
         String tree = details.dump(0);
         LOG.info("\n" + tree);

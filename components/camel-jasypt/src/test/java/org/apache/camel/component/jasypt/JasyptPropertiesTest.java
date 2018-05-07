@@ -41,7 +41,7 @@ public class JasyptPropertiesTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         // START SNIPPET: e1
-        // create the jasypt properties parser
+        // create the jasypt properties parse
         JasyptPropertiesParser jasypt = new JasyptPropertiesParser();
         // and set the master password
         jasypt.setPassword("secret");
@@ -49,7 +49,7 @@ public class JasyptPropertiesTest extends CamelTestSupport {
         // create the properties component
         PropertiesComponent pc = new PropertiesComponent();
         pc.setLocation("classpath:org/apache/camel/component/jasypt/myproperties.properties");
-        // and use the jasypt properties parser so we can decrypt values
+        // and use the jasypt properties parse so we can decrypt values
         pc.setPropertiesParser(jasypt);
 
         // add properties component to camel context

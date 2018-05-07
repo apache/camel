@@ -25,7 +25,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <!-- define the jasypt properties parser with the given password to be used -->
+    <!-- define the jasypt properties parse with the given password to be used -->
     <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
         <property name="password" value="secret"/>
     </bean>
@@ -34,7 +34,7 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
         <!-- the properties file is in the classpath -->
         <property name="location" value="classpath:org/apache/camel/component/jasypt/myproperties.properties"/>
-        <!-- and let it leverage the jasypt parser -->
+        <!-- and let it leverage the jasypt parse -->
         <property name="propertiesParser" ref="jasypt"/>
     </bean>
     <!-- END SNIPPET: e1 -->

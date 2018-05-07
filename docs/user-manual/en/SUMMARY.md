@@ -340,6 +340,7 @@
 	* [SAP NetWeaver](sap-netweaver-component.adoc)
 	* [Schematron](schematron-component.adoc)
 	* [SCP](scp-component.adoc)
+	* [Service](service-component.adoc)
 	* [ServiceNow](servicenow-component.adoc)
 	* [Servlet](servlet-component.adoc)
 	* [SFTP](sftp-component.adoc)

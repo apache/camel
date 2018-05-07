@@ -1149,11 +1149,11 @@ public abstract class AbstractCamelCatalog {
 
                 answer.setError(errMsg);
 
-                // is it simple parser exception then we can grab the index where the problem is
+                // is it simple parse exception then we can grab the index where the problem is
                 if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")
                     || cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleParserException")) {
                     try {
-                        // we need to grab the index field from those simple parser exceptions
+                        // we need to grab the index field from those simple parse exceptions
                         Method method = cause.getClass().getMethod("getIndex");
                         Object result = method.invoke(cause);
                         if (result != null) {

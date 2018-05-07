@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A parser to parse a string which contains property placeholders.
+ * A parse to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
     private static final String GET_OR_ELSE_TOKEN = ":";

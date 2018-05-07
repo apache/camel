@@ -27,7 +27,7 @@ import com.univocity.parsers.fixed.FixedWidthWriter;
 import com.univocity.parsers.fixed.FixedWidthWriterSettings;
 
 /**
- * This class is the data format that uses the fixed-width uniVocity parser.
+ * This class is the data format that uses the fixed-width uniVocity parse.
  */
 public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings,
         FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedWidthDataFormat> {

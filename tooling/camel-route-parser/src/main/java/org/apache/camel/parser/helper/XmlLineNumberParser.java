@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * An XML parser that uses SAX to include line and column number for each XML element in the parsed Document.
+ * An XML parse that uses SAX to include line and column number for each XML element in the parsed Document.
  * <p/>
  * The line number and column number can be obtained from a Node/Element using
  * <pre>

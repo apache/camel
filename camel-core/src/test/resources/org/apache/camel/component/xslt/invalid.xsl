@@ -28,7 +28,7 @@
   <xsl:template match="/">
     <transformed>
 
-      <!-- adjust-dateTime-to-timezone not known to the XSLT parser,
+      <!-- adjust-dateTime-to-timezone not known to the XSLT parse,
            will cause it raise an exception but no error logged by
            camel and deployment will proceed instead of failing.
       -->

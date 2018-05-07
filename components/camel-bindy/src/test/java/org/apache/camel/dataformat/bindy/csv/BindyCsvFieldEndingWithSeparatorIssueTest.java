@@ -83,7 +83,7 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
     }
 
     @Test
-    @Ignore("This issue will be revisit when we have chance to rewrite bindy parser")
+    @Ignore("This issue will be revisit when we have chance to rewrite bindy parse")
     public void testBindySeparatorsAround() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(createRoute()); // new ReconciliationRoute()

@@ -26,7 +26,7 @@ import groovy.util.XmlParser;
 import org.apache.camel.Exchange;
 
 /**
- * DataFormat for using groovy.util.XmlParser as parser and renderer for XML
+ * DataFormat for using groovy.util.XmlParser as parse and renderer for XML
  * data
  */
 public class XmlParserDataFormat extends AbstractXmlDataFormat {

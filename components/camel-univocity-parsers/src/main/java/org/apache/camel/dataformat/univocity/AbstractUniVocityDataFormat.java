@@ -43,8 +43,8 @@ import static org.apache.camel.util.IOHelper.getCharsetName;
  * @param <F>   uniVocity format class
  * @param <CWS> uniVocity writer settings class
  * @param <W>   uniVocity writer class
- * @param <CPS> uniVocity parser settings class
- * @param <P>   uniVocity parser class
+ * @param <CPS> uniVocity parse settings class
+ * @param <P>   uniVocity parse class
  * @param <DF>  the data format class (for providing a fluent API)
  */
 public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>,
@@ -69,7 +69,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     private final Object writerSettingsToken = new Object();
     private volatile Marshaller<W> marshaller;
 
-    // We're using a ThreadLocal for the parser settings because in order to retrieve the headers we need to change the
+    // We're using a ThreadLocal for the parse settings because in order to retrieve the headers we need to change the
     // settings each time we're parsing...
     private volatile ThreadLocal<CPS> parserSettings;
     private final Object parserSettingsToken = new Object();
@@ -487,14 +487,14 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     protected abstract W createWriter(Writer writer, CWS settings);
 
     /**
-     * Creates a new instance of the parser settings.
+     * Creates a new instance of the parse settings.
      *
-     * @return New instance of the parser settings
+     * @return New instance of the parse settings
      */
     protected abstract CPS createParserSettings();
 
     /**
-     * Configure the parser settings.
+     * Configure the parse settings.
      *
      * @param settings Parser settings to configure
      */
@@ -510,10 +510,10 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Creates a new instance of the uniVocity parser.
+     * Creates a new instance of the uniVocity parse.
      *
      * @param settings Parser settings to use
-     * @return New instance of the uniVocity parser
+     * @return New instance of the uniVocity parse
      */
     protected abstract P createParser(CPS settings);
 
@@ -547,9 +547,9 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Creates and configures the parser settings.
+     * Creates and configures the parse settings.
      *
-     * @return new configured instance of the parser settings
+     * @return new configured instance of the parse settings
      */
     final CPS createAndConfigureParserSettings() {
         CPS settings = createParserSettings();
@@ -559,7 +559,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Configures the common settings shared by parser and writer.
+     * Configures the common settings shared by parse and writer.
      *
      * @param settings settings to configure
      */

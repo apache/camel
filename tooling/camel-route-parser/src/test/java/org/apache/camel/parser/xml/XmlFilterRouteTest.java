@@ -36,8 +36,8 @@ public class XmlFilterRouteTest {
     public void testXml() throws Exception {
         List<CamelSimpleExpressionDetails> list = new ArrayList<>();
 
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myfiltercamel.xml");
-        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myfiltercamel.xml";
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parse/xml/myfiltercamel.xml");
+        String fqn = "src/test/resources/org/apache/camel/camel/parse/xml/myfiltercamel.xml";
         String baseDir = "src/test/resources";
         XmlRouteParser.parseXmlRouteSimpleExpressions(is, baseDir, fqn, list);
 

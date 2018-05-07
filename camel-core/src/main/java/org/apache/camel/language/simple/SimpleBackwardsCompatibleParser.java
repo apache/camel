@@ -25,14 +25,14 @@ import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * A backwards compatible parser, which supports the old simple language
+ * A backwards compatible parse, which supports the old simple language
  * syntax by which simple functions can be given without using start and
  * end tokens.
  * <p/>
  * For example "body" would be parsed as the body function, where as the
- * new parser would require that to be entered as "${body}".
+ * new parse would require that to be entered as "${body}".
  * <p/>
- * This parser is to be removed when the old syntax is no longer supported.
+ * This parse is to be removed when the old syntax is no longer supported.
  *
  * @deprecated will be removed in Camel 3.0
  */

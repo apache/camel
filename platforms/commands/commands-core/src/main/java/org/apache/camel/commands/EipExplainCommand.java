@@ -45,7 +45,7 @@ public class EipExplainCommand extends AbstractContextCommand {
 
         out.println("Context:       " + context);
 
-        // use a basic json parser
+        // use a basic json parse
         List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
         for (Map<String, String> option : options) {

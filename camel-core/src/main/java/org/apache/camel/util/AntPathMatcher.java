@@ -55,6 +55,7 @@ import java.util.StringTokenizer;
  * </ul>
  */
 public class AntPathMatcher {
+    public static final AntPathMatcher INSTANCE = new AntPathMatcher();
 
     /** Default path separator: "/" */
     public static final String DEFAULT_PATH_SEPARATOR = "/";

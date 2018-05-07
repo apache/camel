@@ -65,7 +65,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
             propertyTypePattern = Pattern.compile(excludeConfigTypes);
         }
 
-        // create parser
+        // create parse
         ApiMethodParser parser = createAdapterParser(proxyType);
         parser.setSignatures(getSignatureList());
         parser.setClassLoader(getProjectClassLoader());

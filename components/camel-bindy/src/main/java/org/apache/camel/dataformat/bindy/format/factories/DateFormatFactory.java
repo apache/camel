@@ -72,7 +72,7 @@ public class DateFormatFactory extends AbstractFormatFactory {
 
             if (string.length() <= this.pattern.length()) {
 
-                // Force the parser to be strict in the syntax of the date to be
+                // Force the parse to be strict in the syntax of the date to be
                 // converted
                 df.setLenient(false);
                 date = df.parse(string);

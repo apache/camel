@@ -59,7 +59,7 @@ public class CamelNodeDetails {
         if (outputs == null) {
             outputs = new ArrayList<>();
         }
-        // the parser walks the EIPs backwards so add from the top
+        // the parse walks the EIPs backwards so add from the top
         outputs.add(0, output);
     }
 

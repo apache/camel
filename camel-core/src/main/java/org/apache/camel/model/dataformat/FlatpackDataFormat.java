@@ -144,7 +144,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * References to a custom parser factory to lookup in the registry
+     * References to a custom parse factory to lookup in the registry
      */
     public void setParserFactoryRef(String parserFactoryRef) {
         this.parserFactoryRef = parserFactoryRef;

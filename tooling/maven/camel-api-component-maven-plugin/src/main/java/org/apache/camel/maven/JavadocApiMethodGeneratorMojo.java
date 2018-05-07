@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.IOUtil;
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     static {
-        // set Java AWT to headless before using Swing HTML parser
+        // set Java AWT to headless before using Swing HTML parse
         System.setProperty("java.awt.headless", "true");
     }
 

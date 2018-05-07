@@ -186,7 +186,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     protected FTPClient createFtpClient() throws Exception {
         FTPClient client = new FTPClient();
-        // If we're in an OSGI environment, set the parser factory to
+        // If we're in an OSGI environment, set the parse factory to
         // OsgiParserFactory, because commons-net uses Class.forName in their
         // default ParserFactory
         if (isOsgi()) {

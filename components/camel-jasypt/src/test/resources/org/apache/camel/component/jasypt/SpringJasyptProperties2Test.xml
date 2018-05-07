@@ -25,7 +25,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <!-- define the jasypt properties parser with the given password to be used -->
+    <!-- define the jasypt properties parse with the given password to be used -->
     <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
         <!-- password is mandatory, you can prefix it with sysenv: or sys: to indicate it should use
              an OS environment or JVM system property value, so you dont have the master password defined here -->

@@ -34,6 +34,7 @@ import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.slf4j.LoggerFactory;
 
 public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
     private final ExecutorServiceManager executorServiceManager;
@@ -57,7 +58,10 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
     @Override
     protected void doStop() throws Exception {
-        executorServiceManager.shutdownGraceful(scheduledExecutorService);
+        if (this.scheduledExecutorService != null) {
+            this.executorServiceManager.shutdownNow(scheduledExecutorService);
+        }
+
         super.doStop();
     }
 
@@ -103,6 +107,8 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         }
 
         private void onEvent(Event event) {
+            LoggerFactory.getLogger(ConsulEventConsumer.this.getClass()).info("{}", event);
+
             final Exchange exchange = endpoint.createExchange();
             final Message message = exchange.getIn();
 

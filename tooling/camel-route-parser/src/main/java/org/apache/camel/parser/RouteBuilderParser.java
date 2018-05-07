@@ -41,9 +41,9 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.util.Strings;
 
 /**
- * A Camel RouteBuilder parser that parses Camel Java routes source code.
+ * A Camel RouteBuilder parse that parses Camel Java routes source code.
  * <p/>
- * This implementation is higher level details, and uses the lower level parser {@link CamelJavaParserHelper}.
+ * This implementation is higher level details, and uses the lower level parse {@link CamelJavaParserHelper}.
  */
 public final class RouteBuilderParser {
 

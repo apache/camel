@@ -31,7 +31,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
     private final Map<Pattern, Map<Pattern, List<NameReplacement>>> methodMap;
 
     /**
-     * Create a parser using regular expressions to adapt parameter names.
+     * Create a parse using regular expressions to adapt parameter names.
      * @param proxyType Proxy class.
      * @param substitutions an array of <b>ordered</b> Argument adapters.
      */

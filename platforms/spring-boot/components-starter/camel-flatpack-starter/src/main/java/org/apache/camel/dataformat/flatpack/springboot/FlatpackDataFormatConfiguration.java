@@ -66,7 +66,7 @@ public class FlatpackDataFormatConfiguration
      */
     private Boolean ignoreExtraColumns = false;
     /**
-     * References to a custom parser factory to lookup in the registry
+     * References to a custom parse factory to lookup in the registry
      */
     private String parserFactoryRef;
     /**

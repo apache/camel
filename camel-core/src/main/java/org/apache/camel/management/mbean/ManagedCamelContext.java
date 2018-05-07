@@ -573,7 +573,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
         String xml = dumpRoutesAsXml();
         if (xml != null) {
-            // use the coverage xml parser to dump the routes and enrich with coverage stats
+            // use the coverage xml parse to dump the routes and enrich with coverage stats
             Document dom = RouteCoverageXmlParser.parseXml(context, new ByteArrayInputStream(xml.getBytes()));
             // convert dom back to xml
             String converted = context.getTypeConverter().convertTo(String.class, dom);

@@ -34,7 +34,7 @@ public class FindElementInRoutesTest {
 
     @Test
     public void testXml() throws Exception {
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myroutes.xml");
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parse/xml/myroutes.xml");
         String key = "_camelContext1/cbr-route/_from1";
         Element element = CamelXmlHelper.getSelectedCamelElementNode(key, is);
         assertNotNull("Could not find Element for key " + key, element);

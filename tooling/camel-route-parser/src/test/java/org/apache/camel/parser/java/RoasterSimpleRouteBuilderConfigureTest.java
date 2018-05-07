@@ -37,7 +37,7 @@ public class RoasterSimpleRouteBuilderConfigureTest {
 
     @Test
     public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/MySimpleRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelSimpleExpressions(method);
@@ -56,7 +56,7 @@ public class RoasterSimpleRouteBuilderConfigureTest {
     public static int findLineNumber(int pos) throws Exception {
         int lines = 0;
         int current = 0;
-        File file = new File("src/test/java/org/apache/camel/parser/java/MySimpleRouteBuilder.java");
+        File file = new File("src/test/java/org/apache/camel/parse/java/MySimpleRouteBuilder.java");
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {

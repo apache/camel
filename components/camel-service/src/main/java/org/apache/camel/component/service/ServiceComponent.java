@@ -1,0 +1,133 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.service;
+
+
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.cloud.ServiceRegistry;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.cloud.ServiceRegistryHelper;
+import org.apache.camel.impl.cloud.ServiceRegistrySelectors;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
+
+public class ServiceComponent extends DefaultComponent {
+    @Metadata(label = "advanced")
+    private ServiceRegistry service;
+    @Metadata(label = "advanced")
+    private ServiceRegistry.Selector serviceSelector;
+
+    public ServiceComponent() {
+        this(null);
+    }
+
+    public ServiceComponent(CamelContext context) {
+        super(context);
+
+        this.serviceSelector = ServiceRegistrySelectors.DEFAULT_SELECTOR;
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        final String serviceName = StringHelper.before(remaining, ":");
+        final String delegateUri = StringHelper.after(remaining, ":");
+
+        ObjectHelper.notNull(serviceName, "Service Name");
+        ObjectHelper.notNull(delegateUri, "Delegate URI");
+
+        // add service name to the parameters
+        parameters.put("serviceName", serviceName);
+
+        // Lookup the service registry, this may be a static selected service
+        // or dynamically selected one through a ServiceRegistry.Selector
+        final ServiceRegistry service = getServiceRegistry();
+
+        // Compute service definition from parameters, this is used as default
+        // definition
+        final ServiceParameters params = computeServiceParameters(parameters);
+
+        return new ServiceEndpoint(
+            uri,
+            this,
+            service,
+            params,
+            URISupport.appendParametersToURI(delegateUri, parameters)
+        );
+    }
+
+    public ServiceRegistry getService() {
+        return service;
+    }
+
+    /**
+     * Inject the service to use.
+     */
+    public void setService(ServiceRegistry service) {
+        this.service = service;
+    }
+
+    public ServiceRegistry.Selector getServiceSelector() {
+        return serviceSelector;
+    }
+
+    /**
+     *
+     * Inject the service selector used to lookup the {@link ServiceRegistry} to use.
+     */
+    public void setServiceSelector(ServiceRegistry.Selector serviceSelector) {
+        this.serviceSelector = serviceSelector;
+    }
+
+    // *****************
+    // Helpers
+    // *****************
+
+    private ServiceRegistry getServiceRegistry() {
+        if (service == null) {
+            return ServiceRegistryHelper.lookupService(getCamelContext(), serviceSelector).orElseThrow(
+                () -> new IllegalStateException("No cluster service found")
+            );
+        }
+
+        return service;
+    }
+
+    @SuppressWarnings("unchecked")
+    private ServiceParameters computeServiceParameters(Map<String, Object> parameters) {
+        // Extract service definition related parameter from uri
+        final String serviceId = getAndRemoveParameter(parameters, "serviceId", String.class);
+        final String serviceName = getAndRemoveParameter(parameters, "serviceName", String.class);
+        final String serviceHost = getAndRemoveParameter(parameters, "serviceHost", String.class);
+        final String servicePort = getAndRemoveParameter(parameters, "servicePort", String.class);
+        final Map<String, Object> serviceMeta = IntrospectionSupport.extractProperties(parameters, "serviceMeta.", true);
+
+        ServiceParameters params = new ServiceParameters();
+        ObjectHelper.ifNotEmpty(serviceId, params::setId);
+        ObjectHelper.ifNotEmpty(serviceName, params::setName);
+        ObjectHelper.ifNotEmpty(serviceHost, params::setHost);
+        ObjectHelper.ifNotEmpty(servicePort, params::setPort);
+        ObjectHelper.ifNotEmpty(serviceMeta, meta -> params.setMeta(Map.class.cast(meta)));
+
+        return params;
+    }
+}

@@ -99,7 +99,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     /**
-     * Whether to allow using the easy predicate parser to pre-parse predicates.
+     * Whether to allow using the easy predicate parse to pre-parse predicates.
      * See {@link EasyPredicateParser} for more details.
      */
     public void setAllowEasyPredicate(boolean allowEasyPredicate) {

@@ -92,7 +92,7 @@ public class FtpConfiguration extends RemoteFileConfiguration {
 
     /**
      * Allows you to set how the consumer will handle subfolders and files
-     * in the path if the directory parser results in with absolute paths
+     * in the path if the directory parse results in with absolute paths
      * The reason for this is that some FTP servers may return file names 
      * with absolute paths, and if so then the FTP component needs to handle
      * this by converting the returned path into a relative path.

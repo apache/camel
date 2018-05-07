@@ -31,10 +31,10 @@ public class RoasterChoiceRouteBuilderConfigureTest {
 
     @Test
     public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/MyChoiceRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
-        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz, ".", "src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java", method);
+        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz, ".", "src/test/java/org/apache/camel/parse/java/MyChoiceRouteBuilder.java", method);
         Assert.assertNotNull(list);
     }
 

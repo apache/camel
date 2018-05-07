@@ -25,8 +25,8 @@ import static org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators.isO
 /**
  * To allow defining very easy jsonpath predicates using the syntax: left OP right
  * <p/>
- * The easy parser is only in use if the predicate do not start with the <tt>$</tt> sign which is used by jsonpath.
- * The parser is intended for predicates only.
+ * The easy parse is only in use if the predicate do not start with the <tt>$</tt> sign which is used by jsonpath.
+ * The parse is intended for predicates only.
  */
 public class EasyPredicateParser {
 
@@ -34,7 +34,7 @@ public class EasyPredicateParser {
      * Parses the predicate
      *
      * @param predicate the predicate
-     * @return the parsed predicate or the original predicate if easy parser did not kick-in
+     * @return the parsed predicate or the original predicate if easy parse did not kick-in
      */
     public String parse(String predicate) {
 

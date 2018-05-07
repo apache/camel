@@ -196,7 +196,7 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
             reader.setFeature(Parser.namespacePrefixesFeature, false);
 
             /*
-             * set each parser feature that the user may have supplied.
+             * set each parse feature that the user may have supplied.
              * http://www.saxproject.org/apidoc/org/xml/sax/package-summary.html
              * http://home.ccil.org/~cowan/XML/tagsoup/#properties
              */
@@ -208,7 +208,7 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
             }
 
             /*
-             * set each parser feature that the user may have supplied. {@link
+             * set each parse feature that the user may have supplied. {@link
              * http://home.ccil.org/~cowan/XML/tagsoup/#properties}
              */
 
@@ -226,7 +226,7 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
             }
 
         } catch (Exception e) {
-            throw new IllegalArgumentException("Problem configuring the parser", e);
+            throw new IllegalArgumentException("Problem configuring the parse", e);
         }
         return reader;
     }

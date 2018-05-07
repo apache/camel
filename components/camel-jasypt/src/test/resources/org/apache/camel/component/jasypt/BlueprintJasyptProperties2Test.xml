@@ -23,7 +23,7 @@
            xsi:schemaLocation="
            http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
-    <!-- define the jasypt properties parser with the given password to be used -->
+    <!-- define the jasypt properties parse with the given password to be used -->
     <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
         <property name="password" value="secret"/>
     </bean>

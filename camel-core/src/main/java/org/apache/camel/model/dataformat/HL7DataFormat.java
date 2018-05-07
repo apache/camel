@@ -68,7 +68,7 @@ public class HL7DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To use a custom HL7 parser
+     * To use a custom HL7 parse
      */
     public void setParser(Object parser) {
         this.parser = parser;
@@ -77,7 +77,7 @@ public class HL7DataFormat extends DataFormatDefinition {
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (getParser() != null) {
-            setProperty(camelContext, dataFormat, "parser", getParser());
+            setProperty(camelContext, dataFormat, "parse", getParser());
         }
         setProperty(camelContext, dataFormat, "validate", isValidate());
     }

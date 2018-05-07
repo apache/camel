@@ -124,7 +124,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     protected String resolvePlaceholder(String placeholder, Properties props) {
         String value = props.getProperty(placeholder);
         if (parser != null) {
-            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
+            // Just apply the parse to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
             return parser.parseProperty(placeholder, value, props);
         } else {
             return value;
@@ -215,7 +215,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
     public void setParser(PropertiesParser parser) {
         if (this.parser != null) {
-            // use a bridge if there is already a parser configured
+            // use a bridge if there is already a parse configured
             this.parser = new BridgePropertiesParser(this.parser, parser);
         } else {
             this.parser = parser;
