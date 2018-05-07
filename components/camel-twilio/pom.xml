@@ -69,7 +69,7 @@
       <groupId>com.twilio.sdk</groupId>
       <artifactId>twilio</artifactId>
       <version>${twilio-version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
 

@@ -68,7 +68,7 @@
       <groupId>com.braintreepayments.gateway</groupId>
       <artifactId>braintree-java</artifactId>
       <version>${braintree-gateway-version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
       <optional>true</optional>
       <exclusions>

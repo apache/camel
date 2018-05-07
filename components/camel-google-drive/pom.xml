@@ -83,7 +83,7 @@
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-drive</artifactId>
         <version>${google-api-services-drive-version}</version>
-      <classifier>javadoc</classifier>
+      <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
 

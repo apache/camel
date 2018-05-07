@@ -189,7 +189,7 @@
             <groupId>com.cloudbees.thirdparty</groupId>
             <artifactId>zendesk-java-client</artifactId>
             <version>${zendesk-client-version}</version>
-            <classifier>javadoc</classifier>
+            <type>javadoc</type>
           </dependency>
         </dependencies>
       </plugin>
