@@ -90,15 +90,16 @@
 				<executions>
 					<execution>
 						<id>add-javadoc</id>
+						<phase>generate-test-resources</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 						<configuration>
 							<attach>true</attach>
-							<source>1.8</source>
+							<source>${jdk.version}</source>
 							<quiet>true</quiet>
 							<detectOfflineLinks>false</detectOfflineLinks>
-							<javadocVersion>1.7</javadocVersion>
+							<javadocVersion>${jdk.version}</javadocVersion>
 							<encoding>UTF-8</encoding>
 						</configuration>
 					</execution>
