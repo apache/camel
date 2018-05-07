@@ -22,7 +22,7 @@ package org.apache.camel.component.jolt;
 public final class JoltConstants {
 
     public static final String JOLT_RESOURCE_URI = "CamelJoltResourceUri";
-    
+
     public static final String JOLT_CONTEXT = "CamelJoltContext";
 
     private JoltConstants() {
