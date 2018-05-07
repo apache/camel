@@ -66,7 +66,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
 
         STANDARD_MICALGS = Collections.unmodifiableMap(stdMicAlgs);
     }
-    
+
     /**
      * Signing algorithms for DSA keys in order of preference
      */
@@ -90,7 +90,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     "MD5WITHRSA",
     "MD2WITHRSA",
     };
-    
+
     /**
      * Signing algorithms for EC keys in order of preference
      */
@@ -104,10 +104,10 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
 
     public AS2SignedDataGenerator() {
     }
-    
+
     /**
      * Creates a <code>multipart/signed</code> content type containing the algorithms used by this generator.
-     * 
+     *
      * @return A <code>multipart/signed</code> content type
      */
     public ContentType createMultipartSignedContentType(String boundary) {
@@ -170,12 +170,12 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
                 header.append('\"');
             }
         }
-        
+
         return ContentType.parse(header.toString());
     }
-    
+
     public static String[] getSupportedSignatureAlgorithmNamesForKey(Key key) {
-        
+
         switch (key.getAlgorithm()) {
         case "DSA":
             return DSA_SIGNING_ALGORITHMS;

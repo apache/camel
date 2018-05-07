@@ -33,19 +33,19 @@ public class AS2HeaderUtilsTest {
     private static final String SIGNED_RECEIPT_MICALG_ATTRIBUTE = "signed-receipt-micalg";
     private static final String SIGNED_RECEIPT_MICALG_IMPORTANCE = "required";
     private static final String[] SIGNED_RECEIPT_MICALG_VALUES = {"sha1"};
-    
+
     @Test
     public void parseNameValuePairTest() {
 
         final CharArrayBuffer buffer = new CharArrayBuffer(TEST_NAME_VALUES.length());
         buffer.append(TEST_NAME_VALUES);
         final ParserCursor cursor = new ParserCursor(0, TEST_NAME_VALUES.length());
-        
+
         Parameter parameter = AS2HeaderUtils.parseParameter(buffer, cursor);
         assertEquals("Unexpected value for parameter attribute", SIGNED_RECEIPT_PROTOCOL_ATTRIBUTE, parameter.getAttribute());
         assertEquals("Unexpected value for parameter importance", SIGNED_RECEIPT_PROTOCOL_IMPORTANCE, parameter.getImportance().getImportance());
         assertArrayEquals("Unexpected value for parameter values", SIGNED_RECEIPT_PROTOCOL_VALUES, parameter.getValues());
-        
+
         parameter = AS2HeaderUtils.parseParameter(buffer, cursor);
         assertEquals("Unexpected value for parameter attribute", SIGNED_RECEIPT_MICALG_ATTRIBUTE, parameter.getAttribute());
         assertEquals("Unexpected value for parameter importance", SIGNED_RECEIPT_MICALG_IMPORTANCE, parameter.getImportance().getImportance());

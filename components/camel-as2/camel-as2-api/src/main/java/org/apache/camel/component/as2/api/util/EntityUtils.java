@@ -44,11 +44,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class EntityUtils {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(EntityUtils.class);
 
     private static AtomicLong partNumber = new AtomicLong();
-    
+
     private EntityUtils() {
     }
 
@@ -60,7 +60,7 @@ public final class EntityUtils {
      * <p>
      * The generated string contains only US-ASCII characters and hence is safe
      * for use in RFC822 headers.
-     * 
+     *
      * @return The generated boundary string.
      */
     public static String createBoundaryValue() {
@@ -78,15 +78,15 @@ public final class EntityUtils {
     public static String appendParameter(String headerString, String parameterName, String parameterValue) {
         return headerString + "; " + parameterName + "=" + parameterValue;
     }
-    
+
     public static byte[] encode(byte[] data, String encoding) throws Exception {
         Args.notNull(data, "Data");
-        
+
         if (encoding == null) {
             // Identity encoding
             return data;
         }
-        
+
         switch(encoding.toLowerCase()) {
         case "base64":
             return Base64.encode(data);
@@ -102,10 +102,10 @@ public final class EntityUtils {
             throw new Exception("Unknown encoding: " + encoding);
         }
     }
-    
+
     public static OutputStream encode(OutputStream os, String encoding) throws Exception {
         Args.notNull(os, "Output Stream");
-        
+
         if (encoding == null) {
             // Identity encoding
             return os;
@@ -125,10 +125,10 @@ public final class EntityUtils {
             throw new Exception("Unknown encoding: " + encoding);
         }
     }
-    
+
     public static byte[] decode(byte[] data, String encoding) throws Exception {
         Args.notNull(data, "Input Stream");
-        
+
         if (encoding == null) {
             // Identity encoding
             return data;
@@ -147,10 +147,10 @@ public final class EntityUtils {
             throw new Exception("Unknown encoding: " + encoding);
         }
     }
-    
+
     public static InputStream decode(InputStream is, String encoding) throws Exception {
         Args.notNull(is, "Input Stream");
-        
+
         if (encoding == null) {
             // Identity encoding
             return is;
@@ -170,24 +170,24 @@ public final class EntityUtils {
             throw new Exception("Unknown encoding: " + encoding);
         }
     }
-    
+
     public static ApplicationEDIEntity createEDIEntity(String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody) throws Exception {
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
         String charset = ediMessageContentType.getCharset() == null ? AS2Charset.US_ASCII : ediMessageContentType.getCharset().toString();
         switch(ediMessageContentType.getMimeType().toLowerCase()) {
         case AS2MediaType.APPLICATION_EDIFACT:
-            return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody);            
+            return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
         case AS2MediaType.APPLICATION_EDI_X12:
-            return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody);            
+            return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody);
         case AS2MediaType.APPLICATION_EDI_CONSENT:
-            return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody);            
+            return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
         default:
             throw new Exception("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
         }
-        
+
     }
-    
+
     public static byte[] getContent(HttpEntity entity) {
         try {
             final ByteArrayOutputStream outstream = new ByteArrayOutputStream();
@@ -239,9 +239,9 @@ public final class EntityUtils {
             contentCharset = StandardCharsets.US_ASCII;
         }
         return decode(bodyPartContent.getBytes(contentCharset), bodyPartTransferEncoding);
-    
+
     }
 
 
-    
+
 }

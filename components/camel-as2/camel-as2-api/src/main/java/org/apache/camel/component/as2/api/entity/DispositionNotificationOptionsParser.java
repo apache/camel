@@ -51,18 +51,18 @@ public class DispositionNotificationOptionsParser {
                                                                               final ParserCursor cursor) {
         Args.notNull(buffer, "buffer");
         Args.notNull(cursor, "cursor");
-        
+
         Map<String, Parameter> parameters = new HashMap<String, Parameter>();
         while (!cursor.atEnd()) {
             Parameter parameter = AS2HeaderUtils.parseParameter(buffer, cursor);
             parameters.put(parameter.getAttribute(), parameter);
         }
-        
+
         Parameter signedReceiptProtocolParameter = parameters.get(SIGNED_RECEIPT_PROTOCOL_ATTR_NAME);
-        
+
         Parameter signedReceiptMicalgParameter = parameters.get(SIGNED_RECEIPT_MICALG_ATTR_NAME);
-        
-        
+
+
         return new DispositionNotificationOptions(signedReceiptProtocolParameter, signedReceiptMicalgParameter);
     }
 

@@ -34,7 +34,7 @@ import org.apache.http.util.Args;
 
 /**
  * AS2 Client Manager
- * 
+ *
  * <p>
  * Sends EDI Messages over HTTP
  *
@@ -55,17 +55,17 @@ public class AS2ClientManager {
      * The HTTP Context Attribute indicating the AS2 message structure to be sent.
      */
     public static final String AS2_MESSAGE_STRUCTURE = CAMEL_AS2_CLIENT_PREFIX + "as2-message-structure";
-    
+
     /**
      * The HTTP Context Attribute indicating the EDI message content type to be sent.
      */
     public static final String EDI_MESSAGE_CONTENT_TYPE = CAMEL_AS2_CLIENT_PREFIX + "edi-message-content-type";
-    
+
     /**
      * The HTTP Context Attribute indicating the EDI message transfer encoding to be sent.
      */
     public static final String EDI_MESSAGE_TRANSFER_ENCODING = CAMEL_AS2_CLIENT_PREFIX + "edi-message-transfer-encoding";
-    
+
     /**
      * The HTTP Context Attribute containing the HTTP request message
      * transporting the EDI message
@@ -136,13 +136,13 @@ public class AS2ClientManager {
 
     /**
      * The HTTP Context Attribute containing the internet e-mail address of
-     * sending system requesting a message disposition notification. 
+     * sending system requesting a message disposition notification.
      */
     public static final String DISPOSITION_NOTIFICATION_TO = CAMEL_AS2_CLIENT_PREFIX + "disposition-notification-to";
 
     /**
-     * The HTTP Context Attribute containing the list of names of the requested MIC algorithms to be used 
-     * by the receiving system to construct a message disposition notification. 
+     * The HTTP Context Attribute containing the list of names of the requested MIC algorithms to be used
+     * by the receiving system to construct a message disposition notification.
      */
     public static final String SIGNED_RECEIPT_MIC_ALGORITHMS = CAMEL_AS2_CLIENT_PREFIX + "signed-receipt-mic-algorithms";
 
@@ -156,7 +156,7 @@ public class AS2ClientManager {
 
     /**
      * Send <code>ediMessage</code> to trading partner.
-     * 
+     *
      * @param ediMessage
      *            - EDI message to transport
      * @param httpContext
@@ -177,12 +177,12 @@ public class AS2ClientManager {
                                 String dispositionNotificationTo,
                                 String[] signedReceiptMicAlgorithms)
             throws HttpException {
-        
+
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(as2MessageStructure, "AS2 Message Structure");
         Args.notNull(requestUri, "Request URI");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
-        
+
         // Add Context attributes
         HttpCoreContext httpContext = HttpCoreContext.create();
         httpContext.setAttribute(AS2ClientManager.REQUEST_URI, requestUri);
@@ -197,7 +197,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
-        
+
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
         httpContext.setAttribute(HTTP_REQUEST, request);
 
@@ -257,7 +257,7 @@ public class AS2ClientManager {
         if (privateKey == null) {
             throw new HttpException("Signing private key missing");
         }
-        
+
         return SigningUtils.createSigningGenerator(certificateChain, privateKey);
 
     }

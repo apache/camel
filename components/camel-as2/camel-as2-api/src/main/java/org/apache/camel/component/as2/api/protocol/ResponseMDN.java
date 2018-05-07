@@ -51,11 +51,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResponseMDN implements HttpResponseInterceptor {
-    
+
     public static final String BOUNDARY_PARAM_NAME = "boundary";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
-    
+
     private final String as2Version;
     private final String serverFQDN;
     private Certificate[] signingCertificateChain;
@@ -70,7 +70,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     @Override
     public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
-        
+
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode < 200 || statusCode >= 300) {
             LOG.debug("MDN not added due to response status code: " + statusCode);
@@ -79,14 +79,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
         LOG.debug("Adding MDN to response: " + response);
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-        
+
         HttpEntityEnclosingRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpEntityEnclosingRequest.class);
         if (request == null) {
             LOG.debug("MDN not added due to null request");
             return;
         }
         LOG.debug("Processing MDN for request: " + request);
-        
+
         /* MIME header */
         response.addHeader(AS2Header.MIME_VERSION, AS2Constants.MIME_VERSION);
 
@@ -97,14 +97,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
         String subjectPrefix = coreContext.getAttribute(AS2ServerManager.SUBJECT, String.class);
         String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
         if (subjectPrefix != null && subject != null) {
-            subject = subjectPrefix + subject;            
+            subject = subjectPrefix + subject;
         } else if (subject != null) {
             subject = "MDN Response To:" + subject;
         } else {
             subject = "Your Requested MDN Response";
         }
         response.addHeader(AS2Header.SUBJECT, subject);
-        
+
         /* From header */
         String from = coreContext.getAttribute(AS2ServerManager.FROM, String.class);
         response.addHeader(AS2Header.FROM, from);
@@ -130,9 +130,9 @@ public class ResponseMDN implements HttpResponseInterceptor {
         /* Message-Id header*/
         // SHOULD be set to aid in message reconciliation
         response.addHeader(AS2Header.MESSAGE_ID, Util.createMessageId(serverFQDN));
-        
+
         if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO) != null) {
-            // Return a Message Disposition Notification Receipt in response body 
+            // Return a Message Disposition Notification Receipt in response body
             String boundary = EntityUtils.createBoundaryValue();
             DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
@@ -141,19 +141,19 @@ public class ResponseMDN implements HttpResponseInterceptor {
             DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                     .parseDispositionNotificationOptions(
                             HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
-            
+
             String receiptAddress = HttpMessageUtils.getHeaderValue(request, AS2Header.RECEIPT_DELIVERY_OPTION);
-            if (receiptAddress != null) { 
+            if (receiptAddress != null) {
                 // Asynchronous Delivery
                 // TODO Implement
-            } else { 
+            } else {
                 // Synchronous Delivery
-                
+
                 AS2SignedDataGenerator gen = null;
                 if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null && signingPrivateKey != null) {
                     gen = SigningUtils.createSigningGenerator(signingCertificateChain, signingPrivateKey);
                 }
-                
+
                 if (gen != null) {
                     // Create signed receipt
                     try {
@@ -173,7 +173,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     EntityUtils.setMessageEntity(response, multipartReportEntity);
                 }
             }
-            
+
         }
         LOG.debug(Util.printMessage(response));
     }

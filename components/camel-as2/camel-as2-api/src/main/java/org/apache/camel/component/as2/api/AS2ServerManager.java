@@ -27,13 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * AS2 Server Manager 
- * 
- * <p>Receives EDI Messages over HTTP  
+ * AS2 Server Manager
+ *
+ * <p>Receives EDI Messages over HTTP
  *
  */
 public class AS2ServerManager {
-    
+
     //
     // AS2 HTTP Context Attribute Keys
     //
@@ -57,13 +57,13 @@ public class AS2ServerManager {
     public static final String FROM = CAMEL_AS2_SERVER_PREFIX + "from";
 
     private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManager.class);
-    
+
     private AS2ServerConnection as2ServerConnection;
-    
+
     public AS2ServerManager(AS2ServerConnection as2ServerConnection) {
         this.as2ServerConnection = as2ServerConnection;
     }
-    
+
     public void listen(String requestUriPattern, HttpRequestHandler handler) {
         try {
             as2ServerConnection.listen(requestUriPattern, handler);
@@ -71,15 +71,15 @@ public class AS2ServerManager {
             LOG.error("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
             throw new RuntimeException("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
         }
-                
+
     }
-    
+
     public void stopListening(String requestUri) {
         as2ServerConnection.stopListening(requestUri);
     }
-    
+
     public void handleMDNResponse(HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from) throws HttpException {
-        // Add Context attributes for Response 
+        // Add Context attributes for Response
         httpContext.setAttribute(SUBJECT, subject);
         httpContext.setAttribute(FROM, from);
     }

@@ -28,19 +28,19 @@ import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.CharArrayBuffer;
 
 public class RequestMDN implements HttpRequestInterceptor {
-    
+
     private static final String SIGNED_RECEIPT_PREFIX = "signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional";
 
     @Override
     public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-        
+
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-        
+
         /* Disposition-Notification-To */
         String dispositionNotificationTo = coreContext.getAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, String.class);
         if (dispositionNotificationTo != null) {
             request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
-            
+
             String[] micAlgorithms = coreContext.getAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, String[].class);
             if (micAlgorithms == null) {
                 // requesting unsigned receipt: indicate by not setting Disposition-Notification-Options header

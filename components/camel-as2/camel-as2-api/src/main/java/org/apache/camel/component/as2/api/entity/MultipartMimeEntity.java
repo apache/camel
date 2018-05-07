@@ -44,15 +44,15 @@ public abstract class MultipartMimeEntity extends MimeEntity {
     public MultipartMimeEntity(ContentType contentType, boolean isMainBody, String boundary) {
         setContentType(contentType);
         setMainBody(isMainBody);
-        
+
         if (boundary != null && EntityUtils.validateBoundaryValue(boundary)) {
             this.boundary = boundary;
         } else {
-            this.boundary = EntityUtils.createBoundaryValue();            
+            this.boundary = EntityUtils.createBoundaryValue();
         }
 
     }
-    
+
     protected MultipartMimeEntity() {
     }
 
@@ -94,7 +94,7 @@ public abstract class MultipartMimeEntity extends MimeEntity {
         try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, getCharset())) {
 
             // Write out mime part headers if this is not the main body of message.
-            if (!isMainBody()) { 
+            if (!isMainBody()) {
                 HeaderIterator it = headerIterator();
                 while (it.hasNext()) {
                     Header header = it.nextHeader();
@@ -102,7 +102,7 @@ public abstract class MultipartMimeEntity extends MimeEntity {
                 }
                 canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
             }
-        
+
             // Write out each part separated by a boundary delimiter line
             String boundary = "--" + this.boundary;
             // Write out parts
@@ -111,10 +111,10 @@ public abstract class MultipartMimeEntity extends MimeEntity {
                 part.writeTo(outstream);
                 canonicalOutstream.writeln(); // ensure boundary occurs at the beginning of a line; RFC2046 - 5.1.1
             }
-            
+
             // Write out closing boundary delimiter line
             canonicalOutstream.writeln(boundary + "--");
-            
+
         }
     }
 

@@ -17,10 +17,10 @@
 package org.apache.camel.component.as2.api;
 
 public interface AS2ReportType {
-    
+
     /**
      * Disposition Notification Report Type
      */
     public static final String DISPOSITION_NOTIFICATION = "disposition-notification";
-    
+
 }

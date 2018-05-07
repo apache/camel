@@ -45,7 +45,7 @@ public final class Utils {
 
     private Utils() {
     }
-    
+
     public static AuthorityKeyIdentifier createAuthorityKeyId(PublicKey pub) throws IOException {
         SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
 

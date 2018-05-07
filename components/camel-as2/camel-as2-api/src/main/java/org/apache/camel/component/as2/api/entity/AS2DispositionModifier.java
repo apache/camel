@@ -17,7 +17,7 @@
 package org.apache.camel.component.as2.api.entity;
 
 public final class AS2DispositionModifier {
-    
+
     public static final AS2DispositionModifier ERROR = new AS2DispositionModifier("error");
     public static final AS2DispositionModifier ERROR_AUTHENTICATION_FAILED = new AS2DispositionModifier("error: authentication-failed");
     public static final AS2DispositionModifier ERROR_DECOMPRESSION_FAILED = new AS2DispositionModifier("error: decompression-failed");
@@ -26,17 +26,17 @@ public final class AS2DispositionModifier {
     public static final AS2DispositionModifier ERROR_INTEGRITY_CHECK_FAILED = new AS2DispositionModifier("error: integrity-check-failed");
     public static final AS2DispositionModifier ERROR_UNEXPECTED_PROCESSING_ERROR = new AS2DispositionModifier("error: unexpected-processing-error");
     public static final AS2DispositionModifier WARNING = new AS2DispositionModifier("warning");
-    
+
     private String modifier;
-    
+
     private AS2DispositionModifier(String modifier) {
         this.modifier = modifier;
     }
-    
+
     public String getModifier() {
         return modifier;
     }
-    
+
     public boolean isError() {
         return modifier.startsWith("error: ");
     }
@@ -57,11 +57,11 @@ public final class AS2DispositionModifier {
     public static AS2DispositionModifier createWarning(String description) {
         return new AS2DispositionModifier("warning: " + description);
     }
-    
+
     public static AS2DispositionModifier createFailure(String description) {
         return new AS2DispositionModifier("failure: " + description);
     }
-    
+
     public static AS2DispositionModifier parseDispositionType(String dispositionModifierString) {
         switch(dispositionModifierString) {
         case "error":
@@ -87,5 +87,5 @@ public final class AS2DispositionModifier {
             return null;
         }
     }
-    
+
 }

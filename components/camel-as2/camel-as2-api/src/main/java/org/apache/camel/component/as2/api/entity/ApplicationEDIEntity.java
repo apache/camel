@@ -27,16 +27,16 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.util.Args;
 
 public abstract class ApplicationEDIEntity extends MimeEntity {
-    
+
     private final String ediMessage;
-    
+
     protected ApplicationEDIEntity(String ediMessage, ContentType contentType, String contentTransferEncoding, boolean isMainBody) {
         this.ediMessage = Args.notNull(ediMessage, "EDI Message");
         setContentType(Args.notNull(contentType, "Content Type").toString());
         setContentTransferEncoding(contentTransferEncoding);
         setMainBody(isMainBody);
     }
-    
+
     public String getEdiMessage() {
         return ediMessage;
     }
@@ -48,7 +48,7 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
         try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII)) {
 
             // Write out mime part headers if this is not the main body of message.
-            if (!isMainBody()) { 
+            if (!isMainBody()) {
                 HeaderIterator it = headerIterator();
                 while (it.hasNext()) {
                     Header header = it.nextHeader();
@@ -56,7 +56,7 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
                 }
                 canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
             }
-            
+
             canonicalOutstream.write(ediMessage.getBytes(getCharset()), 0, ediMessage.length());
         }
     }

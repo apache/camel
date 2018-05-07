@@ -50,7 +50,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     private String name;
 
     private Object apiProxy;
-    
+
     private AS2ClientConnection as2ClientConnection;
 
     private AS2ServerConnection as2ServerConnection;
@@ -60,7 +60,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         super(uri, component, apiName, methodName, AS2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
 
     }
-    
+
     public AS2ClientConnection getAS2ClientConnection() {
         return as2ClientConnection;
     }
@@ -107,7 +107,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             break;
         }
     }
-    
+
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         if (apiProxy == null) {
@@ -115,7 +115,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         }
         return apiProxy;
     }
-    
+
     /**
      * Some description of this option, and what it does
      */
@@ -139,7 +139,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
-    
+
     private void createAS2ClientConnection() {
         try {
             as2ClientConnection = AS2ConnectionHelper.createAS2ClientConnection(configuration);
@@ -150,7 +150,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             throw new RuntimeCamelException("Client HTTP connection failed", e);
         }
     }
-    
+
     private void createAS2ServerConnection() {
         try {
             as2ServerConnection = AS2ConnectionHelper.createAS2ServerConnection(configuration);

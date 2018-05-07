@@ -21,7 +21,7 @@ public enum DispositionMode {
     MANUAL_ACTION_MDN_SENT_AUTOMATICALLY("manual-action", "MDN-sent-automatically"),
     AUTOMATIC_ACTION_MDN_SENT_MANUALLY("automatic-action", "MDN-sent-manually"),
     AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY("automatic-action", "MDN-sent-automatically");
-    
+
     private String actionMode;
     private String sendingMode;
 
@@ -29,7 +29,7 @@ public enum DispositionMode {
         this.actionMode = actionMode;
         this.sendingMode = sendingMode;
     }
-    
+
     public String getActionMode() {
         return actionMode;
     }

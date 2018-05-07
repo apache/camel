@@ -42,94 +42,94 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class EntityParserTest {
-    
-    public static final String REPORT_TYPE_HEADER_VALUE = 
+
+    public static final String REPORT_TYPE_HEADER_VALUE =
             "disposition-notification; boundary=\"----=_Part_56_1672293592.1028122454656\"\r\n";
-    
-    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT = 
+
+    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT =
             "\r\n"
-            + "------=_Part_56_1672293592.1028122454656\r\n" 
+            + "------=_Part_56_1672293592.1028122454656\r\n"
             + "Content-Type: text/plain\r\n"
-            + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n" 
+            + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n"
             + "MDN for -\r\n"
-            + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n" 
+            + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
             + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-            + "  To: \"0123456780000\"" 
-            + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n" 
+            + "  To: \"0123456780000\""
+            + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
             + " Status: processed\r\n"
             + " Comment: This is not a guarantee that the message has\r\n"
-            + "  been completely processed or &understood by the receiving\r\n" 
+            + "  been completely processed or &understood by the receiving\r\n"
             + "  translator\r\n" + "\r\n"
-            + "------=_Part_56_1672293592.1028122454656\r\n" 
+            + "------=_Part_56_1672293592.1028122454656\r\n"
             + "Content-Type: message/disposition-notification\r\n"
-            + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n" 
+            + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n"
             + "Reporting-UA: AS2 Server\r\n"
-            + "MDN-Gateway: dns; example.com\r\n" 
+            + "MDN-Gateway: dns; example.com\r\n"
             + "Original-Recipient: rfc822; 0123456780000\r\n"
             + "Final-Recipient: rfc822; 0123456780000\r\n"
             + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-            + "Disposition: automatic-action/MDN-sent-automatically;\r\n" 
+            + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
             + "  processed/warning: you're awesome\r\n"
-            + "Failure: oops-a-failure\r\n" + "Error: oops-an-error\r\n" 
+            + "Failure: oops-a-failure\r\n" + "Error: oops-an-error\r\n"
             + "Warning: oops-a-warning\r\n"
-            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n" 
+            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
             + "\r\n"
             + "------=_Part_56_1672293592.1028122454656--\r\n";
 
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
-    
+
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME = "US-ASCII";
-    
+
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING = "7bit";
 
-    public static final String TEXT_PLAIN_CONTENT = 
+    public static final String TEXT_PLAIN_CONTENT =
             "MDN for -\r\n"
-            + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n" 
+            + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
             + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-            + "  To: \"0123456780000\"" 
-            + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n" 
+            + "  To: \"0123456780000\""
+            + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
             + " Status: processed\r\n"
             + " Comment: This is not a guarantee that the message has\r\n"
-            + "  been completely processed or &understood by the receiving\r\n" 
-            + "  translator\r\n" 
+            + "  been completely processed or &understood by the receiving\r\n"
+            + "  translator\r\n"
             + "\r\n"
             + "------=_Part_56_1672293592.1028122454656--\r\n";
-    
+
     public static final String TEXT_PLAIN_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
-    
+
     public static final String TEXT_PLAIN_CONTENT_CHARSET_NAME = "US-ASCII";
-    
+
     public static final String TEXT_PLAIN_CONTENT_TRANSFER_ENCODING = "7bit";
 
-    public static final String EXPECTED_TEXT_PLAIN_CONTENT = 
+    public static final String EXPECTED_TEXT_PLAIN_CONTENT =
             "MDN for -\r\n"
-            + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n" 
+            + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
             + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-            + "  To: \"0123456780000\"" 
-            + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n" 
+            + "  To: \"0123456780000\""
+            + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
             + " Status: processed\r\n"
             + " Comment: This is not a guarantee that the message has\r\n"
-            + "  been completely processed or &understood by the receiving\r\n" 
-            + "  translator\r\n";            
-    
-    public static final String DISPOSITION_NOTIFICATION_CONTENT = 
+            + "  been completely processed or &understood by the receiving\r\n"
+            + "  translator\r\n";
+
+    public static final String DISPOSITION_NOTIFICATION_CONTENT =
             "Reporting-UA: AS2 Server\r\n"
-            + "MDN-Gateway: dns; example.com\r\n" 
+            + "MDN-Gateway: dns; example.com\r\n"
             + "Original-Recipient: rfc822; 0123456780000\r\n"
             + "Final-Recipient: rfc822; 0123456780000\r\n"
             + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-            + "Disposition: automatic-action/MDN-sent-automatically;\r\n" 
+            + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
             + "  processed/warning: you're awesome\r\n"
-            + "Failure: oops-a-failure\r\n" + "Error: oops-an-error\r\n" 
+            + "Failure: oops-a-failure\r\n" + "Error: oops-an-error\r\n"
             + "Warning: oops-a-warning\r\n"
-            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n" 
+            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
             + "\r\n"
             + "------=_Part_56_1672293592.1028122454656--\r\n";
-    
+
     public static final String DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
-    
+
     public static final String DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME = "US-ASCII";
-    
+
     public static final String DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING = "7bit";
 
     public static final String EXPECTED_REPORTING_UA = "AS2 Server";
@@ -145,9 +145,9 @@ public class EntityParserTest {
     public static final String[] EXPECTED_WARNING = {"oops-a-warning"};
     public static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "7v7F++fQaNB1sVLFtMRp+dF+eG4=";
     public static final String EXPECTED_DIGEST_ALGORITHM_ID = "sha1";
-    
+
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
-    
+
     @Before
     public void setUp() throws Exception {
     }
@@ -155,28 +155,28 @@ public class EntityParserTest {
     @After
     public void tearDown() throws Exception {
     }
-    
+
     @Test
     public void parseMessageDispositionNotificationReportMessageTest() throws Exception {
         HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
         HttpMessageUtils.setHeaderValue(response, AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
         HttpMessageUtils.setHeaderValue(response, AS2Header.REPORT_TYPE, REPORT_TYPE_HEADER_VALUE);
-        
+
         BasicHttpEntity entity = new BasicHttpEntity();
         entity.setContentType(AS2MimeType.MULTIPART_REPORT);
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         entity.setContent(is);
         EntityUtils.setMessageEntity(response, entity);
-        
+
         EntityParser.parseMessageDispositionNotificationReportEntity(response);
         HttpEntity parsedEntity = EntityUtils.getMessageEntity(response);
         assertNotNull("Unexpected Null message disposition notification report entity", parsedEntity);
         assertTrue("Unexpected type for message disposition notification report entity", parsedEntity instanceof DispositionNotificationMultipartReportEntity);
     }
-    
+
     @Test
     public void parseMessageDispositionNotificationReportBodyTest() throws Exception {
-        
+
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
         inbuffer.bind(is);
@@ -185,25 +185,25 @@ public class EntityParserTest {
                 .parseMultipartReportEntityBody(inbuffer, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
-        
+
         assertNotNull("Unexpected Null disposition notification multipart entity", dispositionNotificationMultipartReportEntity);
         assertEquals("Unexpected number of body parts", 2, dispositionNotificationMultipartReportEntity.getPartCount());
-        
+
         assertTrue("Unexpected type for first body part", dispositionNotificationMultipartReportEntity.getPart(0) instanceof TextPlainEntity);
         assertTrue("Unexpected type for second body part", dispositionNotificationMultipartReportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity);
     }
 
     @Test
     public void parseTextPlainBodyTest() throws Exception {
-        
+
         InputStream is = new ByteArrayInputStream(TEXT_PLAIN_CONTENT.getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
         inbuffer.bind(is);
 
         TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(inbuffer, TEXT_PLAIN_CONTENT_BOUNDARY, TEXT_PLAIN_CONTENT_CHARSET_NAME, TEXT_PLAIN_CONTENT_TRANSFER_ENCODING);
-        
+
         String text = textPlainEntity.getText();
-        
+
         assertEquals("Unexpected text", EXPECTED_TEXT_PLAIN_CONTENT, text);
     }
 
@@ -213,7 +213,7 @@ public class EntityParserTest {
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_CONTENT.getBytes(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
         inbuffer.bind(is);
-        
+
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = EntityParser
                 .parseMessageDispositionNotificationEntityBody(inbuffer, DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY,
                         DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME,

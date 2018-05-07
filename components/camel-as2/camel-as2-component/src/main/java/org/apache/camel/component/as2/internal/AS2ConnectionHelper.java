@@ -29,18 +29,18 @@ import org.apache.camel.component.as2.api.AS2ServerConnection;
  * Utility class for creating AS2 connections.
  */
 public final class AS2ConnectionHelper {
-    
-    private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<Integer, AS2ServerConnection>(); 
-    
+
+    private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<Integer, AS2ServerConnection>();
+
     /**
      * Prevent instantiation
      */
     private AS2ConnectionHelper() {
     }
-        
+
     /**
      * Create an AS2 client connection.
-     * 
+     *
      * @param configuration - configuration used to configure connection.
      * @return The AS2 client connection.
      * @throws UnknownHostException Failed to establish connection due to unknown host.
@@ -50,13 +50,13 @@ public final class AS2ConnectionHelper {
         return new AS2ClientConnection(configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
                 configuration.getTargetHostname(), configuration.getTargetPortNumber());
     }
-    
+
     /**
      * Create an AS2 server connection.
-     * 
+     *
      * @param configuration - configuration used to configure connection.
      * @return The AS2 server connection.
-     * @throws IOException 
+     * @throws IOException
      */
     public static AS2ServerConnection createAS2ServerConnection(AS2Configuration configuration) throws IOException {
         synchronized (serverConnections) {

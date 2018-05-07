@@ -30,7 +30,7 @@ public enum AS2MicAlgorithm {
 
     private String jdkAlgorithmName;
     private String as2AlgorithmName;
-    
+
     private AS2MicAlgorithm(String jdkAlgorithmName, String as2AlgorithmName) {
         this.jdkAlgorithmName = jdkAlgorithmName;
         this.as2AlgorithmName = as2AlgorithmName;
@@ -54,7 +54,7 @@ public enum AS2MicAlgorithm {
             return null;
         }
     }
-    
+
     public static String getAS2AlgorithmName(String jdkAlgorithmName) {
         switch(jdkAlgorithmName) {
         case Constants.MD5_JDK_ALGORITHM_NAME:
@@ -65,5 +65,5 @@ public enum AS2MicAlgorithm {
             return null;
         }
     }
-    
+
 }

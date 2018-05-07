@@ -31,7 +31,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.CharArrayBuffer;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
-    
+
     public DispositionNotificationMultipartReportEntity(HttpEntityEnclosingRequest request,
                                                         HttpResponse response,
                                                         DispositionMode dispositionMode,
@@ -49,13 +49,13 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         this.contentType = new BasicHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
         Header reportType = new BasicHeader(AS2Header.REPORT_TYPE, getReportTypeValue(boundary));
         addHeader(reportType);
-        
+
         addPart(buildPlainTextReport(request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields));
         addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false));
     }
-    
+
     protected DispositionNotificationMultipartReportEntity(String boundary, boolean isMainBody) {
         this.boundary = boundary;
         this.isMainBody = isMainBody;
@@ -76,12 +76,12 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         String originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
         String sentDate = HttpMessageUtils.getHeaderValue(request, AS2Header.DATE);
         String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
-        
+
         String receivedFrom = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
         String sentTo = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
-        
+
         String receivedDate = HttpMessageUtils.getHeaderValue(response, AS2Header.DATE);
-        
+
         charBuffer.append("MDN for -\n");
         charBuffer.append(" Message ID: " + originalMessageId + "\n");
         charBuffer.append("  Subject: " + (subject == null ? "" : subject) + "\n");
@@ -93,7 +93,7 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
 
         return new TextPlainEntity(charBuffer.toString(), AS2Charset.US_ASCII, AS2TransferEncoding.SEVENBIT, false);
     }
-    
+
     protected String getReportTypeValue(String boundary) {
         return "disposition-notification; boundary=\"" + boundary + "\"";
     }

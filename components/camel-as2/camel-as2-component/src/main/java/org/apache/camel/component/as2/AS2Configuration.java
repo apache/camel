@@ -41,73 +41,73 @@ public class AS2Configuration {
     @UriPath
     @Metadata(required = "true")
     private String methodName;
-    
+
     @UriPath
     private String as2Version = "1.1";
 
     @UriParam
     private String userAgent = "Camel AS2 Client Endpoint";
-    
+
     @UriParam
     private String server = "Camel AS2 Server Endpoint";
-    
+
     @UriParam
     private String serverFqdn = "camel.apache.org";
-    
+
     @UriParam
     private String targetHostname;
-    
+
     @UriParam
     private Integer targetPortNumber;
-    
+
     @UriParam
     private String clientFqdn = "camel.apache.org";
-    
+
     @UriParam
     private Integer serverPortNumber;
-    
+
     @UriParam
     private String requestUri = "/";
-    
+
     @UriParam
     private ContentType ediMessageType;
-    
+
     @UriParam
     private String ediMessageTransferEncoding;
-    
+
     @UriParam
     private AS2MessageStructure as2MessageStructure;
-    
+
     @UriParam
     private String subject;
-    
+
     @UriParam
     private String from;
-    
+
     @UriParam
     private String as2From;
-    
+
     @UriParam
     private String as2To;
-    
+
     @UriParam
     private String signingAlgorithmName;
-    
+
     @UriParam
     private Certificate[] signingCertificateChain;
-    
+
     @UriParam
     private PrivateKey signingPrivateKey;
-    
+
     @UriParam
     private String dispositionNotificationTo;
-    
+
     @UriParam
     private String[] signedReceiptMicAlgorithms;
-    
+
     /**
      * What kind of operation to perform
-     * 
+     *
      * @return the API Name
      */
     public AS2ApiName getApiName() {
@@ -116,7 +116,7 @@ public class AS2Configuration {
 
     /**
      * What kind of operation to perform
-     * 
+     *
      * @param apiName -
      *            the API Name to set
      */
@@ -126,7 +126,7 @@ public class AS2Configuration {
 
     /**
      * What sub operation to use for the selected operation
-     * 
+     *
      * @return The methodName
      */
     public String getMethodName() {
@@ -135,7 +135,7 @@ public class AS2Configuration {
 
     /**
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param methodName -
      *            the methodName to set
      */
@@ -145,7 +145,7 @@ public class AS2Configuration {
 
     /**
      * The version of the AS2 protocol.
-     * 
+     *
      * @return The version of the AS2 protocol.
      */
     public String getAs2Version() {
@@ -154,7 +154,7 @@ public class AS2Configuration {
 
     /**
      * The version of the AS2 protocol.
-     * 
+     *
      * @param as2Version - the version of the AS2 protocol.
      */
     public void setAs2Version(String as2Version) {
@@ -167,7 +167,7 @@ public class AS2Configuration {
     /**
      * The value included in the <code>User-Agent</code>
      * message header identifying the AS2 user agent.
-     * 
+     *
      * @return AS2 user agent identification string.
      */
     public String getUserAgent() {
@@ -177,7 +177,7 @@ public class AS2Configuration {
     /**
      * The value included in the <code>User-Agent</code>
      * message header identifying the AS2 user agent.
-     * 
+     *
      * @param userAgent - AS2 user agent identification string.
      */
     public void setUserAgent(String userAgent) {
@@ -185,9 +185,9 @@ public class AS2Configuration {
     }
 
     /**
-     * The value included in the <code>Server</code> 
+     * The value included in the <code>Server</code>
      * message header identifying the AS2 Server.
-     * 
+     *
      * @return AS2 server identification string.
      */
     public String getServer() {
@@ -195,9 +195,9 @@ public class AS2Configuration {
     }
 
     /**
-     * The value included in the <code>Server</code> 
+     * The value included in the <code>Server</code>
      * message header identifying the AS2 Server.
-     * 
+     *
      * @param server - AS2 server identification string.
      */
     public void setServer(String server) {
@@ -205,10 +205,10 @@ public class AS2Configuration {
     }
 
     /**
-     * The Server Fully Qualified Domain Name (FQDN). 
-     * 
+     * The Server Fully Qualified Domain Name (FQDN).
+     *
      * <p> Used in message ids sent by endpoint.
-     * 
+     *
      * @return The FQDN of client.
      */
     public String getServerFqdn() {
@@ -216,10 +216,10 @@ public class AS2Configuration {
     }
 
     /**
-     * The Server Fully Qualified Domain Name (FQDN). 
-     * 
+     * The Server Fully Qualified Domain Name (FQDN).
+     *
      * <p> Used in message ids sent by endpoint.
-     * 
+     *
      * @param clientFqdn - the FQDN of client.
      */
     public void setServerFqdn(String serverFqdn) {
@@ -231,7 +231,7 @@ public class AS2Configuration {
 
     /**
      * The host name (IP or DNS) of target host.
-     * 
+     *
      * @return The target host name (IP or DNS name).
      */
     public String getTargetHostname() {
@@ -240,7 +240,7 @@ public class AS2Configuration {
 
     /**
      * The host name (IP or DNS name) of target host.
-     * 
+     *
      * @param targetHostname - the target host name (IP or DNS name).
      */
     public void setTargetHostname(String targetHostname) {
@@ -249,7 +249,7 @@ public class AS2Configuration {
 
     /**
      * The port number of target host.
-     * 
+     *
      * @return The target port number. -1 indicates the scheme default port.
      */
     public int getTargetPortNumber() {
@@ -258,7 +258,7 @@ public class AS2Configuration {
 
     /**
      * The port number of target host.
-     * 
+     *
      * @param targetPortNumber - the target port number. -1 indicates the scheme default port.
      */
     public void setTargetPortNumber(String targetPortNumber) {
@@ -270,10 +270,10 @@ public class AS2Configuration {
     }
 
     /**
-     * The Client Fully Qualified Domain Name (FQDN). 
-     * 
+     * The Client Fully Qualified Domain Name (FQDN).
+     *
      * <p> Used in message ids sent by endpoint.
-     * 
+     *
      * @return The FQDN of client.
      */
     public String getClientFqdn() {
@@ -281,10 +281,10 @@ public class AS2Configuration {
     }
 
     /**
-     * The Client Fully Qualified Domain Name (FQDN). 
-     * 
+     * The Client Fully Qualified Domain Name (FQDN).
+     *
      * <p> Used in message ids sent by endpoint.
-     * 
+     *
      * @param clientFqdn - the FQDN of client.
      */
     public void setClientFqdn(String clientFqdn) {
@@ -296,7 +296,7 @@ public class AS2Configuration {
 
     /**
      * The port number of server.
-     * 
+     *
      * @return The server port number.
      */
     public Integer getServerPortNumber() {
@@ -305,7 +305,7 @@ public class AS2Configuration {
 
     /**
      * The port number of server.
-     * 
+     *
      * @param serverPortNumber - the server port number.
      */
     public void setServerPortNumber(String serverPortNumber) {
@@ -427,6 +427,6 @@ public class AS2Configuration {
     public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
-    
-    
+
+
 }

@@ -52,7 +52,7 @@ public class AS2ServerConnection {
 
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
-    
+
     static class RequestListenerThread extends Thread {
 
         private final ServerSocket serversocket;
@@ -105,11 +105,11 @@ public class AS2ServerConnection {
                 }
             }
         }
-        
+
         void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
             reqistry.register(requestUriPattern, httpRequestHandler);
         }
-        
+
         void unregisterHandler(String requestUri) {
             reqistry.unregister(requestUri);
         }
@@ -155,9 +155,9 @@ public class AS2ServerConnection {
                 }
             }
         }
-        
+
     }
-    
+
     private RequestListenerThread listenerThread;
     private String as2Version;
     private String originServer;
@@ -184,7 +184,7 @@ public class AS2ServerConnection {
         listenerThread.setDaemon(true);
         listenerThread.start();
     }
-    
+
     public void close() {
         if (listenerThread != null) {
             synchronized (listenerThread) {
@@ -206,9 +206,9 @@ public class AS2ServerConnection {
             }
         }
     }
-    
+
     public void stopListening(String requestUri) {
-        
+
         if (listenerThread != null) {
             listenerThread.unregisterHandler(requestUri);
         }

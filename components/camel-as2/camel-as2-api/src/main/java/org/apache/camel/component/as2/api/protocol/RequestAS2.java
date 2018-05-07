@@ -30,10 +30,10 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 
 public class RequestAS2 implements HttpRequestInterceptor {
-    
+
     private final String as2Version;
     private final String clientFQDN;
-    
+
     public RequestAS2(String as2Version, String clientFQDN) {
         this.as2Version = as2Version;
         this.clientFQDN = clientFQDN;
@@ -41,16 +41,16 @@ public class RequestAS2 implements HttpRequestInterceptor {
 
     @Override
     public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-        
+
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-        
+
         /* MIME header */
         request.addHeader(AS2Header.MIME_VERSION, AS2Constants.MIME_VERSION);
-        
+
         /* Subject header */
         String subject = coreContext.getAttribute(AS2ClientManager.SUBJECT, String.class);
         request.addHeader(AS2Header.SUBJECT, subject);
-        
+
         /* From header */
         String from = coreContext.getAttribute(AS2ClientManager.FROM, String.class);
         request.addHeader(AS2Header.FROM, from);
@@ -75,7 +75,7 @@ public class RequestAS2 implements HttpRequestInterceptor {
             throw new HttpException("Invalid AS-To name", e);
         }
         request.addHeader(AS2Header.AS2_TO, as2To);
-        
+
         /* Message-Id header*/
         // SHOULD be set to aid in message reconciliation
         request.addHeader(AS2Header.MESSAGE_ID, Util.createMessageId(clientFQDN));

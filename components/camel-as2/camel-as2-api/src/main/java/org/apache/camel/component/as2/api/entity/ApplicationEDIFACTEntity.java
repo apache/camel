@@ -25,5 +25,5 @@ public class ApplicationEDIFACTEntity extends ApplicationEDIEntity {
             boolean isMainBody) {
         super(content, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, charset), contentTransferEncoding, isMainBody);
     }
-    
+
 }

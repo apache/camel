@@ -84,11 +84,11 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final String SUBJECT = "Test Case";
     private static final String AS2_NAME = "878051556";
     private static final String FROM = "mrAS@example.org";
-    
+
     private static final String MDN_FROM = "as2Test@server.example.com";
     private static final String MDN_SUBJECT_PREFIX = "MDN Response:";
-    
-    private static final String EDI_MESSAGE = 
+
+    private static final String EDI_MESSAGE =
             "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
             + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
             + "BGM+380+342459+9'\n"
@@ -115,11 +115,11 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
             + "MOA+8:525'\n"
             + "UNT+23+00000000000117'\n"
             + "UNZ+1+00000000000778'\n";
-    
+
     private static final String EXPECTED_AS2_VERSION = "1.1";
     private static final String EXPECTED_MDN_SUBJECT = MDN_SUBJECT_PREFIX + SUBJECT;
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] {"sha1", "md5"};
-  
+
     private static AS2ServerConnection serverConnection;
     private static KeyPair serverSigningKP;
     private static List<X509Certificate> serverCertList;
@@ -134,11 +134,11 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Before
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Security.addProvider(new BouncyCastleProvider());
-        
+
         setupKeysAndCertificates();
-        
+
         // Create and populate certificate store.
         JcaCertStore certs = new JcaCertStore(certList);
 
@@ -152,7 +152,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         ASN1EncodableVector attributes = new ASN1EncodableVector();
         attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
-        
+
         for (String signingAlgorithmName : AS2SignedDataGenerator
                 .getSupportedSignatureAlgorithmNamesForKey(signingKP.getPrivate())) {
             try {
@@ -167,7 +167,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
                 continue;
             }
         }
-        
+
         if (this.gen == null) {
             throw new Exception("failed to create signing generator");
         }
@@ -213,7 +213,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertTrue("Request body does not contain EDI entity", entity instanceof ApplicationEDIEntity);
         String ediMessage = ((ApplicationEDIEntity)entity).getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE, ediMessage);
-        
+
         HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         assertEquals("Unexpected response type", AS2MimeType.MULTIPART_REPORT, HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE));
@@ -224,7 +224,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected AS2 from", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM));
         assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
         assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
-        
+
         HttpEntity responseEntity = response.getEntity();
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof DispositionNotificationMultipartReportEntity);
@@ -276,13 +276,13 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
         assertNotNull("Request body", entity);
         assertTrue("Request body does not contain EDI entity", entity instanceof MultipartSignedEntity);
-        
+
         MimeEntity signedEntity = ((MultipartSignedEntity)entity).getSignedDataEntity();
         assertTrue("Signed entity wrong type", signedEntity instanceof ApplicationEDIEntity);
         ApplicationEDIEntity ediMessageEntity = (ApplicationEDIEntity) signedEntity;
         String ediMessage = ediMessageEntity.getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE, ediMessage);
-        
+
         HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         String contentTypeHeaderValue = HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE);
@@ -295,7 +295,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected AS2 from", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM));
         assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
         assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
-        
+
         HttpEntity responseEntity = response.getEntity();
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof MultipartSignedEntity);
@@ -316,10 +316,10 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @BeforeClass
     public static void setupTest() throws Exception {
-    	setupServerKeysAndCertificates();
+        setupServerKeysAndCertificates();
         receiveTestMessages();
     }
-    
+
     @AfterClass
     public static void teardownTest() throws Exception {
         if (serverConnection != null) {
@@ -338,7 +338,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         }
 
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -349,10 +349,10 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
             }
         };
     }
-    
+
     private static void setupServerKeysAndCertificates() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        
+
         //
         // set up our certificates
         //
@@ -364,21 +364,21 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         KeyPair issueKP = kpg.generateKeyPair();
         X509Certificate issueCert = Utils.makeCertificate(
                                         issueKP, issueDN, issueKP, issueDN);
-        
+
         //
         // certificate we sign against
         //
         String signingDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";
         serverSigningKP = kpg.generateKeyPair();
         X509Certificate signingCert = Utils.makeCertificate(
-        		serverSigningKP, signingDN, issueKP, issueDN);
-        
+                serverSigningKP, signingDN, issueKP, issueDN);
+
         serverCertList = new ArrayList<X509Certificate>();
 
         serverCertList.add(signingCert);
         serverCertList.add(issueCert);
     }
-   
+
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection("1.1", "AS2ClientManagerIntegrationTest Server",
                 "server.example.com", 8888, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate());
@@ -397,7 +397,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         issueKP = kpg.generateKeyPair();
         issueCert = Utils.makeCertificate(
                                         issueKP, issueDN, issueKP, issueDN);
-        
+
         //
         // certificate we sign against
         //
@@ -405,7 +405,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         signingKP = kpg.generateKeyPair();
         signingCert = Utils.makeCertificate(
                                         signingKP, signingDN, issueKP, issueDN);
-        
+
         certList = new ArrayList<X509Certificate>();
 
         certList.add(signingCert);

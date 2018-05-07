@@ -79,16 +79,16 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    boolean isMainBody) throws HttpException {
         setMainBody(isMainBody);
         setContentType(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset));
-        
+
         this.finalRecipient = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
         if (this.finalRecipient == null) {
             throw new HttpException("The " + AS2Header.AS2_TO + " is missing");
         }
-        
+
         this.originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
 
         this.receivedContentMic = MicUtils.createReceivedContentMic(request);
-        
+
         this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
 
         this.dispositionMode = Args.notNull(dispositionMode, "Disposition Mode");
@@ -103,7 +103,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
             this.extensionFields.putAll(extensionFields);
         }
     }
-    
+
     public AS2MessageDispositionNotificationEntity(String reportingUA,
                                                    String mtnName,
                                                    String finalRecipient,
