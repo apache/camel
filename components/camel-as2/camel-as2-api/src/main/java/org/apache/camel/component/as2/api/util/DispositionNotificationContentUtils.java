@@ -36,7 +36,7 @@ import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
 public final class DispositionNotificationContentUtils {
-    
+
     private static final String REPORTING_UA = "reporting-ua";
     private static final String MDN_GATEWAY = "mdn-gateway";
     private static final String FINAL_RECIPIENT = "final-recipient";
@@ -109,7 +109,7 @@ public final class DispositionNotificationContentUtils {
 
             return builder.toString();
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -231,7 +231,7 @@ public final class DispositionNotificationContentUtils {
                 extensionFields.put(field.getName(), field.getValue());
             }
         }
-        
+
         return new AS2MessageDispositionNotificationEntity(reportingUA,
                                                             mtaName,
                                                             finalRecipient,
@@ -254,7 +254,7 @@ public final class DispositionNotificationContentUtils {
         final String fieldName = fieldLine.substringTrimmed(0, colon);
 
         ParserCursor cursor = new ParserCursor(colon + 1, fieldLine.length());
-        
+
         final List<Element> elements = new ArrayList<Element>();
         while (!cursor.atEnd()) {
             final Element element = parseDispositionFieldElement(fieldLine, cursor);
@@ -262,23 +262,23 @@ public final class DispositionNotificationContentUtils {
                 elements.add(element);
             }
         }
-        
+
         return new Field(fieldName, elements.toArray(new Element[elements.size()]));
     }
 
     public static Element parseDispositionFieldElement(CharArrayBuffer fieldLine, ParserCursor cursor) {
-        
+
         final String value = TOKEN_PARSER.parseToken(fieldLine, cursor, TOKEN_DELIMS);
         if (cursor.atEnd()) {
             return new Element(value, null);
         }
-        
+
         final char delim = fieldLine.charAt(cursor.getPos());
         cursor.updatePos(cursor.getPos() + 1);
         if (delim == ELEM_DELIMITER) {
             return new Element(value, null);
         }
-        
+
         final List<String> parameters = new ArrayList<String>();
         while (!cursor.atEnd()) {
             final String parameter = TOKEN_PARSER.parseToken(fieldLine, cursor, TOKEN_DELIMS);
@@ -294,7 +294,7 @@ public final class DispositionNotificationContentUtils {
                 break;
             }
         }
-        
+
         return new Element(value, parameters.toArray(new String[parameters.size()]));
     }
 }

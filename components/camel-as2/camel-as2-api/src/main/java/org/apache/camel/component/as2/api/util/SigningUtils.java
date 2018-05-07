@@ -43,7 +43,7 @@ public final class SigningUtils {
     }
 
     public static AS2SignedDataGenerator createSigningGenerator(Certificate[] certificateChain, PrivateKey privateKey) throws HttpException {
-        
+
         AS2SignedDataGenerator gen = new AS2SignedDataGenerator();
 
         // Get first certificate in chain for signing
@@ -77,7 +77,7 @@ public final class SigningUtils {
             throw new HttpException("Failed to create signer info");
         }
         gen.addSignerInfoGenerator(signerInfoGenerator);
-        
+
         // Create and populate certificate store.
         try {
             JcaCertStore certs = new JcaCertStore(Arrays.asList(certificateChain));
@@ -87,6 +87,6 @@ public final class SigningUtils {
         }
 
         return gen;
-        
+
     }
 }

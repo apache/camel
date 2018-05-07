@@ -41,14 +41,14 @@ import org.apache.http.protocol.HttpRequestHandler;
  * The AS2 consumer.
  */
 public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuration> implements HttpRequestHandler {
-    
+
     private static final String HANDLER_PROPERTY = "handler";
     private static final String REQUEST_URI_PROPERTY = "requestUri";
 
     private AS2ServerConnection as2ServerConnection;
-    
+
     private AS2ServerManager apiProxy;
-    
+
     private final ApiMethod apiMethod;
 
     private final Map<String, Object> properties;
@@ -65,7 +65,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         properties.put(HANDLER_PROPERTY, this);
 
         as2ServerConnection = endpoint.getAS2ServerConnection();
-        
+
         apiProxy = new AS2ServerManager(as2ServerConnection);
     }
 
@@ -73,7 +73,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     public void interceptPropertyNames(Set<String> propertyNames) {
         propertyNames.add(HANDLER_PROPERTY);
     }
-    
+
     @Override
     protected int poll() throws Exception {
         return 0;
@@ -82,11 +82,11 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        
+
         // invoke the API method to start listening
         ApiMethodHelper.invokeMethod(apiProxy, apiMethod, properties);
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         String requestUri = (String) properties.get(REQUEST_URI_PROPERTY);
@@ -110,7 +110,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         } catch (Exception e) {
             log.info("Received exception consuming AS2 message: ", e);
         }
-        
+
     }
-    
+
 }

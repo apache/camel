@@ -31,7 +31,7 @@ public class CanonicalOutputStream extends FilterOutputStream {
         newline[1] = (byte) '\n';
     }
 
-    private String charset; 
+    private String charset;
 
     public CanonicalOutputStream(OutputStream out, String charset) {
         super(out);

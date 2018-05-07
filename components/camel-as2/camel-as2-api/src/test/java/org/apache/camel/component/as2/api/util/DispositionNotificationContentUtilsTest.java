@@ -38,18 +38,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class DispositionNotificationContentUtilsTest {
-    
-    public static final String DISPOSITION_NOTIFICATION_CONTENT = 
+
+    public static final String DISPOSITION_NOTIFICATION_CONTENT =
             "Reporting-UA: AS2 Server\r\n"
-            + "MDN-Gateway: dns; example.com\r\n" 
+            + "MDN-Gateway: dns; example.com\r\n"
             + "Original-Recipient: rfc822; 0123456780000\r\n"
             + "Final-Recipient: rfc822; 0123456780000\r\n"
             + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-            + "Disposition: automatic-action/MDN-sent-automatically;\r\n" 
+            + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
             + "  processed/warning: you're awesome\r\n"
-            + "Failure: oops-a-failure\r\n" 
+            + "Failure: oops-a-failure\r\n"
             + "Error: oops-an-error\r\n" + "Warning: oops-a-warning\r\n"
-            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n" 
+            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
             + "\r\n";
 
     public static final String EXPECTED_REPORTING_UA = "AS2 Server";
@@ -65,7 +65,7 @@ public class DispositionNotificationContentUtilsTest {
     public static final String[] EXPECTED_WARNING = {"oops-a-warning"};
     public static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "7v7F++fQaNB1sVLFtMRp+dF+eG4=";
     public static final String EXPECTED_DIGEST_ALGORITHM_ID = "sha1";
-        
+
 
     @Before
     public void setUp() throws Exception {
@@ -77,15 +77,15 @@ public class DispositionNotificationContentUtilsTest {
 
     @Test
     public void test() throws Exception {
-        
+
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_CONTENT.getBytes());
-        
+
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
         inbuffer.bind(is);
-        
+
         List<CharArrayBuffer> dispositionNotificationFields = EntityParser.parseBodyPartFields(inbuffer, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =  DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
-        
+
         assertEquals("Unexpected Reporting UA value", EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA());
         assertEquals("Unexpected MTN Name", EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName());
         assertEquals("Unexpected Original Recipient", EXPECTED_ORIGINAL_RECIPIENT, messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"));

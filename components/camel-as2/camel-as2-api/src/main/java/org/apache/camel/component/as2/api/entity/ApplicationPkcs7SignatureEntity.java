@@ -36,17 +36,17 @@ import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
 
 public class ApplicationPkcs7SignatureEntity extends MimeEntity {
-    
+
     private static final String CONTENT_DISPOSITION = "attachment; filename=\"smime.p7s\"";
-    
+
     private static final String CONTENT_DESCRIPTION = "S/MIME Cryptographic Signature";
-    
+
     private byte[] signature;
-    
+
     public ApplicationPkcs7SignatureEntity(MimeEntity data, CMSSignedDataGenerator signer, String charset, String contentTransferEncoding, boolean isMainBody) throws HttpException {
         Args.notNull(data, "Data");
         Args.notNull(signer, "Signer");
-        
+
         ContentType contentType = ContentType.parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset",  charset));
         setContentType(contentType.toString());
         setContentTransferEncoding(contentTransferEncoding);
@@ -59,7 +59,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
             throw new HttpException("Failed to create signed data", e);
         }
     }
-    
+
     public ApplicationPkcs7SignatureEntity(String charset,
                                            String contentTransferEncoding,
                                            byte[] signature,
@@ -74,7 +74,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
         setMainBody(isMainBody);
     }
-    
+
     public byte[] getSignature() {
         return signature;
     }
@@ -107,7 +107,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
             throw new IOException("Failed to write to output stream", e);
         }
     }
-    
+
     private byte[] createSignature(MimeEntity data, CMSSignedDataGenerator signer) throws Exception {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             data.writeTo(bos);
@@ -119,7 +119,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         } catch (Exception e) {
             throw new Exception("", e);
         }
-        
+
     }
 
 }

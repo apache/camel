@@ -42,7 +42,7 @@ public final class Utils {
     // certificate serial number seed.
     //
     static int  serialNo = 1;
-    
+
     private Utils() {
     }
 

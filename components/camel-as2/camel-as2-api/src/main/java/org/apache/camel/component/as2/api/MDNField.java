@@ -17,7 +17,7 @@
 package org.apache.camel.component.as2.api;
 
 public interface MDNField {
-    
+
     /**
      * Field Name for Reporting UA
      */

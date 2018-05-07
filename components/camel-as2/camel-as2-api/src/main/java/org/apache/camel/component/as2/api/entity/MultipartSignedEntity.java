@@ -46,20 +46,20 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
         ApplicationPkcs7SignatureEntity signature = new ApplicationPkcs7SignatureEntity(data, signer, signatureCharSet, signatureTransferEncoding, false);
         addPart(signature);
     }
-    
+
     protected MultipartSignedEntity(String boundary, boolean isMainBody) {
         this.boundary = boundary;
         this.isMainBody = isMainBody;
     }
-    
-    public boolean isValid()  {
-    	MimeEntity signedEntity = getSignedDataEntity();
+
+    public boolean isValid() {
+        MimeEntity signedEntity = getSignedDataEntity();
         ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = getSignatureEntity();
-        
+
         if (signedEntity == null || applicationPkcs7SignatureEntity == null) {
             return false;
         }
-        
+
         try {
             ByteArrayOutputStream outstream = new ByteArrayOutputStream();
             signedEntity.writeTo(outstream);
@@ -86,23 +86,23 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
         } catch (Exception e) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     public MimeEntity getSignedDataEntity() {
         if (getPartCount() > 0) {
             return getPart(0);
         }
-        
+
         return null;
     }
-    
+
     public ApplicationPkcs7SignatureEntity getSignatureEntity() {
         if (getPartCount() > 1 && getPart(1) instanceof ApplicationPkcs7SignatureEntity) {
             return (ApplicationPkcs7SignatureEntity)  getPart(1);
         }
-        
+
         return null;
     }
 

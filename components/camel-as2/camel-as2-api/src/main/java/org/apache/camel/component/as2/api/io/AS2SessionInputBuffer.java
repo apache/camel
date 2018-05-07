@@ -45,7 +45,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     private final MessageConstraints constraints;
 
     private CharsetDecoder decoder;
-    
+
     private String transferEncoding;
 
     private InputStream instream;
@@ -78,7 +78,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     public void setCharsetDecoder(CharsetDecoder chardecoder) {
         this.decoder = chardecoder;
     }
-    
+
     public String getTransferEncoding() {
         return transferEncoding;
     }
@@ -239,7 +239,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         }
         return lineFromLineBuffer(charbuffer);
     }
-    
+
     @Override
     public String readLine() throws IOException {
         final CharArrayBuffer charbuffer = new CharArrayBuffer(64);
@@ -359,6 +359,6 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         } catch (Exception e) {
             throw new IOException("failed to decode transfer encoding", e);
         }
-       
+
     }
 }

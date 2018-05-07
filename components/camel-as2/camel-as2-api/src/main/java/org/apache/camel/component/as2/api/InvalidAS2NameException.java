@@ -24,22 +24,22 @@ public class InvalidAS2NameException extends Exception {
     private static final long serialVersionUID = -6284079291785073089L;
 
     private final String name;
-    
+
     private final int index;
-    
+
     /**
      * Constructs an <code>InvalidAS2NameException</code> for the
      * specified name and index.
-     * 
+     *
      * @param name - the AS2 name that is invalid.
-     * @param index - the index in the <code>name</code> of the invalid character 
+     * @param index - the index in the <code>name</code> of the invalid character
      */
     public InvalidAS2NameException(String name, int index) {
         super();
         this.name = name;
         this.index = index;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Throwable#getMessage()
      */
@@ -55,7 +55,7 @@ public class InvalidAS2NameException extends Exception {
 
     /**
      * Returns the invalid AS2 name
-     * 
+     *
      * @return the invalid AS2 name
      */
     public String getName() {
@@ -64,7 +64,7 @@ public class InvalidAS2NameException extends Exception {
 
     /**
      * Returns the index of the invalid character in <code>name</code>
-     * 
+     *
      * @return the index of the invalid character in <code>name</code>
      */
     public int getIndex() {

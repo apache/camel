@@ -19,9 +19,9 @@ package org.apache.camel.component.as2.api.entity;
 public enum AS2DispositionType {
     PROCESSED("processed"),
     FAILED("failed");
-    
+
     private String type;
-    
+
     private AS2DispositionType(String type) {
         this.type = type;
     }
@@ -29,12 +29,12 @@ public enum AS2DispositionType {
     public String getType() {
         return type;
     }
-    
+
     @Override
     public String toString() {
         return type;
     }
-    
+
     public static AS2DispositionType parseDispositionType(String dispositionTypeString) {
         switch(dispositionTypeString) {
         case "processed":

@@ -41,21 +41,21 @@ import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.Args;
 
 public class AS2ClientConnection {
-    
+
     private HttpHost targetHost;
     private HttpProcessor httpProcessor;
     private DefaultBHttpClientConnection httpConnection;
     private String as2Version;
     private String userAgent;
     private String clientFqdn;
-    
+
     public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName, Integer targetPortNumber) throws UnknownHostException, IOException {
 
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.userAgent = Args.notNull(userAgent, "userAgent");
         this.clientFqdn = Args.notNull(clientFqdn, "clientFqdn");
         this.targetHost = new HttpHost(Args.notNull(targetHostName, "targetHostName"), Args.notNull(targetPortNumber, "targetPortNumber"));
-                
+
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create()
                 .add(new RequestAS2(as2Version, clientFqdn))
@@ -66,7 +66,7 @@ public class AS2ClientConnection {
                 .add(new RequestContent(true))
                 .add(new RequestConnControl())
                 .add(new RequestExpectContinue(true)).build();
-        
+
         // Create Socket
         Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
 
@@ -74,7 +74,7 @@ public class AS2ClientConnection {
         httpConnection = new AS2BHttpClientConnection(8 * 1024);
         httpConnection.bind(socket);
     }
-    
+
     public String getAs2Version() {
         return as2Version;
     }
@@ -88,13 +88,13 @@ public class AS2ClientConnection {
     }
 
     public HttpResponse send(HttpRequest request, HttpCoreContext httpContext) throws HttpException, IOException {
-        
+
         httpContext.setTargetHost(targetHost);
 
         // Execute Request
         HttpRequestExecutor httpexecutor = new HttpRequestExecutor();
         httpexecutor.preProcess(request, httpProcessor, httpContext);
-        HttpResponse response = httpexecutor.execute(request, httpConnection, httpContext);   
+        HttpResponse response = httpexecutor.execute(request, httpConnection, httpContext);
         httpexecutor.postProcess(response, httpProcessor, httpContext);
 
         return response;

@@ -29,15 +29,15 @@ import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
 public final class HttpMessageUtils {
-    
+
     private HttpMessageUtils() {
     }
-    
+
     public static String getHeaderValue(HttpMessage message, String headerName) {
         Header header = message.getFirstHeader(headerName);
         return header == null ? null : header.getValue();
     }
-    
+
     public static void setHeaderValue(HttpMessage message, String headerName, String headerValue) {
         Args.notNull(message, "message");
         Args.notNull(headerName, "headerName");
@@ -47,7 +47,7 @@ public final class HttpMessageUtils {
             message.setHeader(headerName, headerValue);
         }
     }
-    
+
     public static <T> T getEntity(HttpMessage request, Class<T> type) {
         if (request instanceof HttpEntityEnclosingRequest) {
             HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
@@ -79,7 +79,7 @@ public final class HttpMessageUtils {
             if (!foundMultipartEndBoundary) {
                 throw new HttpException("Failed to find end boundary delimiter for body part");
             }
-    
+
             return bodyPartContentBuffer.toString();
         } catch (HttpException e) {
             throw e;
@@ -104,5 +104,5 @@ public final class HttpMessageUtils {
         }
         return null;
     }
-    
+
 }

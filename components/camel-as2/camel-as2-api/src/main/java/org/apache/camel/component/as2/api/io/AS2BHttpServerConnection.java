@@ -56,7 +56,7 @@ public class AS2BHttpServerConnection extends DefaultBHttpServerConnection {
         super(buffersize, fragmentSizeHint, chardecoder, charencoder, constraints, incomingContentStrategy,
                 outgoingContentStrategy, requestParserFactory, responseWriterFactory);
     }
-    
+
     @Override
     public void receiveRequestEntity(HttpEntityEnclosingRequest request) throws HttpException, IOException {
         super.receiveRequestEntity(request);

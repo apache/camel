@@ -36,7 +36,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.Args;
 
 public abstract class MimeEntity extends AbstractHttpEntity {
-    
+
     /**
      * An OuputStream wrapper that doesn't close its underlying output stream.
      * <p>
@@ -56,7 +56,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     }
 
     protected static final long UNKNOWN_CONTENT_LENGTH = -1;
-    
+
     protected static final long RECALCULATE_CONTENT_LENGTH = -2;
 
     protected boolean isMainBody;
@@ -66,18 +66,18 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     protected long contentLength = RECALCULATE_CONTENT_LENGTH;
 
     private final HeaderGroup headergroup = new HeaderGroup();
-    
+
     protected MimeEntity() {
     }
-    
+
     public boolean isMainBody() {
         return isMainBody;
     }
-    
+
     public void setMainBody(boolean isMainBody) {
         this.isMainBody = isMainBody;
     }
-    
+
     public String getContentTypeValue() {
         Header contentTypeHeader = getContentType();
         if (contentTypeHeader != null) {
@@ -85,21 +85,21 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         }
         return null;
     }
-    
+
     public void setContentType(ContentType contentType) {
         super.setContentType(contentType == null ? null : contentType.toString());
     }
-    
+
     @Override
     public void setContentType(Header contentType) {
         super.setContentType(contentType);
         if (contentType != null) {
-        	addHeader(contentType);
+            addHeader(contentType);
         } else {
-        	removeHeaders(AS2Header.CONTENT_TYPE);
+            removeHeaders(AS2Header.CONTENT_TYPE);
         }
     }
-    
+
     public String getContentEncodingValue() {
         Header contentEncodingHeader = getContentEncoding();
         if (contentEncodingHeader != null) {
@@ -107,14 +107,14 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         }
         return null;
     }
-    
+
     @Override
     public void setContentEncoding(Header contentEncoding) {
         super.setContentEncoding(contentEncoding);
         if (contentEncoding != null) {
-        	addHeader(contentEncoding);
+            addHeader(contentEncoding);
         } else {
-        	removeHeaders(HTTP.CONTENT_ENCODING);
+            removeHeaders(HTTP.CONTENT_ENCODING);
         }
     }
 
@@ -125,7 +125,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         }
         return null;
     }
-    
+
     /**
      * Obtains the Content-Transfer-Encoding header.
      * The default implementation returns the value of the
@@ -148,9 +148,9 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     public void setContentTranserEncoding(final Header contentTransferEncoding) {
         this.contentTransferEncoding = contentTransferEncoding;
         if (contentTransferEncoding != null) {
-        	addHeader(contentTransferEncoding);
+            addHeader(contentTransferEncoding);
         } else {
-        	removeHeaders(AS2Header.CONTENT_TRANSFER_ENCODING);
+            removeHeaders(AS2Header.CONTENT_TRANSFER_ENCODING);
         }
     }
 
@@ -171,7 +171,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     }
 
 
-    
+
     public boolean containsHeader(final String name) {
         return this.headergroup.containsHeader(name);
     }
@@ -229,7 +229,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
             }
         }
     }
-    
+
     public void removeAllHeaders() {
         this.headergroup.clear();
     }
@@ -251,7 +251,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     public boolean isStreaming() {
         return !isRepeatable();
     }
-    
+
     @Override
     public long getContentLength() {
         if (contentLength == RECALCULATE_CONTENT_LENGTH) {

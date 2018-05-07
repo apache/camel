@@ -83,10 +83,10 @@ public final class AS2HeaderUtils {
 
     private AS2HeaderUtils() {
     }
-    
+
     public static Header createHeader(String headerName, String[]... elements) {
         StringBuilder sb = new StringBuilder();
-        
+
         boolean firstElement = true;
         for (String[] element: elements) {
             if (element.length == 0) {
@@ -105,7 +105,7 @@ public final class AS2HeaderUtils {
         BasicHeader header = new BasicHeader(headerName, sb.toString());
         return header;
     }
-    
+
     public static Parameter parseParameter(final CharArrayBuffer buffer, final ParserCursor cursor) {
         Args.notNull(buffer, "Char array buffer");
         Args.notNull(cursor, "Parser cursor");
@@ -161,5 +161,5 @@ public final class AS2HeaderUtils {
         }
         return null;
     }
-    
+
 }

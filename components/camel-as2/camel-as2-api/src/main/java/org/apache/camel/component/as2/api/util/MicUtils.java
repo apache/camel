@@ -38,20 +38,20 @@ import org.slf4j.LoggerFactory;
 
 public final class MicUtils {
     private static final Logger LOG = LoggerFactory.getLogger(MicUtils.class);
-    
+
     private MicUtils() {
     }
 
     public static class ReceivedContentMic {
         private final String digestAlgorithmId;
         private final String encodedMessageDigest;
-        
+
         public ReceivedContentMic(String digestAlgorithmId, byte[] messageDigest) throws Exception {
             this.digestAlgorithmId = digestAlgorithmId;
             messageDigest = EntityUtils.encode(messageDigest, "base64");
             this.encodedMessageDigest = new String(messageDigest, AS2Charset.US_ASCII);
         }
-        
+
         // Used when parsing received content MIC from received string
         protected ReceivedContentMic(String digestAlgorithmId, String encodedMessageDigest) {
             this.digestAlgorithmId = digestAlgorithmId;
@@ -65,13 +65,13 @@ public final class MicUtils {
         public String getEncodedMessageDigest() {
             return encodedMessageDigest;
         }
-        
+
         @Override
         public String toString() {
             return encodedMessageDigest + "," + digestAlgorithmId;
         }
     }
-    
+
     public static byte[] createMic(byte[] content, String algorithmId) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(algorithmId, "BC");
@@ -81,9 +81,9 @@ public final class MicUtils {
             return null;
         }
     }
-    
+
     public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request) throws HttpException {
-        
+
         String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
             LOG.debug("do not create MIC: no disposition notification options in request");
@@ -102,7 +102,7 @@ public final class MicUtils {
             return null;
         }
         ContentType contentType = ContentType.parse(contentTypeString);
-        
+
         HttpEntity entity = null;
         switch (contentType.getMimeType().toLowerCase()) {
         case AS2MimeType.APPLICATION_EDIFACT:
@@ -124,9 +124,9 @@ public final class MicUtils {
                     + "' for message integrity check");
             return null;
         }
-        
+
         byte[] content = EntityUtils.getContent(entity);
-        
+
         String micAS2AlgorithmName = AS2MicAlgorithm.getAS2AlgorithmName(micJdkAlgorithmName);
         byte[] mic = createMic(content, micJdkAlgorithmName);
         try {
@@ -135,7 +135,7 @@ public final class MicUtils {
             throw new HttpException("failed to encode MIC", e);
         }
     }
-    
+
     public static String getMicJdkAlgorithmName(String[] micAs2AlgorithmNames) {
         if (micAs2AlgorithmNames == null) {
             return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
@@ -145,7 +145,7 @@ public final class MicUtils {
             if (micJdkAlgorithmName != null) {
                 return micJdkAlgorithmName;
             }
-        }    
+        }
         return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
     }
 }

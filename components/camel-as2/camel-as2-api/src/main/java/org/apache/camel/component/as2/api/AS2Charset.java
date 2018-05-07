@@ -17,12 +17,12 @@
 package org.apache.camel.component.as2.api;
 
 public interface AS2Charset {
-    
+
     /**
      * Name of charset parameter in Content-Type header values.
      */
     public static final String PARAM = "charset";
-    
+
     /**
      * Character Set Name for US ASCII
      */
