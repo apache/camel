@@ -24,7 +24,7 @@ public class ActuatorTestRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("timer:foo").routeId("foo-route").to("log:foo");
+        from("timer:foo").routeId("foo-route").routeGroup("foo-route-group").to("log:foo");
     }
 
 }

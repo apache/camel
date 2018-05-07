@@ -38,8 +38,8 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.lang.Nullable;
+
 
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
@@ -200,11 +200,13 @@ public class CamelRoutesEndpoint {
     /**
      * Container for exposing {@link org.apache.camel.Route} information as JSON.
      */
-    @JsonPropertyOrder({"id", "description", "uptime", "uptimeMillis"})
+    @JsonPropertyOrder({"id", "group", "description", "uptime", "uptimeMillis"})
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class RouteEndpointInfo {
 
         private final String id;
+        
+        private final String group;
 
         private final String description;
 
@@ -216,6 +218,7 @@ public class CamelRoutesEndpoint {
 
         public RouteEndpointInfo(Route route) {
             this.id = route.getId();
+            this.group = route.getGroup();
             this.description = route.getDescription();
             this.uptime = route.getUptime();
             this.uptimeMillis = route.getUptimeMillis();
@@ -229,6 +232,10 @@ public class CamelRoutesEndpoint {
 
         public String getId() {
             return id;
+        }
+        
+        public String getGroup() {
+            return group;
         }
 
         public String getDescription() {
