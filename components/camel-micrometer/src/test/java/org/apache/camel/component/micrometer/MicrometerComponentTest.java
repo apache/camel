@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -72,7 +73,7 @@ public class MicrometerComponentTest {
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.getTypeConverter()).thenReturn(typeConverter);
         when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
-        when(camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class)).thenReturn(metricRegistry);
+        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class)).thenReturn(metricRegistry);
 
         Map<String, Object> params = new HashMap<>();
         params.put("tags", "key=value");
@@ -80,10 +81,10 @@ public class MicrometerComponentTest {
         assertThat(result, is(notNullValue()));
         assertThat(result, is(instanceOf(MicrometerEndpoint.class)));
         MicrometerEndpoint me = (MicrometerEndpoint) result;
-        assertThat(me.getMetricsName(), is(MicrometerConstants.HEADER_PREFIX + "." + "counter"));
+        assertThat(me.getMetricsName(), is("counter"));
         assertThat(me.getRegistry(), is(metricRegistry));
         inOrder.verify(camelContext, times(1)).getRegistry();
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
         inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
         inOrder.verify(camelContext, times(1)).getTypeConverter();
@@ -92,28 +93,28 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateNewEndpointForCounter() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.COUNTER, "a name", Collections.emptyList());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.COUNTER, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForGauge() {
-        MicrometerEndpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.GAUGE, "a name", Collections.emptyList());
+        MicrometerEndpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.GAUGE, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForHistogram() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.DISTRIBUTION_SUMMARY, "a name", Collections.emptyList());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForTimer() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.TIMER, "a name", Collections.emptyList());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.TIMER, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }

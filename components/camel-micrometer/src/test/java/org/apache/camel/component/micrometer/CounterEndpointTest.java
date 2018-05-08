@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.micrometer;
 
-import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Producer;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +48,7 @@ public class CounterEndpointTest {
 
     @Before
     public void setUp() {
-        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Collections.emptyList());
+        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Tags.empty());
         inOrder = Mockito.inOrder(registry);
     }
 
@@ -66,7 +66,7 @@ public class CounterEndpointTest {
     }
 
     @Test
-    public void testCreateProducer() throws Exception {
+    public void testCreateProducer() {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
         assertThat(producer, is(instanceOf(CounterProducer.class)));
@@ -80,8 +80,8 @@ public class CounterEndpointTest {
     @Test
     public void testSetIncrement() {
         assertThat(endpoint.getIncrement(), is(nullValue()));
-        endpoint.setIncrement(VALUE);
-        assertThat(endpoint.getIncrement(), is(VALUE));
+        endpoint.setIncrement(VALUE.toString());
+        assertThat(Double.valueOf(endpoint.getIncrement()), is(VALUE));
     }
 
     @Test
@@ -92,8 +92,8 @@ public class CounterEndpointTest {
     @Test
     public void testSetDecrement() {
         assertThat(endpoint.getDecrement(), is(nullValue()));
-        endpoint.setDecrement(VALUE);
-        assertThat(endpoint.getDecrement(), is(VALUE));
+        endpoint.setDecrement(VALUE.toString());
+        assertThat(Double.valueOf(endpoint.getDecrement()), is(VALUE));
     }
 
 }

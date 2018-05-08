@@ -18,7 +18,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface MicrometerRegistryMBean {
+public interface MicrometerRoutePolicyMBean {
 
     @ManagedOperation(description = "Dumps the statistics as json")
     String dumpStatisticsAsJson();

@@ -39,8 +39,8 @@ public class CounterProducer extends AbstractMicrometerProducer<Counter> {
     @Override
     protected void doProcess(Exchange exchange, MicrometerEndpoint endpoint, Counter counter) {
         Message in = exchange.getIn();
-        Double increment = endpoint.getIncrement();
-        Double decrement = endpoint.getDecrement();
+        Double increment = simple(exchange, endpoint.getIncrement(), Double.class);
+        Double decrement = simple(exchange, endpoint.getDecrement(), Double.class);
         Double finalIncrement = getDoubleHeader(in, HEADER_COUNTER_INCREMENT, increment);
         Double finalDecrement = getDoubleHeader(in, HEADER_COUNTER_DECREMENT, decrement);
         if (finalIncrement != null) {

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.micrometer;
 
-import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Producer;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +48,7 @@ public class DistributionSummaryEndpointTest {
 
     @Before
     public void setUp() {
-        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.DISTRIBUTION_SUMMARY, METRICS_NAME, Collections.emptyList());
+        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.DISTRIBUTION_SUMMARY, METRICS_NAME, Tags.empty());
         inOrder = Mockito.inOrder(registry);
     }
 
@@ -65,7 +65,7 @@ public class DistributionSummaryEndpointTest {
     }
 
     @Test
-    public void testCreateProducer() throws Exception {
+    public void testCreateProducer() {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
         assertThat(producer, is(instanceOf(DistributionSummaryProducer.class)));
@@ -79,8 +79,8 @@ public class DistributionSummaryEndpointTest {
     @Test
     public void testSetValue() {
         assertThat(endpoint.getValue(), is(nullValue()));
-        endpoint.setValue(VALUE);
-        assertThat(endpoint.getValue(), is(VALUE));
+        endpoint.setValue(VALUE.toString());
+        assertThat(Double.valueOf(endpoint.getValue()), is(VALUE));
     }
 
 }
