@@ -36,37 +36,7 @@
   <properties>
     <category>Other Languages</category>
     <ceylon.version>1.3.3</ceylon.version>
-    <skipTests>true</skipTests>
   </properties>
-
-  <dependencies>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-
-    <!-- used for jetty -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
-    </dependency>
-
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-    </dependency>
-
-  </dependencies>
 
   <build>
 
@@ -88,12 +58,34 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
+            <!-- we're replacing ${project.version} in module.ceylon, to use the
+                 current version -->
+            <id>prepare-module-ceylon</id>
             <phase>process-resources</phase>
             <configuration>
-              <tasks>
+              <target>
                 <copy file="${project.build.outputDirectory}/module.ceylon"
                       toFile="${project.basedir}/src/main/ceylon/org/apache/camel/example/module.ceylon" overwrite="true" />
-              </tasks>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <!-- by default we would use ceylon-maven-plugin:import-dependency,
+                 this fails if the Maven reactor doesn't contain the JAR artifact
+                 attached to the Maven module so here we prepare the module 
+                 dependencies via file copying -->
+            <id>prepare-module-dependencies</id>
+            <phase>initialize</phase>
+            <configuration>
+              <target>
+                <copy file="../../camel-core/target/camel-core-${project.version}.jar"
+                  toFile="${project.build.directory}/modules/org/apache/camel/camel-core/${project.version}/org.apache.camel.camel-core-${project.version}.jar" overwrite="true" />
+                <copy file="../../components/camel-jetty/target/camel-jetty-${project.version}.jar"
+                  toFile="${project.build.directory}/modules/org/apache/camel/camel-jetty/${project.version}/org.apache.camel.camel-jetty-${project.version}.jar" overwrite="true" />
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
@@ -112,35 +104,13 @@
         </configuration>
         <executions>
           <execution>
-            <id>dependency</id>
-            <goals>
-              <goal>import-dependency</goal>
-            </goals>
-            <configuration>
-              <!-- Import Maven dependencies as Ceylon modules -->
-              <moduleImports>
-                <moduleImport>
-                  <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-core</artifactId>
-                  </dependency>
-                  <!-- otherwise ceylon complains about undeclared imports -->
-                  <force>true</force>
-                </moduleImport>
-                <moduleImport>
-                  <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-jetty</artifactId>
-                  </dependency>
-                </moduleImport>
-              </moduleImports>
-            </configuration>
-          </execution>
-          <execution>
             <id>compile</id>
             <goals>
               <goal>compile</goal>
             </goals>
+            <configuration>
+              <verbose>true</verbose>
+            </configuration>
           </execution>
         </executions>
       </plugin>
