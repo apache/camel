@@ -26,10 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.rxjava2.engine.suport.TestSubscriber;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTestSupport {
 
     @Test
