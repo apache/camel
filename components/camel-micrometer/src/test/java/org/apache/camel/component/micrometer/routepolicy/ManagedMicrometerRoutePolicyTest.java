@@ -18,14 +18,15 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.List;
 import java.util.Set;
+import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest {
 
 
@@ -35,9 +36,10 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(10);
+        int count = 10;
+        getMockEndpoint("mock:result").expectedMessageCount(count);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
                 template.sendBody("seda:foo", "Hello " + i);
             } else {
@@ -48,22 +50,26 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         assertMockEndpointsSatisfied();
 
         // there should be 3 names
-        List<Meter> meters = registry.getMeters();
+        List<Meter> meters = meterRegistry.getMeters();
         assertEquals(3, meters.size());
 
-        // there should be 3 mbeans
-        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:*"), null);
-        assertEquals(3, set.size());
-
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRegistryService", context.getManagementName());
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
         String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 
-        assertTrue(json.contains("test"));
-        assertTrue(json.contains("bar.responses"));
-        assertTrue(json.contains("foo.responses"));
+        assertFalse(json.contains("\"name\" : \"test\""));  // the MicrometerRoutePolicy does NOT display producer metrics
+        assertTrue(json.contains("\"routeId\" : \"bar\""));
+        assertTrue(json.contains("\"routeId\" : \"foo\""));
+
+        // there should be 2 route policy meter mbeans
+        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelRoutePolicy.*"), null);
+        assertEquals(2, set.size());
+
+        String camelContextName = context().getName();
+        Long testCount = (Long)getMBeanServer().getAttribute(new ObjectName("org.apache.camel.micrometer:name=test.camelContext." + camelContextName), "Count");
+        assertEquals(count / 2, testCount.longValue());
     }
 
     @Override

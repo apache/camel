@@ -17,13 +17,16 @@
 package org.apache.camel.component.micrometer.json;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.micrometer.MicrometerComponent;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +37,8 @@ public class AbstractMicrometerService extends ServiceSupport {
     private MeterRegistry meterRegistry;
     private boolean prettyPrint = true;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
+    private Iterable<Tag> matchingTags = Tags.empty();
+    private Predicate<String> matchingNames;
     private transient ObjectMapper mapper;
     private transient ObjectMapper secondsMapper;
 
@@ -69,6 +74,22 @@ public class AbstractMicrometerService extends ServiceSupport {
         this.durationUnit = durationUnit;
     }
 
+    public Iterable<Tag> getMatchingTags() {
+        return matchingTags;
+    }
+
+    public void setMatchingTags(Iterable<Tag> matchingTags) {
+        this.matchingTags = matchingTags;
+    }
+
+    public Predicate<String> getMatchingNames() {
+        return matchingNames;
+    }
+
+    public void setMatchingNames(Predicate<String> matchingNames) {
+        this.matchingNames = matchingNames;
+    }
+
     public String dumpStatisticsAsJson() {
         ObjectWriter writer = mapper.writer();
         if (isPrettyPrint()) {
@@ -97,7 +118,7 @@ public class AbstractMicrometerService extends ServiceSupport {
     protected void doStart() {
         if (meterRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            meterRegistry = camelRegistry.lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class);
+            meterRegistry = camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
             // create a new metricsRegistry by default
             if (meterRegistry == null) {
                 meterRegistry = new SimpleMeterRegistry();
@@ -105,10 +126,10 @@ public class AbstractMicrometerService extends ServiceSupport {
         }
 
         // json mapper
-        this.mapper = new ObjectMapper().registerModule(new MicrometerModule(getDurationUnit()));
+        this.mapper = new ObjectMapper().registerModule(new MicrometerModule(getDurationUnit(), getMatchingNames(), getMatchingTags()));
         this.secondsMapper = getDurationUnit() == TimeUnit.SECONDS
                 ? this.mapper
-                : new ObjectMapper().registerModule(new MicrometerModule(TimeUnit.SECONDS));
+                : new ObjectMapper().registerModule(new MicrometerModule(TimeUnit.SECONDS, getMatchingNames(), getMatchingTags()));
     }
 
     @Override

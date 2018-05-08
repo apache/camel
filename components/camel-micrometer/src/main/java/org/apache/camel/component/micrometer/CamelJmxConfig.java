@@ -14,17 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.routepolicy;
+package org.apache.camel.component.micrometer;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.StaticService;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
+import io.micrometer.jmx.JmxConfig;
 
 /**
- * Service holding the {@link MeterRegistry} which registers all metrics.
+ * JmxConfig with a custom domain name
  */
-@ManagedResource(description = "MicrometerRegistry")
-public final class MicrometerRegistryService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRegistryMBean {
+public final class CamelJmxConfig implements JmxConfig {
+
+    public static final CamelJmxConfig DEFAULT = new CamelJmxConfig();
+
+    @Override
+    public String get(String key) {
+        return null;
+    }
+
+    @Override
+    public String prefix() {
+        return "jmx";
+    }
+
+    @Override
+    public String domain() {
+        return "org.apache.camel.micrometer";
+    }
 }

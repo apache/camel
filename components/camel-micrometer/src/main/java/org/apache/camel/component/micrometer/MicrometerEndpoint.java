@@ -45,14 +45,14 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     protected final String metricsName;
     @UriPath(description = "Tags of metrics")
     protected final Iterable<Tag> tags;
-    @UriParam(description = "Action when using timer type")
-    private MicrometerTimerAction action;
-    @UriParam(description = "Value value when using histogram type")
-    private Double value;
-    @UriParam(description = "Increment value when using counter type")
-    private Double increment;
-    @UriParam(description = "Decrement value when using counter type")
-    private Double decrement;
+    @UriParam(description = "Action expression when using timer type")
+    private String action;
+    @UriParam(description = "Value expression when using histogram type")
+    private String value;
+    @UriParam(description = "Increment value expression when using counter type")
+    private String increment;
+    @UriParam(description = "Decrement value expression when using counter type")
+    private String decrement;
 
     public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, MetricsType metricsType, String metricsName, Iterable<Tag> tags) {
         super(uri, component);
@@ -101,35 +101,35 @@ public class MicrometerEndpoint extends DefaultEndpoint {
         return metricsType;
     }
 
-    public MicrometerTimerAction getAction() {
+    public String getAction() {
         return action;
     }
 
-    public void setAction(MicrometerTimerAction action) {
+    public void setAction(String action) {
         this.action = action;
     }
 
-    public Double getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public Double getIncrement() {
+    public String getIncrement() {
         return increment;
     }
 
-    public void setIncrement(Double increment) {
+    public void setIncrement(String increment) {
         this.increment = increment;
     }
 
-    public Double getDecrement() {
+    public String getDecrement() {
         return decrement;
     }
 
-    public void setDecrement(Double decrement) {
+    public void setDecrement(String decrement) {
         this.decrement = decrement;
     }
 

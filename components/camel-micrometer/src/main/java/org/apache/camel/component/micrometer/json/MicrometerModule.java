@@ -18,13 +18,11 @@ package org.apache.camel.component.micrometer.json;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Comparator;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
@@ -42,6 +40,7 @@ import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.distribution.HistogramSnapshot;
@@ -50,12 +49,20 @@ import io.micrometer.core.instrument.search.Search;
 
 public class MicrometerModule extends Module {
 
-    static final Version VERSION = new Version(1, 0, 2, "", "io.micrometer", "micrometer-core");
+    static final Version VERSION = new Version(1, 0, 4, "", "io.micrometer", "micrometer-core");
 
     private final TimeUnit timeUnit;
+    private final Iterable<Tag> matchingTags;
+    private final Predicate<String> matchingNames;
 
     public MicrometerModule(TimeUnit timeUnit) {
+        this(timeUnit, name -> true, Tags.empty());
+    }
+
+    public MicrometerModule(TimeUnit timeUnit, Predicate<String> matchingNames, Iterable<Tag> matchingTags) {
         this.timeUnit = timeUnit;
+        this.matchingNames = matchingNames;
+        this.matchingTags = matchingTags;
     }
 
     @Override
@@ -226,8 +233,13 @@ public class MicrometerModule extends Module {
 
     private static final class MeterRegistrySerializer extends StdSerializer<MeterRegistry> {
 
-        private MeterRegistrySerializer() {
+        private final Predicate<String> matchingNames;
+        private final Iterable<Tag> matchingTags;
+
+        private MeterRegistrySerializer(Predicate<String> matchingNames, Iterable<Tag> matchingTags) {
             super(MeterRegistry.class);
+            this.matchingNames = matchingNames;
+            this.matchingTags = matchingTags;
         }
 
 
@@ -238,30 +250,29 @@ public class MicrometerModule extends Module {
 
             json.writeStartObject();
             json.writeStringField("version", VERSION.toString());
-            json.writeObjectField("gauges", meters(registry, Gauge.class));
-            json.writeObjectField("counters", meters(registry, Counter.class));
-            json.writeObjectField("functionCounters", meters(registry, FunctionCounter.class));
-            json.writeObjectField("timers", meters(registry, Timer.class));
-            json.writeObjectField("functionTimers", meters(registry, FunctionTimer.class));
-            json.writeObjectField("longTaskTimers", meters(registry, LongTaskTimer.class));
-            json.writeObjectField("distributionSummaries", meters(registry, DistributionSummary.class));
+            json.writeObjectField("gauges", meters(registry, Gauge.class, matchingNames, matchingTags));
+            json.writeObjectField("counters", meters(registry, Counter.class, matchingNames, matchingTags));
+            json.writeObjectField("functionCounters", meters(registry, FunctionCounter.class, matchingNames, matchingTags));
+            json.writeObjectField("timers", meters(registry, Timer.class, matchingNames, matchingTags));
+            json.writeObjectField("functionTimers", meters(registry, FunctionTimer.class, matchingNames, matchingTags));
+            json.writeObjectField("longTaskTimers", meters(registry, LongTaskTimer.class, matchingNames, matchingTags));
+            json.writeObjectField("distributionSummaries", meters(registry, DistributionSummary.class, matchingNames, matchingTags));
             json.writeEndObject();
         }
 
-        private Map<String, List<Meter>> meters(MeterRegistry meterRegistry, Class<? extends Meter> clazz) {
+        private Set<Meter> meters(MeterRegistry meterRegistry, Class<? extends Meter> clazz, Predicate<String> matchingNames, Iterable<Tag> matchingTags) {
             if (meterRegistry instanceof CompositeMeterRegistry) {
-                Map<String, List<Meter>> map = new TreeMap<>();
-                ((CompositeMeterRegistry) meterRegistry).getRegistries().forEach(reg ->
-                        meters(meterRegistry, clazz).forEach((key, value) -> map.merge(key, value, (m1, m2) ->
-                                Stream.concat(m1.stream(), m2.stream()).collect(Collectors.toList()))));
-                return map;
+                return ((CompositeMeterRegistry) meterRegistry).getRegistries().stream()
+                        .flatMap(reg -> meters(reg, clazz, matchingNames, matchingTags).stream())
+                        .sorted(Comparator.comparing(o -> o.getId().getName()))
+                        .collect(Collectors.toSet());
             }
-            return Search.in(meterRegistry).meters().stream()
+            return Search.in(meterRegistry).name(matchingNames).tags(matchingTags).meters().stream()
                     .filter(clazz::isInstance)
-                    .collect(Collectors.toMap(
-                        meter -> meter.getId().getName(),
-                        Collections::singletonList));
+                    .sorted(Comparator.comparing(o -> o.getId().getName()))
+                    .collect(Collectors.toSet());
         }
+
     }
 
 
@@ -277,7 +288,7 @@ public class MicrometerModule extends Module {
                 new FunctionTimerSerializer(timeUnit),
                 new LongTaskTimerSerializer(timeUnit),
                 new DistributionSummarySerializer(timeUnit),
-                new MeterRegistrySerializer()
+                new MeterRegistrySerializer(matchingNames, matchingTags)
         )));
     }
 }

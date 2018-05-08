@@ -16,16 +16,20 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
-import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.MockClock;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.core.instrument.util.HierarchicalNameMapper;
+import io.micrometer.jmx.JmxMeterRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.micrometer.MicrometerComponent;
+import org.apache.camel.component.micrometer.CamelJmxConfig;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
 
-    protected MeterRegistry registry = new SimpleMeterRegistry();
+    protected CompositeMeterRegistry meterRegistry;
 
     @Override
     protected boolean useJmx() {
@@ -35,18 +39,21 @@ public class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind(MicrometerComponent.METRICS_REGISTRY_NAME, this.registry);
+        meterRegistry = new CompositeMeterRegistry();
+        meterRegistry.add(new SimpleMeterRegistry());
+        meterRegistry.add(new JmxMeterRegistry(new CamelJmxConfig(), new MockClock(), HierarchicalNameMapper.DEFAULT));
+        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
         return registry;
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
         MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
-        factory.setMeterRegistry(registry);
+        factory.setMeterRegistry(meterRegistry);
         context.addRoutePolicyFactory(factory);
 
         return context;
     }
+
 }

@@ -17,10 +17,13 @@
 package org.apache.camel.component.micrometer.messagehistory;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
 
 public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
 
@@ -31,11 +34,13 @@ public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
 
     @Test
     public void testMetricsHistory() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(5);
-        getMockEndpoint("mock:bar").expectedMessageCount(5);
-        getMockEndpoint("mock:baz").expectedMessageCount(5);
+        int count = 10;
 
-        for (int i = 0; i < 10; i++) {
+        getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
+        getMockEndpoint("mock:bar").expectedMessageCount(count / 2);
+        getMockEndpoint("mock:baz").expectedMessageCount(count / 2);
+
+        for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
                 template.sendBody("seda:foo", "Hello " + i);
             } else {
@@ -49,6 +54,13 @@ public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
         MeterRegistry registry = context.getRegistry().findByType(MeterRegistry.class).iterator().next();
         assertEquals(3, registry.getMeters().size());
 
+        Timer fooTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "foo").timer();
+        assertEquals(count / 2, fooTimer.count());
+        Timer barTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "bar").timer();
+        assertEquals(count / 2, barTimer.count());
+        Timer bazTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "baz").timer();
+        assertEquals(count / 2, bazTimer.count());
+
         // get the message history service
         MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHistoryService.class);
         assertNotNull(service);
@@ -56,9 +68,9 @@ public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
         assertNotNull(json);
         log.info(json);
 
-        assertTrue(json.contains("foo.history"));
-        assertTrue(json.contains("bar.history"));
-        assertTrue(json.contains("baz.history"));
+        assertTrue(json.contains("\"nodeId\" : \"foo\""));
+        assertTrue(json.contains("\"nodeId\" : \"bar\""));
+        assertTrue(json.contains("\"nodeId\" : \"baz\""));
     }
 
 }

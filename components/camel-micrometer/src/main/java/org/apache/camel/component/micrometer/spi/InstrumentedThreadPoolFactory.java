@@ -35,8 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
 
     private static final AtomicLong COUNTER = new AtomicLong();
-    private MeterRegistry meterRegistry;
-    private ThreadPoolFactory threadPoolFactory;
+    private final MeterRegistry meterRegistry;
+    private final ThreadPoolFactory threadPoolFactory;
     private String prefix = "instrumented-delegate-";
 
     public InstrumentedThreadPoolFactory(MeterRegistry meterRegistry) {

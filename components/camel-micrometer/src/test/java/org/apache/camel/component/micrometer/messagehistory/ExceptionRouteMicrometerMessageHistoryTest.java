@@ -67,9 +67,9 @@ public class ExceptionRouteMicrometerMessageHistoryTest extends CamelTestSupport
         assertNotNull(json);
         log.info(json);
 
-        assertTrue(json.contains("foo.history"));
-        assertTrue(json.contains("bar.history"));
-        assertTrue(json.contains("exception.history"));
+        assertTrue(json.contains("\"nodeId\" : \"foo\""));
+        assertTrue(json.contains("\"nodeId\" : \"bar\""));
+        assertTrue(json.contains("\"nodeId\" : \"exception\""));
     }
 
     @Override

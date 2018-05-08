@@ -29,22 +29,26 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar1").expectedMessageCount(1);
-        getMockEndpoint("mock:bar2").expectedMessageCount(1);
 
-        template.sendBody("direct:multicast", "Hello World");
+        int count = 10;
+        getMockEndpoint("mock:foo").expectedMessageCount(count);
+        getMockEndpoint("mock:bar1").expectedMessageCount(count);
+        getMockEndpoint("mock:bar2").expectedMessageCount(count);
+
+        for (int i = 0; i < count; i++) {
+            template.sendBody("direct:multicast", "Hello World");
+        }
 
         assertMockEndpointsSatisfied();
 
         // there should be 3 names
-        List<Meter> meters = registry.getMeters();
+        List<Meter> meters = meterRegistry.getMeters();
         assertEquals(3, meters.size());
 
 
         meters.forEach(meter -> {
             Timer timer = (Timer) meter;
-            assertEquals("Timer " + timer.getId() + " should have count of 1",  1, timer.count());
+            assertEquals("Timer " + timer.getId() + " should have count of " + count,  count, timer.count());
         });
     }
 

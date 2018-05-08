@@ -36,9 +36,9 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import static org.apache.camel.component.micrometer.MicrometerComponent.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -48,6 +48,8 @@ import static org.junit.Assert.assertTrue;
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
 public class TimerRouteTest {
+
+    private static final long DELAY = 20L;
 
     @EndpointInject(uri = "mock:out")
     private MockEndpoint endpoint;
@@ -76,7 +78,7 @@ public class TimerRouteTest {
                     from("direct:in-1")
                             .setHeader(HEADER_METRIC_NAME, constant("B"))
                             .to("micrometer:timer:A?action=start")
-                            .delay(100L)
+                            .delay(DELAY)
                             .setHeader(HEADER_METRIC_NAME, constant("B"))
                             .to("micrometer:timer:A?action=stop")
                             .to("mock:out");
@@ -84,15 +86,15 @@ public class TimerRouteTest {
                     from("direct:in-2")
                             .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.start))
                             .to("micrometer:timer:A")
-                            .delay(100L)
+                            .delay(DELAY)
                             .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.stop))
                             .to("micrometer:timer:A")
                             .to("mock:out");
 
                     from("direct:in-3")
                             .to("micrometer:timer:C?action=start")
-                            .delay(100L)
-                            .to("micrometer:timer:C?action=stop&tags=a=b")
+                            .delay(DELAY)
+                            .to("micrometer:timer:C?action=stop&tags=a=${body}")
                             .to("mock:out");
                 }
             };
@@ -131,7 +133,7 @@ public class TimerRouteTest {
         Object body = new Object();
         endpoint.expectedBodiesReceived(body);
         producer2.sendBody(body);
-        Timer timer = registry.find(MicrometerConstants.HEADER_PREFIX + "." + "A").timer();
+        Timer timer = registry.find("A").timer();
         assertEquals(1L, timer.count());
         assertTrue(timer.max(TimeUnit.MILLISECONDS) > 0.0D);
         endpoint.assertIsSatisfied();
@@ -139,13 +141,18 @@ public class TimerRouteTest {
 
     @Test
     public void testNormal() throws Exception {
-        Object body = new Object();
-        endpoint.expectedBodiesReceived(body);
-        producer3.sendBody(body);
-        Timer timer = registry.find(MicrometerConstants.HEADER_PREFIX + "." + "C").timer();
-        assertEquals(1L, timer.count());
-        assertTrue(timer.max(TimeUnit.MILLISECONDS) > 0.0D);
-        assertEquals("b", timer.getId().getTag("a"));
+        int count = 10;
+        String body = "Hello";
+        endpoint.expectedMessageCount(count);
+        for (int i = 0; i < count; i++) {
+            producer3.sendBody(body);
+        }
+        Timer timer = registry.find("C").timer();
+        assertEquals(count, timer.count());
+        assertTrue(timer.max(TimeUnit.MILLISECONDS) > DELAY);
+        assertTrue(timer.mean(TimeUnit.MILLISECONDS) > DELAY);
+        assertTrue(timer.totalTime(TimeUnit.MILLISECONDS) > DELAY * count);
+        assertEquals(body, timer.getId().getTag("a"));
         endpoint.assertIsSatisfied();
     }
 }

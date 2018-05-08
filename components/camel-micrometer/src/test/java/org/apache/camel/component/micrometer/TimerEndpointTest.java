@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.micrometer;
 
-import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Producer;
 import org.junit.After;
 import org.junit.Before;
@@ -47,7 +47,7 @@ public class TimerEndpointTest {
 
     @Before
     public void setUp() {
-        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.TIMER, METRICS_NAME, Collections.emptyList());
+        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.TIMER, METRICS_NAME, Tags.empty());
         inOrder = Mockito.inOrder(registry);
     }
 
@@ -78,8 +78,8 @@ public class TimerEndpointTest {
     @Test
     public void testSetAction() {
         assertThat(endpoint.getAction(), is(nullValue()));
-        endpoint.setAction(MicrometerTimerAction.start);
-        assertThat(endpoint.getAction(), is(MicrometerTimerAction.start));
+        endpoint.setAction(MicrometerTimerAction.start.name());
+        assertThat(MicrometerTimerAction.valueOf(endpoint.getAction()), is(MicrometerTimerAction.start));
     }
 
 }
