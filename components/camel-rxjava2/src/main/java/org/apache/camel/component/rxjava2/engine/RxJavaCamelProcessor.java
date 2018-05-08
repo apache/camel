@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+import hu.akarnokd.rxjava2.processors.MulticastProcessor;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
-import io.reactivex.processors.BehaviorProcessor;
 import io.reactivex.processors.FlowableProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
@@ -46,7 +46,7 @@ final class RxJavaCamelProcessor implements Closeable {
         this.name = name;
         this.camelProducer = null;
         this.camelEmitter = new AtomicReference<>();
-        this.publisher = BehaviorProcessor.create();
+        this.publisher = MulticastProcessor.create(1); // Buffered downstream if needed
     }
 
     @Override
