@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import static org.apache.camel.component.micrometer.MicrometerComponent.METRICS_REGISTRY_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;

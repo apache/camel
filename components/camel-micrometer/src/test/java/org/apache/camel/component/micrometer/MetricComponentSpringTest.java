@@ -68,7 +68,7 @@ public class MetricComponentSpringTest {
             };
         }
 
-        @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
+        @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
         public MeterRegistry getMetricRegistry() {
             return Mockito.mock(MeterRegistry.class);
         }
@@ -76,7 +76,7 @@ public class MetricComponentSpringTest {
 
     @Test
     public void testMetricsRegistryFromCamelRegistry() throws Exception {
-        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerComponent.METRICS_REGISTRY_NAME, MeterRegistry.class);
+        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
         Counter mockCounter = Mockito.mock(Counter.class);
         InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
         when(mockRegistry.counter(MicrometerConstants.HEADER_PREFIX + "." + "A", Tags.empty())).thenReturn(mockCounter);

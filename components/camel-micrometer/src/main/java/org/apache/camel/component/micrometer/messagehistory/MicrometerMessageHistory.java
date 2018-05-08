@@ -20,20 +20,27 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultMessageHistory;
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 
 /**
  * A micrometer metrics based {@link MessageHistory}
  */
 public class MicrometerMessageHistory extends DefaultMessageHistory {
 
+    private final Route route;
     private final Timer.Sample sample;
     private final MeterRegistry meterRegistry;
     private final String name;
 
-    public MicrometerMessageHistory(MeterRegistry meterRegistry, String routeId, NamedNode namedNode, String name, long timestamp) {
-        super(routeId, namedNode, timestamp);
+    public MicrometerMessageHistory(MeterRegistry meterRegistry, Route route, NamedNode namedNode, String name, long timestamp) {
+        super(route.getId(), namedNode, timestamp);
         this.meterRegistry = meterRegistry;
+        this.route = route;
         this.name = name;
         this.sample = Timer.start(meterRegistry);
     }
@@ -41,10 +48,10 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
     @Override
     public void nodeProcessingDone() {
         super.nodeProcessingDone();
-        Timer timer = Timer.builder(name)
-                .tag("camelService", "messageHistory")
-                .tag("routeId", getRouteId())
-                .tag("nodeId", getNode().getId())
+        Timer timer = Timer.builder(name != null ? name : DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME)
+                .tag(CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName())
+                .tag(ROUTE_ID_TAG, getRouteId())
+                .tag(NODE_ID_TAG, getNode().getId())
                 .register(meterRegistry);
         sample.stop(timer);
     }

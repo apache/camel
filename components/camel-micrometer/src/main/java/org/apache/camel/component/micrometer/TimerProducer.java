@@ -36,7 +36,10 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
 
     @Override
     protected Function<MeterRegistry, Timer> registrar(String name, Iterable<Tag> tags) {
-        return meterRegistry -> meterRegistry.timer(name, tags);
+        return meterRegistry ->
+            Timer.builder(name)
+                .tags(tags)
+                .register(meterRegistry);
     }
 
     @Override
@@ -64,7 +67,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
 
     private void handleStop(Exchange exchange, String metricsName, Iterable<Tag> tags) {
         if (getTimerSampleFromExchange(exchange, getPropertyName(metricsName)) != null) {
-            doProcess(exchange, getEndpoint(), getMeter(metricsName, tags));
+            doProcess(exchange, getEndpoint(), getOrRegisterMeter(metricsName, tags));
         }
     }
 

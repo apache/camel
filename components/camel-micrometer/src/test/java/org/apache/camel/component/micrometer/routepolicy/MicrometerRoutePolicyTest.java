@@ -16,19 +16,24 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
-import java.util.List;
-import io.micrometer.core.instrument.Meter;
+import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 
 public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest {
 
+    private static final long DELAY_FOO = 20;
+    private static final long DELAY_BAR = 50;
+
     @Test
     public void testMetricsRoutePolicy() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(10);
+        int count = 10;
+        getMockEndpoint("mock:result").expectedMessageCount(count);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
                 template.sendBody("seda:foo", "Hello " + i);
             } else {
@@ -38,10 +43,18 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
 
         assertMockEndpointsSatisfied();
 
-        // there should be 2 names
-        List<Meter> meters = registry.getMeters();
-        assertEquals(2, meters.size());
-        meters.forEach(meter -> assertTrue(meter instanceof Timer));
+        Timer fooTimer = registry.find(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME).tag(ROUTE_ID_TAG, "foo").timer();
+        assertEquals(count / 2, fooTimer.count());
+        assertTrue(fooTimer.mean(TimeUnit.MILLISECONDS) > DELAY_FOO);
+        assertTrue(fooTimer.max(TimeUnit.MILLISECONDS) > DELAY_FOO);
+        assertTrue(fooTimer.totalTime(TimeUnit.MILLISECONDS) > DELAY_FOO * count / 2);
+
+        Timer barTimer = registry.find(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME).tag(ROUTE_ID_TAG, "bar").timer();
+        assertEquals(count / 2, barTimer.count());
+        assertTrue(barTimer.mean(TimeUnit.MILLISECONDS) > DELAY_BAR);
+        assertTrue(barTimer.max(TimeUnit.MILLISECONDS) > DELAY_BAR);
+        assertTrue(barTimer.totalTime(TimeUnit.MILLISECONDS) > DELAY_BAR * count / 2);
+
     }
 
     @Override
@@ -50,10 +63,12 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
             @Override
             public void configure() {
                 from("seda:foo").routeId("foo")
-                    .to("mock:result");
+                        .delay(DELAY_FOO)
+                        .to("mock:result");
 
                 from("seda:bar").routeId("bar")
-                    .to("mock:result");
+                        .delay(DELAY_BAR)
+                        .to("mock:result");
             }
         };
     }

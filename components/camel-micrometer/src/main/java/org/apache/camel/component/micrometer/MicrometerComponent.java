@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MicrometerComponent extends UriEndpointComponent {
 
-    public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
     public static final MetricsType DEFAULT_METER_TYPE = MetricsType.COUNTER;
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerComponent.class);
@@ -56,7 +55,7 @@ public class MicrometerComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, METRICS_REGISTRY_NAME);
+            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
         if (prefix == null) {
             prefix = MicrometerConstants.HEADER_PREFIX;

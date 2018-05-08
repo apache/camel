@@ -17,17 +17,17 @@
 package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
-import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link MeterRegistry}.
@@ -40,9 +40,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private boolean prettyPrint;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
-    private Route route;
-    private String prefix = MicrometerConstants.HEADER_PREFIX;
-    private String namePattern = "##name##.##routeId##.##type##";
+    private String name;
 
 
     private static final class MetricsStatistics {
@@ -65,16 +63,15 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         public void onExchangeDone(Exchange exchange) {
             Timer.Sample sample = (Timer.Sample) exchange.removeProperty(MICROMETER_ROUTE_POLICY + route.getId());
             if (sample != null) {
-                Timer timer = Timer.builder(name)
+                Timer timer = Timer.builder(name != null ? name : DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME)
                         .description(route.getDescription())
-                        .tag("camelService", "routePolicy")
-                        .tag("route", route.getId())
+                        .tag(CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName())
+                        .tag(ROUTE_ID_TAG, route.getId())
                         .tag("failed", Boolean.toString(exchange.isFailed()))
                         .register(meterRegistry);
                 sample.stop(timer);
             }
         }
-
     }
 
 
@@ -102,33 +99,18 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         this.durationUnit = durationUnit;
     }
 
-    public String getNamePattern() {
-        return namePattern;
+    public String getName() {
+        return name;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    /**
-     * The name pattern to use.
-     * <p/>
-     * Uses dot as separators, but you can change that.
-     * The values <tt>##name##</tt>, <tt>##routeId##</tt>, and <tt>##type##</tt> will be replaced with actual value.
-     */
-    public void setNamePattern(String namePattern) {
-        this.namePattern = namePattern;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public void onInit(Route route) {
         super.onInit(route);
 
-        this.route = route;
         MicrometerRegistryService registryService;
         try {
             registryService = route.getRouteContext().getCamelContext().hasService(MicrometerRegistryService.class);
@@ -153,20 +135,9 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // create statistics holder
         // for know we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
-        statistics = new MetricsStatistics(meterRegistry, route, createName("responses"));
+        statistics = new MetricsStatistics(meterRegistry, route, getName());
     }
 
-    private String createName(String type) {
-        CamelContext context = route.getRouteContext().getCamelContext();
-        String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
-
-        String answer = namePattern;
-        answer = answer.replaceFirst("##prefix##", prefix);
-        answer = answer.replaceFirst("##name##", name);
-        answer = answer.replaceFirst("##routeId##", Matcher.quoteReplacement(route.getId()));
-        answer = answer.replaceFirst("##type##", type);
-        return answer;
-    }
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {

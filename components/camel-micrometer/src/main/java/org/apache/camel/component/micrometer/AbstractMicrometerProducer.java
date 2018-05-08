@@ -20,12 +20,14 @@ import java.util.function.Function;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 
 
 public abstract class AbstractMicrometerProducer<T extends Meter> extends DefaultProducer {
@@ -58,7 +60,9 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         String defaultMetricsName = getEndpoint().getMetricsName();
         String finalMetricsName = getMetricsName(in, defaultMetricsName);
         Iterable<Tag> defaultTags = getEndpoint().getTags();
-        Iterable<Tag> finalTags = getTags(in, defaultTags);
+        Iterable<Tag> finalTags = Tags.concat(
+                getTags(in, defaultTags),
+                Tags.of(CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
         try {
             doProcess(exchange, finalMetricsName, finalTags);
         } catch (Exception e) {
@@ -71,9 +75,9 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
     protected abstract Function<MeterRegistry, T> registrar(String name, Iterable<Tag> tags);
 
     protected void doProcess(Exchange exchange, String name, Iterable<Tag> tags) {
-        T meter = getMeter(name, tags);
         try {
-            doProcess(exchange, getEndpoint(), meter);
+
+            doProcess(exchange, getEndpoint(), getOrRegisterMeter(name, tags));
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
@@ -81,7 +85,7 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         }
     }
 
-    protected T getMeter(String name, Iterable<Tag> tags) {
+    protected T getOrRegisterMeter(String name, Iterable<Tag> tags) {
         MeterRegistry registry = getEndpoint().getRegistry();
         return registrar(name, tags).apply(registry);
     }

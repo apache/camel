@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.json;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -248,19 +249,17 @@ public class MicrometerModule extends Module {
             json.writeEndObject();
         }
 
-        private Map<String, List<Meter>> meters(MeterRegistry meterRegistry, Class<? extends Meter> clazz) {
+        private List<Meter> meters(MeterRegistry meterRegistry, Class<? extends Meter> clazz) {
             if (meterRegistry instanceof CompositeMeterRegistry) {
-                Map<String, List<Meter>> map = new TreeMap<>();
-                ((CompositeMeterRegistry) meterRegistry).getRegistries().forEach(reg ->
-                        meters(meterRegistry, clazz).forEach((key, value) -> map.merge(key, value, (m1, m2) ->
-                                Stream.concat(m1.stream(), m2.stream()).collect(Collectors.toList()))));
-                return map;
+                ((CompositeMeterRegistry) meterRegistry).getRegistries().stream()
+                        .flatMap(reg -> meters(reg, clazz).stream())
+                        .sorted(Comparator.comparing(o -> o.getId().getName()))
+                        .collect(Collectors.toList());
             }
             return Search.in(meterRegistry).meters().stream()
                     .filter(clazz::isInstance)
-                    .collect(Collectors.toMap(
-                        meter -> meter.getId().getName(),
-                        Collections::singletonList));
+                    .sorted(Comparator.comparing(o -> o.getId().getName()))
+                    .collect(Collectors.toList());
         }
     }
 

@@ -22,13 +22,13 @@ import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
 
 /**
- * Filter for adding common distribution statistics for all Timers and Histograms.
+ * Example filter for adding common distribution statistics for all Timers and Distribution
+ * Summaries.
  * Configure and add this to the {@link io.micrometer.core.instrument.MeterRegistry}
  * if desired.
  */
 public class DistributionStatisticConfigFilter implements MeterFilter {
 
-    private String prefix = MicrometerConstants.HEADER_PREFIX;
     private Long maximumExpectedValue;
     private Long minimumExpectedValue;
     private Boolean enabled;
@@ -39,7 +39,7 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
 
     @Override
     public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
-        if (id.getName().startsWith(prefix)) {
+        if (id.getTag(MicrometerConstants.CAMEL_CONTEXT_TAG) != null) {
             return DistributionStatisticConfig.builder()
                     .percentilesHistogram(enabled)
                     .percentiles(percentiles)
@@ -52,10 +52,6 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
                     .merge(config);
         }
         return config;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
     }
 
     public void setMaximumExpectedValue(Long maximumExpectedValue) {

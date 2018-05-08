@@ -23,7 +23,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.micrometer.MicrometerComponent;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
@@ -47,7 +47,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind(MicrometerComponent.METRICS_REGISTRY_NAME, registry);
+        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, registry);
         return registry;
     }
 
@@ -65,11 +65,13 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
 
     @Test
     public void testMessageHistory() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(5);
-        getMockEndpoint("mock:bar").expectedMessageCount(5);
-        getMockEndpoint("mock:baz").expectedMessageCount(5);
+        int count = 10;
 
-        for (int i = 0; i < 10; i++) {
+        getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
+        getMockEndpoint("mock:bar").expectedMessageCount(count / 2);
+        getMockEndpoint("mock:baz").expectedMessageCount(count / 2);
+
+        for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
                 template.sendBody("seda:foo", "Hello " + i);
             } else {

@@ -19,7 +19,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.micrometer.MicrometerComponent;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
@@ -35,7 +35,7 @@ public class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind(MicrometerComponent.METRICS_REGISTRY_NAME, this.registry);
+        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, this.registry);
         return registry;
     }
 

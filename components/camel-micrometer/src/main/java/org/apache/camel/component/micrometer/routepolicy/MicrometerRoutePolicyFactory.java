@@ -19,7 +19,6 @@ package org.apache.camel.component.micrometer.routepolicy;
 import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -32,8 +31,7 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
     private MeterRegistry meterRegistry;
     private boolean prettyPrint = true;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
-    private String prefix = MicrometerConstants.HEADER_PREFIX;
-    private String namePattern = "##prefix##.##name##.##routeId##.##type##";
+    private String name;
 
     /**
      * To use a specific {@link io.micrometer.core.instrument.MeterRegistry} instance.
@@ -73,20 +71,12 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
         this.durationUnit = durationUnit;
     }
 
-    public String getNamePattern() {
-        return namePattern;
+    public String getName() {
+        return name;
     }
 
-    public void setNamePattern(String namePattern) {
-        this.namePattern = namePattern;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+    public void setName(String prefix) {
+        this.name = name;
     }
 
     @Override
@@ -95,8 +85,7 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
         answer.setMeterRegistry(getMeterRegistry());
         answer.setPrettyPrint(isPrettyPrint());
         answer.setDurationUnit(getDurationUnit());
-        answer.setPrefix(prefix);
-        answer.setNamePattern(namePattern);
+        answer.setName(name);
         return answer;
     }
 

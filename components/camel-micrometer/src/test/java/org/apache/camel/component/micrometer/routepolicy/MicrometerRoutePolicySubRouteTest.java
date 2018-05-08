@@ -26,10 +26,13 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        int count = 10;
+        getMockEndpoint("mock:foo").expectedMessageCount(count);
+        getMockEndpoint("mock:bar").expectedMessageCount(count);
 
-        template.sendBody("direct:foo", "Hello World");
+        for (int i = 0; i < count; i++) {
+            template.sendBody("direct:foo", "Hello World");
+        }
 
         assertMockEndpointsSatisfied();
 

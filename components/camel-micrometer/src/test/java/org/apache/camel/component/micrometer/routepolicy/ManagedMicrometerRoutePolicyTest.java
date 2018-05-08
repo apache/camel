@@ -35,9 +35,10 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(10);
+        int count = 10;
+        getMockEndpoint("mock:result").expectedMessageCount(count);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
                 template.sendBody("seda:foo", "Hello " + i);
             } else {
