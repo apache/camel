@@ -417,6 +417,7 @@
 	* [Ribbon](ribbon.adoc)
 	* [Ruby](ruby.adoc)
 	* [RX](rx.adoc)
+	* [Rxjava2](rxjava2.adoc)
 	* [Scala DSL](scala.adoc)
 	* [SCR](scr.adoc)
 	* [Servlet Listener](servletlistener.adoc)
