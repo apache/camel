@@ -37,6 +37,7 @@
     <category>Other Languages</category>
     <ceylon.version>1.3.3</ceylon.version>
     <skipTests>true</skipTests>
+    <maven.test.skip>true</maven.test.skip>
   </properties>
 
   <dependencies>
