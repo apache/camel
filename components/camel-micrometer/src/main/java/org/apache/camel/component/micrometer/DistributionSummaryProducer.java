@@ -40,7 +40,7 @@ public class DistributionSummaryProducer extends AbstractMicrometerProducer<Dist
 
     @Override
     protected void doProcess(Exchange exchange, MicrometerEndpoint endpoint, DistributionSummary summary) {
-        Double value = endpoint.getValue();
+        Double value = simple(exchange, endpoint.getValue(), Double.class);
         Double finalValue = getDoubleHeader(exchange.getIn(), HEADER_HISTOGRAM_VALUE, value);
         if (finalValue != null) {
             summary.record(finalValue);

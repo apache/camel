@@ -19,20 +19,23 @@ package org.apache.camel.component.micrometer.messagehistory;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.MockClock;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.core.instrument.util.HierarchicalNameMapper;
+import io.micrometer.jmx.JmxMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.micrometer.MicrometerComponent;
+import org.apache.camel.component.micrometer.CamelJmxConfig;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ManagedMessageHistoryTest extends CamelTestSupport {
 
-    private MeterRegistry registry = new SimpleMeterRegistry();
+    private CompositeMeterRegistry meterRegistry;
 
     @Override
     protected boolean useJmx() {
@@ -47,7 +50,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind(MicrometerComponent.METRICS_REGISTRY_NAME, registry);
+        meterRegistry = new CompositeMeterRegistry();
+        meterRegistry.add(new SimpleMeterRegistry());
+        meterRegistry.add(new JmxMeterRegistry(new CamelJmxConfig(), Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
+        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
         return registry;
     }
 
@@ -57,7 +63,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
 
         MicrometerMessageHistoryFactory factory = new MicrometerMessageHistoryFactory();
         factory.setPrettyPrint(true);
-        factory.setMeterRegistry(registry);
+        factory.setMeterRegistry(meterRegistry);
         context.setMessageHistoryFactory(factory);
 
         return context;
@@ -65,11 +71,13 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
 
     @Test
     public void testMessageHistory() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(5);
-        getMockEndpoint("mock:bar").expectedMessageCount(5);
-        getMockEndpoint("mock:baz").expectedMessageCount(5);
+        int count = 10;
 
-        for (int i = 0; i < 10; i++) {
+        getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
+        getMockEndpoint("mock:bar").expectedMessageCount(count / 2);
+        getMockEndpoint("mock:baz").expectedMessageCount(count / 2);
+
+        for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
                 template.sendBody("seda:foo", "Hello " + i);
             } else {
@@ -80,11 +88,16 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // there should be 3 names
-        assertEquals(3, registry.getMeters().size());
+        assertEquals(3, meterRegistry.getMeters().size());
 
         // there should be 3 mbeans
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:*"), null);
         assertEquals(3, set.size());
+
+        String camelContextName = context().getName();
+        Long testCount = (Long)getMBeanServer().getAttribute(
+                new ObjectName("org.apache.camel.micrometer:name=CamelMessageHistory.camelContext." + camelContextName + ".nodeId.foo.routeId.route1"), "Count");
+        assertEquals(count / 2, testCount.longValue());
 
         // get the message history service using JMX
         String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerMessageHistoryService", context.getManagementName());
@@ -93,27 +106,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertNotNull(json);
         log.info(json);
         
-        assertTrue(json.contains("foo.history"));
-        assertTrue(json.contains("bar.history"));
-        assertTrue(json.contains("baz.history"));
+        assertTrue(json.contains("\"nodeId\" : \"foo\""));
+        assertTrue(json.contains("\"nodeId\" : \"bar\""));
+        assertTrue(json.contains("\"nodeId\" : \"baz\""));
 
-        // reset
-        getMBeanServer().invoke(on, "reset", null, null);
-
-        resetMocks();
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-
-        template.sendBody("seda:foo", "Hello Again");
-
-        assertMockEndpointsSatisfied();
-
-        json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
-        assertNotNull(json);
-        log.info(json);
-
-        assertTrue(json.contains("foo.history"));
-        assertFalse(json.contains("bar.history"));
-        assertFalse(json.contains("baz.history"));
     }
 
     @Override
@@ -121,10 +117,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo")
+                from("seda:foo").routeId("route1")
                         .to("mock:foo").id("foo");
 
-                from("seda:bar")
+                from("seda:bar").routeId("route2")
                         .to("mock:bar").id("bar")
                         .to("mock:baz").id("baz");
             }

@@ -26,6 +26,14 @@ public final class MicrometerConstants {
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
 
+    public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "CamelMessageHistory";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "CamelRoutePolicy";
+
+    public static final String ROUTE_ID_TAG = "routeId";
+    public static final String NODE_ID_TAG = "nodeId";
+    public static final String CAMEL_CONTEXT_TAG = "camelContext";
+    public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
+
     private MicrometerConstants() {
     }
 

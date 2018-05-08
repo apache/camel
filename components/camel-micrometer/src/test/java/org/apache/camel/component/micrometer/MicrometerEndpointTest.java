@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.micrometer;
 
-import java.util.Collections;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -57,7 +57,7 @@ public class MicrometerEndpointTest {
 
     @Before
     public void setUp() {
-        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Collections.emptyList()) {
+        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Tags.empty()) {
             @Override
             public Producer createProducer() {
                 return null;
@@ -83,7 +83,7 @@ public class MicrometerEndpointTest {
     }
 
     @Test(expected = RuntimeCamelException.class)
-    public void testCreateConsumer() throws Exception {
+    public void testCreateConsumer() {
         endpoint.createConsumer(processor);
     }
 

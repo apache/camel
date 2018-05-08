@@ -36,9 +36,9 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import static org.apache.camel.component.micrometer.MicrometerComponent.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(CamelSpringRunner.class)
@@ -51,8 +51,11 @@ public class DistributionSummaryRouteTest {
     @EndpointInject(uri = "mock:out")
     private MockEndpoint endpoint;
 
-    @Produce(uri = "direct:in")
-    private ProducerTemplate producer;
+    @Produce(uri = "direct:in-1")
+    private ProducerTemplate producer1;
+
+    @Produce(uri = "direct:in-2")
+    private ProducerTemplate producer2;
 
     private MeterRegistry registry;
 
@@ -66,8 +69,11 @@ public class DistributionSummaryRouteTest {
 
                 @Override
                 public void configure() {
-                    from("direct:in")
+                    from("direct:in-1")
                             .to("micrometer:summary:A?value=332491")
+                            .to("mock:out");
+                    from("direct:in-2")
+                            .to("micrometer:summary:${body}?value=${header.nextValue}")
                             .to("mock:out");
                 }
             };
@@ -92,7 +98,7 @@ public class DistributionSummaryRouteTest {
     @Test
     public void testOverrideMetricsName() throws Exception {
         endpoint.expectedMessageCount(1);
-        producer.sendBodyAndHeader(new Object(), HEADER_METRIC_NAME, "B");
+        producer1.sendBodyAndHeader(new Object(), HEADER_METRIC_NAME, "B");
         assertEquals(1L, registry.find("B").summary().count());
         endpoint.assertIsSatisfied();
     }
@@ -100,10 +106,21 @@ public class DistributionSummaryRouteTest {
     @Test
     public void testOverrideValue() throws Exception {
         endpoint.expectedMessageCount(1);
-        producer.sendBodyAndHeader(new Object(), HEADER_HISTOGRAM_VALUE, 181L);
-        DistributionSummary summary = registry.find(MicrometerConstants.HEADER_PREFIX + "." + "A").summary();
+        producer1.sendBodyAndHeader(new Object(), HEADER_HISTOGRAM_VALUE, 181D);
+        DistributionSummary summary = registry.find("A").summary();
         assertEquals(1L, summary.count());
-        HistogramSnapshot snapshot = summary.takeSnapshot(false);
+        HistogramSnapshot snapshot = summary.takeSnapshot();
+        assertEquals(181.0D, snapshot.total(), 0.01D);
+        endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testScriptEvaluationValue() throws Exception {
+        endpoint.expectedMessageCount(1);
+        producer2.sendBodyAndHeader("C", "nextValue", "181.0");
+        DistributionSummary summary = registry.find("C").summary();
+        assertEquals(1L, summary.count());
+        HistogramSnapshot snapshot = summary.takeSnapshot();
         assertEquals(181.0D, snapshot.total(), 0.01D);
         endpoint.assertIsSatisfied();
     }

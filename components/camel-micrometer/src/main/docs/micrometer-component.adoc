@@ -48,7 +48,6 @@ micrometer:[ counter | summary | timer ]:metricname[?options]
 The Micrometer component supports the following options:
 
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -86,10 +85,9 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *tags* (producer) | Tags that accompany the metric. Comma-separated list of key=value pairs |  | String
 | *action* (producer) | Action when using timer type |  | MetricsTimerAction
-| *decrement* (producer) | Decrement value when using counter type |  | Long
-| *increment* (producer) | Increment value when using counter type |  | Long
-| *value* (producer) | Value value when using histogram type |  | Long
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *decrement* (producer) | Decrement value when using counter type |  | Double
+| *increment* (producer) | Increment value when using counter type |  | Double
+| *value* (producer) | Value value when using histogram type |  | Double
 |===
 // endpoint options: END
 
@@ -97,7 +95,7 @@ with the following path and query parameters:
 
 ### [[MicrometerComponent-registry]]Meter Registry
 
-The Camel Micrometer component uses by default a `SimpleMeterRegistry` instance.
+By default the Camel Micrometer component uses a `SimpleMeterRegistry` instance.
 This default registry should be replaced with a custom one by providing
 a `MeterRegistry` bean. MeterRegistries primarily determine the backend monitoring system
 in use. A CompositeMeterRegistry can be used to address more than one monitoring target.
@@ -122,7 +120,9 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 
     @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
-        MeterRegistry registry = ...;
+        ComponentMeterRegistry registry = ...;
+        registry.add(...);
+        // ...
         return registry;
     }
 }
@@ -144,27 +144,33 @@ class MyBean extends RouteBuilder {
     // If multiple MetricRegistry beans
     // @Named(MicrometerComponent.METRIC_REGISTRY_NAME)
     MetricRegistry registry() {
-        MeterRegistry registry = ...;
+        ComponentMeterRegistry registry = ...;
+        registry.add(...);
         // ...
         return registry;
     }
 }
 ----
 
+### Usage of producers
 
-### Usage
-
-Each metric has type and name. Supported types are
+Each meter has type and name. Supported types are
 link:#MicrometerComponent-counter[counter],
-link:#MicrometerComponent-summary[histogram] and
-link:#MetricsComponent-timer[timer].
-Metric name is simple string. If metric type is not provided then a counter is used by default.
+link:#MicrometerComponent-summary[distribution summary] and
+link:#MetricsComponent-timer[timer]. If no type is provided then a counter is used by default.
+
+The meter name is a string that is evaluated as `Simple` expression. In addition to using the `CamelMetricsName`
+header (see below), this allows to select the meter depending on exchange data.
+
+The optional `tags` URI parameter is a comma-separated string, consisting of `key=value` expressions. Both
+`key` and `value` are strings that are also evaluated as `Simple` expression.
+E.g. the URI parameter `tags=X=${header.Y}` would assign the current value of header `Y` to the key `X`.
+
 
 #### Headers
 
-The Metric name defined in URI can be overridden by using header with name
-`CamelMetricsName`.
-The Metric tags defined as URI parameters can be overridden by using header with name `CamelMetricsTags`.
+The meter name defined in URI can be overridden by using a header with name `CamelMetricsName`.
+The meter tags defined as URI parameters can be augmented by using a header with name `CamelMetricsTags`.
 
 For example
 
@@ -172,18 +178,18 @@ For example
 ----
 from("direct:in")
     .setHeader(MicrometerConstants.HEADER_METRIC_NAME, constant("new.name"))
-    .setHeader(MicrometerConstants.HEADER_METRIC_TAGS, constant(Tags.of("otherKey", "otherValue")))
-    .to("metrics:counter:name.not.used?tags=key=value")
+    .setHeader(MicrometerConstants.HEADER_METRIC_TAGS, constant(Tags.of("dynamic-key", "dynamic-value")))
+    .to("metrics:counter:name.not.used?tags=static-key=static-value")
     .to("direct:out");
 ----
 
 will update a counter with name `new.name` instead of `name.not.used` using the
-tag `otherKey` with value `otherValue` instead of the tag `key` with value `value`.
+tag `dynamic-key` with value `dynamic-value` in addition to the tag `static-key` with value `static-value`.
 
-All Metrics specific headers are removed from the message once the Micrometer
-endpoint finishes processing of exchange. While processing exchange
+All Metrics specific headers are removed from the message once the Micrometer endpoint finishes processing of exchange. While processing exchange
 Micrometer endpoint will catch all exceptions and write log entry using
 level `warn`.
+
 
 ### [[MicrometerComponent-counter]]Counter
 
@@ -203,7 +209,7 @@ micrometer:counter:name[?options]
 
 If neither `increment` or `decrement` is defined then counter value will
 be incremented by one. If `increment` and `decrement` are both defined
-only increment operation is called. 
+only increment operation is called.
 
 [source,java]
 ----
@@ -221,18 +227,21 @@ from("direct:in")
     .to("direct:out");
 ----
 
+Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Double result, e.g.
+if header `X` contains a value that evaluates to 3.0, the `simple.counter` counter is decremented by 3.0:
+
 [source,java]
 ----
 // decrement counter simple.counter by 3
 from("direct:in")
-    .to("micrometer:counter:simple.counter?decrement=3")
+    .to("micrometer:counter:simple.counter?decrement=${header.X}")
     .to("direct:out");
 ----
 
 #### Headers
 
-Message headers can be used to override `increment` and `decrement`
-values specified in Metrics component URI.
+Like in `camel-metrics`, specific Message headers can be used to override
+`increment` and `decrement` values specified in the Micrometer endpoint URI.
 
 [width="100%",cols="10%,80%,10%",options="header",]
 |====================================================================
@@ -260,7 +269,7 @@ from("direct:in")
 
 ----
 
-### [[MicrometerComponent-summary]]Histogram
+### [[MicrometerComponent-summary]]Distribution Summary
 
 [source]
 ----
@@ -275,7 +284,7 @@ micrometer:summary:metricname[?options]
 |value |- |Value to use in histogram
 |===================================
 
-If no `value` is not set nothing is added to histogram and warning is
+If no `value` is not set, nothing is added to histogram and warning is
 logged.
 
 [source,java]
@@ -295,10 +304,22 @@ from("direct:in")
 
 ----
 
+`value` is evaluated as `Simple` expressions with a Double result, e.g.
+if header `X` contains a value that evaluates to 3.0, this value is registered with the `simple.histogram`:
+
+[source,java]
+----
+// nothing is added to simple.histogram; warning is logged
+from("direct:in")
+    .to("micrometer:summary:simple.histogram?value=${header.X}")
+    .to("direct:out");
+
+----
+
 #### Headers
 
-Message header can be used to override value specified in Metrics
-component URI.
+Like in `camel-metrics`, a specific Message header can be used to override the value specified in
+the Micrometer endpoint URI.
 
 [width="100%",cols="10%,80%,10%",options="header",]
 |=================================================================
@@ -308,9 +329,9 @@ component URI.
 
 [source,java]
 ----
-// adds value 992 to simple.histogram
+// adds value 992.0 to simple.histogram
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_HISTOGRAM_VALUE, constant(992L))
+    .setHeader(MicrometerConstants.HEADER_HISTOGRAM_VALUE, constant(992.0D))
     .to("micrometer:summary:simple.histogram?value=700")
     .to("direct:out")
 
@@ -333,8 +354,8 @@ micrometer:timer:metricname[?options]
 |==========================
 
 If no `action` or invalid value is provided then warning is logged
-without any timer update. If action `start` is called on already running
-timer or `stop` is called on not running timer then nothing is updated
+without any timer update. If action `start` is called on an already running
+timer or `stop` is called on an unknown timer, nothing is updated
 and warning is logged.
 
 [source,java]
@@ -349,23 +370,25 @@ from("direct:in")
 `Timer.Sample` objects are stored as Exchange properties between
 different Metrics component calls.
 
+`action` is evaluated as a `Simple` expression returning a result of type `MicrometerTimerAction`.
+
 #### Headers
 
-Message header can be used to override action value specified in Metrics
-component URI.
+Like in `camel-metrics`, a specific Message header can be used to override action value specified in
+the Micrometer endpoint URI.
 
 [width="100%",cols="10%,80%,10%",options="header",]
 |=======================================================================
 |Name |Description |Expected type
 |CamelMetricsTimerAction |Override timer action in URI
-|`org.apache.camel.component.micrometer.timer.TimerEndpoint.TimerAction`
+|`org.apache.camel.component.micrometer.MicrometerTimerAction`
 |=======================================================================
 
 [source,java]
 ----
 // sets timer action using header
 from("direct:in")
-    .setHeader(MicrometerConstants.HEADER_TIMER_ACTION, TimerAction.start)
+    .setHeader(MicrometerConstants.HEADER_TIMER_ACTION, MicrometerTimerAction.start)
     .to("micrometer:timer:simple.timer")
     .to("direct:out");
 ----
@@ -408,17 +431,13 @@ statistics in json format
 |meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel
 will create a shared instance used by the this CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration in when dumping the statistics as json.
-|prefix|CamelMetrics|Common prefix for metric names
-|namePattern |`##prefix##.##name##.##routeId##.##type##` |The name
-pattern to use. Uses dot as separators, but you can change that. The
-values `##prefix##`, `##name##`, `##routeId##`, and `##type##` will be replaced with actual
-value, where `##prefix##` is a common metrics name prefix,`###name###` is the name of the
-CamelContext. `###routeId###` is the name of the route and `###type###` is the value of responses.
 |=======================================================================
+
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
+with `name=MicrometerRoutePolicy`.
 
 
 ### MicrometerMessageHistoryFactory
-
 
 This factory allows to use metrics to
 capture Message History performance
@@ -452,13 +471,6 @@ statistics in json format
 `MeterRegistry`. If none is provided then Camel
 will create a shared instance used by the this CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration when dumping the statistics as json.
-|prefix|CamelMetrics|Common prefix for metric names
-|namePattern |`##prefix##.##name##.##routeId##.##id##.##type##` |The name pattern
-to use. Uses dot as separators, but you can change that. The values
-`##name##`, `##routeId##`, `##type##`, and `###id###` will be replaced with
-actual value, where `###name###` is the name of the CamelContext,
-`###routeId###` is the name of the route, the `###id###` pattern represents
-the node id and `###type###` is the value of history.
 |=======================================================================
 
 At runtime the metrics can be accessed from Java API or JMX which allows
@@ -473,17 +485,51 @@ MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHi
 String json = service.dumpStatisticsAsJson();
 ----
 
-And the JMX API the MBean is registered in the `type=services` tree
-with `name=MicrometerMessageHistoryService`.
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
+with `name=MicrometerMessageHistory`.
 
 ### InstrumentedThreadPoolFactory
 
-This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
+This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from inside of Camel.
-See more details at Advanced configuration of CamelContext using Spring
+See more details at Advanced configuration of CamelContext using Spring.
 
 
-### See Also
+### Exposing Micrometer statistics in JMX
 
-* The `camel-example-cdi-metrics` example that illustrates the integration
-  between Camel, Metrics and CDI.
+Micrometer uses Registry implementations in order to publish statistics. While in production scenarios
+it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for
+test or local deployments to publish statistics to JMX.
+
+In order to achieve this, add the following dependency:
+
+[source,xml]
+----
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-jmx</artifactId>
+      <version>${micrometer-version}</version>
+    </dependency>
+----
+
+and add a `JmxMeterRegistry` instance:
+
+[source,java]
+----
+
+    @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
+    public MeterRegistry getMeterRegistry() {
+        ComponentMeterRegistry meterRegistry = new CompositeMeterRegistry();
+        meterRegistry.add(...);
+        meterRegistry.add(new JmxMeterRegistry(
+           CamelJmxConfig.DEFAULT,
+           Clock.SYSTEM,
+           HierarchicalNameMapper.DEFAULT));
+        return meterRegistry;
+    }
+}
+----
+
+The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into
+an MBean name.
+

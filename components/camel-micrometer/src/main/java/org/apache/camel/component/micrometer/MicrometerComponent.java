@@ -37,16 +37,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MicrometerComponent extends UriEndpointComponent {
 
-    public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
     public static final MetricsType DEFAULT_METER_TYPE = MetricsType.COUNTER;
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerComponent.class);
 
     @Metadata(label = "advanced")
     private MeterRegistry metricsRegistry;
-
-    @Metadata(label = "advanced")
-    private String prefix;
 
     public MicrometerComponent() {
         super(MicrometerEndpoint.class);
@@ -56,12 +52,9 @@ public class MicrometerComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, METRICS_REGISTRY_NAME);
+            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
-        if (prefix == null) {
-            prefix = MicrometerConstants.HEADER_PREFIX;
-        }
-        String metricsName = getMetricsName(remaining, prefix);
+        String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
         Iterable<Tag> tags = getMetricsTag(parameters);
 
@@ -71,9 +64,9 @@ public class MicrometerComponent extends UriEndpointComponent {
         return endpoint;
     }
 
-    String getMetricsName(String remaining, String prefix) {
+    String getMetricsName(String remaining) {
         String name = StringHelper.after(remaining, ":");
-        return prefix + "." + (name == null ? remaining : name);
+        return name == null ? remaining : name;
     }
 
     MetricsType getMetricsType(String remaining) {
