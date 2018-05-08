@@ -63,6 +63,19 @@
       <version>${hapi-fhir-version}</version>
     </dependency>
 
+    <!-- These aren't needed for compilation but makes camel-fhir easier to use for third party projects/users e.g wildfly-camel -->
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-structures-dstu3</artifactId>
+      <version>${hapi-fhir-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-structures-dstu2</artifactId>
+      <version>${hapi-fhir-version}</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -86,20 +99,6 @@
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v24</artifactId>
       <version>${hapi-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-structures-dstu3</artifactId>
-      <version>${hapi-fhir-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-structures-dstu2</artifactId>
-      <version>${hapi-fhir-version}</version>
       <scope>test</scope>
     </dependency>
 
