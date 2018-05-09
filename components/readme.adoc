@@ -27,7 +27,7 @@ Number of Components: 293 in 200 JAR artifacts (20 deprecated)
 `apns:name` | 2.8 | For sending notifications to Apple iOS devices.
 
 | link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
-`asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server Asterisk PBX Server.
+`asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
 
 | link:camel-atmos/src/main/docs/atmos-component.adoc[Atmos] (camel-atmos) +
 `atmos:name/operation` | 2.15 | The atmos component is used for integrating with EMC's Atomos Storage.
