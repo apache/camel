@@ -31,6 +31,8 @@ public class SlackComponent extends DefaultComponent {
     }
 
     public SlackComponent(CamelContext context) {
+        super(context);
+        
         registerExtension(new SlackComponentVerifierExtension());
     }
 
