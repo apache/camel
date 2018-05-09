@@ -129,7 +129,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
                 String host = configuration.getAmazonAWSHost();
                 host = FileUtil.stripTrailingSeparator(host);
-                queueUrl = "https://sqs." + configuration.getRegion() + host + "/"
+                queueUrl = "https://sqs." + configuration.getRegion() + "." + host + "/"
                         + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
                 GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
