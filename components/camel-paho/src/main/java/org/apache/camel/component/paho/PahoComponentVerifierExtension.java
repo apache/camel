@@ -67,7 +67,7 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
         if (ObjectHelper.isNotEmpty(brokerUrl)) {
             try {
                 // Create MQTT client
-            	if (ObjectHelper.isEmpty(username) && ObjectHelper.isEmpty(password)) {
+                if (ObjectHelper.isEmpty(username) && ObjectHelper.isEmpty(password)) {
                     MqttClient client = new MqttClient(brokerUrl, MqttClient.generateClientId());
                     client.connect();
                     client.disconnect();
@@ -78,7 +78,7 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
                     connOpts.setPassword(password.toCharArray());
                     client.connect(connOpts);
                     client.disconnect();
-            	}
+                }
             } catch (MqttException e) {
                 builder.error(
                     ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, "Unable to connect to MQTT broker")
