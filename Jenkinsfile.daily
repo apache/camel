@@ -56,7 +56,7 @@ pipeline {
                 jdk 'JDK 1.9 (latest)'
             }
             steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: 0
+                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
             }
             post {
                 always {
@@ -72,7 +72,7 @@ pipeline {
                 jdk 'JDK 10 (latest)'
             }
             steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: 0
+                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
             }
             post {
                 always {
