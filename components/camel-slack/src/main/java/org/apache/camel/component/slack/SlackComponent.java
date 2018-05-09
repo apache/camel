@@ -18,15 +18,20 @@ package org.apache.camel.component.slack;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class SlackComponent extends UriEndpointComponent {
+public class SlackComponent extends DefaultComponent {
 
     private String webhookUrl;
 
     public SlackComponent() {
-        super(SlackEndpoint.class);
+        this(null);
+    }
+
+    public SlackComponent(CamelContext context) {
+        registerExtension(new SlackComponentVerifierExtension());
     }
 
     /**
