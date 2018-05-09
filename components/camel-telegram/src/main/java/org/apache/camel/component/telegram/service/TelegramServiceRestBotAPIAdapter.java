@@ -24,6 +24,10 @@ import java.util.List;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
@@ -36,10 +40,6 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
  * Adapts the {@code RestBotAPI} to the {@code TelegramService} interface.

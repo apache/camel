@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.telegram;
 
-import static org.mockito.ArgumentMatchers.eq;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -33,6 +31,8 @@ import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Tests a producer that sends media information.

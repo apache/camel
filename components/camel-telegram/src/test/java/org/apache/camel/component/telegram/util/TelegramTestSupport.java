@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
@@ -28,8 +30,6 @@ import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.mockito.Mockito;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A support test class for Telegram tests.
