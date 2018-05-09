@@ -86,7 +86,7 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
         mockRemoved.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody(String.class).equals(val2);
+                return exchange.getIn().getBody(String.class) == null;
             }
         });
 
