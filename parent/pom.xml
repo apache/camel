@@ -651,8 +651,8 @@
     <spring4-version>4.3.17.RELEASE</spring4-version>
     <spring5-version>5.0.6.RELEASE</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>5.0.4.RELEASE</spring-security-version>
-    <spring-security-bundle-version>4.2.4.RELEASE_1</spring-security-bundle-version>
+    <spring-security-version>5.0.5.RELEASE</spring-security-version>
+    <spring-security-bundle-version>5.0.4.RELEASE_1</spring-security-bundle-version>
     <spring-ws-bundle-version>2.4.2.RELEASE_1</spring-ws-bundle-version>
     <spring-xml-bundle-version>2.4.2.RELEASE_1</spring-xml-bundle-version>
     <spring-ws-version>3.0.0.RELEASE</spring-ws-version>
