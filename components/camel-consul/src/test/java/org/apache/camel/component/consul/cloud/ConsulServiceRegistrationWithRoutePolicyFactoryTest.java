@@ -35,7 +35,7 @@ public class ConsulServiceRegistrationWithRoutePolicyFactoryTest extends ConsulS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("jetty:http://0.0.0.0:%d/service/endpoint/", SERVICE_PORT)
+                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
                     .routeId(SERVICE_ID)
                     .routeGroup(SERVICE_NAME)
                     .noAutoStartup()

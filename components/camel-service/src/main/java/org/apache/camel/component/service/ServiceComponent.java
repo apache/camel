@@ -17,16 +17,17 @@
 package org.apache.camel.component.service;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.cloud.ServiceRegistryHelper;
 import org.apache.camel.impl.cloud.ServiceRegistrySelectors;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -56,7 +57,7 @@ public class ServiceComponent extends DefaultComponent {
         ObjectHelper.notNull(delegateUri, "Delegate URI");
 
         // add service name to the parameters
-        parameters.put("serviceName", serviceName);
+        parameters.put(ServiceDefinition.SERVICE_META_NAME, serviceName);
 
         // Lookup the service registry, this may be a static selected service
         // or dynamically selected one through a ServiceRegistry.Selector
@@ -64,7 +65,18 @@ public class ServiceComponent extends DefaultComponent {
 
         // Compute service definition from parameters, this is used as default
         // definition
-        final ServiceParameters params = computeServiceParameters(parameters);
+        final Map<String, Object> params = new HashMap<>();
+        parameters.forEach(
+            (k, v) -> {
+                if (k.startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
+                    params.put(k, v);
+                }
+            }
+        );
+
+        // remove all the service related options so the underlying component
+        // does not fail because of unknown parameters
+        parameters.keySet().removeAll(parameters.keySet());
 
         return new ServiceEndpoint(
             uri,
@@ -110,24 +122,5 @@ public class ServiceComponent extends DefaultComponent {
         }
 
         return service;
-    }
-
-    @SuppressWarnings("unchecked")
-    private ServiceParameters computeServiceParameters(Map<String, Object> parameters) {
-        // Extract service definition related parameter from uri
-        final String serviceId = getAndRemoveParameter(parameters, "serviceId", String.class);
-        final String serviceName = getAndRemoveParameter(parameters, "serviceName", String.class);
-        final String serviceHost = getAndRemoveParameter(parameters, "serviceHost", String.class);
-        final String servicePort = getAndRemoveParameter(parameters, "servicePort", String.class);
-        final Map<String, Object> serviceMeta = IntrospectionSupport.extractProperties(parameters, "serviceMeta.", true);
-
-        ServiceParameters params = new ServiceParameters();
-        ObjectHelper.ifNotEmpty(serviceId, params::setId);
-        ObjectHelper.ifNotEmpty(serviceName, params::setName);
-        ObjectHelper.ifNotEmpty(serviceHost, params::setHost);
-        ObjectHelper.ifNotEmpty(servicePort, params::setPort);
-        ObjectHelper.ifNotEmpty(serviceMeta, meta -> params.setMeta(Map.class.cast(meta)));
-
-        return params;
     }
 }

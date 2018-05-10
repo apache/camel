@@ -125,7 +125,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
 
         if (endpoint instanceof DiscoverableService) {
             final DiscoverableService service = (DiscoverableService)endpoint;
-            final ServiceDefinition definition = service.getServiceDefinition();
+            final Map<String, Object> properties = service.getServiceProperties();
 
             // try to get the service id from route properties
             String serviceId = (String)route.getProperties().get(ServiceDefinition.SERVICE_META_ID);
@@ -137,7 +137,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             }
             if (serviceId == null) {
                 // finally get the id from the DiscoverableService
-                serviceId = definition.getId();
+                serviceId = (String)properties.get(ServiceDefinition.SERVICE_META_ID);
             }
 
             // try to get the service name from route properties
@@ -148,7 +148,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             }
             if (serviceName == null) {
                 // finally get the name from the DiscoverableService
-                serviceName = definition.getName();
+                serviceName = (String)properties.get(ServiceDefinition.SERVICE_META_NAME);
             }
 
             ObjectHelper.notNull(serviceId, "Service ID");
@@ -157,7 +157,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             // Build the final resource definition from bits collected from the
             // endpoint and the route.
             DefaultServiceDefinition.Builder builder = DefaultServiceDefinition.builder()
-                .from(definition)
+                .from(properties)
                 .withId(serviceId)
                 .withName(serviceName);
 
