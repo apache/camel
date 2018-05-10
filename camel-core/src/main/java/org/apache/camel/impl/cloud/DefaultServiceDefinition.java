@@ -175,7 +175,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         private String id;
         private String name;
         private String host;
-        private int port;
+        private Integer port;
         private Map<String, String> meta;
         private ServiceHealth health;
 
@@ -186,6 +186,51 @@ public class DefaultServiceDefinition implements ServiceDefinition {
             withPort(source.getPort());
             withMeta(source.getMetadata());
             withHealth(source.getHealth());
+
+            return this;
+        }
+
+        public Builder from(Map<String, Object> properties) {
+            Map<String, Object> options = new HashMap<>(properties);
+            Object val = null;
+
+            val = options.remove(ServiceDefinition.SERVICE_META_ID);
+            if (val != null && val instanceof String) {
+                withId((String)val);
+            }
+
+            val = options.remove(ServiceDefinition.SERVICE_META_NAME);
+            if (val != null && val instanceof String) {
+                withName((String)val);
+            }
+
+            val = options.remove(ServiceDefinition.SERVICE_META_HOST);
+            if (val != null && val instanceof String) {
+                withHost((String)val);
+            }
+
+            val = options.remove(ServiceDefinition.SERVICE_META_PORT);
+            if (val != null && val instanceof String) {
+                withPort((String)val);
+            }
+            if (val != null && val instanceof Integer) {
+                withPort((Integer)val);
+            }
+
+            val = options.remove(ServiceDefinition.SERVICE_META_HOST);
+            if (val != null && val instanceof String) {
+                withHost((String)val);
+            }
+
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
+                    continue;
+                }
+
+                if (entry.getValue() instanceof String) {
+                    addMeta(entry.getKey(), (String)entry.getValue());
+                }
+            }
 
             return this;
         }
@@ -217,12 +262,20 @@ public class DefaultServiceDefinition implements ServiceDefinition {
             return host;
         }
 
-        public Builder withPort(int port) {
+        public Builder withPort(Integer port) {
             this.port = port;
             return this;
         }
 
-        public int port() {
+        public Builder withPort(String port) {
+            if (port != null) {
+                withPort(Integer.parseInt(port));
+            }
+
+            return this;
+        }
+
+        public Integer port() {
             return port;
         }
 
@@ -266,7 +319,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         }
 
         public ServiceDefinition build() {
-            return new DefaultServiceDefinition(id, name, host, port, meta, health);
+            return new DefaultServiceDefinition(id, name, host, port != null ? port : -1, meta, health);
         }
     }
 }

@@ -16,12 +16,23 @@
  */
 package org.apache.camel.component.consul.cloud;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.service.ServiceComponent;
 import org.apache.camel.impl.JndiRegistry;
 
 public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulServiceRegistrationTestBase {
+
+    protected Map<String, String> getMetadata() {
+        return new HashMap<String, String>() {{
+            put("service.type", "consul");
+            put("service.zone", "US");
+        }};
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -35,7 +46,7 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint/", SERVICE_NAME, SERVICE_PORT)
+                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME, SERVICE_PORT)
                     .routeId(SERVICE_ID)
                     .routeGroup(SERVICE_NAME)
                     .noAutoStartup()

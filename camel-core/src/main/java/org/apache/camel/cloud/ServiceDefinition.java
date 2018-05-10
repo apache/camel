@@ -33,7 +33,9 @@ public interface ServiceDefinition {
     // default service meta-data keys
     String SERVICE_META_ID = "service.id";
     String SERVICE_META_NAME = "service.name";
+    String SERVICE_META_HOST = "service.host";
     String SERVICE_META_PORT = "service.port";
+    String SERVICE_META_ZONE = "service.zone";
     String SERVICE_META_PROTOCOL= "service.protocol";
     String SERVICE_META_PATH = "service.path";
 

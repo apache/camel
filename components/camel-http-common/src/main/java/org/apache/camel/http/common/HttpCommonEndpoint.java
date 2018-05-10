@@ -18,12 +18,13 @@ package org.apache.camel.http.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -200,14 +201,12 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     //-------------------------------------------------------------------------
 
     @Override
-    public ServiceDefinition getServiceDefinition() {
-        // Returns a partial
-        return DefaultServiceDefinition.builder()
-            .withPort(getPort())
-            .addMeta(ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()))
-            .addMeta(ServiceDefinition.SERVICE_META_PATH, getPath())
-            .addMeta(ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol())
-            .build();
+    public Map<String, Object> getServiceProperties() {
+        return new HashMap<String, Object>() {{
+            put(ServiceDefinition.SERVICE_META_PORT, getPort());
+            put(ServiceDefinition.SERVICE_META_PATH, getPath());
+            put(ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol());
+        }};
     }
 
     // Properties
