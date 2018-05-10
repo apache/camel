@@ -17,32 +17,23 @@
 package org.apache.camel.component.consul.cloud;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.orbitz.consul.CatalogClient;
 import com.orbitz.consul.HealthClient;
 import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.support.ConsulTestSupport;
-import org.apache.camel.component.service.ServiceComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 import org.springframework.util.SocketUtils;
 
-public class ConsulServiceRegistrationTest extends ConsulTestSupport {
-    private final static String SERVICE_NAME = "my-service";
-    private final static String SERVICE_HOST = "localhost";
-    private final static int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("service", new ServiceComponent());
-
-        return registry;
-    }
+public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSupport {
+    protected final static String SERVICE_ID = UUID.randomUUID().toString();
+    protected final static String SERVICE_NAME = "my-service";
+    protected final static String SERVICE_HOST = "localhost";
+    protected final static int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -60,19 +51,6 @@ public class ConsulServiceRegistrationTest extends ConsulTestSupport {
         return context;
     }
 
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                fromF("service:%s:jetty:http://0.0.0.0:%d?serviceMeta.type=consul", SERVICE_NAME, SERVICE_PORT)
-                    .routeId("exposed")
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
-            }
-        };
-    }
-
     @Test
     public void testRegistrationFromRoute() throws Exception {
         final CatalogClient catalog = getConsul().catalogClient();
@@ -82,17 +60,16 @@ public class ConsulServiceRegistrationTest extends ConsulTestSupport {
         assertTrue(catalog.getService(SERVICE_NAME).getResponse().isEmpty());
 
         // let start the route
-        context().startRoute("exposed");
+        context().startRoute(SERVICE_ID);
 
         // check that service has been registered
         List<CatalogService> services = catalog.getService(SERVICE_NAME).getResponse();
         assertEquals(1, services.size());
         assertEquals(SERVICE_PORT, services.get(0).getServicePort());
         assertEquals("localhost", services.get(0).getServiceAddress());
-        assertTrue(services.get(0).getServiceTags().contains("type=consul"));
-        assertTrue(services.get(0).getServiceTags().contains("service.protocol=http"));
-        assertTrue(services.get(0).getServiceTags().contains("service.path=/"));
-        assertTrue(services.get(0).getServiceTags().contains("service.port=" + SERVICE_PORT));
+        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PROTOCOL + "=http"));
+        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint/"));
+        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PORT + "=" + SERVICE_PORT));
 
         List<ServiceHealth> checks = health.getHealthyServiceInstances(SERVICE_NAME).getResponse();
         assertEquals(1, checks.size());
@@ -100,7 +77,7 @@ public class ConsulServiceRegistrationTest extends ConsulTestSupport {
         assertEquals("localhost", checks.get(0).getService().getAddress());
 
         // let stop the route
-        context().stopRoute("exposed");
+        context().stopRoute(SERVICE_ID);
 
         // the service should be removed once the route is stopped
         assertTrue(catalog.getService(SERVICE_NAME).getResponse().isEmpty());
