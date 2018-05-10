@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.consul.cloud;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.orbitz.consul.CatalogClient;
@@ -34,6 +36,10 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
     protected final static String SERVICE_NAME = "my-service";
     protected final static String SERVICE_HOST = "localhost";
     protected final static int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
+
+    protected Map<String, String> getMetadata() {
+        return Collections.emptyMap();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -68,8 +74,13 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         assertEquals(SERVICE_PORT, services.get(0).getServicePort());
         assertEquals("localhost", services.get(0).getServiceAddress());
         assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PROTOCOL + "=http"));
-        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint/"));
-        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PORT + "=" + SERVICE_PORT));
+        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint"));
+
+        getMetadata().forEach(
+            (k, v) -> {
+                assertTrue(services.get(0).getServiceTags().contains(k + "=" + v));
+            }
+        );
 
         List<ServiceHealth> checks = health.getHealthyServiceInstances(SERVICE_NAME).getResponse();
         assertEquals(1, checks.size());
