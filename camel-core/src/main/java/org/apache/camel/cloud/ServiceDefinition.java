@@ -28,7 +28,11 @@ import org.apache.camel.util.StringHelper;
  * @see ServiceDiscovery
  */
 public interface ServiceDefinition {
+    String SERVICE_META_PREFIX = "service.";
+
     // default service meta-data keys
+    String SERVICE_META_ID = "service.id";
+    String SERVICE_META_NAME = "service.name";
     String SERVICE_META_PORT = "service.port";
     String SERVICE_META_PROTOCOL= "service.protocol";
     String SERVICE_META_PATH = "service.path";
