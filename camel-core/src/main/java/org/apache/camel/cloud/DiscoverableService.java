@@ -16,9 +16,11 @@
  */
 package org.apache.camel.cloud;
 
+import java.util.Map;
+
 public interface DiscoverableService {
     /**
-     * Get the service definition.
+     * Get the service properties.
      */
-    ServiceDefinition getServiceDefinition();
+    Map<String, Object> getServiceProperties();
 }
