@@ -27,10 +27,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -42,6 +44,7 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
+import org.apache.kafka.common.header.Header;
 
 public class KafkaConsumer extends DefaultConsumer {
 
@@ -98,7 +101,7 @@ public class KafkaConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         log.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}",
-            endpoint.getConfiguration().getTopic(), endpoint.getConfiguration().isBreakOnFirstError());
+                endpoint.getConfiguration().getTopic(), endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
 
         executor = endpoint.createExecutor();
@@ -276,9 +279,11 @@ public class KafkaConsumer extends DefaultConsumer {
                                 record = recordIterator.next();
                                 if (log.isTraceEnabled()) {
                                     log.trace("Partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(),
-                                              record.value());
+                                            record.value());
                                 }
                                 Exchange exchange = endpoint.createKafkaExchange(record);
+
+                                propagateHeaders(record, exchange, endpoint.getConfiguration().getHeaderFilterStrategy());
 
                                 // if not auto commit then we have additional information on the exchange
                                 if (!isAutoCommitEnabled()) {
@@ -287,9 +292,9 @@ public class KafkaConsumer extends DefaultConsumer {
                                 if (endpoint.getConfiguration().isAllowManualCommit()) {
                                     // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
                                     KafkaManualCommit manual = endpoint.getComponent().getKafkaManualCommitFactory().newInstance(exchange, consumer, topicName, threadId,
-                                        offsetRepository, partition, record.offset());
+                                            offsetRepository, partition, record.offset());
                                     exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, manual);
-                                    
+
                                 }
 
                                 try {
@@ -303,7 +308,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                     if (endpoint.getConfiguration().isBreakOnFirstError()) {
                                         // we are failing and we should break out
                                         log.warn("Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.",
-                                            exchange, topicName, partitionLastOffset);
+                                                exchange, topicName, partitionLastOffset);
                                         // force commit so we resume on next poll where we failed
                                         commitOffset(offsetRepository, partition, partitionLastOffset, true);
                                         // continue to next partition
@@ -421,6 +426,16 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
             }
         }
+    }
+
+    private void propagateHeaders(ConsumerRecord<Object, Object> record, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+        StreamSupport.stream(record.headers().spliterator(), false)
+                .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
+                .forEach(header -> exchange.getIn().setHeader(header.key(), header.value()));
+    }
+
+    private boolean shouldBeFiltered(Header header, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+        return !headerFilterStrategy.applyFilterToCamelHeaders(header.key(), header.value(), exchange);
     }
 
     private boolean isAutoCommitEnabled() {
