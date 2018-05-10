@@ -51,34 +51,38 @@ pipeline {
             }
         }
 
-        stage('Test JDK 9') {
-            tools {
-                jdk 'JDK 1.9 (latest)'
-            }
-            steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
-                    sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete" 
+        stage('Test') {
+            parallel {
+                stage('Test JDK 9') {
+                    tools {
+                        jdk 'JDK 1.9 (latest)'
+                    }
+                    steps {
+                        sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                            junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                            sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete" 
+                        }
+                    }
                 }
-            }
-        }
 
-        stage('Test JDK 10') {
-            tools {
-                jdk 'JDK 10 (latest)'
-            }
-            steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
-                    sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete" 
+                stage('Test JDK 10') {
+                    tools {
+                        jdk 'JDK 10 (latest)'
+                    }
+                    steps {
+                        sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                            junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                            sh "find . -path '*/target/surefire-reports/*' -delete -o -path '*/target/failsafe-reports/*' -delete" 
+                        }
+                    }
                 }
             }
         }
