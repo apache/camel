@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The asterisk component is used to interact with Asterisk PBX Server <a href="http://www.asterisk.org">Asterisk PBX Server</a>.
+ * The asterisk component is used to interact with Asterisk PBX Server.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {
