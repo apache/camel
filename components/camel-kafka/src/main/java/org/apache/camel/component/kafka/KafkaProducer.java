@@ -23,20 +23,26 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.URISupport;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.utils.Bytes;
 
 public class KafkaProducer extends DefaultAsyncProducer {
@@ -142,8 +148,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     allowHeader = !headerTopic.equals(fromTopic);
                     if (!allowHeader) {
                         log.debug("Circular topic detected from message header."
-                            + " Cannot send to same topic as the message comes from: {}"
-                            + ". Will use endpoint configured topic: {}", from, topic);
+                                + " Cannot send to same topic as the message comes from: {}"
+                                + ". Will use endpoint configured topic: {}", from, topic);
                     }
                 }
             }
@@ -159,24 +165,28 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         // endpoint take precedence over header configuration
         final Integer partitionKey = endpoint.getConfiguration().getPartitionKey() != null
-            ? endpoint.getConfiguration().getPartitionKey() : exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
+                ? endpoint.getConfiguration().getPartitionKey() : exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
         final boolean hasPartitionKey = partitionKey != null;
 
         // endpoint take precedence over header configuration
         Object key = endpoint.getConfiguration().getKey() != null
-            ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
+                ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
         final Object messageKey = key != null
-            ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
+                ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
         final boolean hasMessageKey = messageKey != null;
+
+        // extracting headers which need to be propagated
+        HeaderFilterStrategy headerFilterStrategy = endpoint.getConfiguration().getHeaderFilterStrategy();
+        List<Header> propagatedHeaders = getPropagatedHeaders(exchange, headerFilterStrategy);
 
         Object msg = exchange.getIn().getBody();
 
         // is the message body a list or something that contains multiple values
         Iterator<Object> iterator = null;
         if (msg instanceof Iterable) {
-            iterator = ((Iterable<Object>)msg).iterator();
+            iterator = ((Iterable<Object>) msg).iterator();
         } else if (msg instanceof Iterator) {
-            iterator = (Iterator<Object>)msg;
+            iterator = (Iterator<Object>) msg;
         }
         if (iterator != null) {
             final Iterator<Object> msgList = iterator;
@@ -194,11 +204,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     Object value = tryConvertToSerializedType(exchange, next, endpoint.getConfiguration().getSerializerClass());
 
                     if (hasPartitionKey && hasMessageKey) {
-                        return new ProducerRecord(msgTopic, partitionKey, key, value);
+                        return new ProducerRecord(msgTopic, partitionKey, null, key, value, propagatedHeaders);
                     } else if (hasMessageKey) {
-                        return new ProducerRecord(msgTopic, key, value);
+                        return new ProducerRecord(msgTopic, null, null, key, value, propagatedHeaders);
                     } else {
-                        return new ProducerRecord(msgTopic, value);
+                        return new ProducerRecord(msgTopic, null, null, null, value, propagatedHeaders);
                     }
                 }
 
@@ -214,13 +224,56 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         ProducerRecord record;
         if (hasPartitionKey && hasMessageKey) {
-            record = new ProducerRecord(topic, partitionKey, key, value);
+            record = new ProducerRecord(topic, partitionKey, null, key, value, propagatedHeaders);
         } else if (hasMessageKey) {
-            record = new ProducerRecord(topic, key, value);
+            record = new ProducerRecord(topic, null, null, key, value, propagatedHeaders);
         } else {
-            record = new ProducerRecord(topic, value);
+            record = new ProducerRecord(topic, null, null, null, value, propagatedHeaders);
         }
         return Collections.singletonList(record).iterator();
+    }
+
+    private List<Header> getPropagatedHeaders(Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+        return exchange.getIn().getHeaders().entrySet().stream()
+                .filter(entry -> shouldBeFiltered(entry, exchange, headerFilterStrategy))
+                .map(this::getRecordHeader)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private boolean shouldBeFiltered(Map.Entry<String, Object> entry, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+        return !headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange);
+    }
+
+    private RecordHeader getRecordHeader(Map.Entry<String, Object> entry) {
+        byte[] headerValue = getHeaderValue(entry.getValue());
+        if (headerValue == null) {
+            return null;
+        }
+        return new RecordHeader(entry.getKey(), headerValue);
+    }
+
+    private byte[] getHeaderValue(Object value) {
+        if (value instanceof String) {
+            return ((String) value).getBytes();
+        } else if (value instanceof Long) {
+            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+            buffer.putLong((Long) value);
+            return buffer.array();
+        } else if (value instanceof Integer) {
+            ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+            buffer.putInt((Integer) value);
+            return buffer.array();
+        } else if (value instanceof Double) {
+            ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
+            buffer.putDouble((Double) value);
+            return buffer.array();
+        } else if (value instanceof byte[]) {
+            return (byte[]) value;
+        }
+        log.debug("Cannot propagate header value of type[{}], skipping... " +
+                "Supported types: String, Integer, Long, Double, byte[].", value != null ? value.getClass() : "null");
+        return null;
     }
 
     @Override

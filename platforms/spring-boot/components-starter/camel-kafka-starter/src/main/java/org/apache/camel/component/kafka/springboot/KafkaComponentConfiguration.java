@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.springboot;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 import org.apache.camel.component.kafka.KafkaManualCommitFactory;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -751,6 +752,11 @@ public class KafkaComponentConfiguration
          * increase, 20% random jitter is added to avoid connection storms.
          */
         private Integer reconnectBackoffMaxMs = 1000;
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         */
+        private HeaderFilterStrategy headerFilterStrategy;
 
         public Boolean getTopicIsPattern() {
             return topicIsPattern;
@@ -1451,6 +1457,15 @@ public class KafkaComponentConfiguration
 
         public void setReconnectBackoffMaxMs(Integer reconnectBackoffMaxMs) {
             this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
+        }
+
+        public HeaderFilterStrategy getHeaderFilterStrategy() {
+            return headerFilterStrategy;
+        }
+
+        public void setHeaderFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            this.headerFilterStrategy = headerFilterStrategy;
         }
     }
 }
