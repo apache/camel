@@ -54,6 +54,9 @@ pipeline {
         stage('Test') {
             parallel {
                 stage('Test JDK 9') {
+                    agent {
+                        label AGENT_LABEL
+                    }
                     tools {
                         jdk 'JDK 1.9 (latest)'
                     }
@@ -70,6 +73,9 @@ pipeline {
                 }
 
                 stage('Test JDK 10') {
+                    agent {
+                        label AGENT_LABEL
+                    }
                     tools {
                         jdk 'JDK 10 (latest)'
                     }
