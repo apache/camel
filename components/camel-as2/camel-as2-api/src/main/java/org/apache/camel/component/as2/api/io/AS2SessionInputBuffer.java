@@ -23,7 +23,6 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 
-import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.MessageConstraintException;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
@@ -45,8 +44,6 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     private final MessageConstraints constraints;
 
     private CharsetDecoder decoder;
-
-    private String transferEncoding;
 
     private InputStream instream;
     private int bufferpos;
@@ -77,14 +74,6 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
 
     public void setCharsetDecoder(CharsetDecoder chardecoder) {
         this.decoder = chardecoder;
-    }
-
-    public String getTransferEncoding() {
-        return transferEncoding;
-    }
-
-    public void setTransferEncoding(String transferEncoding) {
-        this.transferEncoding = transferEncoding;
     }
 
     public void bind(final InputStream instream) {
@@ -221,11 +210,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                     return lineFromReadBuffer(charbuffer, pos);
                 }
                 retry = false;
-                addTransferDecodedBytesToLinebuffer(pos);
+                addBytesToLinebuffer(pos);
             } else {
                 // end of line not found
                 if (hasBufferedData()) {
-                    addTransferDecodedBytesToLinebuffer(pos);
+                    addBytesToLinebuffer(pos);
                 }
                 noRead = fillBuffer();
                 if (noRead == -1) {
@@ -280,6 +269,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                 }
             }
         }
+        
         if (this.decoder == null) {
             charbuffer.append(this.linebuffer, 0, len);
         } else {
@@ -301,6 +291,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
             pos--;
         }
         len = pos - off;
+        
         if (this.decoder == null) {
             charbuffer.append(this.buffer, off, len);
         } else {
@@ -343,7 +334,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         return len;
     }
 
-    private void addTransferDecodedBytesToLinebuffer(int pos) throws IOException {
+    private void addBytesToLinebuffer(int pos) throws IOException {
         try {
             int len;
             if (pos != -1) {
@@ -351,10 +342,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
             } else {
                 len = this.bufferlen - this.bufferpos;
             }
-            byte[] data = new byte[len];
-            System.arraycopy(this.buffer, this.bufferpos, data, 0, data.length);
-            data = EntityUtils.decode(data, transferEncoding); //
-            this.linebuffer.append(data, 0, data.length);
+            this.linebuffer.append(this.buffer, this.bufferpos, len);
             this.bufferpos = pos + 1;
         } catch (Exception e) {
             throw new IOException("failed to decode transfer encoding", e);

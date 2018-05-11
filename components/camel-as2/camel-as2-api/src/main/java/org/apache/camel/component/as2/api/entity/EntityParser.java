@@ -357,7 +357,6 @@ public final class EntityParser {
                                                                        String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
@@ -368,7 +367,6 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(boundary, false);
 
@@ -406,7 +404,7 @@ public final class EntityParser {
             signedEntity.removeAllHeaders();
             signedEntity.setHeaders(headers);
             multipartSignedEntity.addPart(signedEntity);
-
+            
             //
             // End Signed Entity Part
 
@@ -460,7 +458,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
 
@@ -470,7 +467,6 @@ public final class EntityParser {
                                                                                                                  String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
@@ -481,7 +477,6 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = new DispositionNotificationMultipartReportEntity(boundary, false);
 
@@ -578,7 +573,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
 
     }
@@ -589,7 +583,6 @@ public final class EntityParser {
                                                        String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
@@ -600,9 +593,11 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             String text = parseBodyPartText(inbuffer, boundary);
+            if (contentTransferEncoding != null) {
+            	text = EntityUtils.decode(text, charset, contentTransferEncoding);
+            }
             return new TextPlainEntity(text, charsetName, contentTransferEncoding, false);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse text entity");
@@ -610,7 +605,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
 
@@ -620,7 +614,6 @@ public final class EntityParser {
                                                                                               String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
@@ -631,7 +624,6 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             List<CharArrayBuffer> dispositionNotificationFields = parseBodyPartFields(inbuffer, boundary,
                     BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
@@ -646,7 +638,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
 
@@ -657,7 +648,6 @@ public final class EntityParser {
                                              Header[] headers)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
             Charset charset = entityContentType.getCharset();
@@ -667,7 +657,6 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             MimeEntity entity = null;
             switch (entityContentType.getMimeType().toLowerCase()) {
@@ -695,7 +684,7 @@ public final class EntityParser {
                 skipToBoundary(inbuffer, boundary);
                 break;
             case AS2MimeType.TEXT_PLAIN:
-                entity = parseTextPlainEntityBody(inbuffer, boundary, charset.name(), previousContentTransferEncoding);
+                entity = parseTextPlainEntityBody(inbuffer, boundary, charset.name(), contentTransferEncoding);
                 break;
             case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
                 entity = parseApplicationPkcs7SignatureEntityBody(inbuffer, boundary, entityContentType,
@@ -713,7 +702,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
 
     }
@@ -724,7 +712,6 @@ public final class EntityParser {
                                                           String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
             Charset charset = ediMessageContentType.getCharset();
@@ -734,9 +721,11 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             String ediMessageBodyPartContent = parseBodyPartText(inbuffer, boundary);
+            if (contentTransferEncoding != null) {
+            	ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
+            }
             ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
                     ediMessageContentType, contentTransferEncoding, false);
 
@@ -747,7 +736,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
 
@@ -757,7 +745,6 @@ public final class EntityParser {
                                                                                            String contentTransferEncoding) throws ParseException {
 
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
-        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
             Charset charset = contentType.getCharset();
@@ -767,13 +754,14 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
-            inbuffer.setTransferEncoding(contentTransferEncoding);
 
             String pkcs7SignatureBodyContent = parseBodyPartText(inbuffer, boundary);
+            
+            byte[] signature = EntityUtils.decode(pkcs7SignatureBodyContent.getBytes(charset), contentTransferEncoding);
 
             String charsetName = charset.toString();
             ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(
-                    charsetName, contentTransferEncoding, pkcs7SignatureBodyContent.getBytes(charset), false);
+                    charsetName, contentTransferEncoding, signature, false);
             return applicationPkcs7SignatureEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Signature entity");
@@ -781,7 +769,6 @@ public final class EntityParser {
             throw parseException;
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
-            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
 
@@ -814,10 +801,10 @@ public final class EntityParser {
     public static List<CharArrayBuffer> parseBodyPartFields(final AS2SessionInputBuffer inbuffer,
                                                            final String boundary,
                                                            final LineParser parser,
-                                                           final List<CharArrayBuffer> headerLines)
+                                                           final List<CharArrayBuffer> fields)
             throws IOException {
         Args.notNull(parser, "parser");
-        Args.notNull(headerLines, "headerLines");
+        Args.notNull(fields, "fields");
         CharArrayBuffer current = null;
         CharArrayBuffer previous = null;
         while (true) {
@@ -854,11 +841,11 @@ public final class EntityParser {
                 // leave current line buffer for reuse for next header
                 current.clear();
             } else {
-                headerLines.add(current);
+                fields.add(current);
                 previous = current;
                 current = null;
             }
         }
-        return headerLines;
+        return fields;
     }
 }
