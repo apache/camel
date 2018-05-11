@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.as2.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -37,7 +32,6 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
-import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -67,6 +61,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class AS2MessageTest {
 

@@ -596,7 +596,7 @@ public final class EntityParser {
 
             String text = parseBodyPartText(inbuffer, boundary);
             if (contentTransferEncoding != null) {
-            	text = EntityUtils.decode(text, charset, contentTransferEncoding);
+                text = EntityUtils.decode(text, charset, contentTransferEncoding);
             }
             return new TextPlainEntity(text, charsetName, contentTransferEncoding, false);
         } catch (Exception e) {
@@ -724,7 +724,7 @@ public final class EntityParser {
 
             String ediMessageBodyPartContent = parseBodyPartText(inbuffer, boundary);
             if (contentTransferEncoding != null) {
-            	ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
+                ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
             }
             ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
                     ediMessageContentType, contentTransferEncoding, false);
