@@ -122,7 +122,23 @@ public class SqsProducer extends DefaultProducer {
                     result.put(entry.getKey(), mav);
                 } else if (value instanceof Number) {
                     MessageAttributeValue mav = new MessageAttributeValue();
-                    mav.setDataType("Number");
+                    final String dataType;
+                    if(value instanceof Integer) {
+                        dataType = "Number.int";
+                    } else if (value instanceof Byte) {
+                        dataType = "Number.byte";
+                    } else if (value instanceof Double) {
+                        dataType = "Number.double";
+                    } else if (value instanceof Float) {
+                        dataType = "Number.float";
+                    } else if (value instanceof Long) {
+                        dataType = "Number.long";
+                    } else if (value instanceof Short) {
+                        dataType = "Number.short";
+                    } else {
+                        dataType = "Number";
+                    }
+                    mav.setDataType(dataType);
                     mav.withStringValue(((Number)value).toString());
                     result.put(entry.getKey(), mav);
                 } else {
