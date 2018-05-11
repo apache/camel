@@ -21,6 +21,7 @@ import java.io.OutputStream;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
+import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.entity.ContentType;
@@ -45,7 +46,8 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
-        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII)) {
+        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII);
+        	OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {
@@ -57,7 +59,9 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
                 canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
             }
 
-            canonicalOutstream.write(ediMessage.getBytes(getCharset()), 0, ediMessage.length());
+            transferEncodedStream.write(ediMessage.getBytes(getCharset()), 0, ediMessage.length());
+        } catch (Exception e) {
+            throw new IOException("Failed to write to output stream", e);
         }
     }
 

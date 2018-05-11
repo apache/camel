@@ -17,8 +17,10 @@
 package org.apache.camel.component.as2.api.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
@@ -78,6 +80,11 @@ public final class EntityUtils {
     public static String appendParameter(String headerString, String parameterName, String parameterValue) {
         return headerString + "; " + parameterName + "=" + parameterValue;
     }
+    
+    public static String encode(String data, Charset charset, String encoding) throws Exception {
+    	byte[] encoded = encode(data.getBytes(charset), encoding);
+    	return new String(encoded, charset);
+    }
 
     public static byte[] encode(byte[] data, String encoding) throws Exception {
         Args.notNull(data, "Data");
@@ -125,9 +132,14 @@ public final class EntityUtils {
             throw new Exception("Unknown encoding: " + encoding);
         }
     }
+    
+    public static String decode(String data, Charset charset, String encoding) throws Exception {
+    	byte[] decoded = decode(data.getBytes(charset), encoding);
+    	return new String(decoded, charset);
+    }
 
     public static byte[] decode(byte[] data, String encoding) throws Exception {
-        Args.notNull(data, "Input Stream");
+        Args.notNull(data, "Data");
 
         if (encoding == null) {
             // Identity encoding
@@ -242,6 +254,17 @@ public final class EntityUtils {
 
     }
 
-
-
+    public static void printEntity(PrintStream out, HttpEntity entity) throws IOException {
+    	entity.writeTo(out);
+    }
+    
+    public static String printEntity(HttpEntity entity)  throws IOException {
+    	try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PrintStream ps = new PrintStream(baos, true, "utf-8")) {
+    		printEntity(ps, entity);
+            String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            return content;
+    	}
+    }
+    
 }
