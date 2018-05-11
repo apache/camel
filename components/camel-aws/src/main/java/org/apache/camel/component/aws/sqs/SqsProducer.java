@@ -135,6 +135,11 @@ public class SqsProducer extends DefaultProducer {
                     mav.setDataType("Binary");
                     mav.withBinaryValue((ByteBuffer)value);
                     result.put(entry.getKey(), mav);
+                } else if (value instanceof Boolean) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("Number.Boolean");
+                    mav.withStringValue(((Boolean)value)?"1":"0");
+                    result.put(entry.getKey(), mav);
                 } else if (value instanceof Number) {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     final String dataType;
