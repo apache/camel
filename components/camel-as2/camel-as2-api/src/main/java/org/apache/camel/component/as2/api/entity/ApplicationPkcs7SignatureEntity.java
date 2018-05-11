@@ -100,9 +100,9 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
 
         // Write out signed data.
         String transferEncoding = getContentTransferEncoding() == null ? null : getContentTransferEncoding().getValue();
-        try (OutputStream trasnsferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
+        try (OutputStream transferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
 
-            trasnsferEncodedStream.write(signature);
+            transferEncodedStream.write(signature);
         } catch (Exception e) {
             throw new IOException("Failed to write to output stream", e);
         }
