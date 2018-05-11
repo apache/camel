@@ -82,8 +82,8 @@ public final class EntityUtils {
     }
     
     public static String encode(String data, Charset charset, String encoding) throws Exception {
-    	byte[] encoded = encode(data.getBytes(charset), encoding);
-    	return new String(encoded, charset);
+        byte[] encoded = encode(data.getBytes(charset), encoding);
+        return new String(encoded, charset);
     }
 
     public static byte[] encode(byte[] data, String encoding) throws Exception {
@@ -134,8 +134,8 @@ public final class EntityUtils {
     }
     
     public static String decode(String data, Charset charset, String encoding) throws Exception {
-    	byte[] decoded = decode(data.getBytes(charset), encoding);
-    	return new String(decoded, charset);
+        byte[] decoded = decode(data.getBytes(charset), encoding);
+        return new String(decoded, charset);
     }
 
     public static byte[] decode(byte[] data, String encoding) throws Exception {
@@ -255,16 +255,16 @@ public final class EntityUtils {
     }
 
     public static void printEntity(PrintStream out, HttpEntity entity) throws IOException {
-    	entity.writeTo(out);
+        entity.writeTo(out);
     }
     
-    public static String printEntity(HttpEntity entity)  throws IOException {
-    	try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static String printEntity(HttpEntity entity) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 PrintStream ps = new PrintStream(baos, true, "utf-8")) {
-    		printEntity(ps, entity);
+            printEntity(ps, entity);
             String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
             return content;
-    	}
+        }
     }
     
 }
