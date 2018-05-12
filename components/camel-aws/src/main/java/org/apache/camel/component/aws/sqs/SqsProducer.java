@@ -138,12 +138,12 @@ public class SqsProducer extends DefaultProducer {
                 } else if (value instanceof Boolean) {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("Number.Boolean");
-                    mav.withStringValue(((Boolean)value)?"1":"0");
+                    mav.withStringValue(((Boolean)value) ? "1" : "0");
                     result.put(entry.getKey(), mav);
                 } else if (value instanceof Number) {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     final String dataType;
-                    if(value instanceof Integer) {
+                    if (value instanceof Integer) {
                         dataType = "Number.int";
                     } else if (value instanceof Byte) {
                         dataType = "Number.byte";
