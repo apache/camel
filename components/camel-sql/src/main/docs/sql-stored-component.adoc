@@ -5,7 +5,7 @@
 
 The *sql-stored:* component allows you to work with databases using JDBC
 Stored Procedure queries. This component is an extension to
-the <<sql-component,SQL Component>> but specialized for calling
+the link:sql-component.adoc[SQL Component] but specialized for calling
 stored procedures.
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -251,4 +251,4 @@ You should also include the specific database driver, if needed.
 
 === See Also
 
-* <<sql-component,SQL Component>>
+* link:sql-component.adoc[SQL Component]
