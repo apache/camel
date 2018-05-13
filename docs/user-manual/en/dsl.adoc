@@ -9,7 +9,7 @@ languages (DSL) as listed below.
 
 * link:java-dsl.adoc[Java DSL] - A Java based DSL using the fluent
 builder style.
-* Spring XML - A XML based DSL in Spring XML files
+* link:spring.adoc[Spring XML] - A XML based DSL in Spring XML files
 * Blueprint XML - A XML based
 DSL in OSGi Blueprint XML files
 * Rest DSL - A DSL to define REST services using a
