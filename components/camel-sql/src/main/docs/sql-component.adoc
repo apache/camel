@@ -594,10 +594,16 @@ Here is the SQL query used to create the tables, just replace
 
 [source,sql]
 -------------------------------------------------------------------------------
-CREATE TABLE aggregation ( id varchar(255) NOT NULL, exchange blob NOT
-NULL, constraint aggregation_pk PRIMARY KEY (id) ); CREATE TABLE
-aggregation_completed ( id varchar(255) NOT NULL, exchange blob NOT
-NULL, constraint aggregation_completed_pk PRIMARY KEY (id) );
+CREATE TABLE aggregation (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ constraint aggregation_pk PRIMARY KEY (id)
+);
+CREATE TABLE aggregation_completed (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ constraint aggregation_completed_pk PRIMARY KEY (id)
+);
 -------------------------------------------------------------------------------
 
 
@@ -612,13 +618,22 @@ store the body, and the following two headers `companyName` and
 
 [source,sql]
 -------------------------------------------------------------------------------
-CREATE TABLE aggregationRepo3 ( id varchar(255) NOT NULL, exchange blob
-NOT NULL, body varchar(1000), companyName varchar(1000), accountName
-varchar(1000), constraint aggregationRepo3_pk PRIMARY KEY (id) ); CREATE
-TABLE aggregationRepo3_completed ( id varchar(255) NOT NULL, exchange
-blob NOT NULL, body varchar(1000), companyName varchar(1000),
-accountName varchar(1000), constraint aggregationRepo3_completed_pk
-PRIMARY KEY (id) );
+CREATE TABLE aggregationRepo3 (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ body varchar(1000),
+ companyName varchar(1000),
+ accountName varchar(1000),
+ constraint aggregationRepo3_pk PRIMARY KEY (id)
+);
+CREATE TABLE aggregationRepo3_completed (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ body varchar(1000),
+ companyName varchar(1000),
+ accountName varchar(1000),
+ constraint aggregationRepo3_completed_pk PRIMARY KEY (id)
+);
 -------------------------------------------------------------------------------
  
 
@@ -628,14 +643,19 @@ below:
 [source,xml]
 -------------------------------------------------------------------------------
 <bean id="repo3"
-class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
-<property name="repositoryName" value="aggregationRepo3"/> <property
-name="transactionManager" ref="txManager3"/> <property name="dataSource"
-ref="dataSource3"/> <!-- configure to store the message body and
-following headers as text in the repo --> <property
-name="storeBodyAsText" value="true"/> <property
-name="headersToStoreAsText"> <list> <value>companyName</value>
-<value>accountName</value> </list> </property> </bean>
+  class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
+  <property name="repositoryName" value="aggregationRepo3"/>
+  <property name="transactionManager" ref="txManager3"/>
+  <property name="dataSource" ref="dataSource3"/>
+  <!-- configure to store the message body and following headers as text in the repo -->
+  <property name="storeBodyAsText" value="true"/>
+  <property name="headersToStoreAsText">
+    <list>
+      <value>companyName</value>
+      <value>accountName</value>
+    </list>
+  </property>
+</bean>
 -------------------------------------------------------------------------------
 
 Codec (Serialization)
@@ -676,17 +696,19 @@ Here is the declaration for Oracle:
 
 [source,xml]
 -------------------------------------------------------------------------------
-<bean id="lobHandler"
-class="org.springframework.jdbc.support.lob.OracleLobHandler"> <property
-name="nativeJdbcExtractor" ref="nativeJdbcExtractor"/> </bean> <bean
-id="nativeJdbcExtractor"
-class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor"/>
+<bean id="lobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler">
+  <property name="nativeJdbcExtractor" ref="nativeJdbcExtractor"/>
+</bean>
+<bean id="nativeJdbcExtractor"
+  class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor"/>
 <bean id="repo"
-class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
-<property name="transactionManager" ref="transactionManager"/> <property
-name="repositoryName" value="aggregation"/> <property name="dataSource"
-ref="dataSource"/> <!-- Only with Oracle, else use default --> <property
-name="lobHandler" ref="lobHandler"/> </bean>
+  class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
+  <property name="transactionManager" ref="transactionManager"/>
+  <property name="repositoryName" value="aggregation"/>
+  <property name="dataSource" ref="dataSource"/>
+  <!-- Only with Oracle, else use default -->
+  <property name="lobHandler" ref="lobHandler"/>
+</bean>
 -------------------------------------------------------------------------------
  
 Optimistic locking
@@ -729,16 +751,20 @@ JDBC vendor.
 -------------------------------------------------------------------------------
 <bean id="repo"
 class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
-<property name="transactionManager" ref="transactionManager"/> <property
-name="repositoryName" value="aggregation"/> <property name="dataSource"
-ref="dataSource"/> <property name"jdbcOptimisticLockingExceptionMapper"
-ref="myExceptionMapper"/> </bean> <!-- use the default mapper with extra
-FQN class names from our JDBC driver --> <bean id="myExceptionMapper"
-class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExceptionMapper">
-<property name="classNames"> <util:set>
-<value>com.foo.sql.MyViolationExceptoion</value>
-<value>com.foo.sql.MyOtherViolationExceptoion</value> </util:set>
-</property> </bean>
+  <property name="transactionManager" ref="transactionManager"/>
+  <propertyname="repositoryName" value="aggregation"/>
+  <property name="dataSource" ref="dataSource"/>
+  <property name"jdbcOptimisticLockingExceptionMapper" ref="myExceptionMapper"/>
+</bean>
+<!-- use the default mapper with extraFQN class names from our JDBC driver -->
+<bean id="myExceptionMapper" class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExceptionMapper">
+  <property name="classNames">
+    <util:set>
+      <value>com.foo.sql.MyViolationExceptoion</value>
+      <value>com.foo.sql.MyOtherViolationExceptoion</value>
+    </util:set>
+  </property>
+</bean>
 -------------------------------------------------------------------------------
 
 ### Camel Sql Starter
