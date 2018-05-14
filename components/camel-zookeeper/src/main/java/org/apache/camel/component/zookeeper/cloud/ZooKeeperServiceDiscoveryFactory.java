@@ -167,10 +167,6 @@ public class ZooKeeperServiceDiscoveryFactory implements ServiceDiscoveryFactory
         configuration.setConnectionTimeoutUnit(connectionTimeoutUnit);
     }
 
-    public ZooKeeperCuratorConfiguration copy() {
-        return configuration.copy();
-    }
-
     public List<AuthInfo> getAuthInfoList() {
         return configuration.getAuthInfoList();
     }

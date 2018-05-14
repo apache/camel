@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.springboot.cluster;
+package org.apache.camel.component.consul.springboot.cloud;
 
 import java.util.Map;
 
-import org.apache.camel.component.consul.cluster.ConsulClusterConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.component.consul.cluster.service")
-public class ConsulClusterServiceConfiguration extends ConsulClusterConfiguration {
+@ConfigurationProperties(prefix = "camel.component.consul.service-registry")
+public class ConsulServiceRegistryConfiguration extends org.apache.camel.component.consul.cloud.ConsulServiceRegistryConfiguration {
     /**
-     * Sets if the consul cluster service should be enabled or not, default is false.
+     * Sets if the consul service registry should be enabled or not, default is false.
      */
     private boolean enabled;
 
     /**
-     * Cluster Service ID
+     * Service Registry ID
      */
     private String id;
 

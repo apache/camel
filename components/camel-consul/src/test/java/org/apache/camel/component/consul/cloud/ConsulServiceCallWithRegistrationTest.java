@@ -80,7 +80,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
                     .end()
                     .log("${body}");
 
-                fromF("jetty:http://%s:%d/service/path", SERVICE_HOST, port)
+                fromF("undertow:http://%s:%d/service/path", SERVICE_HOST, port)
                     .routeId(serviceId)
                     .routeGroup(serviceName)
                     .routePolicy(new ServiceRegistrationRoutePolicy())
@@ -116,7 +116,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
                     .end()
                     .log("${body}");
 
-                fromF("jetty:http://%s:%d/service/path", SERVICE_HOST, port)
+                fromF("undertow:http://%s:%d/service/path", SERVICE_HOST, port)
                     .routeId(serviceId)
                     .routeGroup(serviceName)
                     .routePolicy(new ServiceRegistrationRoutePolicy())

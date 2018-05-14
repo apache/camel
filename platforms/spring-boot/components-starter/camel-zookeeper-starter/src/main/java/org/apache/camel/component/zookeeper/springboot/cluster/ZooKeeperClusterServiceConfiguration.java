@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.springboot.cluster;
+package org.apache.camel.component.zookeeper.springboot.cluster;
 
 import java.util.Map;
 
-import org.apache.camel.component.consul.cluster.ConsulClusterConfiguration;
+import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.component.consul.cluster.service")
-public class ConsulClusterServiceConfiguration extends ConsulClusterConfiguration {
+@ConfigurationProperties(prefix = "camel.component.zookeeper.cluster.service")
+public class ZooKeeperClusterServiceConfiguration extends ZooKeeperCuratorConfiguration {
     /**
-     * Sets if the consul cluster service should be enabled or not, default is false.
+     * Sets if the zookeeper cluster service should be enabled or not, default is false.
      */
     private boolean enabled;
 
