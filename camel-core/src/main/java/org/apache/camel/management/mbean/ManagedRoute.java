@@ -33,6 +33,11 @@ import javax.management.ObjectName;
 import javax.management.Query;
 import javax.management.QueryExp;
 import javax.management.StringValueExp;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 import org.w3c.dom.Document;
 
@@ -42,6 +47,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
@@ -101,6 +107,32 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     public String getRouteGroup() {
         return route.getGroup();
+    }
+
+    @Override
+    public TabularData getRouteProperties() {
+        try {
+            final Map<String, Object> properties = route.getProperties();
+            final TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.camelRoutePropertiesTabularType());
+            final CompositeType ct = CamelOpenMBeanTypes.camelRoutePropertiesCompositeType();
+
+            // gather route properties
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                final String key = entry.getKey();
+                final String val = context.getTypeConverter().convertTo(String.class, entry.getValue());
+
+                CompositeData data = new CompositeDataSupport(
+                    ct,
+                    new String[]{"key", "value"},
+                    new Object[]{key, val}
+                );
+
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public String getDescription() {

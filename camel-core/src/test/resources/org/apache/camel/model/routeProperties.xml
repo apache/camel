@@ -17,12 +17,18 @@
     limitations under the License.
 
 -->
-<routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="xmlAutoLoading">
-        <routeProperty key="key1" value="val1"/>
-        <routeProperty key="key2" value="val2"/>
+<routes xmlns="http://camel.apache.org/schema/spring"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-        <from uri="direct:xmlAutoLoading"/>
-        <to uri="mock:xmlAutoLoading"/>
-    </route>
+  <!--
+       xsi:schemaLocation="http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd"
+  -->
+
+  <route id="route-id">
+    <routeProperty key="key1" value="val1"/>
+    <routeProperty key="key2" value="val2"/>
+
+    <from uri="seda:a"/>
+    <to uri="seda:b"/>
+  </route>
 </routes>

@@ -241,9 +241,6 @@ public final class CamelOpenMBeanTypes {
                                  new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.STRING});
     }
 
-
-
-
     public static CompositeType camelHealthDetailsCompositeType() throws OpenDataException {
         return new CompositeType("healthDetails", "Health Details",
             new String[]{"id", "group", "state", "enabled", "interval", "failureThreshold"},
@@ -254,5 +251,17 @@ public final class CamelOpenMBeanTypes {
     public static TabularType camelHealthDetailsTabularType() throws OpenDataException {
         CompositeType ct = camelHealthDetailsCompositeType();
         return new TabularType("healthDetails", "Health Details", ct, new String[]{"id"});
+    }
+
+    public static CompositeType camelRoutePropertiesCompositeType() throws OpenDataException {
+        return new CompositeType("routeProperties", "Route Properties",
+            new String[]{"key", "value"},
+            new String[]{"Key", "Value"},
+            new OpenType[]{SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType camelRoutePropertiesTabularType() throws OpenDataException {
+        CompositeType ct = camelRoutePropertiesCompositeType();
+        return new TabularType("routeProperties", "Route Properties", ct, new String[]{"key"});
     }
 }
