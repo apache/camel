@@ -29,8 +29,8 @@ import org.apache.http.HttpStatus;
  */
 public class YqlProducer extends DefaultProducer {
 
-    static final String CAMEL_YQL_HTTP_STATUS = "CamelYqlHttpStatus";
-    static final String CAMEL_YQL_HTTP_REQUEST = "CamelYqlHttpRequest";
+    public static final String CAMEL_YQL_HTTP_STATUS = "CamelYqlHttpStatus";
+    public static final String CAMEL_YQL_HTTP_REQUEST = "CamelYqlHttpRequest";
 
     private final YqlEndpoint endpoint;
     private final YqlClient yqlClient;
