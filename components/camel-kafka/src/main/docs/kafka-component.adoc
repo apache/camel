@@ -247,9 +247,13 @@ camelContext.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
         from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-                     "&groupId=A" +                            //
-                     "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
-                     "&offsetRepository=#offsetRepo")          // Keep the offsets in the previously configured repository
+                     // Setup the topic and broker address
+                     "&groupId=A" +
+                     // The consumer processor group ID
+                     "&autoOffsetReset=earliest" +
+                     // Ask to start from the beginning if we have unknown offset
+                     "&offsetRepository=#offsetRepo")
+                     // Keep the offsets in the previously configured repository
                 .to("mock:result");
     }
 });
@@ -308,8 +312,11 @@ camelContext.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
         from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-                     "&groupId=A" +                            //
-                     "&sslContextParameters=#ssl")             // Reference the SSL configuration
+                     // Setup the topic and broker address
+                     "&groupId=A" +
+                     // The consumer processor group ID
+                     "&sslContextParameters=#ssl")
+                     // Reference the SSL configuration
                 .to("mock:result");
     }
 });
@@ -365,13 +372,15 @@ In XML:
 [source,xml]
 ----
 <!-- simple -->
-<bean id="insertDbIdemRepo" class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
+<bean id="insertDbIdemRepo"
+  class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
   <property name="topic" value="idempotent-db-inserts"/>
   <property name="bootstrapServers" value="localhost:9091"/>
 </bean>
 
 <!-- complex -->
-<bean id="insertDbIdemRepo" class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
+<bean id="insertDbIdemRepo"
+  class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
   <property name="topic" value="idempotent-db-inserts"/>
   <property name="maxCacheSize" value="10000"/>
   <property name="consumerConfig">
@@ -408,7 +417,8 @@ You can then use the `KafkaManualCommit` from Java code such as a Camel `Process
 [source,java]
 ----
 public void process(Exchange exchange) {
-    KafkaManualCommit manual = exchange.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+    KafkaManualCommit manual =
+        exchange.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
     manual.commitSync();
 }
 ----
