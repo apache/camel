@@ -31,7 +31,7 @@
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%-15.15thread] %-5level %-30.30logger - %msg%n</pattern>
     </encoder>
-    <file>target/camel-consul-starter-test.log</file>
+    <file>target/camel-zookeeper-starter-test.log</file>
   </appender>
 
   <root level="INFO">

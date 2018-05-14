@@ -228,9 +228,9 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
         }
     }
 
-    // *********************************************
-    //
-    // *********************************************
+    // ****************
+    // Registry
+    // ****************
 
     @Override
     public void register(ServiceDefinition definition) {
@@ -303,6 +303,9 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
         }
 
         client.agentClient().deregister(definition.getId());
+
+        //remove the serviceId to the list of known server
+        serviceList.remove(definition.getId());
     }
 
     private String computeServiceHost(ServiceDefinition definition) {
