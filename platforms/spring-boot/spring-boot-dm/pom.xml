@@ -47,6 +47,7 @@
     <!-- Needed by BOM generator-->
     <avro-version>1.8.2</avro-version>
     <jackson-version>1.9.12</jackson-version>
+    <testcontainers-version>1.7.3</testcontainers-version>
 
     <!-- Needed by starters -->
     <egit-github-core-version>2.1.5</egit-github-core-version>

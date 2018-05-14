@@ -118,9 +118,8 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
                     Map<String, String> meta = new HashMap<>();
                     ObjectHelper.ifNotEmpty(si.getPayload(), meta::putAll);
 
-                    meta.put("service_name", si.getName());
-                    meta.put("service_id", si.getId());
-                    meta.put("service_type", si.getServiceType().name());
+                    meta.putIfAbsent(ServiceDefinition.SERVICE_META_NAME, si.getName());
+                    meta.putIfAbsent(ServiceDefinition.SERVICE_META_ID, si.getId());
 
                     return new DefaultServiceDefinition(
                         si.getName(),
