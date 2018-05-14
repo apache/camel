@@ -790,7 +790,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 final PropertySource<JavaClassSource> prop = innerClass.addProperty(optionType, sourceProp.getName());
 
                 boolean anEnum;
-                Class optionClass;
+                Class<?> optionClass;
                 if (!propType.isArray()) {
                     optionClass = loadClass(projectClassLoader, optionType);
                     anEnum = optionClass.isEnum();
@@ -930,8 +930,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     // try loading class, looking for inner classes if needed
-    private Class loadClass(ClassLoader projectClassLoader, String loadClassName) throws MojoFailureException {
-        Class optionClass;
+    private Class<?> loadClass(ClassLoader projectClassLoader, String loadClassName) throws MojoFailureException {
+        Class<?> optionClass;
         while (true) {
             try {
                 optionClass = projectClassLoader.loadClass(loadClassName);
@@ -962,7 +962,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     protected ClassLoader getProjectClassLoader() throws MojoFailureException {
-        final List classpathElements;
+        final List<?> classpathElements;
         try {
             classpathElements = project.getTestClasspathElements();
         } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
@@ -970,7 +970,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         final URL[] urls = new URL[classpathElements.size()];
         int i = 0;
-        for (Iterator it = classpathElements.iterator(); it.hasNext(); i++) {
+        for (Iterator<?> it = classpathElements.iterator(); it.hasNext(); i++) {
             try {
                 urls[i] = new File((String) it.next()).toURI().toURL();
             } catch (MalformedURLException e) {
@@ -1702,7 +1702,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         return sb.toString();
     }
 
-    private static void sortImports(Importer importer) {
+    private static void sortImports(Importer<JavaClassSource> importer) {
         // sort imports
         List<Import> imports = importer.getImports();
 
