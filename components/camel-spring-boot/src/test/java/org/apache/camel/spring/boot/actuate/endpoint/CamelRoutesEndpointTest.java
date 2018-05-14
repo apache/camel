@@ -59,6 +59,8 @@ public class CamelRoutesEndpointTest extends Assert {
         assertEquals(routes.size(), camelContext.getRoutes().size());
         assertTrue(routes.stream().anyMatch(r -> "foo-route".equals(r.getId())));
         assertTrue(routes.stream().anyMatch(r -> "foo-route-group".equals(r.getGroup())));
+        assertTrue(routes.stream().anyMatch(r -> r.getProperties().containsKey("key1") &&  "val1".equals(r.getProperties().get("key1"))));
+        assertTrue(routes.stream().anyMatch(r -> r.getProperties().containsKey("key2") &&  "val2".equals(r.getProperties().get("key2"))));
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.Experimental;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -28,6 +30,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Route Group")
     String getRouteGroup();
+
+    @ManagedAttribute(description = "Route Properties")
+    TabularData getRouteProperties();
 
     @ManagedAttribute(description = "Route Description")
     String getDescription();

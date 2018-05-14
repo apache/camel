@@ -33,6 +33,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
@@ -236,6 +237,34 @@ public class DefaultRouteContext implements RouteContext {
                 rest = "true";
             }
             edcr.getProperties().put(Route.REST_PROPERTY, rest);
+
+            List<PropertyDefinition> properties = route.getRouteProperties();
+            if (properties != null) {
+                final String[] reservedProperties = new String[] {
+                    Route.ID_PROPERTY,
+                    Route.PARENT_PROPERTY,
+                    Route.GROUP_PROPERTY,
+                    Route.REST_PROPERTY,
+                    Route.DESCRIPTION_PROPERTY
+                };
+
+                for (PropertyDefinition prop : properties) {
+                    try {
+                        final String key = CamelContextHelper.parseText(camelContext, prop.getKey());
+                        final String val = CamelContextHelper.parseText(camelContext, prop.getValue());
+
+                        for (String property : reservedProperties) {
+                            if (property.equalsIgnoreCase(key)) {
+                                throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
+                            }
+                        }
+
+                        edcr.getProperties().put(key, val);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
+            }
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);

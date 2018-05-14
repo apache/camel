@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -65,7 +66,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs"})
+@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
@@ -95,6 +96,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
     private OutputTypeDefinition outputType;
+    private List<PropertyDefinition> routeProperties;
 
     public RouteDefinition() {
     }
@@ -819,6 +821,23 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return this;
     }
 
+    /**
+     * Adds a custom property on the route.
+     */
+    public RouteDefinition routeProperty(String key, String value) {
+        if (routeProperties == null) {
+            routeProperties = new ArrayList<>();
+        }
+
+        PropertyDefinition prop = new PropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+
+        routeProperties.add(prop);
+
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -1165,6 +1184,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     public OutputTypeDefinition getOutputType() {
         return this.outputType;
+    }
+
+    public List<PropertyDefinition> getRouteProperties() {
+        return routeProperties;
+    }
+
+    /**
+     * To set metadata as properties on the route.
+     */
+    @XmlElement(name = "routeProperty")
+    @Metadata(label = "advanced")
+    public void setRouteProperties(List<PropertyDefinition> routeProperties) {
+        this.routeProperties = routeProperties;
     }
 
     // Implementation methods
