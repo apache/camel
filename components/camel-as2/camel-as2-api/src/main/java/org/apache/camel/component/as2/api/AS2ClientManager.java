@@ -159,9 +159,21 @@ public class AS2ClientManager {
      *
      * @param ediMessage
      *            - EDI message to transport
-     * @param httpContext
-     *            - the subject sent in the interchange request.
-     * @throws HttpException
+     * @param requestUri
+     *            - resource location to deliver message
+     * @param subject - message subject
+     * @param from - RFC2822 address of sender
+     * @param as2From - AS2 name of sender
+     * @param as2To - AS2 name of recipient
+     * @param as2MessageStructure - the structure of AS2 to send; see {@link AS2MessageStructure}
+     * @param ediMessageContentType - the content typw of EDI message
+     * @param ediMessageTransferEncoding - the transfer encoding used to transport EDI message
+     * @param signingCertificateChain - the chain of certificates used to sign the message or <code>null</code> if sending EDI message unsigned
+     * @param signingPrivateKey - the private key used to sign EDI message
+     * @param dispositionNotificationTo - an RFC2822 address to request a receipt or <code>null</code> if no receipt requested
+     * @param signedReceiptMicAlgorithms - the senders list of signing algorithms for signing receipt, in preferred order,  or <code>null</code> if requesting an unsigned receipt.
+     * @return {@link HttpCoreContext} containing request and response used to send EDI message
+     * @throws HttpException when things go wrong.
      */
     public HttpCoreContext send(String ediMessage,
                                 String requestUri,
