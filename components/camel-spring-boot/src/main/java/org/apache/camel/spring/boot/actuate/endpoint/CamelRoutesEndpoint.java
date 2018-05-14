@@ -16,8 +16,11 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -208,6 +211,8 @@ public class CamelRoutesEndpoint {
         
         private final String group;
 
+        private final Map<String, Object> properties;
+
         private final String description;
 
         private final String uptime;
@@ -223,6 +228,12 @@ public class CamelRoutesEndpoint {
             this.uptime = route.getUptime();
             this.uptimeMillis = route.getUptimeMillis();
 
+            if (route.getProperties() != null) {
+                this.properties = new HashMap<>(route.getProperties());
+            } else {
+                this.properties = Collections.emptyMap();
+            }
+
             if (route instanceof StatefulService) {
                 this.status = ((StatefulService) route).getStatus().name();
             } else {
@@ -236,6 +247,10 @@ public class CamelRoutesEndpoint {
         
         public String getGroup() {
             return group;
+        }
+
+        public Map<String, Object> getProperties() {
+            return properties;
         }
 
         public String getDescription() {
