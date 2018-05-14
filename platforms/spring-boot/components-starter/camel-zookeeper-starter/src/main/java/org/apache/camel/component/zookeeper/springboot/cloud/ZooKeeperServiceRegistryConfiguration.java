@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cluster.springboot;
+package org.apache.camel.component.zookeeper.springboot.cloud;
 
 import java.util.Map;
 
-import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.component.zookeeper.cluster.service")
-public class ZooKeeperClusterServiceConfiguration extends ZooKeeperCuratorConfiguration {
+@ConfigurationProperties(prefix = "camel.component.zookeeper.service-registry")
+public class ZooKeeperServiceRegistryConfiguration extends org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceRegistryConfiguration {
     /**
-     * Sets if the zookeeper cluster service should be enabled or not, default is false.
+     * Sets if the zookeeper service registry should be enabled or not, default is false.
      */
     private boolean enabled;
 
     /**
-     * Cluster Service ID
+     * Service Registry ID
      */
     private String id;
 

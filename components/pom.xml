@@ -56,6 +56,7 @@
     <module>camel-jetty-common</module>
     <module>camel-jetty</module>
     <module>camel-jetty9</module>
+    <module>camel-undertow</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
     <module>camel-jms</module>
@@ -302,7 +303,6 @@
     <module>camel-thrift</module>
     <module>camel-twilio</module>
     <module>camel-twitter</module>
-    <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>
     <module>camel-urlrewrite</module>
     <module>camel-velocity</module>

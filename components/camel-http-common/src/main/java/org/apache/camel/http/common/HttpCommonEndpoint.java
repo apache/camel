@@ -18,7 +18,6 @@ package org.apache.camel.http.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.cloud.DiscoverableService;
@@ -30,6 +29,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CollectionHelper;
 
 public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, DiscoverableService {
 
@@ -202,11 +202,11 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     @Override
     public Map<String, Object> getServiceProperties() {
-        return new HashMap<String, Object>() {{
-            put(ServiceDefinition.SERVICE_META_PORT, getPort());
-            put(ServiceDefinition.SERVICE_META_PATH, getPath());
-            put(ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol());
-        }};
+        return CollectionHelper.immutableMapOf(
+            ServiceDefinition.SERVICE_META_PORT, getPort(),
+            ServiceDefinition.SERVICE_META_PATH, getPath(),
+            ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol()
+        );
     }
 
     // Properties
