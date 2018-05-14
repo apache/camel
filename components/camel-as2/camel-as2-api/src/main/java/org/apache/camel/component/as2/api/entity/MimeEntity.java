@@ -129,7 +129,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     /**
      * Obtains the Content-Transfer-Encoding header.
      * The default implementation returns the value of the
-     * {@link #contentEncoding contentTransferEncoding} attribute.
+     * {@link #contentEncoding contentEncoding} attribute.
      *
      * @return  the Content-Transfer-Encoding header, or {@code null}
      */
@@ -140,12 +140,12 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     /**
      * Specifies the Content-Transfer-Encoding header.
      * The default implementation sets the value of the
-     * {@link #contentTranferEncoding contentTransferEncoding} attribute.
+     * {@link #contentTransferEncoding contentTransferEncoding} attribute.
      *
      * @param contentTransferEncoding   the new Content-Transfer-Encoding header, or
      *                          {@code null} to unset
      */
-    public void setContentTranserEncoding(final Header contentTransferEncoding) {
+    public void setContentTransferEncoding(final Header contentTransferEncoding) {
         this.contentTransferEncoding = contentTransferEncoding;
         if (contentTransferEncoding != null) {
             addHeader(contentTransferEncoding);
@@ -157,9 +157,9 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     /**
      * Specifies the Content-Transfer-Encoding header, as a string.
      * The default implementation calls
-     * {@link #setContentTransferEncoding(Header) setContentEncoding(Header)}.
+     * {@link #setContentTransferEncoding(Header) setContentTransferEncoding(Header)}.
      *
-     * @param ceString     the new Content-Transfer-Encoding header, or
+     * @param contentTranserEncoding - the new Content-Transfer-Encoding header, or
      *                     {@code null} to unset
      */
     public void setContentTransferEncoding(final String contentTranserEncoding) {
@@ -167,7 +167,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         if (contentTranserEncoding != null) {
             h = new BasicHeader(AS2Header.CONTENT_TRANSFER_ENCODING, contentTranserEncoding);
         }
-        setContentTranserEncoding(h);
+        setContentTransferEncoding(h);
     }
 
 

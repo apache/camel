@@ -38,12 +38,17 @@ import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.component.as2.api.entity.AS2DispositionType;
+import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.camel.component.as2.api.util.MicUtils;
+import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ClientManagerApiMethod;
 import org.apache.http.HttpEntity;
@@ -80,6 +85,8 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AS2ClientManagerIntegrationTest.class);
     private static final String PATH_PREFIX = AS2ApiCollection.getCollection().getApiName(AS2ClientManagerApiMethod.class).getName();
 
+    private static final String ORIGIN_SERVER_NAME = "AS2ClientManagerIntegrationTest Server";
+    private static final String AS2_VERSION = "1.1";
     private static final String REQUEST_URI = "/";
     private static final String SUBJECT = "Test Case";
     private static final String AS2_NAME = "878051556";
@@ -116,7 +123,8 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
             + "UNT+23+00000000000117'\n"
             + "UNZ+1+00000000000778'\n";
 
-    private static final String EXPECTED_AS2_VERSION = "1.1";
+    private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
+    private static final String EXPECTED_AS2_VERSION = AS2_VERSION;
     private static final String EXPECTED_MDN_SUBJECT = MDN_SUBJECT_PREFIX + SUBJECT;
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] {"sha1", "md5"};
 
@@ -191,7 +199,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType", ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", null);
+        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is java.security.cert.Certificate[]
         headers.put("CamelAS2.signingCertificateChain", null);
         // parameter type is java.security.PrivateKey
@@ -236,6 +244,15 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected content type in second body part of report",
                 ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
                 secondPart.getContentTypeValue());
+        
+        assertTrue("", secondPart instanceof AS2MessageDispositionNotificationEntity);
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals("Unexpected value for reporting UA", ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA());
+        assertEquals("Unexpected value for final recipient", AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient());
+        assertEquals("Unexpected value for original message ID", HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID), messageDispositionNotificationEntity.getOriginalMessageId());
+        assertEquals("Unexpected value for disposition mode", DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, messageDispositionNotificationEntity.getDispositionMode());
+        assertEquals("Unexpected value for disposition type", AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType());
+        
     }
 
     @Test
@@ -256,7 +273,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType", ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", null);
+        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is java.security.cert.Certificate[]
         headers.put("CamelAS2.signingCertificateChain", certList.toArray(new Certificate[0]));
         // parameter type is java.security.PrivateKey
@@ -300,6 +317,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof MultipartSignedEntity);
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
+        assertTrue("Signature for response entity is invalid", responseSignedEntity.isValid());
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue("Signed entity wrong type", responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity);
         DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity)responseSignedDataEntity;
@@ -312,6 +330,18 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
                 secondPart.getContentTypeValue());
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull("Signature Entity", signatureEntity);
+        
+        assertTrue("", secondPart instanceof AS2MessageDispositionNotificationEntity);
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals("Unexpected value for reporting UA", ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA());
+        assertEquals("Unexpected value for final recipient", AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient());
+        assertEquals("Unexpected value for original message ID", HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID), messageDispositionNotificationEntity.getOriginalMessageId());
+        assertEquals("Unexpected value for disposition mode", DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, messageDispositionNotificationEntity.getDispositionMode());
+        assertEquals("Unexpected value for disposition type", AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType());
+        
+        ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
+        ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest)request);
+        assertEquals("Received content MIC does not match computed", computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest());
     }
 
     @BeforeClass
@@ -380,7 +410,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     }
 
     private static void receiveTestMessages() throws IOException {
-        serverConnection = new AS2ServerConnection("1.1", "AS2ClientManagerIntegrationTest Server",
+        serverConnection = new AS2ServerConnection(AS2_VERSION, ORIGIN_SERVER_NAME,
                 "server.example.com", 8888, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate());
         serverConnection.listen("/", new RequestHandler());
     }
