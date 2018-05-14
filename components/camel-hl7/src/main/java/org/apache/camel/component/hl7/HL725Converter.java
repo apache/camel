@@ -239,7 +239,7 @@ import org.apache.camel.converter.IOConverter;
 /**
  * HL7 converters.
  */
-@Converter
+@Converter(ignoreOnLoadError = true)
 public final class HL725Converter {
 
     private static final HapiContext DEFAULT_CONTEXT;
