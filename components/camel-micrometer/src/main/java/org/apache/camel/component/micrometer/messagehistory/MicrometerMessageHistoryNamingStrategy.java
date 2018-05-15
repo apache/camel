@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.routepolicy;
+package org.apache.camel.component.micrometer.messagehistory;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.StaticService;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Route;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 
 /**
- * Service holding the {@link MeterRegistry} which registers all metrics.
+ * Provides a strategy to derive a meter name from the route and node
  */
-@ManagedResource(description = "MicrometerRoutePolicy")
-public final class MicrometerRoutePolicyService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
+public interface MicrometerMessageHistoryNamingStrategy {
+
+    MicrometerMessageHistoryNamingStrategy DEFAULT = (route, node) -> DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+
+    String getName(Route route, NamedNode node);
+
 }

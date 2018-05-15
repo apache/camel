@@ -20,7 +20,6 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import io.micrometer.core.instrument.Clock;
-import io.micrometer.core.instrument.MockClock;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.util.HierarchicalNameMapper;
@@ -52,7 +51,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         JndiRegistry registry = super.createRegistry();
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
-        meterRegistry.add(new JmxMeterRegistry(new CamelJmxConfig(), Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
+        meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
         registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
         return registry;
     }
@@ -91,12 +90,15 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertEquals(3, meterRegistry.getMeters().size());
 
         // there should be 3 mbeans
-        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:*"), null);
+        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelMessageHistory.*"), null);
         assertEquals(3, set.size());
 
-        String camelContextName = context().getName();
-        Long testCount = (Long)getMBeanServer().getAttribute(
-                new ObjectName("org.apache.camel.micrometer:name=CamelMessageHistory.camelContext." + camelContextName + ".nodeId.foo.routeId.route1"), "Count");
+        ObjectName fooMBean = set.stream()
+                .filter(on -> on.getCanonicalName().contains("foo"))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected MBean with node Id foo"));
+
+        Long testCount = (Long)getMBeanServer().getAttribute(fooMBean, "Count");
         assertEquals(count / 2, testCount.longValue());
 
         // get the message history service using JMX

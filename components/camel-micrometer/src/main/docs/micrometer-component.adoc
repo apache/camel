@@ -18,11 +18,14 @@ are link:#MicrometerComponent-counter[counter], link:#MicrometerComponent-dist
 and link:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
 simple way to measure behaviour of application. Configurable
 reporting backends (via Micrometer registries) is enabling different integration options for
-collecting and visualizing statistics. The component also provides
-a `MicrometerRoutePolicyFactory` which allows to expose route statistics
-using Micrometer, see bottom of page for details.
+collecting and visualizing statistics.
 
-Maven users will need to add the following dependency to their `pom.xml`
+The component also provides
+a `MicrometerRoutePolicyFactory` which allows to expose route statistics
+using Micrometer as well as `EventNotifier` implementations for counting
+routes and timing Exchanges.
+
+Maven users need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
@@ -45,20 +48,21 @@ micrometer:[ counter | summary | timer ]:metricname[?options]
 ### Options
 
 // component options: START
-The Micrometer component supports the following options:
+The Micrometer component supports 2 options which are listed below.
+
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MeterRegistry
+| *metricsRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MeterRegistry
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
 
 
 // endpoint options: START
-The Metrics endpoint is configured using URI syntax:
+The Micrometer endpoint is configured using URI syntax:
 
 ----
 micrometer:metricsType:meterName
@@ -66,28 +70,29 @@ micrometer:metricsType:meterName
 
 with the following path and query parameters:
 
-==== Path Parameters:
+==== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *metricsType* | *Required* Type of metrics |  | MetricsType
-| *meterName* | *Required* Name of metrics |  | String
+| *metricsName* | *Required* Name of metrics |  | String
+| *tags* | Tags of metrics |  | Tag>
 |===
 
 
-==== Query Parameters:
+==== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *tags* (producer) | Tags that accompany the metric. Comma-separated list of key=value pairs |  | String
-| *action* (producer) | Action when using timer type |  | MetricsTimerAction
-| *decrement* (producer) | Decrement value when using counter type |  | Double
-| *increment* (producer) | Increment value when using counter type |  | Double
-| *value* (producer) | Value value when using histogram type |  | Double
+| *action* (producer) | Action expression when using timer type |  | String
+| *decrement* (producer) | Decrement value expression when using counter type |  | String
+| *increment* (producer) | Increment value expression when using counter type |  | String
+| *value* (producer) | Value expression when using histogram type |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -95,8 +100,8 @@ with the following path and query parameters:
 
 ### [[MicrometerComponent-registry]]Meter Registry
 
-By default the Camel Micrometer component uses a `SimpleMeterRegistry` instance.
-This default registry should be replaced with a custom one by providing
+By default the Camel Micrometer component creates a `SimpleMeterRegistry` instance.
+This default registry, however, should be replaced with a custom one by providing
 a `MeterRegistry` bean. MeterRegistries primarily determine the backend monitoring system
 in use. A CompositeMeterRegistry can be used to address more than one monitoring target.
 
@@ -487,6 +492,35 @@ String json = service.dumpStatisticsAsJson();
 
 If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
 with `name=MicrometerMessageHistory`.
+
+
+### MicrometerEventNotifiers
+
+There is a `MicrometerRouteEventNotifier` (counting added and running routes) and a
+`MicrometerExchangeEventNotifier` (timing exchanges from their creation to their completion).
+
+EventNotifiers can be added to the CamelContext, e.g.:
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new MicrometerExchangeEventNotifier())
+----
+
+At runtime the metrics can be accessed from Java API or JMX which allows
+to gather the data as json output.
+
+From Java code you can do get the service from the CamelContext as
+shown:
+
+[source,java]
+----
+MicrometerEventNotifierService service = context.hasService(MicrometerEventNotifierService.class);
+String json = service.dumpStatisticsAsJson();
+----
+
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
+with `name=MicrometerEventNotifier`.
+
 
 ### InstrumentedThreadPoolFactory
 
