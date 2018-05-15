@@ -20,10 +20,20 @@ import java.util.Optional;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
+import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class ConsulClientKeyValueTest extends ConsulClientTestSupport {
+public class ConsulClientKeyValueTest extends ConsulTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("consulClient", getConsul());
+
+        return registry;
+    }
 
     @Test
     public void testKeyPut() throws Exception {
