@@ -139,7 +139,7 @@ public class MicrometerComponentTest {
     @Test
     public void testGetOrCreateMetricRegistryFoundInCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
-        MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
+        MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
@@ -149,7 +149,7 @@ public class MicrometerComponentTest {
     public void testGetOrCreateMetricRegistryFoundInCamelRegistryByType() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.singleton(metricRegistry));
-        MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
+        MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
         inOrder.verify(camelRegistry, times(1)).findByType(MeterRegistry.class);
@@ -160,7 +160,7 @@ public class MicrometerComponentTest {
     public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.emptySet());
-        MeterRegistry result = component.getOrCreateMeterRegistry(camelRegistry, "name");
+        MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(metricRegistry)));
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
@@ -171,7 +171,7 @@ public class MicrometerComponentTest {
     @Test
     public void testGetMetricRegistryFromCamelRegistry() {
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
-        MeterRegistry result = component.getMeterRegistryFromCamelRegistry(camelRegistry, "name");
+        MeterRegistry result = MicrometerUtils.getMeterRegistryFromCamelRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
@@ -179,7 +179,7 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateMetricRegistry() {
-        MeterRegistry registry = component.createMeterRegistry();
+        MeterRegistry registry = MicrometerUtils.createMeterRegistry();
         assertThat(registry, is(notNullValue()));
     }
 }

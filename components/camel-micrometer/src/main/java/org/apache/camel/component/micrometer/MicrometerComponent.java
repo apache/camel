@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the component that manages metrics endpoints.
+ * Represents the component that manages Micrometer endpoints.
  */
 public class MicrometerComponent extends UriEndpointComponent {
 
@@ -52,7 +52,7 @@ public class MicrometerComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry = getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
+            metricsRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
         String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
@@ -92,34 +92,6 @@ public class MicrometerComponent extends UriEndpointComponent {
                     .reduce(Tags.empty(), Tags::and);
         }
         return Tags.empty();
-    }
-
-    MeterRegistry getOrCreateMeterRegistry(Registry camelRegistry, String registryName) {
-        LOG.debug("Looking up MeterRegistry from Camel Registry for name \"{}\"", registryName);
-        MeterRegistry result = getMeterRegistryFromCamelRegistry(camelRegistry, registryName);
-        if (result == null) {
-            LOG.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
-            LOG.info("Creating new default MeterRegistry");
-            result = createMeterRegistry();
-        }
-        return result;
-    }
-
-    MeterRegistry getMeterRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
-        MeterRegistry registry = camelRegistry.lookupByNameAndType(registryName, MeterRegistry.class);
-        if (registry != null) {
-            return registry;
-        } else {
-            Set<MeterRegistry> registries = camelRegistry.findByType(MeterRegistry.class);
-            if (registries.size() == 1) {
-                return registries.iterator().next();
-            }
-        }
-        return null;
-    }
-
-    MeterRegistry createMeterRegistry() {
-        return new SimpleMeterRegistry();
     }
 
     public MeterRegistry getMetricsRegistry() {

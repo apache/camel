@@ -18,16 +18,21 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link MeterRegistry}.
@@ -40,34 +45,41 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private boolean prettyPrint;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
+    private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
 
 
     private static final class MetricsStatistics {
-        private static final String MICROMETER_ROUTE_POLICY = "MicrometerRoutePolicy-";
         private final MeterRegistry meterRegistry;
         private final Route route;
+        private final MicrometerRoutePolicyNamingStrategy namingStrategy;
 
-        private MetricsStatistics(MeterRegistry meterRegistry, Route route) {
-            this.meterRegistry = meterRegistry;
+        private MetricsStatistics(MeterRegistry meterRegistry, Route route, MicrometerRoutePolicyNamingStrategy namingStrategy) {
+            this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
+            this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
         }
 
         public void onExchangeBegin(Exchange exchange) {
             Timer.Sample sample = Timer.start(meterRegistry);
-            exchange.setProperty(MICROMETER_ROUTE_POLICY + route.getId(), sample);
+            exchange.setProperty(propertyName(exchange), sample);
         }
 
         public void onExchangeDone(Exchange exchange) {
-            Timer.Sample sample = (Timer.Sample) exchange.removeProperty(MICROMETER_ROUTE_POLICY + route.getId());
+            Timer.Sample sample = (Timer.Sample) exchange.removeProperty(propertyName(exchange));
             if (sample != null) {
-                Timer timer = Timer.builder(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME)
+                Timer timer = Timer.builder(namingStrategy.getName(route))
                         .description(route.getDescription())
                         .tag(CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName())
+                        .tag(SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName())
                         .tag(ROUTE_ID_TAG, route.getId())
-                        .tag("failed", Boolean.toString(exchange.isFailed()))
+                        .tag(FAILED_TAG, Boolean.toString(exchange.isFailed()))
                         .register(meterRegistry);
                 sample.stop(timer);
             }
+        }
+
+        private String propertyName(Exchange exchange) {
+            return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, route.getId(), exchange.getExchangeId());
         }
     }
 
@@ -96,36 +108,42 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         this.durationUnit = durationUnit;
     }
 
+    public MicrometerRoutePolicyNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    public void setNamingStrategy(MicrometerRoutePolicyNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
 
-        MicrometerRoutePolicyService registryService;
+        if (getMeterRegistry() == null) {
+            setMeterRegistry(MicrometerUtils.getOrCreateMeterRegistry(
+                    route.getRouteContext().getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
+        }
+
         try {
-            registryService = route.getRouteContext().getCamelContext().hasService(MicrometerRoutePolicyService.class);
+            MicrometerRoutePolicyService registryService = route.getRouteContext().getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {
                 registryService = new MicrometerRoutePolicyService();
                 registryService.setMeterRegistry(getMeterRegistry());
                 registryService.setPrettyPrint(isPrettyPrint());
                 registryService.setDurationUnit(getDurationUnit());
-                registryService.setMatchingNames(name -> name.equals(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME));
+                registryService.setMatchingTags(Tags.of(SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName()));
                 route.getRouteContext().getCamelContext().addService(registryService);
+                ServiceHelper.startService(registryService);
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
-        // ensure registry service is started
-        try {
-            ServiceHelper.startService(registryService);
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-
         // create statistics holder
-        // for know we record only all the timings of a complete exchange (responses)
+        // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
-        statistics = new MetricsStatistics(meterRegistry, route);
+        statistics = new MetricsStatistics(getMeterRegistry(), route, getNamingStrategy());
     }
 
 

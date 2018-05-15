@@ -19,16 +19,19 @@ package org.apache.camel.component.micrometer.messagehistory;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
+import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
  * A factory to setup and use {@link MicrometerMessageHistory} as message history implementation.
@@ -39,6 +42,7 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
     private MeterRegistry meterRegistry;
     private boolean prettyPrint = true;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
+    private MicrometerMessageHistoryNamingStrategy namingStrategy = MicrometerMessageHistoryNamingStrategy.DEFAULT;
 
     @Override
     public CamelContext getCamelContext() {
@@ -85,6 +89,17 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
         this.durationUnit = durationUnit;
     }
 
+    public MicrometerMessageHistoryNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    /**
+     * Sets the naming strategy for message history meter names
+     */
+    public void setNamingStrategy(MicrometerMessageHistoryNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
+
     @Override
     @Deprecated
     public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Date date) {
@@ -93,32 +108,30 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp) {
-        return new MicrometerMessageHistory(meterRegistry, camelContext.getRoute(routeId), namedNode, timestamp);
+        return new MicrometerMessageHistory(getMeterRegistry(), camelContext.getRoute(routeId), namedNode, getNamingStrategy(), timestamp);
     }
 
     @Override
-    protected void doStart() {
-        MicrometerMessageHistoryService messageHistoryService;
+    protected void doStart() throws Exception {
+
+        if (meterRegistry == null) {
+            meterRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelContext.getRegistry(), METRICS_REGISTRY_NAME);
+        }
+
         try {
-            messageHistoryService = camelContext.hasService(MicrometerMessageHistoryService.class);
+            MicrometerMessageHistoryService messageHistoryService = camelContext.hasService(MicrometerMessageHistoryService.class);
             if (messageHistoryService == null) {
                 messageHistoryService = new MicrometerMessageHistoryService();
                 messageHistoryService.setMeterRegistry(getMeterRegistry());
                 messageHistoryService.setPrettyPrint(isPrettyPrint());
                 messageHistoryService.setDurationUnit(getDurationUnit());
-                messageHistoryService.setMatchingNames(name -> name.equals(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME));
+                messageHistoryService.setMatchingTags(Tags.of(SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName()));
                 camelContext.addService(messageHistoryService);
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
-        // use metrics registry from service if not explicit configured
-        if (meterRegistry == null) {
-            meterRegistry = messageHistoryService.getMeterRegistry();
-        }
-
-        ObjectHelper.notNull(meterRegistry, "meterRegistry", this);
     }
 
     @Override

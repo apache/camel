@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.routepolicy;
+package org.apache.camel.component.micrometer.eventnotifier;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
+import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyMBean;
 
-/**
- * Service holding the {@link MeterRegistry} which registers all metrics.
- */
-@ManagedResource(description = "MicrometerRoutePolicy")
-public final class MicrometerRoutePolicyService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
+@ManagedResource(description = "MicrometerEventNotifier")
+public final class MicrometerEventNotifierService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
 }

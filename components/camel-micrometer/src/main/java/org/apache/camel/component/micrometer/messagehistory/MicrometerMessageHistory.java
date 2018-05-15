@@ -23,31 +23,36 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultMessageHistory;
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
- * A micrometer metrics based {@link MessageHistory}
+ * A micrometer metrics based {@link MessageHistory}. This could also use {@link #elapsed}
+ * provided by the super class, but Micrometer can potentially use other {@link io.micrometer.core.instrument.Clock clocks}
+ * and measures in nano-second precision.
  */
 public class MicrometerMessageHistory extends DefaultMessageHistory {
 
     private final Route route;
     private final Timer.Sample sample;
     private final MeterRegistry meterRegistry;
+    private final MicrometerMessageHistoryNamingStrategy namingStrategy;
 
-    public MicrometerMessageHistory(MeterRegistry meterRegistry, Route route, NamedNode namedNode, long timestamp) {
+    public MicrometerMessageHistory(MeterRegistry meterRegistry, Route route, NamedNode namedNode, MicrometerMessageHistoryNamingStrategy namingStrategy, long timestamp) {
         super(route.getId(), namedNode, timestamp);
         this.meterRegistry = meterRegistry;
         this.route = route;
+        this.namingStrategy = namingStrategy;
         this.sample = Timer.start(meterRegistry);
     }
 
     @Override
     public void nodeProcessingDone() {
         super.nodeProcessingDone();
-        Timer timer = Timer.builder(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME)
+        Timer timer = Timer.builder(namingStrategy.getName(route, getNode()))
                 .tag(CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName())
+                .tag(SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName())
                 .tag(ROUTE_ID_TAG, getRouteId())
                 .tag(NODE_ID_TAG, getNode().getId())
                 .register(meterRegistry);

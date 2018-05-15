@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.routepolicy;
+package org.apache.camel.component.micrometer.eventnotifier;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.StaticService;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
+import org.apache.camel.api.management.ManagedOperation;
 
-/**
- * Service holding the {@link MeterRegistry} which registers all metrics.
- */
-@ManagedResource(description = "MicrometerRoutePolicy")
-public final class MicrometerRoutePolicyService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
+public interface MicrometerEventNotifierMBean {
+
+    @ManagedOperation(description = "Dumps the statistics as json")
+    String dumpStatisticsAsJson();
+
+    @ManagedOperation(description = "Dumps the statistics as json using seconds for time units")
+    String dumpStatisticsAsJsonTimeUnitSeconds();
+
 }
