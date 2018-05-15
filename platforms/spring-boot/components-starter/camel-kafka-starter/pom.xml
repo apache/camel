@@ -38,6 +38,17 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-kafka</artifactId>
       <version>${project.version}</version>
+      <!-- managed by spring boot BOM -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.kafka</groupId>
+          <artifactId>kafka_2.11</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.kafka</groupId>
+          <artifactId>kafka-clients</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>

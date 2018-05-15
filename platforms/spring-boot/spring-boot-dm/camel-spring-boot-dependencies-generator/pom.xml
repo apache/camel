@@ -169,6 +169,9 @@
               <exclude>org.scala-lang:*</exclude>
               <exclude>org.apache.lucene:*</exclude>
 
+              <!-- Kafka -->
+              <exclude>org.apache.kafka:*</exclude>
+
               <!-- Jetty -->
               <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
               <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
