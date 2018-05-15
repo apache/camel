@@ -51,8 +51,8 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         this.scheduledExecutorService = this.executorServiceManager.newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
+        super.doStart();
     }
 
     @Override
