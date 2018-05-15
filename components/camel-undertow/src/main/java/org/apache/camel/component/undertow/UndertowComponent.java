@@ -166,7 +166,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("undertow", true);
+            config = camelContext.getRestConfiguration(getComponentName(), true);
         }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
@@ -202,7 +202,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("undertow")) {
+        if (config.getComponent() == null || config.getComponent().equals(getComponentName())) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -232,9 +232,9 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         String url;
         if (api) {
-            url = "undertow:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
+            url = getComponentName() + ":%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
         } else {
-            url = "undertow:%s://%s:%s/%s?matchOnUriPrefix=false&httpMethodRestrict=%s";
+            url = getComponentName() + ":%s://%s:%s/%s?matchOnUriPrefix=false&httpMethodRestrict=%s";
         }
 
         // get the endpoint
@@ -271,7 +271,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url = "undertow:" + host;
+        String url = getComponentName() + ":" + host;
         if (!ObjectHelper.isEmpty(basePath)) {
             url += "/" + basePath;
         }
@@ -296,7 +296,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("undertow", true);
+        RestConfiguration config = getCamelContext().getRestConfiguration(getComponentName(), true);
         // configure additional options on undertow configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());
@@ -372,5 +372,9 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     @Override
     public ComponentVerifier getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+    }
+
+    protected String getComponentName() {
+        return "undertow";
     }
 }
