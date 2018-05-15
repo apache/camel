@@ -76,6 +76,7 @@
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
     <module>camel-example-management</module>
+    <module>camel-example-micrometer</module>	
     <module>camel-example-mybatis</module>
     <module>camel-example-netty-custom-correlation</module>
     <module>camel-example-netty-http</module>

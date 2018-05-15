@@ -28,11 +28,20 @@ public final class MicrometerConstants {
 
     public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "CamelMessageHistory";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "CamelRoutePolicy";
+    public static final String DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME = "CamelExchangeEventNotifier";
+    public static final String DEFAULT_CAMEL_ROUTES_ADDED = "CamelRoutesAdded";
+    public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "CamelRoutesRunning";
 
     public static final String ROUTE_ID_TAG = "routeId";
     public static final String NODE_ID_TAG = "nodeId";
+    public static final String FAILED_TAG = "failed";
     public static final String CAMEL_CONTEXT_TAG = "camelContext";
+    public static final String EVENT_TYPE_TAG = "eventType";
     public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
+
+    public static final String SERVICE_NAME = "serviceName";
+    public static final String ENDPOINT_NAME = "endpointName";
+
 
     private MicrometerConstants() {
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
@@ -31,13 +32,14 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
     @Test
     public void testMetricsRoutePolicy() throws Exception {
         int count = 10;
-        getMockEndpoint("mock:result").expectedMessageCount(count);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(count);
 
         for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
-                template.sendBody("seda:foo", "Hello " + i);
+                template.sendBody("direct:foo", "Hello " + i);
             } else {
-                template.sendBody("seda:bar", "Hello " + i);
+                template.sendBody("direct:bar", "Hello " + i);
             }
         }
 
@@ -62,11 +64,11 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo")
+                from("direct:foo").routeId("foo")
                         .delay(DELAY_FOO)
                         .to("mock:result");
 
-                from("seda:bar").routeId("bar")
+                from("direct:bar").routeId("bar")
                         .delay(DELAY_BAR)
                         .to("mock:result");
             }

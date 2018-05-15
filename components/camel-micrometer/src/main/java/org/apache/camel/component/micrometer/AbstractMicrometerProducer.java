@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -31,11 +28,14 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_PREFIX;
 
 
 public abstract class AbstractMicrometerProducer<T extends Meter> extends DefaultProducer {
 
-    public static final String HEADER_PATTERN = MicrometerConstants.HEADER_PREFIX + "*";
+    private static final String HEADER_PATTERN = HEADER_PREFIX + "*";
 
     public AbstractMicrometerProducer(MicrometerEndpoint endpoint) {
         super(endpoint);
@@ -51,9 +51,10 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
     public void process(Exchange exchange) {
         Message in = exchange.getIn();
         String defaultMetricsName = simple(exchange, getEndpoint().getMetricsName(), String.class);
-        String finalMetricsName = getMetricsName(in, defaultMetricsName);
+        String finalMetricsName = getStringHeader(in, HEADER_METRIC_NAME, defaultMetricsName);
         Iterable<Tag> defaultTags = getEndpoint().getTags();
-        Iterable<Tag> finalTags = Tags.concat(defaultTags, getTags(in)).stream()
+        Iterable<Tag> headerTags = getTagHeader(in, HEADER_METRIC_TAGS, Tags.empty());
+        Iterable<Tag> finalTags = Tags.concat(defaultTags, headerTags).stream()
                 .map(tag -> Tag.of(
                         simple(exchange, tag.getKey(), String.class),
                         simple(exchange, tag.getValue(), String.class)))
@@ -91,24 +92,16 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         return getEndpoint().getCamelContext().getTypeConverter().convertTo(clazz, expression);
     }
 
-    public String getMetricsName(Message in, String defaultValue) {
-        return getStringHeader(in, MicrometerConstants.HEADER_METRIC_NAME, defaultValue);
-    }
-
-    public Iterable<Tag> getTags(Message in) {
-        return getTagHeader(in, MicrometerConstants.HEADER_METRIC_TAGS, Tags.empty());
-    }
-
-    public String getStringHeader(Message in, String header, String defaultValue) {
+    protected String getStringHeader(Message in, String header, String defaultValue) {
         String headerValue = in.getHeader(header, String.class);
         return ObjectHelper.isNotEmpty(headerValue) ? headerValue : defaultValue;
     }
 
-    public Double getDoubleHeader(Message in, String header, Double defaultValue) {
+    protected Double getDoubleHeader(Message in, String header, Double defaultValue) {
         return in.getHeader(header, defaultValue, Double.class);
     }
 
-    public Iterable<Tag> getTagHeader(Message in, String header, Iterable<Tag> defaultTags) {
+    protected Iterable<Tag> getTagHeader(Message in, String header, Iterable<Tag> defaultTags) {
         return (Iterable<Tag>) in.getHeader(header, defaultTags, Iterable.class);
     }
 

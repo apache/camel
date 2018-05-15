@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,25 +6,30 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
-package org.apache.camel.component.micrometer.routepolicy;
+package org.apache.camel.example.micrometer;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.StaticService;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
+import org.apache.camel.spring.javaconfig.Main;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Service holding the {@link MeterRegistry} which registers all metrics.
+ * @version 
  */
-@ManagedResource(description = "MicrometerRoutePolicy")
-public final class MicrometerRoutePolicyService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
+public class IntegrationTest extends Assert {
+    
+    @Test
+    public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
+        // let's boot up the Spring application context for 2 seconds to check that it works OK
+        Main.main("-duration", "2s", "-cc", "CamelPrometheusExample", "-bp", "org.apache.camel.example.micrometer");
+    }
+
 }
