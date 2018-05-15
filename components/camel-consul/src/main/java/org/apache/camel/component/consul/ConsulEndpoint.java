@@ -99,8 +99,10 @@ public class ConsulEndpoint extends DefaultEndpoint {
     }
 
     public synchronized Consul getConsul() throws Exception {
-        if (consul == null) {
+        if (consul == null && ObjectHelper.isEmpty(getConfiguration().getConsulClient())) {
             consul = configuration.createConsulClient(getCamelContext());
+        } else {
+        	consul = getConfiguration().getConsulClient();
         }
 
         return consul;
