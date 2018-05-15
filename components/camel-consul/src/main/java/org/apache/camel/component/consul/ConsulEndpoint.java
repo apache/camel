@@ -34,8 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
 public class ConsulEndpoint extends DefaultEndpoint {
 
-    //@UriParam(description = "The consul configuration")
-    //@Metadata
+    // @UriParam(description = "The consul configuration")
+    // @Metadata
     private final ConsulConfiguration configuration;
 
     @UriPath(description = "The API endpoint")
@@ -47,13 +47,8 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     private Consul consul;
 
-    public ConsulEndpoint(
-            String apiEndpoint,
-            String uri,
-            ConsulComponent component,
-            ConsulConfiguration configuration,
-            Optional<ConsulFactories.ProducerFactory> producerFactory,
-            Optional<ConsulFactories.ConsumerFactory> consumerFactory) {
+    public ConsulEndpoint(String apiEndpoint, String uri, ConsulComponent component, ConsulConfiguration configuration, Optional<ConsulFactories.ProducerFactory> producerFactory,
+                          Optional<ConsulFactories.ConsumerFactory> consumerFactory) {
 
         super(uri, component);
 
@@ -70,18 +65,14 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        ConsulFactories.ProducerFactory factory = producerFactory.orElseThrow(
-            () -> new IllegalArgumentException("No producer for " + apiEndpoint)
-        );
+        ConsulFactories.ProducerFactory factory = producerFactory.orElseThrow(() -> new IllegalArgumentException("No producer for " + apiEndpoint));
 
         return factory.create(this, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        ConsulFactories.ConsumerFactory factory = consumerFactory.orElseThrow(
-            () -> new IllegalArgumentException("No consumer for " + apiEndpoint)
-        );
+        ConsulFactories.ConsumerFactory factory = consumerFactory.orElseThrow(() -> new IllegalArgumentException("No consumer for " + apiEndpoint));
 
         return factory.create(this, configuration, processor);
     }
@@ -102,7 +93,7 @@ public class ConsulEndpoint extends DefaultEndpoint {
         if (consul == null && ObjectHelper.isEmpty(getConfiguration().getConsulClient())) {
             consul = configuration.createConsulClient(getCamelContext());
         } else {
-        	consul = getConfiguration().getConsulClient();
+            consul = getConfiguration().getConsulClient();
         }
 
         return consul;

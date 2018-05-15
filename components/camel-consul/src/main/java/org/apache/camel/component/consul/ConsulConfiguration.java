@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.consul;
 
+import com.orbitz.consul.Consul;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
-import com.orbitz.consul.Consul;
 
 @UriParams
 public class ConsulConfiguration extends ConsulClientConfiguration {
@@ -69,25 +69,23 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
     public void setKey(String key) {
         this.key = key;
     }
-    
 
     public Consul getConsulClient() {
-		return consulClient;
-	}
+        return consulClient;
+    }
 
     /**
-     * Reference to a `com.orbitz.consul.Consul` in the
-     * registry.
+     * Reference to a `com.orbitz.consul.Consul` in the registry.
      */
-	public void setConsulClient(Consul consulClient) {
-		this.consulClient = consulClient;
-	}
+    public void setConsulClient(Consul consulClient) {
+        this.consulClient = consulClient;
+    }
 
     // ****************************************
     // Copy
     // ****************************************
 
-	@Override
+    @Override
     public ConsulConfiguration copy() {
         try {
             return (ConsulConfiguration)super.clone();
