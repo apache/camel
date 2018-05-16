@@ -435,7 +435,7 @@ following options:
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration in when dumping the statistics as json.
 |=======================================================================
 
-If JMX is percentileHistogramEnabled in the CamelContext, the MBean is registered in the `type=services` tree
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
 with `name=MicrometerRoutePolicy`.
 
 
@@ -483,7 +483,7 @@ MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHi
 String json = service.dumpStatisticsAsJson();
 ----
 
-If JMX is percentileHistogramEnabled in the CamelContext, the MBean is registered in the `type=services` tree
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
 with `name=MicrometerMessageHistory`.
 
 
@@ -511,7 +511,7 @@ MicrometerEventNotifierService service = context.hasService(MicrometerEventNotif
 String json = service.dumpStatisticsAsJson();
 ----
 
-If JMX is percentileHistogramEnabled in the CamelContext, the MBean is registered in the `type=services` tree
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
 with `name=MicrometerEventNotifier`.
 
 
