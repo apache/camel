@@ -179,6 +179,7 @@
         <include>org.apache.camel:camel-lumberjack</include>
         <include>org.apache.camel:camel-lzf</include>
         <include>org.apache.camel:camel-metrics</include>
+		<include>org.apache.camel:camel-micrometer</include>
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-master</include>
