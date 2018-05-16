@@ -24,34 +24,36 @@ import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.management.event.RouteRemovedEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RUNNING;
-import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 
 public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifier<AbstractRouteEvent> {
 
     private final AtomicLong routesAdded = new AtomicLong();
     private final AtomicLong routesRunning = new AtomicLong();
+    private MicrometerRouteEventNotifierNamingStrategy namingStrategy = MicrometerRouteEventNotifierNamingStrategy.DEFAULT;
 
     public MicrometerRouteEventNotifier() {
         super(AbstractRouteEvent.class);
     }
 
+    public MicrometerRouteEventNotifierNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    public void setNamingStrategy(MicrometerRouteEventNotifierNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Gauge.builder(DEFAULT_CAMEL_ROUTES_ADDED, routesAdded, value -> Long.valueOf(value.get()).doubleValue())
-                .tag(SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName())
-                .tag(CAMEL_CONTEXT_TAG, getCamelContext().getName())
-                .tag(EVENT_TYPE_TAG, AbstractRouteEvent.class.getSimpleName())
+        Gauge.builder(namingStrategy.getRouteAddedName(), routesAdded, value -> Long.valueOf(value.get()).doubleValue())
+                .baseUnit("routes")
+                .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
-        Gauge.builder(DEFAULT_CAMEL_ROUTES_RUNNING, routesRunning, value -> Long.valueOf(value.get()).doubleValue())
-                .tag(SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName())
-                .tag(CAMEL_CONTEXT_TAG, getCamelContext().getName())
-                .tag(EVENT_TYPE_TAG, AbstractRouteEvent.class.getSimpleName())
+        Gauge.builder(namingStrategy.getRouteRunningName(), routesRunning, value -> Long.valueOf(value.get()).doubleValue())
+                .baseUnit("routes")
+                .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
     }
 

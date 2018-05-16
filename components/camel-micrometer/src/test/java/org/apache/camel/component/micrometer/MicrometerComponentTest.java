@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
@@ -93,36 +94,30 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateNewEndpointForCounter() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.COUNTER, "a name", Tags.empty());
-        assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
-    }
-
-    @Test
-    public void testCreateNewEndpointForGauge() {
-        MicrometerEndpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.GAUGE, "a name", Tags.empty());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.COUNTER, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForHistogram() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForTimer() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, MetricsType.TIMER, "a name", Tags.empty());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.TIMER, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testGetMetricsType() {
-        for (MetricsType type : EnumSet.allOf(MetricsType.class)) {
-            assertThat(component.getMetricsType(type.toString() + ":metrics-name"), is(type));
+        Meter.Type[] supportedTypes = {Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER};
+        for (Meter.Type type : supportedTypes) {
+            assertThat(component.getMetricsType(MicrometerUtils.getName(type) + ":metrics-name"), is(type));
         }
     }
 

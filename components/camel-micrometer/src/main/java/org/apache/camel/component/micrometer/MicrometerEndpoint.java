@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import org.apache.camel.Component;
@@ -39,7 +40,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Type of metrics")
     @Metadata(required = "true")
-    protected final MetricsType metricsType;
+    protected final Meter.Type metricsType;
     @UriPath(description = "Name of metrics")
     @Metadata(required = "true")
     protected final String metricsName;
@@ -54,7 +55,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @UriParam(description = "Decrement value expression when using counter type")
     private String decrement;
 
-    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, MetricsType metricsType, String metricsName, Iterable<Tag> tags) {
+    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, Meter.Type metricsType, String metricsName, Iterable<Tag> tags) {
         super(uri, component);
         this.registry = registry;
         this.metricsType = metricsType;
@@ -69,11 +70,11 @@ public class MicrometerEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() {
-        if (metricsType == MetricsType.COUNTER) {
+        if (metricsType == Meter.Type.COUNTER) {
             return new CounterProducer(this);
-        } else if (metricsType == MetricsType.DISTRIBUTION_SUMMARY) {
+        } else if (metricsType == Meter.Type.DISTRIBUTION_SUMMARY) {
             return new DistributionSummaryProducer(this);
-        } else if (metricsType == MetricsType.TIMER) {
+        } else if (metricsType == Meter.Type.TIMER) {
             return new TimerProducer(this);
         } else {
             throw new IllegalArgumentException("Metrics type " + metricsType + " is not supported");
@@ -97,7 +98,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
         return tags;
     }
 
-    public MetricsType getMetricsType() {
+    public Meter.Type getMetricsType() {
         return metricsType;
     }
 

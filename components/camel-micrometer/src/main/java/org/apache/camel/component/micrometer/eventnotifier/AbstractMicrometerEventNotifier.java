@@ -105,13 +105,6 @@ public abstract class AbstractMicrometerEventNotifier<T extends EventObject> ext
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
-
-
-        try {
-
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
     }
 
 }

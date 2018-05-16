@@ -34,7 +34,12 @@ This example uses [Prometheus](https://prometheus.io) as monitoring backend.
 
 * Start up Prometheus
 
-Optionally, you can install a metrics visualizer like [Grafana](https://grafana.com/).
+Optionally, you can install a metrics visualizer, e.g. [Grafana](https://grafana.com/):
+
+* Download the package for your platform and unpack it on your local host
+* Add your Prometheus server as a data source
+* Import a [suitable dashboard](https://grafana.com/dashboards/4701)
+* Add some graphs to display Camel metrics (this is out of scope for this example).
 
 
 ### Run
