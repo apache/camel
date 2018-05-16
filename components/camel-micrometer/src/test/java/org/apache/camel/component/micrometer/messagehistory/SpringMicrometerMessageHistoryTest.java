@@ -42,9 +42,9 @@ public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
 
         for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
-                template.sendBody("seda:foo", "Hello " + i);
+                template.sendBody("direct:foo", "Hello " + i);
             } else {
-                template.sendBody("seda:bar", "Hello " + i);
+                template.sendBody("direct:bar", "Hello " + i);
             }
         }
 

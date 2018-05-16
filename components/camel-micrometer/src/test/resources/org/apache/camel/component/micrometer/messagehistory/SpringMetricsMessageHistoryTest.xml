@@ -34,11 +34,11 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="seda:foo"/>
+      <from uri="direct:foo"/>
       <to uri="mock:foo" id="foo"/>
     </route>
     <route>
-      <from uri="seda:bar"/>
+      <from uri="direct:bar"/>
       <to uri="mock:bar" id="bar"/>
       <to uri="mock:baz" id="baz"/>
     </route>
