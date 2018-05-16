@@ -52,9 +52,9 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
 
         for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
-                template.sendBody("seda:foo", "Hello " + i);
+                template.sendBody("direct:foo", "Hello " + i);
             } else {
-                template.sendBody("seda:bar", "Hello " + i);
+                template.sendBody("direct:bar", "Hello " + i);
             }
         }
 
@@ -87,10 +87,10 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo")
+                from("direct:foo")
                     .to("mock:foo").id("foo");
 
-                from("seda:bar")
+                from("direct:bar")
                     .to("mock:bar").id("bar")
                     .to("mock:baz").id("baz");
             }
