@@ -22,10 +22,6 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultMessageHistory;
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
  * A micrometer metrics based {@link MessageHistory}. This could also use {@link #elapsed}
@@ -51,10 +47,8 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
     public void nodeProcessingDone() {
         super.nodeProcessingDone();
         Timer timer = Timer.builder(namingStrategy.getName(route, getNode()))
-                .tag(CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName())
-                .tag(SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName())
-                .tag(ROUTE_ID_TAG, getRouteId())
-                .tag(NODE_ID_TAG, getNode().getId())
+                .tags(namingStrategy.getTags(route, getNode()))
+                .description(getNode().getDescriptionText())
                 .register(meterRegistry);
         sample.stop(timer);
     }

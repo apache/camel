@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer;
 
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
@@ -57,7 +58,7 @@ public class MicrometerEndpointTest {
 
     @Before
     public void setUp() {
-        endpoint = new MicrometerEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME, Tags.empty()) {
+        endpoint = new MicrometerEndpoint(null, null, registry, Meter.Type.COUNTER, METRICS_NAME, Tags.empty()) {
             @Override
             public Producer createProducer() {
                 return null;
