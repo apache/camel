@@ -293,7 +293,7 @@
     <hazelcast-version>3.10</hazelcast-version>
     <hbase-version>1.2.6</hbase-version>
     <hessian-version>4.0.51</hessian-version>
-    <hibernate-validator-version>6.0.9.Final</hibernate-validator-version>
+    <hibernate-validator-version>6.0.10.Final</hibernate-validator-version>
     <hibernate-version>5.2.16.Final</hibernate-version>
     <hikaricp-version>2.3.13</hikaricp-version>
     <hk2-version>2.3.0</hk2-version>
