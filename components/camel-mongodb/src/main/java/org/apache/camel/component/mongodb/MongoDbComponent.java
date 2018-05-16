@@ -21,15 +21,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link MongoDbEndpoint}.
  */
-public class MongoDbComponent extends UriEndpointComponent {
+public class MongoDbComponent extends DefaultComponent {
     
     public static final Set<MongoDbOperation> WRITE_OPERATIONS = 
             new HashSet<>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, 
@@ -38,10 +39,14 @@ public class MongoDbComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
 
     public MongoDbComponent() {
-        super(MongoDbEndpoint.class);
+        this(null);
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    public MongoDbComponent(CamelContext context) {
+    	super(context);
+	}
+
+	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
