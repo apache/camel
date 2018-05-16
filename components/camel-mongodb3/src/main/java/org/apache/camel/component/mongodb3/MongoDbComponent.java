@@ -41,10 +41,10 @@ public class MongoDbComponent extends DefaultComponent {
     }
 
     public MongoDbComponent(CamelContext context) {
-		super(context);
-	}
+        super(context);
+    }
 
-	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
