@@ -17,14 +17,12 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
@@ -37,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MicrometerComponent extends UriEndpointComponent {
 
-    public static final MetricsType DEFAULT_METER_TYPE = MetricsType.COUNTER;
+    public static final Meter.Type DEFAULT_METER_TYPE = Meter.Type.COUNTER;
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerComponent.class);
 
@@ -55,7 +53,7 @@ public class MicrometerComponent extends UriEndpointComponent {
             metricsRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
         String metricsName = getMetricsName(remaining);
-        MetricsType metricsType = getMetricsType(remaining);
+        Meter.Type metricsType = getMetricsType(remaining);
         Iterable<Tag> tags = getMetricsTag(parameters);
 
         LOG.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
@@ -69,18 +67,11 @@ public class MicrometerComponent extends UriEndpointComponent {
         return name == null ? remaining : name;
     }
 
-    MetricsType getMetricsType(String remaining) {
-        String name = StringHelper.before(remaining, ":");
-        MetricsType type;
-        if (name == null) {
-            type = DEFAULT_METER_TYPE;
-        } else {
-            type = MetricsType.getByName(name);
-        }
-        if (type == null) {
-            throw new RuntimeCamelException("Unknown meter type \"" + name + "\"");
-        }
-        return type;
+    Meter.Type getMetricsType(String remaining) {
+        String type = StringHelper.before(remaining, ":");
+        return type == null
+                ? DEFAULT_METER_TYPE
+                : MicrometerUtils.getByName(type);
     }
 
     Iterable<Tag> getMetricsTag(Map<String, Object> parameters) {

@@ -17,13 +17,15 @@
 package org.apache.camel.component.micrometer;
 
 import java.time.Duration;
+import java.util.function.Predicate;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ALWAYS;
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_METERS;
 
 /**
- * Example filter for adding common distribution statistics for all Timers and Distribution
- * Summaries.
+ * Filter for adding distribution statistics to Timers and Distribution Summaries.
  * Configure and add this to the {@link io.micrometer.core.instrument.MeterRegistry}
  * if desired:
  *
@@ -35,20 +37,23 @@ import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
  */
 public class DistributionStatisticConfigFilter implements MeterFilter {
 
+    private Predicate<Meter.Id> appliesTo = ALWAYS;
     private Long maximumExpectedValue;
     private Long minimumExpectedValue;
-    private Boolean enabled;
+    private Boolean publishPercentileHistogram = true;
+    private Integer percentilePrecision;
     private Integer bufferLength;
     private Duration expiry;
-    private double[] percentiles = new double[] {0.5D, 0.75D, 0.9D, 0.99D, 0.999D };
+    private double[] percentiles;
     private long[] slas;
 
     @Override
     public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
-        if (id.getTag(MicrometerConstants.CAMEL_CONTEXT_TAG) != null) {
+        if (CAMEL_METERS.and(appliesTo).test(id)) {
             return DistributionStatisticConfig.builder()
-                    .percentilesHistogram(enabled)
+                    .percentilesHistogram(publishPercentileHistogram)
                     .percentiles(percentiles)
+                    .percentilePrecision(percentilePrecision)
                     .maximumExpectedValue(maximumExpectedValue)
                     .minimumExpectedValue(minimumExpectedValue)
                     .sla(slas)
@@ -60,31 +65,120 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
         return config;
     }
 
-    public void setMaximumExpectedValue(Long maximumExpectedValue) {
+    /**
+     * Restrict a condition under which this config applies to a Camel meter
+     *
+     * @param appliesTo predicate that must return true so that this config applies
+     */
+    public DistributionStatisticConfigFilter andAppliesTo(Predicate<Meter.Id> appliesTo) {
+        this.appliesTo = this.appliesTo.and(appliesTo);
+        return this;
+    }
+
+    /**
+     * Add a condition under which this config applies to a Camel meter
+     *
+     * @param appliesTo predicate that must return true so that this config applies
+     */
+    public DistributionStatisticConfigFilter orAppliesTo(Predicate<Meter.Id> appliesTo) {
+        this.appliesTo = this.appliesTo.or(appliesTo);
+        return this;
+    }
+
+    /**
+     * Sets the maximum expected value for a distribution summary value.
+     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
+     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     *
+     * @param maximumExpectedValue the maximum expected value for a distribution summary value
+     */
+    public DistributionStatisticConfigFilter setMaximumExpectedValue(Long maximumExpectedValue) {
         this.maximumExpectedValue = maximumExpectedValue;
+        return this;
     }
 
-    public void setMinimumExpectedValue(Long minimumExpectedValue) {
+    /**
+     * Sets the minimum expected value for a distribution summary value.
+     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
+     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     *
+     * @param minimumExpectedValue the minimum expected value for a distribution summary value
+     */
+    public DistributionStatisticConfigFilter setMinimumExpectedValue(Long minimumExpectedValue) {
         this.minimumExpectedValue = minimumExpectedValue;
+        return this;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    /**
+     * Sets the maximum expected duration for a timer value
+     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
+     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     *
+     * @param maximumExpectedDuration the maximum expected duration for a timer value
+     */
+    public DistributionStatisticConfigFilter setMaximumExpectedDuration(Duration maximumExpectedDuration) {
+        this.maximumExpectedValue = maximumExpectedDuration.toNanos();
+        return this;
     }
 
-    public void setBufferLength(Integer bufferLength) {
+    /**
+     * Sets the minimum expected duration for a timer value
+     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
+     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     *
+     * @param minimumExpectedDuration the minimum expected duration for a timer value
+     */
+    public DistributionStatisticConfigFilter setMinimumExpectedDuration(Duration minimumExpectedDuration) {
+        this.minimumExpectedValue = minimumExpectedDuration.toNanos();
+        return this;
+    }
+
+    /**
+     * Whether to publish aggregatable percentile approximations for Prometheus or Atlas.
+     * Has no effect on systems that do not support aggregatable percentile approximations.
+     * This defaults to true.
+     *
+     * @param publishPercentileHistogram Whether to publish aggregatable percentile approximations.
+     */
+    public DistributionStatisticConfigFilter setPublishPercentileHistogram(Boolean publishPercentileHistogram) {
+        this.publishPercentileHistogram = publishPercentileHistogram;
+        return this;
+    }
+
+    public DistributionStatisticConfigFilter setBufferLength(Integer bufferLength) {
         this.bufferLength = bufferLength;
+        return this;
     }
 
-    public void setExpiry(Duration expiry) {
+    public DistributionStatisticConfigFilter setExpiry(Duration expiry) {
         this.expiry = expiry;
+        return this;
     }
 
-    public void setPercentiles(double[] percentiles) {
+    /**
+     * Calculate and publish percentile values. These values are non-aggregatable across dimensions.
+     *
+     * @param percentiles array of percentiles to be published
+     */
+    public DistributionStatisticConfigFilter setPercentiles(double[] percentiles) {
         this.percentiles = percentiles;
+        return this;
     }
 
-    public void setSlas(long[] slas) {
+    public DistributionStatisticConfigFilter setPercentilePrecision(Integer percentilePrecision) {
+        this.percentilePrecision = percentilePrecision;
+        return this;
+    }
+
+    /**
+     * Publish a cumulative histogram with buckets defined by your SLAs. Used together with publishPercentileHistogram
+     * on a monitoring system that supports aggregatable percentiles, this setting adds additional buckets to the published histogram.
+     * Used on a system that does not support aggregatable percentiles, this setting causes a histogram to be published with only these buckets.
+     *
+     * @param slas array of percentiles to be published
+     */
+    public DistributionStatisticConfigFilter setSlas(long[] slas) {
         this.slas = slas;
+        return this;
     }
 }

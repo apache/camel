@@ -27,11 +27,8 @@ import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
@@ -46,7 +43,6 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
-
 
     private static final class MetricsStatistics {
         private final MeterRegistry meterRegistry;
@@ -68,11 +64,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             Timer.Sample sample = (Timer.Sample) exchange.removeProperty(propertyName(exchange));
             if (sample != null) {
                 Timer timer = Timer.builder(namingStrategy.getName(route))
+                        .tags(namingStrategy.getTags(route, exchange))
                         .description(route.getDescription())
-                        .tag(CAMEL_CONTEXT_TAG, route.getRouteContext().getCamelContext().getName())
-                        .tag(SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName())
-                        .tag(ROUTE_ID_TAG, route.getId())
-                        .tag(FAILED_TAG, Boolean.toString(exchange.isFailed()))
                         .register(meterRegistry);
                 sample.stop(timer);
             }
@@ -119,12 +112,10 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     @Override
     public void onInit(Route route) {
         super.onInit(route);
-
         if (getMeterRegistry() == null) {
             setMeterRegistry(MicrometerUtils.getOrCreateMeterRegistry(
                     route.getRouteContext().getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
         }
-
         try {
             MicrometerRoutePolicyService registryService = route.getRouteContext().getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {

@@ -500,7 +500,7 @@ following options:
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
 using the `com.codahale.metrics.JmxReporter`. +
-Notice that if JMX is enabled on CamelContext
+Notice that if JMX is percentileHistogramEnabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
 statistics using json. Setting `useJmx` to true is only needed if you
@@ -576,7 +576,7 @@ The following options is supported on the factory:
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
 using the `com.codahale.metrics.JmxReporter`. +
-Notice that if JMX is enabled on CamelContext
+Notice that if JMX is percentileHistogramEnabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
 statistics using json. Setting `useJmx` to true is only needed if you

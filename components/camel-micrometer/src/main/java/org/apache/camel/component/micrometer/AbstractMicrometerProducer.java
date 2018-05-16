@@ -59,7 +59,8 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
                         simple(exchange, tag.getKey(), String.class),
                         simple(exchange, tag.getValue(), String.class)))
                 .reduce(Tags.empty(), Tags::and, Tags::and)
-                .and(Tags.of(CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
+                .and(Tags.of(
+                        CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
         try {
             doProcess(exchange, finalMetricsName, finalTags);
         } catch (Exception e) {
@@ -82,7 +83,7 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
 
     protected abstract void doProcess(Exchange exchange, MicrometerEndpoint endpoint, T meter);
 
-    protected <T> T simple(Exchange exchange, String expression, Class<T> clazz) {
+    protected <C> C simple(Exchange exchange, String expression, Class<C> clazz) {
         if (expression != null) {
             Expression simple = SimpleLanguage.simple(expression);
             if (simple != null) {

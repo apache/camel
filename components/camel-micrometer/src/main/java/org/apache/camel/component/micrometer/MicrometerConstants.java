@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.function.Predicate;
+import io.micrometer.core.instrument.Meter;
+
 public final class MicrometerConstants {
 
     public static final String HEADER_PREFIX = "CamelMetrics";
@@ -42,6 +45,10 @@ public final class MicrometerConstants {
     public static final String SERVICE_NAME = "serviceName";
     public static final String ENDPOINT_NAME = "endpointName";
 
+    public static final Predicate<Meter.Id> CAMEL_METERS = id -> id.getTag(CAMEL_CONTEXT_TAG) != null;
+    public static final Predicate<Meter.Id> TIMERS = id -> id.getType() == Meter.Type.TIMER;
+    public static final Predicate<Meter.Id> DISTRIBUTION_SUMMARIES = id -> id.getType() == Meter.Type.DISTRIBUTION_SUMMARY;
+    public static final Predicate<Meter.Id> ALWAYS = id -> true;
 
     private MicrometerConstants() {
     }
