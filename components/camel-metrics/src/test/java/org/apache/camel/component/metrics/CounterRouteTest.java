@@ -154,7 +154,7 @@ public class CounterRouteTest {
     public void testOverrideIncrementAndDecrement() throws Exception {
         when(mockRegistry.counter("A")).thenReturn(mockCounter);
         endpoint.expectedMessageCount(1);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_COUNTER_INCREMENT, 912L);
         headers.put(HEADER_COUNTER_DECREMENT, 43219L);
         producer1.sendBodyAndHeaders(new Object(), headers);
