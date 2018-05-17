@@ -85,6 +85,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpContextEngineId;
     @UriParam(javaType = "java.lang.String")
     private OIDList oids = new OIDList();
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean treeList;
 
     /**
      * creates a snmp endpoint
@@ -385,6 +387,18 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public void setSnmpContextEngineId(String snmpContextEngineId) {
         this.snmpContextEngineId = snmpContextEngineId;
+    }
+
+    public boolean isTreeList() {
+        return treeList;
+    }
+
+    /**
+     * Sets the flag whether the scoped PDU will be displayed as the list
+     * if it has child elements in its tree
+     */
+    public void setTreeList(boolean treeList) {
+        this.treeList = treeList;
     }
 
     @Override
