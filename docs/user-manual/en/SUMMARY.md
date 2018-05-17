@@ -286,6 +286,7 @@
 	* [Lumberjack](lumberjack-component.adoc)
 	* [Master](master-component.adoc)
 	* [Metrics](metrics-component.adoc)
+	* [Micrometer](micrometer-component.adoc)
 	* [Mina](mina-component.adoc)
 	* [Mina2](mina2-component.adoc)
 	* [MLLP](mllp-component.adoc)
