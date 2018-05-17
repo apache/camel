@@ -42,10 +42,10 @@ import org.springframework.test.context.junit4.SpringRunner;
         CamelSpringCloudServiceCallRibbonTest.TestConfiguration.class
     },
     properties = {
+        "spring.main.banner-mode=off",
         "ribbon.eureka.enabled=false",
         "ribbon.listOfServers=localhost:9090,localhost:9092",
-        "ribbon.ServerListRefreshInterval=15000",
-        "debug=false"
+        "ribbon.ServerListRefreshInterval=15000"
     }
 )
 public class CamelSpringCloudServiceCallRibbonTest {
@@ -71,7 +71,8 @@ public class CamelSpringCloudServiceCallRibbonTest {
                 public void configure() throws Exception {
                     from("direct:start")
                         .serviceCall()
-                        .name("custom-svc-list/hello");
+                            .name("custom-svc-list/hello")
+                        .end();
 
                     from("jetty:http://localhost:9090/hello")
                         .transform()
