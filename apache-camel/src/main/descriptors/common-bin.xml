@@ -257,7 +257,9 @@
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-cloud</include>
+        <include>org.apache.camel:camel-spring-cloud-consul</include>
         <include>org.apache.camel:camel-spring-cloud-netflix</include>
+        <include>org.apache.camel:camel-spring-cloud-zookeeper</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
@@ -566,7 +568,9 @@
         <include>org.apache.camel:camel-spring-boot</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-consul-starter</include>
         <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-zookeeper-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>
         <include>org.apache.camel:camel-spring-javaconfig-starter</include>
         <include>org.apache.camel:camel-spring-ldap-starter</include>
