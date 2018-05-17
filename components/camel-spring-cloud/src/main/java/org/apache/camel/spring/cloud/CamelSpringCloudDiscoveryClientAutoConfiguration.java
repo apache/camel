@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Configuration;
 @Conditional(CamelSpringCloudDiscoveryClientAutoConfiguration.LoadBalancerCondition.class)
 public class CamelSpringCloudDiscoveryClientAutoConfiguration {
 
-    @Bean(name = "load-balancer-discovery-client")
+    @Bean(name = "service-discovery-client")
     @ConditionalOnMissingBean
     public DiscoveryClient serviceDiscoveryClient(CamelCloudServiceDiscovery serviceDiscovery) {
         return new CamelSpringCloudDiscoveryClient("service-discovery-client", serviceDiscovery);
