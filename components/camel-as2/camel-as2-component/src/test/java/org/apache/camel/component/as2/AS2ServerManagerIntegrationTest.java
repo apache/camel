@@ -170,6 +170,8 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) entity;
         assertTrue("Unexpected content type for entity", ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
         assertTrue("Entity not set as main body of request", ediEntity.isMainBody());
+        String rcvdMessage = ediEntity.getEdiMessage().replaceAll("\r", "");
+        assertEquals("EDI message does not match", EDI_MESSAGE, rcvdMessage);
 
     }
 
@@ -307,4 +309,5 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
             }
         };
     }
+    
 }

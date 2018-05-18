@@ -209,6 +209,7 @@ public final class EntityParser {
             }
 
             multipartSignedEntity = parseMultipartSignedEntityBody(inbuffer, boundary, charsetName, contentTransferEncoding);
+            multipartSignedEntity.setMainBody(true);
 
             EntityUtils.setMessageEntity(message, multipartSignedEntity);
 
@@ -245,18 +246,11 @@ public final class EntityParser {
             Header transferEncoding = entity.getContentEncoding();
             String contentTransferEncoding = transferEncoding == null ? null : transferEncoding.getValue();
 
-            SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
+            AS2SessionInputBuffer inBuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
             inBuffer.bind(entity.getContent());
 
-            // Extract content from stream
-            CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
-            while (inBuffer.readLine(lineBuffer) != -1) {
-                lineBuffer.append("\r\n"); // add line delimiter
-            }
-
-            // Build application EDI entity
-            applicationEDIEntity = EntityUtils.createEDIEntity(lineBuffer.toString(), contentType,
-                    contentTransferEncoding, true);
+            applicationEDIEntity = parseEDIEntityBody(inBuffer, null, contentType, contentTransferEncoding);
+            applicationEDIEntity.setMainBody(true);
 
             EntityUtils.setMessageEntity(message, applicationEDIEntity);
         } catch (HttpException e) {
@@ -791,7 +785,9 @@ public final class EntityParser {
             }
 
             buffer.append(line);
-            buffer.append("\r\n");
+            if (inbuffer.isLastLineReadTerminatedByLineFeed()) {
+                buffer.append("\r\n");
+            }
             line.clear();
         }
 
