@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.net.InetSocketAddress;
+
 import org.eclipse.jetty.websocket.api.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultWebsocketTest {
@@ -36,6 +39,7 @@ public class DefaultWebsocketTest {
     private static final int CLOSE_CODE = -1;
     private static final String MESSAGE = "message";
     private static final String CONNECTION_KEY = "random-connection-key";
+    private static final InetSocketAddress ADDRESS = InetSocketAddress.createUnresolved("127.0.0.1", 12345);
 
     @Mock
     private Session session;
@@ -46,10 +50,12 @@ public class DefaultWebsocketTest {
 
     private DefaultWebsocket defaultWebsocket;
 
+
     @Before
     public void setUp() throws Exception {
         defaultWebsocket = new DefaultWebsocket(sync, null, consumer);
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
+        when(session.getRemoteAddress()).thenReturn(ADDRESS);
     }
 
     @Test
@@ -74,9 +80,10 @@ public class DefaultWebsocketTest {
     @Test
     public void testOnMessage() {
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
+        defaultWebsocket.setSession(session);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(session, consumer, sync);
-        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -86,7 +93,7 @@ public class DefaultWebsocketTest {
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(session, consumer, sync);
-        inOrder.verify(consumer, times(0)).sendMessage(CONNECTION_KEY, MESSAGE);
+        inOrder.verify(consumer, times(0)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
         inOrder.verifyNoMoreInteractions();
     }
 

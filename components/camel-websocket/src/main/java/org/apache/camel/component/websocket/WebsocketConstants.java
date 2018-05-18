@@ -23,6 +23,7 @@ public final class WebsocketConstants {
 
     public static final String CONNECTION_KEY = "websocket.connectionKey";
     public static final String SEND_TO_ALL = "websocket.sendToAll";
+    public static final String REMOTE_ADDRESS = "websocket.remoteAddress";
 
     public static final String WS_PROTOCOL = "ws";
     public static final String WSS_PROTOCOL = "wss";
