@@ -130,6 +130,8 @@ messages back to a single/current client, or to all clients.
 use the `sendToAll` option on the endpoint instead of using this header.
 
 |`WebsocketConstants.CONNECTION_KEY` |Sends the message to the client with the given connection key.
+
+|`WebsocketConstants.REMOTE_ADDRESS` |Remote address of the websocket session.
 |=======================================================================
 
 ### Usage

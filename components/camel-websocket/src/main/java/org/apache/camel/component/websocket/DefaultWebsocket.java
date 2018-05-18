@@ -17,6 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -62,7 +63,7 @@ public class DefaultWebsocket implements Serializable {
     public void onMessage(String message) {
         LOG.debug("onMessage: {}", message);
         if (this.consumer != null) {
-            this.consumer.sendMessage(this.connectionKey, message);
+            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress());
         } else {
             LOG.debug("No consumer to handle message received: {}", message);
         }
@@ -75,10 +76,15 @@ public class DefaultWebsocket implements Serializable {
         if (this.consumer != null) {
             byte[] message = new byte[length];
             System.arraycopy(data, offset, message, 0, length);
-            this.consumer.sendMessage(this.connectionKey, message);
+            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress());
         } else {
             LOG.debug("No consumer to handle message received: byte[]");
         }
+    }
+
+    private InetSocketAddress getRemoteAddress() {
+        Session current = session;
+        return current != null ? current.getRemoteAddress() : null;
     }
 
     public Session getSession() {
