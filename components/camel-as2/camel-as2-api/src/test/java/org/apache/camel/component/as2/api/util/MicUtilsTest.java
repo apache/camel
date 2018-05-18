@@ -74,7 +74,7 @@ public class MicUtilsTest {
             + "UNZ+1+00000000000778'";
 
     private static final String EXPECTED_MESSAGE_DIGEST_ALGORITHM = "sha1";
-    private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "PaQyByOuBL7XiYyts4Sdmvl1WME=";
+    private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "XUt+ug5GEDD0X9+Nv8DGYZZThOQ=";
 
     @Before
     public void setUp() throws Exception {

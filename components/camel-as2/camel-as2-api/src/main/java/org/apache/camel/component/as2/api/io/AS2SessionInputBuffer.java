@@ -49,6 +49,8 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     private int bufferpos;
     private int bufferlen;
     private CharBuffer cbuf;
+    
+    private boolean lastLineReadTerminatedByLineFeed;
 
     public AS2SessionInputBuffer(final HttpTransportMetricsImpl metrics,
                                  final int buffersize,
@@ -186,12 +188,14 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         final int maxLineLen = this.constraints.getMaxLineLength();
         int noRead = 0;
         boolean retry = true;
+        this.lastLineReadTerminatedByLineFeed = false;
         while (retry) {
             // attempt to find end of line (LF)
             int pos = -1;
             for (int i = this.bufferpos; i < this.bufferlen; i++) {
                 if (this.buffer[i] == HTTP.LF) {
                     pos = i;
+                    this.lastLineReadTerminatedByLineFeed = true;
                     break;
                 }
             }
@@ -218,14 +222,16 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                 }
                 noRead = fillBuffer();
                 if (noRead == -1) {
+                    // end of stream reached.
                     retry = false;
                 }
             }
         }
         if (noRead == -1 && this.linebuffer.isEmpty()) {
-            // indicate the end of stream
+            // end of stream reached with no further data in line buffer
             return -1;
         }
+        
         return lineFromLineBuffer(charbuffer);
     }
 
@@ -238,6 +244,10 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         } else {
             return null;
         }
+    }
+
+    public boolean isLastLineReadTerminatedByLineFeed() {
+        return lastLineReadTerminatedByLineFeed;
     }
 
     @Override
@@ -343,7 +353,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                 len = this.bufferlen - this.bufferpos;
             }
             this.linebuffer.append(this.buffer, this.bufferpos, len);
-            this.bufferpos = pos + 1;
+            if (pos != -1) {
+                this.bufferpos = pos + 1;
+            } else {
+                this.bufferpos = this.bufferlen;
+            }
         } catch (Exception e) {
             throw new IOException("failed to decode transfer encoding", e);
         }

@@ -49,7 +49,7 @@ public class AS2ClientManager {
      * Prefix for all AS2 HTTP Context Attributes used by the Http Client
      * Manager.
      */
-    public static final String CAMEL_AS2_CLIENT_PREFIX = "camel-as2.client";
+    public static final String CAMEL_AS2_CLIENT_PREFIX = "camel-as2.client.";
 
     /**
      * The HTTP Context Attribute indicating the AS2 message structure to be sent.
@@ -231,6 +231,7 @@ public class AS2ClientManager {
             try {
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity, gen,
                         AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
+                multipartSignedEntity.setMainBody(true);
                 EntityUtils.setMessageEntity(request, multipartSignedEntity);
             } catch (Exception e) {
                 throw new HttpException("Failed to sign message", e);
