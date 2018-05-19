@@ -16,39 +16,9 @@
  */
 package org.apache.camel.impl.cloud;
 
-import java.util.List;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.cloud.ServiceFilter;
-import org.apache.camel.cloud.ServiceFilterFactory;
-import org.apache.camel.util.ObjectHelper;
-
-public class ChainedServiceFilterFactory implements ServiceFilterFactory {
-    private List<ServiceFilter> serviceFilterList;
-
-    public ChainedServiceFilterFactory() {
-    }
-
-    // *************************************************************************
-    // Properties
-    // *************************************************************************
-
-    public List<ServiceFilter> getServiceFilterList() {
-        return serviceFilterList;
-    }
-
-    public void setServiceFilterList(List<ServiceFilter> serviceFilterList) {
-        this.serviceFilterList = serviceFilterList;
-    }
-
-    // *************************************************************************
-    // Factory
-    // *************************************************************************
-
-    @Override
-    public ServiceFilter newInstance(CamelContext camelContext) throws Exception {
-        ObjectHelper.notNull(serviceFilterList, "ServiceFilter list");
-
-        return new ChainedServiceFilter(serviceFilterList);
-    }
+/**
+ * @deprecated use {@link CombinedServiceFilterFactory}
+ */
+@Deprecated
+public class ChainedServiceFilterFactory extends CombinedServiceFilterFactory {
 }

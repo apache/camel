@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.model.cloud.ChainedServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ChainedServiceFilterTest extends ContextTestSupport {
+public class CombinedServiceFilterTest extends ContextTestSupport {
     @Test
     public void testMultiServiceFilterConfiguration() throws Exception {
-        ChainedServiceCallServiceFilterConfiguration conf =
-            new ChainedServiceCallServiceFilterConfiguration()
+        CombinedServiceCallServiceFilterConfiguration conf =
+            new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
                 .passThrough();
 
-        ChainedServiceFilter filter = (ChainedServiceFilter)conf.newInstance(context);
+        CombinedServiceFilter filter = (CombinedServiceFilter)conf.newInstance(context);
         Assert.assertEquals(2, filter.getDelegates().size());
         Assert.assertTrue(filter.getDelegates().get(0) instanceof HealthyServiceFilter);
         Assert.assertTrue(filter.getDelegates().get(1) instanceof PassThroughServiceFilter);
@@ -43,8 +43,8 @@ public class ChainedServiceFilterTest extends ContextTestSupport {
 
     @Test
     public void testMultiServiceFilter() throws Exception {
-        ChainedServiceCallServiceFilterConfiguration conf =
-            new ChainedServiceCallServiceFilterConfiguration()
+        CombinedServiceCallServiceFilterConfiguration conf =
+            new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
                 .custom(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList())
         );
