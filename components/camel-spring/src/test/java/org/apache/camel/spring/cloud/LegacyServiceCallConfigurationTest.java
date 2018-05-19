@@ -14,27 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.cloud;
+package org.apache.camel.spring.cloud;
 
-import java.util.Arrays;
-import java.util.List;
+import org.apache.camel.spring.SpringCamelContext;
+import org.junit.Test;
 
-import org.apache.camel.cloud.ServiceDiscovery;
+public class LegacyServiceCallConfigurationTest extends ServiceCallConfigurationTest {
+    @Test
+    public void testServiceDiscoveryConfiguration() {
+        SpringCamelContext context = createContext("org/apache/camel/spring/cloud/LegacyServiceCallConfigurationTest.xml");
 
-/**
- * @deprecated use {@link CombinedServiceDiscovery}
- */
-@Deprecated
-public class AggregatingServiceDiscovery extends CombinedServiceDiscovery {
-    public AggregatingServiceDiscovery(List<ServiceDiscovery> delegates) {
-        super(delegates);
-    }
-
-    // **********************
-    // Helpers
-    // **********************
-
-    public static AggregatingServiceDiscovery wrap(ServiceDiscovery... delegates) {
-        return new AggregatingServiceDiscovery(Arrays.asList(delegates));
+        testConfiguration1(context.getServiceCallConfiguration("conf1"));
+        testConfiguration2(context.getServiceCallConfiguration("conf2"));
     }
 }

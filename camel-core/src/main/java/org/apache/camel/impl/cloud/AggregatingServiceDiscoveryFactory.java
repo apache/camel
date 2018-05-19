@@ -16,39 +16,9 @@
  */
 package org.apache.camel.impl.cloud;
 
-import java.util.List;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.cloud.ServiceDiscoveryFactory;
-import org.apache.camel.util.ObjectHelper;
-
-public class AggregatingServiceDiscoveryFactory implements ServiceDiscoveryFactory {
-    private List<ServiceDiscovery> serviceDiscoveryList;
-
-    public AggregatingServiceDiscoveryFactory() {
-    }
-
-    // *************************************************************************
-    // Properties
-    // *************************************************************************
-
-    public List<ServiceDiscovery> getServiceDiscoveryList() {
-        return serviceDiscoveryList;
-    }
-
-    public void setServiceDiscoveryList(List<ServiceDiscovery> serviceDiscoveryList) {
-        this.serviceDiscoveryList = serviceDiscoveryList;
-    }
-
-    // *************************************************************************
-    // Factory
-    // *************************************************************************
-
-    @Override
-    public ServiceDiscovery newInstance(CamelContext camelContext) throws Exception {
-        ObjectHelper.notNull(serviceDiscoveryList, "ServiceDiscovery list");
-
-        return new AggregatingServiceDiscovery(serviceDiscoveryList);
-    }
+/**
+ * @deprecated use {@link CombinedServiceDiscoveryFactory}
+ */
+@Deprecated
+public class AggregatingServiceDiscoveryFactory extends CombinedServiceDiscoveryFactory {
 }

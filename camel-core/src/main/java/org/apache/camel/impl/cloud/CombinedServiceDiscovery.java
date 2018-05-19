@@ -14,34 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.cloud;
+package org.apache.camel.impl.cloud;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.impl.cloud.CachingServiceDiscovery;
-import org.apache.camel.impl.cloud.CombinedServiceDiscovery;
 
-public class CamelCloudServiceDiscovery implements ServiceDiscovery {
-    private ServiceDiscovery delegate;
+public class CombinedServiceDiscovery implements ServiceDiscovery {
+    private final List<ServiceDiscovery> delegates;
 
-    public CamelCloudServiceDiscovery(Long timeout, List<ServiceDiscovery> serviceDiscoveryList) {
-        // Created a chained service discovery that collects services from multiple
-        // ServiceDiscovery
-        this.delegate = new CombinedServiceDiscovery(serviceDiscoveryList);
+    public CombinedServiceDiscovery(List<ServiceDiscovery> delegates) {
+        this.delegates = Collections.unmodifiableList(delegates);
+    }
 
-        // If a timeout is provided, wrap the serviceDiscovery with a caching
-        // strategy so the discovery implementations are not queried for each
-        // discovery request
-        if (timeout != null && timeout > 0) {
-            this.delegate = CachingServiceDiscovery.wrap(this.delegate, timeout, TimeUnit.MILLISECONDS);
-        }
+    public List<ServiceDiscovery> getDelegates() {
+        return this.delegates;
     }
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
-        return delegate.getServices(name);
+        return delegates.stream()
+            .flatMap(d -> d.getServices(name).stream())
+            .collect(Collectors.toList());
+    }
+
+    // **********************
+    // Helpers
+    // **********************
+
+    public static CombinedServiceDiscovery wrap(ServiceDiscovery... delegates) {
+        return new CombinedServiceDiscovery(Arrays.asList(delegates));
     }
 }
