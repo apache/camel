@@ -70,6 +70,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -538,6 +539,10 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return this;
     }
 
+    /**
+     * @deprecated use {@see combinedServiceDiscovery()}
+     */
+    @Deprecated
     public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
         AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
@@ -545,7 +550,24 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
+    /**
+     * @deprecated use {@see combinedServiceDiscovery(AggregatingServiceCallServiceDiscoveryConfiguration)}
+     */
+    @Deprecated
     public ServiceCallConfigurationDefinition multiServiceDiscovery(AggregatingServiceCallServiceDiscoveryConfiguration conf) {
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public CombinedServiceCallServiceDiscoveryConfiguration combinedServiceDiscovery() {
+        CombinedServiceCallServiceDiscoveryConfiguration conf = new CombinedServiceCallServiceDiscoveryConfiguration();
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition combinedServiceDiscovery(CombinedServiceCallServiceDiscoveryConfiguration conf) {
         setServiceDiscoveryConfiguration(conf);
 
         return this;

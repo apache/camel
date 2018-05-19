@@ -99,6 +99,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -639,8 +640,19 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
+    /**
+     * @deprecated use {@see combinedServiceDiscovery()}
+     */
+    @Deprecated
     public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
         AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public CombinedServiceCallServiceDiscoveryConfiguration combinedServiceDiscovery() {
+        CombinedServiceCallServiceDiscoveryConfiguration conf = new CombinedServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -688,6 +700,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
+    /**
+     * @deprecated use {@see combinedFiler()}
+     */
+    @Deprecated
     public ChainedServiceCallServiceFilterConfiguration multiFilter() {
         ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration(this);
         setServiceFilterConfiguration(conf);
