@@ -111,6 +111,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlElements({
         @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "chainedServiceFilter", type = ChainedServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)}
@@ -689,6 +690,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     public ChainedServiceCallServiceFilterConfiguration multiFilter() {
         ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration(this);
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
+    public CombinedServiceCallServiceFilterConfiguration combinedFilter() {
+        CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration(this);
         setServiceFilterConfiguration(conf);
 
         return conf;

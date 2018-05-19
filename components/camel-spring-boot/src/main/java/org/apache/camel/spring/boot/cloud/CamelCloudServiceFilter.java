@@ -20,17 +20,17 @@ import java.util.List;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
-import org.apache.camel.impl.cloud.ChainedServiceFilter;
+import org.apache.camel.impl.cloud.CombinedServiceFilter;
 
 public class CamelCloudServiceFilter implements ServiceFilter {
-    private final ChainedServiceFilter serviceFilter;
+    private final CombinedServiceFilter serviceFilter;
 
-    public CamelCloudServiceFilter(List<ServiceFilter> blacklistServiceFilter) {
-        this.serviceFilter = new ChainedServiceFilter(blacklistServiceFilter);
+    public CamelCloudServiceFilter(List<ServiceFilter> serviceFilterList) {
+        this.serviceFilter = new CombinedServiceFilter(serviceFilterList);
     }
 
     @Override
-    public List<ServiceDefinition> apply(List<ServiceDefinition> serviceDefinitions) {
-        return  this.serviceFilter.apply(serviceDefinitions);
+    public List<ServiceDefinition> apply(List<ServiceDefinition> serviceDefinitionList) {
+        return  this.serviceFilter.apply(serviceDefinitionList);
     }
 }
