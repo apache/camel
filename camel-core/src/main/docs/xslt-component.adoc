@@ -182,9 +182,9 @@ To use the above examples in Spring XML you would use something like the followi
 ----
 
 To see an example, look at the 
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/java/org/apache/camel/spring/processor/XsltTest.java[test
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/builder/xml/XsltTest.java[test
 case] along with its 
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/XsltTest-context.xml[
+https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/XsltTest-context.xml[
 Spring XML].
 
 === Using xsl:include
