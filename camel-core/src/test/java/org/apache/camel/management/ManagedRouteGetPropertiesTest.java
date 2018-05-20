@@ -44,12 +44,12 @@ public class ManagedRouteGetPropertiesTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "getRouteProperties", null, null);
 
         assertNotNull(data);
-        assertTrue(data.containsKey(new Object[] { "key1" }));
-        assertEquals("key1", data.get(new Object[] { "key1" }).get("key"));
-        assertEquals("val1", data.get(new Object[] { "key1" }).get("value"));
-        assertTrue(data.containsKey(new Object[] { "key2" }));
-        assertEquals("key2", data.get(new Object[] { "key2" }).get("key"));
-        assertEquals("val2", data.get(new Object[] { "key2" }).get("value"));
+        assertTrue(data.containsKey(new Object[] {"key1" }));
+        assertEquals("key1", data.get(new Object[] {"key1" }).get("key"));
+        assertEquals("val1", data.get(new Object[] {"key1" }).get("value"));
+        assertTrue(data.containsKey(new Object[] {"key2" }));
+        assertEquals("key2", data.get(new Object[] {"key2" }).get("key"));
+        assertEquals("val2", data.get(new Object[] {"key2" }).get("value"));
     }
 
 
