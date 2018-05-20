@@ -271,8 +271,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         } else if (value instanceof byte[]) {
             return (byte[]) value;
         }
-        log.debug("Cannot propagate header value of type[{}], skipping... " +
-                "Supported types: String, Integer, Long, Double, byte[].", value != null ? value.getClass() : "null");
+        log.debug("Cannot propagate header value of type[{}], skipping... " + "Supported types: String, Integer, Long, Double, byte[].", value != null ? value.getClass() : "null");
         return null;
     }
 
