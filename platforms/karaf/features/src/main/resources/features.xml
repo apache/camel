@@ -2454,7 +2454,7 @@
   <feature name='camel-zendesk' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:com.cloudbees.thirdparty/zendesk-java-client/${zendesk-client-version}</bundle>
-    <bundle dependency='true'>mvn:com.ning/async-http-client/1.9.40</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client/${ahc-version}$Export-Package=org.asynchttpclient.*;version=${ahc-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
