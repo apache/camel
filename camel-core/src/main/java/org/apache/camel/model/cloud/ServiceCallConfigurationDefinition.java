@@ -540,7 +540,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * @deprecated use {@see combinedServiceDiscovery()}
+     * @deprecated As of version 2.22.0, replaced by {@link #combinedServiceDiscovery()}
      */
     @Deprecated
     public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
@@ -551,7 +551,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * @deprecated use {@see combinedServiceDiscovery(AggregatingServiceCallServiceDiscoveryConfiguration)}
+     * @deprecated As of version 2.22.0, replaced by {@link #combinedServiceDiscovery(CombinedServiceCallServiceDiscoveryConfiguration)}
      */
     @Deprecated
     public ServiceCallConfigurationDefinition multiServiceDiscovery(AggregatingServiceCallServiceDiscoveryConfiguration conf) {
@@ -621,6 +621,10 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return this;
     }
 
+    /**
+     * @deprecated As of version 2.22.0, replaced by {@link #combinedFilter()}
+     */
+    @Deprecated
     public ChainedServiceCallServiceFilterConfiguration multiFilter() {
         ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration();
         setServiceFilterConfiguration(conf);
