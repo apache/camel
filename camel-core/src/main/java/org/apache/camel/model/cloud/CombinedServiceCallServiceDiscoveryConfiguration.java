@@ -49,7 +49,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     }
 
     public CombinedServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent) {
-        super(parent, "aggregating-service-discovery");
+        super(parent, "combined-service-discovery");
     }
 
     // *************************************************************************
@@ -133,17 +133,6 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
         KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
-        addServiceDiscoveryConfigurations(conf);
-
-        return conf;
-    }
-
-    /**
-     * @deprecated use {@see combinedServiceDiscovery()}
-     */
-    @Deprecated
-    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         addServiceDiscoveryConfigurations(conf);
 
         return conf;

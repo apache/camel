@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * @deprecated use {@link CombinedServiceCallServiceFilterConfiguration}
+ * @deprecated As of version 2.22.0, replaced by {@link CombinedServiceCallServiceDiscoveryConfiguration}
  */
 @Deprecated
 @Metadata(label = "routing,cloud,service-discovery")

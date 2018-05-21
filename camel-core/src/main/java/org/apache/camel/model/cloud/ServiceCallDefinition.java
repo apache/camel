@@ -641,7 +641,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * @deprecated use {@see combinedServiceDiscovery()}
+     * @deprecated As of version 2.22.0, replaced by  {@link #combinedServiceDiscovery()}
      */
     @Deprecated
     public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
@@ -701,7 +701,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * @deprecated use {@see combinedFiler()}
+     * @deprecated As of version 2.22.0, replaced by {@link #combinedFilter()}
      */
     @Deprecated
     public ChainedServiceCallServiceFilterConfiguration multiFilter() {

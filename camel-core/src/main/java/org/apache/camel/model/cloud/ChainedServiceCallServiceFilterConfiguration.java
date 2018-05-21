@@ -24,7 +24,7 @@ import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.spi.Metadata;
 
 /**
- * @deprecated use {@link CombinedServiceCallServiceFilterConfiguration}
+ * @deprecated As of version 2.22.0, replaced by {@link CombinedServiceCallServiceFilterConfiguration}
  */
 @Deprecated
 @Metadata(label = "routing,cloud,service-filter")
