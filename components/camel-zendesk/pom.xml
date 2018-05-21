@@ -103,7 +103,7 @@
                   <apiName />
                   <proxyClass>org.zendesk.client.v2.Zendesk</proxyClass>
                   <fromJavadoc>
-                    <excludeMethods>isClosed|close|getTicketsByStatus|createGroups</excludeMethods>
+                    <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets</excludeMethods>
                   </fromJavadoc>
                   <substitutions>
                     <substitution>
