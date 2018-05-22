@@ -44,6 +44,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -106,6 +107,9 @@ public class S3Producer extends DefaultProducer {
                 break;
             case downloadLink:
                 createDownloadLink(getEndpoint().getS3Client(), exchange);
+                break;
+            case listObjects:
+                listObjects(getEndpoint().getS3Client(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -380,6 +384,20 @@ public class S3Producer extends DefaultProducer {
 
         DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketName);
         s3Client.deleteBucket(deleteBucketRequest);
+    }
+    
+    private void listObjects(AmazonS3 s3Client, Exchange exchange) {
+        String bucketName;
+
+        bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            bucketName = getConfiguration().getBucketName();
+        }
+        
+        ObjectListing objectList = s3Client.listObjects(bucketName);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(objectList);
     }
 
     private S3Operations determineOperation(Exchange exchange) {

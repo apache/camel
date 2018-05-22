@@ -116,7 +116,15 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public ObjectListing listObjects(String bucketName) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        ObjectListing list = new ObjectListing();
+        list.setBucketName("test");
+        list.setTruncated(false);
+        S3ObjectSummary summary = new S3ObjectSummary();
+        summary.setBucketName("test");
+        summary.setSize(10000L);
+        summary.setKey("Myfile");
+        list.getObjectSummaries().add(summary);
+        return list;
     }
 
     @Override
