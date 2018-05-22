@@ -47,7 +47,12 @@
             <from uri="direct:downloadLink"/>
             <to uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&amp;operation=downloadLink"/>
             <to uri="mock:result"/>
-        </route>   
+        </route> 
+        <route>
+            <from uri="direct:listObjects"/>
+            <to uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&amp;operation=listObjects"/>
+            <to uri="mock:result"/>
+        </route>    
         <route>
             <from uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&amp;maxMessagesPerPoll=5"/>
             <to uri="mock:result"/>
