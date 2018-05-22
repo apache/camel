@@ -180,7 +180,8 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public EnableKeyResult enableKey(EnableKeyRequest enableKeyRequest) {
-        throw new UnsupportedOperationException();
+    	EnableKeyResult res = new EnableKeyResult();
+        return res;
     }
 
     @Override

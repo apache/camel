@@ -88,6 +88,22 @@ public class KMSProducerTest extends CamelTestSupport {
     }
     
     @Test
+    public void kmsEnableKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        template.request("direct:enableKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMSConstants.OPERATION, KMSOperations.enableKey);
+                exchange.getIn().setHeader(KMSConstants.KEY_ID, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+    }
+    
+    @Test
     public void kmsScheduleKeyDeletionTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -149,6 +165,9 @@ public class KMSProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:disableKey")
                     .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=disableKey")
+                    .to("mock:result");
+                from("direct:enableKey")
+                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=enableKey")
                     .to("mock:result");
                 from("direct:scheduleDelete")
                     .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=scheduleKeyDeletion")
