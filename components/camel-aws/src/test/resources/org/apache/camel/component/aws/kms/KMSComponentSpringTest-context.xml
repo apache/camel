@@ -40,6 +40,11 @@
             <to uri="mock:result"/>
         </route>
         <route>
+            <from uri="direct:enableKey"/>
+            <to uri="aws-kms://Test?kmsClient=#amazonKmsClient&amp;operation=enableKey"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:scheduleDelete"/>
             <to uri="aws-kms://Test?kmsClient=#amazonKmsClient&amp;operation=scheduleKeyDeletion"/>
             <to uri="mock:result"/>
