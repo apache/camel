@@ -62,13 +62,13 @@ public class DnsActivation {
         this.resolvesTo.add(resolvesTo);
     }
 
-    public boolean isActive() {
+    public boolean isActive() throws Exception {
         if (resolvesTo.isEmpty()) {
             try {
                 resolvesTo.addAll(getLocalIps());
             } catch (Exception e) {
                 LOG.warn("Failed to get local ips and resolvesTo not specified. Identifying as inactive.", e);
-                return false;
+                throw e;
             }
         }
 
@@ -101,6 +101,7 @@ public class DnsActivation {
                 }
             } catch (Exception e) {
                 LOG.warn(hostname, e);
+                throw e;
             } finally {
                 if (attributeEnumeration != null) {
                     try {
@@ -112,6 +113,7 @@ public class DnsActivation {
                 }
             }
         }
+
         return false;
     }
 
