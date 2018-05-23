@@ -231,7 +231,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public XPathBuilder xpath(String value) {
-        return XPathBuilder.xpath(value);
+        return xpath(value, null);
     }
 
     /**
@@ -241,7 +241,13 @@ public abstract class BuilderSupport {
      * @param resultType the result type that the XPath expression will return.
      * @return the builder
      */
-    public static XPathBuilder xpath(String value, Class<?> resultType) {
+    public XPathBuilder xpath(String value, Class<?> resultType) {
+        // the value may contain property placeholders as it may be used directly from Java DSL
+        try {
+            value = getContext().resolvePropertyPlaceholders(value);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return XPathBuilder.xpath(value, resultType);
     }
 
