@@ -26,7 +26,7 @@ Maven users will need to add the following dependency to their
 ### Options
 
 // dataformat options: START
-The JSon XStream dataformat supports 18 options which are listed below.
+The JSon XStream dataformat supports 19 options which are listed below.
 
 
 
@@ -34,6 +34,7 @@ The JSon XStream dataformat supports 18 options which are listed below.
 |===
 | Name | Default | Java Type | Description
 | objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
+| useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson ObjectMapper from the registry.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | library | XStream | JsonLibrary | Which json library to use.
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
