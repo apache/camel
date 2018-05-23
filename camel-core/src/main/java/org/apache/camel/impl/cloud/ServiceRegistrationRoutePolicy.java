@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.cloud;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -121,66 +122,71 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
     }
 
     private Optional<ServiceDefinition> computeServiceDefinition(Route route) {
-        Endpoint endpoint = route.getConsumer().getEndpoint();
+        final Endpoint endpoint = route.getConsumer().getEndpoint();
+        final Map<String, Object> properties = new HashMap<>();
 
         if (endpoint instanceof DiscoverableService) {
-            final DiscoverableService service = (DiscoverableService)endpoint;
-            final Map<String, Object> properties = service.getServiceProperties();
+            final DiscoverableService service = (DiscoverableService) endpoint;
 
-            // try to get the service id from route properties
-            String serviceId = (String)route.getProperties().get(ServiceDefinition.SERVICE_META_ID);
-            if (serviceId == null) {
-                // if not check if the route id is custom and use it
-                if (route.getRouteContext().getRoute().hasCustomIdAssigned()) {
-                    serviceId = route.getId();
-                }
-            }
-            if (serviceId == null) {
-                // finally get the id from the DiscoverableService
-                serviceId = (String)properties.get(ServiceDefinition.SERVICE_META_ID);
-            }
-
-            // try to get the service name from route properties
-            String serviceName = (String)route.getProperties().get(ServiceDefinition.SERVICE_META_NAME);
-            if (serviceName == null) {
-                // if not check if the route group is defined use the route group
-                serviceName = route.getGroup();
-            }
-            if (serviceName == null) {
-                // finally get the name from the DiscoverableService
-                serviceName = (String)properties.get(ServiceDefinition.SERVICE_META_NAME);
-            }
-
-            ObjectHelper.notNull(serviceId, "Service ID");
-            ObjectHelper.notNull(serviceName, "Service Name");
-
-            // Build the final resource definition from bits collected from the
-            // endpoint and the route.
-            DefaultServiceDefinition.Builder builder = DefaultServiceDefinition.builder()
-                .from(properties)
-                .withId(serviceId)
-                .withName(serviceName);
-
-            // Add additional metadata from route properties whose name starts
-            // with ServiceDefinition.SERVICE_META_PREFIX.
-            //
-            // NOTE: At the moment it is not possible to add properties to a route
-            // with fluent DSL
-            for (Map.Entry<String, Object> entry: route.getProperties().entrySet()) {
-                if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
-                    continue;
-                }
-
-                final String key = entry.getKey().substring(ServiceDefinition.SERVICE_META_PREFIX.length());
-                final String val = camelContext.getTypeConverter().convertTo(String.class, entry.getValue());
-
-                builder.addMeta(key, val);
-            }
-
-            return Optional.of(builder.build());
+            // first load all the properties from the endpoint
+            properties.putAll(service.getServiceProperties());
         }
 
-        return Optional.empty();
+        // try to get the service id from route properties
+        String serviceId = (String)route.getProperties().get(ServiceDefinition.SERVICE_META_ID);
+        if (serviceId == null) {
+            // if not check if the route id is custom and use it
+            if (route.getRouteContext().getRoute().hasCustomIdAssigned()) {
+                serviceId = route.getId();
+            }
+        }
+        if (serviceId == null) {
+            // finally get the id from the DiscoverableService
+            serviceId = (String)properties.get(ServiceDefinition.SERVICE_META_ID);
+        }
+
+        // try to get the service name from route properties
+        String serviceName = (String)route.getProperties().get(ServiceDefinition.SERVICE_META_NAME);
+        if (serviceName == null) {
+            // if not check if the route group is defined use the route group
+            serviceName = route.getGroup();
+        }
+        if (serviceName == null) {
+            // finally get the name from the DiscoverableService
+            serviceName = (String)properties.get(ServiceDefinition.SERVICE_META_NAME);
+        }
+
+        if (ObjectHelper.isEmpty(serviceId) || ObjectHelper.isEmpty(serviceName)) {
+            LOGGER.debug("Route {} has not enough information for service registration");
+            return Optional.empty();
+        }
+
+        // Build the final resource definition from bits collected from the
+        // endpoint and the route.
+        DefaultServiceDefinition.Builder builder = DefaultServiceDefinition.builder()
+            .from(properties)
+            .withId(serviceId)
+            .withName(serviceName)
+            .addMeta(ServiceDefinition.SERVICE_META_NAME, serviceName)
+            .addMeta(ServiceDefinition.SERVICE_META_ID, serviceId);
+
+        // Add additional metadata from route properties whose name starts
+        // with ServiceDefinition.SERVICE_META_PREFIX.
+        //
+        // NOTE: At the moment it is not possible to add properties to a route
+        // with fluent DSL
+        for (Map.Entry<String, Object> entry: route.getProperties().entrySet()) {
+            if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
+                continue;
+            }
+
+            final String key = entry.getKey().substring(ServiceDefinition.SERVICE_META_PREFIX.length());
+            final String val = camelContext.getTypeConverter().convertTo(String.class, entry.getValue());
+
+            builder.addMeta(key, val);
+        }
+
+        return Optional.of(builder.build());
     }
 }
 
