@@ -28,14 +28,17 @@ import org.springframework.util.SocketUtils;
  */
 @SpringBootApplication
 public class ServiceApplication {
-    
+
     @Component
     public class Services extends RouteBuilder {
         public void configure() throws Exception {
-            fromF("service:my-service:undertow:http://localhost:%d/path/to/service/1", SocketUtils.findAvailableTcpPort())
-              .transform().simple("Hi!, I'm service-1 on path: /path/to/service/1");
-            fromF("service:my-service:undertow:http://localhost:%d/path/to/service/2", SocketUtils.findAvailableTcpPort())
-              .transform().simple("Hi!, I'm service-1 on path: /path/to/service/2");
+            // TODO: service.host should be set using properties
+            fromF("service:my-service:undertow:http://localhost:%d/path/to/service/1?service.host=localhost", SocketUtils.findAvailableTcpPort())
+                .transform().simple("Hi!, I'm service-1 on path: /path/to/service/1");
+
+            // TODO: service.host should be set using properties
+            fromF("service:my-service:undertow:http://localhost:%d/path/to/service/2?service.host=localhost", SocketUtils.findAvailableTcpPort())
+                .transform().simple("Hi!, I'm service-1 on path: /path/to/service/2");
         }
     }
 

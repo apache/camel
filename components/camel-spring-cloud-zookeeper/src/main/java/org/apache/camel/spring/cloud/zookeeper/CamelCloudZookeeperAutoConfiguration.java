@@ -17,9 +17,11 @@
 package org.apache.camel.spring.cloud.zookeeper;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.cloud.CamelSpringCloudServiceRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.annotation.Bean;
@@ -31,11 +33,13 @@ import org.springframework.core.convert.converter.Converter;
 @AutoConfigureBefore(CamelSpringCloudServiceRegistryAutoConfiguration.class)
 @ConditionalOnZookeeperEnabled
 @Conditional(CamelCloudZookeeperAutoConfiguration.Condition.class)
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
 public class CamelCloudZookeeperAutoConfiguration {
 
     @Bean(name = "service-definition-to-zookeeper-registration")
-    public Converter<ServiceDefinition, ZookeeperRegistration> serviceDefinitionToConsulRegistration() {
-        return new ServiceDefinitionToZookeeperRegistration();
+    public Converter<ServiceDefinition, ZookeeperRegistration> serviceDefinitionToConsulRegistration(
+            CamelCloudConfigurationProperties properties) {
+        return new ServiceDefinitionToZookeeperRegistration(properties);
     }
 
     // *******************************

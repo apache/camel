@@ -20,11 +20,13 @@ import java.util.Collection;
 
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -35,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureBefore(CamelAutoConfiguration.class)
 @ConditionalOnBean(org.springframework.cloud.client.serviceregistry.ServiceRegistry.class)
 @Conditional(CamelSpringCloudServiceRegistryAutoConfiguration.ServiceRegistryCondition.class)
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
 public class CamelSpringCloudServiceRegistryAutoConfiguration {
 
     @Bean
