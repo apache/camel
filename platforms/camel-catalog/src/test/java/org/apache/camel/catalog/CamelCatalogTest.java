@@ -581,6 +581,10 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
         assertTrue(result.isSuccess());
+
+        // connection factory
+        result = catalog.validateEndpointProperties("activemq:Consumer.Baz.VirtualTopic.FooRequest?connectionFactory=#pooledJmsConnectionFactory");
+        assertTrue(result.isSuccess());
     }
 
     @Test
