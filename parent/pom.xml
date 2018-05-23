@@ -513,7 +513,7 @@
     <mustache-bundle-version>0.9.5_1</mustache-bundle-version>
     <mvel-version>2.4.0.Final</mvel-version>
     <mybatis-version>3.4.6</mybatis-version>
-    <narayana-version>5.8.1.Final</narayana-version>
+    <narayana-version>5.8.2.Final</narayana-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <nekohtml-version>1.9.22</nekohtml-version>
     <neoscada-version>0.4.0</neoscada-version>
