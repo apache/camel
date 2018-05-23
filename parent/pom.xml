@@ -328,6 +328,7 @@
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <!-- jackson 2.9.x is not yet working with all camel components such as swagger-java -->
     <jackson2-version>2.8.10</jackson2-version>
+    <jackson2-databind-version>2.8.11.1</jackson2-databind-version>
     <jackrabbit-version>2.15.6</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
@@ -3609,7 +3610,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${jackson2-version}</version>
+        <version>${jackson2-databind-version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
