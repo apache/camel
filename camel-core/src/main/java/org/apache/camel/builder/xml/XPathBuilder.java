@@ -148,7 +148,9 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
      */
     public static XPathBuilder xpath(String text, Class<?> resultType) {
         XPathBuilder builder = new XPathBuilder(text);
-        builder.setResultType(resultType);
+        if (resultType != null) {
+            builder.setResultType(resultType);
+        }
         return builder;
     }
 
