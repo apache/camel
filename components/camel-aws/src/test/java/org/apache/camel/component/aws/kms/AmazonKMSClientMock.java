@@ -180,7 +180,7 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public EnableKeyResult enableKey(EnableKeyRequest enableKeyRequest) {
-    	EnableKeyResult res = new EnableKeyResult();
+        EnableKeyResult res = new EnableKeyResult();
         return res;
     }
 
@@ -334,7 +334,7 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public void shutdown() {
-        throw new UnsupportedOperationException();      
+        throw new UnsupportedOperationException();
     }
 
     @Override
