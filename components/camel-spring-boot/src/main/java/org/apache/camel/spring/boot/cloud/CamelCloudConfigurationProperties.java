@@ -99,6 +99,11 @@ public class CamelCloudConfigurationProperties {
         private String loadBalancer;
 
         /**
+         * Determine if the default load balancer should be used instead of any auto discovered one.
+         */
+        private boolean defaultLoadBalancer;
+
+        /**
          * The {@link Expression} to use.
          */
         private String expression;
@@ -154,6 +159,14 @@ public class CamelCloudConfigurationProperties {
 
         public void setLoadBalancer(String loadBalancer) {
             this.loadBalancer = loadBalancer;
+        }
+
+        public boolean isDefaultLoadBalancer() {
+            return defaultLoadBalancer;
+        }
+
+        public void setDefaultLoadBalancer(boolean defaultLoadBalancer) {
+            this.defaultLoadBalancer = defaultLoadBalancer;
         }
 
         public String getExpression() {

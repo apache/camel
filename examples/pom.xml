@@ -116,6 +116,7 @@
     <module>camel-example-spring-boot-supervising-route-controller</module>
     <module>camel-example-spring-boot-xml</module>
     <module>camel-example-spring-cloud-servicecall</module>
+    <module>camel-example-spring-cloud-serviceregistry</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>
