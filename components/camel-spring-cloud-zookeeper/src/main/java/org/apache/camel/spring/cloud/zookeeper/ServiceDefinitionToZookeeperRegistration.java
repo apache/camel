@@ -17,6 +17,7 @@
 package org.apache.camel.spring.cloud.zookeeper;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
@@ -24,7 +25,10 @@ import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration
 import org.springframework.core.convert.converter.Converter;
 
 public final class ServiceDefinitionToZookeeperRegistration implements Converter<ServiceDefinition, ZookeeperRegistration> {
-    public ServiceDefinitionToZookeeperRegistration() {
+    private final CamelCloudConfigurationProperties properties;
+
+    public ServiceDefinitionToZookeeperRegistration(CamelCloudConfigurationProperties properties) {
+        this.properties = properties;
     }
 
     @Override
@@ -36,7 +40,7 @@ public final class ServiceDefinitionToZookeeperRegistration implements Converter
         );
 
         return ServiceInstanceRegistration.builder()
-            .address(source.getHost())
+            .address(properties.getServiceRegistry().getServiceHost())
             .port(source.getPort())
             .name(source.getName())
             .payload(instance)

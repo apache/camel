@@ -17,9 +17,11 @@
 package org.apache.camel.spring.cloud.consul;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.cloud.CamelSpringCloudServiceRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.consul.ConditionalOnConsulEnabled;
 import org.springframework.cloud.consul.serviceregistry.ConsulRegistration;
 import org.springframework.context.annotation.Bean;
@@ -31,11 +33,13 @@ import org.springframework.core.convert.converter.Converter;
 @AutoConfigureBefore(CamelSpringCloudServiceRegistryAutoConfiguration.class)
 @ConditionalOnConsulEnabled
 @Conditional(CamelCloudConsulAutoConfiguration.Condition.class)
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
 public class CamelCloudConsulAutoConfiguration {
 
     @Bean(name = "service-definition-to-consul-registration")
-    public Converter<ServiceDefinition, ConsulRegistration> serviceDefinitionToConsulRegistration() {
-        return new ServiceDefinitionToConsulRegistration();
+    public Converter<ServiceDefinition, ConsulRegistration> serviceDefinitionToConsulRegistration(
+            CamelCloudConfigurationProperties properties) {
+        return new ServiceDefinitionToConsulRegistration(properties);
     }
 
     // *******************************
