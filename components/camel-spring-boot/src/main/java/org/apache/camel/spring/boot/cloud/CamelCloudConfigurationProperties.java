@@ -33,6 +33,7 @@ public class CamelCloudConfigurationProperties {
     private ServiceDiscovery serviceDiscovery = new ServiceDiscovery();
     private ServiceFilter serviceFilter = new ServiceFilter();
     private ServiceChooser serviceChooser = new ServiceChooser();
+    private ServiceRegistry serviceRegistry = new ServiceRegistry();
 
     public boolean isEnabled() {
         return enabled;
@@ -60,6 +61,10 @@ public class CamelCloudConfigurationProperties {
 
     public ServiceChooser getServiceChooser() {
         return serviceChooser;
+    }
+
+    public ServiceRegistry getServiceRegistry() {
+        return serviceRegistry;
     }
 
     // *****************************************
@@ -282,6 +287,39 @@ public class CamelCloudConfigurationProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    // *****************************************
+    // Service Registry
+    // *****************************************
+
+    public static class ServiceRegistry {
+        /**
+         * Configure if service registry should be enabled or not, default true.
+         */
+        private boolean enabled = true;
+
+        /**
+         * Configure the service listening address.
+         */
+        private String serviceHost;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+
+        public String getServiceHost() {
+            return serviceHost;
+        }
+
+        public void setServiceHost(String serviceHost) {
+            this.serviceHost = serviceHost;
         }
     }
 }

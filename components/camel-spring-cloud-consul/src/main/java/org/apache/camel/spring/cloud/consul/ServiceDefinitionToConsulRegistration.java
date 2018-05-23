@@ -21,17 +21,23 @@ import java.util.stream.Collectors;
 
 import com.ecwid.consul.v1.agent.model.NewService;
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.springframework.cloud.consul.serviceregistry.ConsulRegistration;
 import org.springframework.core.convert.converter.Converter;
 
 public final class ServiceDefinitionToConsulRegistration implements Converter<ServiceDefinition, ConsulRegistration> {
+    private final CamelCloudConfigurationProperties properties;
+
+    public ServiceDefinitionToConsulRegistration(CamelCloudConfigurationProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public ConsulRegistration convert(ServiceDefinition source) {
         NewService service = new NewService();
         service.setName(source.getName());
         service.setId(source.getId());
-        service.setAddress(source.getHost());
+        service.setAddress(properties.getServiceRegistry().getServiceHost());
         service.setPort(source.getPort());
 
         service.setTags(

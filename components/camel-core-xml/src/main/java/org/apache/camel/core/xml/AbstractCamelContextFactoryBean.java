@@ -350,6 +350,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (serviceRegistries != null && !serviceRegistries.isEmpty()) {
             for (Map.Entry<String, ServiceRegistry> entry : serviceRegistries.entrySet()) {
                 ServiceRegistry service = entry.getValue();
+
+                if (service.getId() == null) {
+                    service.setId(getContext().getUuidGenerator().generateUuid());
+                }
+
                 LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
                 getContext().addService(service);
             }
