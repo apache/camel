@@ -17,29 +17,25 @@
 package org.apache.camel.spring.cloud.zookeeper;
 
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.apache.camel.spring.cloud.CamelSpringCloudServiceRegistryAutoConfiguration;
+import org.apache.camel.spring.cloud.CamelSpringCloudServiceLoadBalancerAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 
 @Configuration
-@AutoConfigureBefore(CamelSpringCloudServiceRegistryAutoConfiguration.class)
+@AutoConfigureBefore(CamelSpringCloudServiceLoadBalancerAutoConfiguration.class)
 @ConditionalOnZookeeperEnabled
-@Conditional(CamelCloudZookeeperAutoConfiguration.Condition.class)
-@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-public class CamelCloudZookeeperAutoConfiguration {
+@Conditional(ZookeeperToServiceDefinitionAutoConfiguration.Condition.class)
+public class ZookeeperToServiceDefinitionAutoConfiguration {
 
-    @Bean(name = "service-definition-to-zookeeper-registration")
-    public Converter<ServiceDefinition, ZookeeperRegistration> serviceDefinitionToConsulRegistration(
-            CamelCloudConfigurationProperties properties) {
-        return new ServiceDefinitionToZookeeperRegistration(properties);
+    @Bean(name = "zookeeper-server-to-service-definition")
+    public Converter<ZookeeperServer, ServiceDefinition> zookeeperServerToServiceDefinition() {
+        return new ZookeeperServerToServiceDefinition();
     }
 
     // *******************************

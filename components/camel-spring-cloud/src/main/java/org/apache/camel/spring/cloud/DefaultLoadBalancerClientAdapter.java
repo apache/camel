@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cloud;
+package org.apache.camel.spring.cloud;
 
-import java.util.Map;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
-public interface DiscoverableService {
-    /**
-     * Get the service properties.
-     */
-    Map<String, String> getServiceProperties();
+public class DefaultLoadBalancerClientAdapter implements CamelSpringCloudServiceLoadBalancer.LoadBalancerClientAdapter {
+    @Override
+    public ServiceLoadBalancer adapt(LoadBalancerClient client) {
+        return new DefaultServiceLoadBalancer(client);
+    }
 }

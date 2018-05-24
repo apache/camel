@@ -142,9 +142,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     //-------------------------------------------------------------------------
 
     @Override
-    public Map<String, Object> getServiceProperties() {
+    public Map<String, String> getServiceProperties() {
         return CollectionHelper.immutableMapOf(
-            ServiceDefinition.SERVICE_META_PORT, httpURI.getPort(),
+            ServiceDefinition.SERVICE_META_PORT, Integer.toString(httpURI.getPort()),
             ServiceDefinition.SERVICE_META_PATH, httpURI.getPath(),
             ServiceDefinition.SERVICE_META_PROTOCOL, httpURI.getScheme()
         );

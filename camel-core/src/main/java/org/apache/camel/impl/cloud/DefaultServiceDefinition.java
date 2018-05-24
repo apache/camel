@@ -169,7 +169,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     }
 
     /**
-     * Fluent builder to contruct ServiceDefinition.
+     * Fluent builder to construct ServiceDefinition.
      */
     public static class Builder {
         private String id;
@@ -190,46 +190,18 @@ public class DefaultServiceDefinition implements ServiceDefinition {
             return this;
         }
 
-        public Builder from(Map<String, Object> properties) {
-            Map<String, Object> options = new HashMap<>(properties);
-            Object val = null;
+        public Builder from(Map<String, String> properties) {
+            ObjectHelper.ifNotEmpty(properties.get(ServiceDefinition.SERVICE_META_ID), this::withId);
+            ObjectHelper.ifNotEmpty(properties.get(ServiceDefinition.SERVICE_META_NAME), this::withName);
+            ObjectHelper.ifNotEmpty(properties.get(ServiceDefinition.SERVICE_META_HOST), this::withHost);
+            ObjectHelper.ifNotEmpty(properties.get(ServiceDefinition.SERVICE_META_PORT), this::withPort);
 
-            val = options.remove(ServiceDefinition.SERVICE_META_ID);
-            if (val != null && val instanceof String) {
-                withId((String)val);
-            }
-
-            val = options.remove(ServiceDefinition.SERVICE_META_NAME);
-            if (val != null && val instanceof String) {
-                withName((String)val);
-            }
-
-            val = options.remove(ServiceDefinition.SERVICE_META_HOST);
-            if (val != null && val instanceof String) {
-                withHost((String)val);
-            }
-
-            val = options.remove(ServiceDefinition.SERVICE_META_PORT);
-            if (val != null && val instanceof String) {
-                withPort((String)val);
-            }
-            if (val != null && val instanceof Integer) {
-                withPort((Integer)val);
-            }
-
-            val = options.remove(ServiceDefinition.SERVICE_META_HOST);
-            if (val != null && val instanceof String) {
-                withHost((String)val);
-            }
-
-            for (Map.Entry<String, Object> entry : options.entrySet()) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
                 if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
                     continue;
                 }
 
-                if (entry.getValue() instanceof String) {
-                    addMeta(entry.getKey(), (String)entry.getValue());
-                }
+                addMeta(entry.getKey(), entry.getValue());
             }
 
             return this;

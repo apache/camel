@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.cloud.consul;
+package org.apache.camel.spring.cloud.zookeeper;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
@@ -22,8 +22,8 @@ import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.cloud.CamelSpringCloudServiceRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.consul.ConditionalOnConsulEnabled;
-import org.springframework.cloud.consul.serviceregistry.ConsulRegistration;
+import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -31,15 +31,15 @@ import org.springframework.core.convert.converter.Converter;
 
 @Configuration
 @AutoConfigureBefore(CamelSpringCloudServiceRegistryAutoConfiguration.class)
-@ConditionalOnConsulEnabled
-@Conditional(CamelCloudConsulAutoConfiguration.Condition.class)
+@ConditionalOnZookeeperEnabled
+@Conditional(ServiceDefinitionToZookeeperRegistrationAutoConfiguration.Condition.class)
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-public class CamelCloudConsulAutoConfiguration {
+public class ServiceDefinitionToZookeeperRegistrationAutoConfiguration {
 
-    @Bean(name = "service-definition-to-consul-registration")
-    public Converter<ServiceDefinition, ConsulRegistration> serviceDefinitionToConsulRegistration(
+    @Bean(name = "service-definition-to-zookeeper-registration")
+    public Converter<ServiceDefinition, ZookeeperRegistration> serviceDefinitionToZookeeperRegistration(
             CamelCloudConfigurationProperties properties) {
-        return new ServiceDefinitionToConsulRegistration(properties);
+        return new ServiceDefinitionToZookeeperRegistration(properties);
     }
 
     // *******************************
@@ -50,7 +50,7 @@ public class CamelCloudConsulAutoConfiguration {
         public Condition() {
             super(
                 "camel.cloud",
-                "camel.cloud.consul"
+                "camel.cloud.zookeeper"
             );
         }
     }

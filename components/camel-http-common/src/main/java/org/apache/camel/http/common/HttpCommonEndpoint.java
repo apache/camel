@@ -201,9 +201,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     //-------------------------------------------------------------------------
 
     @Override
-    public Map<String, Object> getServiceProperties() {
+    public Map<String, String> getServiceProperties() {
         return CollectionHelper.immutableMapOf(
-            ServiceDefinition.SERVICE_META_PORT, getPort(),
+            ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()),
             ServiceDefinition.SERVICE_META_PATH, getPath(),
             ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol()
         );

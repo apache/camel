@@ -14,13 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cloud;
+package org.apache.camel.spring.cloud.consul;
 
-import java.util.Map;
+import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.impl.cloud.DefaultServiceDefinition;
+import org.springframework.cloud.consul.discovery.ConsulServer;
+import org.springframework.core.convert.converter.Converter;
 
-public interface DiscoverableService {
-    /**
-     * Get the service properties.
-     */
-    Map<String, String> getServiceProperties();
+public final class ConsulServerToServiceDefinition implements Converter<ConsulServer, ServiceDefinition> {
+
+    @Override
+    public ServiceDefinition convert(ConsulServer source) {
+        return new DefaultServiceDefinition(
+            source.getId(),
+            source.getHost(),
+            source.getPort(),
+            source.getMetadata()
+        );
+    }
 }

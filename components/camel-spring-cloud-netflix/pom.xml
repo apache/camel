@@ -91,6 +91,10 @@
       <artifactId>camel-spring-boot</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.reactivex</groupId>
       <artifactId>rxjava</artifactId>
       <version>${rxjava-version}</version>
