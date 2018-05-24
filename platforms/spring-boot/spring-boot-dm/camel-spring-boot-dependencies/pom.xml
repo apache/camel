@@ -83,7 +83,7 @@
       <dependency>
         <groupId>com.dropbox.core</groupId>
         <artifactId>dropbox-core-sdk</artifactId>
-        <version>3.0.7</version>
+        <version>3.0.8</version>
       </dependency>
       <dependency>
         <groupId>com.github.dozermapper</groupId>
