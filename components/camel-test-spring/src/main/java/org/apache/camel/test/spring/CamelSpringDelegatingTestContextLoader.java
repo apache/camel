@@ -35,7 +35,10 @@ import org.springframework.test.context.support.DelegatingSmartContextLoader;
  * <em>This loader can handle either classes or locations for configuring the context.</em>
  * <br>
  * NOTE: This TestContextLoader doesn't support the annotation of ExcludeRoutes now.
+ *
+ * @deprecated use {@link CamelSpringRunner} or {@link CamelSpringBootRunner} instead.
  */
+@Deprecated
 public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartContextLoader {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
