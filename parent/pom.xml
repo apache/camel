@@ -551,7 +551,7 @@
     <ops4j-base-version>1.5.0</ops4j-base-version>
     <optaplanner-version>7.3.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
-    <os-maven-plugin-version>1.5.0.Final</os-maven-plugin-version>
+    <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
     <paho-version>1.2.0</paho-version>
