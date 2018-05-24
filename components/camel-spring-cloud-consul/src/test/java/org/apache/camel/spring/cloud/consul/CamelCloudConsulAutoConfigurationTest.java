@@ -57,6 +57,33 @@ public class CamelCloudConsulAutoConfigurationTest {
         }
     }
 
+    @Test
+    public void testConsulServerToServiceDefinition() throws Exception {
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfiguration.class)
+            .web(WebApplicationType.NONE)
+            .run(
+                "--debug=false",
+                "--spring.main.banner-mode=OFF",
+                "--spring.application.name=" + UUID.randomUUID().toString(),
+                "--ribbon.enabled=false",
+                "--ribbon.eureka.enabled=false",
+                "--management.endpoint.enabled=false",
+                "--spring.cloud.consul.enabled=true",
+                "--spring.cloud.consul.config.enabled=false",
+                "--spring.cloud.consul.discovery.enabled=true",
+                "--spring.cloud.service-registry.auto-registration.enabled=false"
+            );
+
+        try {
+            Map<String, Converter> converters = context.getBeansOfType(Converter.class);
+
+            assertThat(converters).isNotNull();
+            assertThat(converters.values().stream().anyMatch(ConsulServerToServiceDefinition.class::isInstance)).isTrue();
+        } finally {
+            context.close();
+        }
+    }
+
     // *************************************
     // Config
     // *************************************

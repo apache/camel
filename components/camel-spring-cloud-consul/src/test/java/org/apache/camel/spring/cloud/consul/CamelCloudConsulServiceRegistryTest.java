@@ -62,7 +62,8 @@ public class CamelCloudConsulServiceRegistryTest {
                 "--spring.cloud.consul.port=" + container.getMappedPort(8500),
                 "--spring.cloud.consul.config.enabled=false",
                 "--spring.cloud.consul.discovery.enabled=true",
-                "--spring.cloud.service-registry.auto-registration.enabled=false"
+                "--spring.cloud.service-registry.auto-registration.enabled=false",
+                "--camel.cloud.service-registry.service-host=localhost"
             );
 
         try {

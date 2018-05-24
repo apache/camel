@@ -14,25 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.cloud.netflix;
+package org.apache.camel.spring.cloud.consul;
 
+import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.apache.camel.spring.cloud.CamelSpringCloudServiceRegistryAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
-import org.springframework.cloud.netflix.ribbon.RibbonClients;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.cloud.consul.ConditionalOnConsulEnabled;
+import org.springframework.cloud.consul.serviceregistry.ConsulRegistration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 
 @Configuration
-@EnableConfigurationProperties
-@ConditionalOnBean(SpringClientFactory.class)
-@Conditional(CamelCloudNetflixRibbonAutoConfiguration.Condition.class)
-@AutoConfigureAfter({ CamelCloudNetflixAutoConfiguration.class, RibbonAutoConfiguration.class })
-@RibbonClients(defaultConfiguration = CamelCloudNetflixRibbonClientConfiguration.class)
-public class CamelCloudNetflixRibbonAutoConfiguration {
+@AutoConfigureBefore(CamelSpringCloudServiceRegistryAutoConfiguration.class)
+@ConditionalOnConsulEnabled
+@Conditional(ServiceDefinitionToConsulRegistrationAutoConfiguration.Condition.class)
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
+public class ServiceDefinitionToConsulRegistrationAutoConfiguration {
+
+    @Bean(name = "service-definition-to-consul-registration")
+    public Converter<ServiceDefinition, ConsulRegistration> serviceDefinitionToConsulRegistration(
+            CamelCloudConfigurationProperties properties) {
+        return new ServiceDefinitionToConsulRegistration(properties);
+    }
 
     // *******************************
     // Condition
@@ -41,8 +49,8 @@ public class CamelCloudNetflixRibbonAutoConfiguration {
     public static class Condition extends GroupCondition {
         public Condition() {
             super(
-                "camel.cloud.netflix",
-                "camel.cloud.netflix.ribbon"
+                "camel.cloud",
+                "camel.cloud.consul"
             );
         }
     }

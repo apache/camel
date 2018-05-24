@@ -47,16 +47,17 @@ public class CamelSpringCloudServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public void register(ServiceDefinition definition) {
-        Registration result = convertServiceDefinition(definition);
-
         synchronized (this) {
-            LOGGER.debug("Register service with definition: {} with registrations: {}", definition, registrationType);
-
-            serviceRegistry.register(result);
-
             // keep track of registered definition to remove them upon registry
             // shutdown
             if (definitions.stream().noneMatch(d -> matchById(d, definition))) {
+                LOGGER.debug("Register service with definition: {} with registrations: {}", definition, registrationType);
+
+                // compute registration from definition
+                Registration result = convertServiceDefinition(definition);
+
+                serviceRegistry.register(result);
+
                 definitions.add(definition);
             }
         }
@@ -64,12 +65,15 @@ public class CamelSpringCloudServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public void deregister(ServiceDefinition definition) {
-        Registration result = convertServiceDefinition(definition);
-
         synchronized (this) {
-            LOGGER.debug("Deregister service with definition: {} with registrations: {}", definition, registrationType);
+            if (definitions.stream().noneMatch(d -> matchById(d, definition))) {
+                LOGGER.debug("Deregister service with definition: {} with registrations: {}", definition, registrationType);
+                
+                // compute registration from definition
+                Registration result = convertServiceDefinition(definition);
 
-            serviceRegistry.deregister(result);
+                serviceRegistry.deregister(result);
+            }
 
             // remove any instance with the same id
             definitions.removeIf(d -> matchById(d, definition));
@@ -82,8 +86,9 @@ public class CamelSpringCloudServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     protected void doStop() throws Exception {
-        // TODO: need to be improved
-        new ArrayList<>(definitions).forEach(this::deregister);
+        synchronized (this) {
+            new ArrayList<>(definitions).forEach(this::deregister);
+        }
     }
 
     public ServiceRegistry getNativeServiceRegistry() {
@@ -139,9 +144,11 @@ public class CamelSpringCloudServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Registration convertServiceDefinition(ServiceDefinition definition) {
-        for (ConversionService conversionService: conversionServices) {
-            if (conversionService.canConvert(ServiceDefinition.class, registrationType)) {
-                return conversionService.convert(definition, registrationType);
+        for (int i = 0; i < conversionServices.size(); i++) {
+            ConversionService cs = conversionServices.get(i);
+
+            if (cs.canConvert(ServiceDefinition.class, registrationType)) {
+                return cs.convert(definition, registrationType);
             }
         }
 

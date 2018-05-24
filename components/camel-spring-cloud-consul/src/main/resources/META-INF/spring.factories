@@ -16,4 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    org.apache.camel.spring.cloud.consul.CamelCloudConsulAutoConfiguration
+    org.apache.camel.spring.cloud.consul.ServiceDefinitionToConsulRegistrationAutoConfiguration,\
+    org.apache.camel.spring.cloud.consul.ConsulServerToServiceDefinitionAutoConfiguration
