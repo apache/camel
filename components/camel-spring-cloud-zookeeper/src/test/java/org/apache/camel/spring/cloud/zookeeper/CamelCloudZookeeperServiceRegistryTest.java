@@ -69,7 +69,8 @@ public class CamelCloudZookeeperServiceRegistryTest {
                 "--spring.cloud.zookeeper.connect-string=" + server.connectString(),
                 "--spring.cloud.zookeeper.config.enabled=false",
                 "--spring.cloud.zookeeper.discovery.enabled=true",
-                "--spring.cloud.service-registry.auto-registration.enabled=false"
+                "--spring.cloud.service-registry.auto-registration.enabled=false",
+                "--camel.cloud.service-registry.service-host=" + SERVICE_HOST
             );
 
         try {
