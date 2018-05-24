@@ -16,4 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    org.apache.camel.spring.cloud.zookeeper.CamelCloudZookeeperAutoConfiguration
+    org.apache.camel.spring.cloud.zookeeper.ServiceDefinitionToZookeeperRegistrationAutoConfiguration,\
+    org.apache.camel.spring.cloud.zookeeper.ZookeeperToServiceDefinitionAutoConfiguration

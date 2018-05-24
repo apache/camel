@@ -54,14 +54,14 @@ import org.apache.camel.spi.UriPath;
 public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final ServiceRegistry serviceRegistry;
-    private final Map<String, Object> serviceParameters;
+    private final Map<String, String> serviceParameters;
     private final ServiceDefinition serviceDefinition;
 
     @UriPath(description = "The endpoint uri to expose as service")
     @Metadata(required = "true")
     private final String delegateUri;
 
-    public ServiceEndpoint(String uri, ServiceComponent component, ServiceRegistry serviceRegistry, Map<String, Object> serviceParameters, String delegateUri) {
+    public ServiceEndpoint(String uri, ServiceComponent component, ServiceRegistry serviceRegistry, Map<String, String> serviceParameters, String delegateUri) {
         super(uri, component);
 
         this.serviceRegistry = serviceRegistry;
@@ -101,7 +101,7 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     }
 
     private ServiceDefinition computeServiceDefinition(CamelContext context, Endpoint delegateEndpoint) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
 
         if (delegateEndpoint instanceof DiscoverableService) {
             parameters.putAll(((DiscoverableService)delegateEndpoint).getServiceProperties());

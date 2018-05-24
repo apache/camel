@@ -56,23 +56,27 @@ public class ServiceComponent extends DefaultComponent {
         ObjectHelper.notNull(serviceName, "Service Name");
         ObjectHelper.notNull(delegateUri, "Delegate URI");
 
-        // add service name to the parameters
-        parameters.put(ServiceDefinition.SERVICE_META_NAME, serviceName);
-
         // Lookup the service registry, this may be a static selected service
         // or dynamically selected one through a ServiceRegistry.Selector
         final ServiceRegistry service = getServiceRegistry();
 
         // Compute service definition from parameters, this is used as default
         // definition
-        final Map<String, Object> params = new HashMap<>();
-        parameters.forEach(
-            (k, v) -> {
-                if (k.startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
-                    params.put(k, v);
-                }
+        final Map<String, String> params = new HashMap<>();
+
+        for (Map.Entry<String, Object> entry: parameters.entrySet()) {
+            if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
+                continue;
             }
-        );
+
+            final String key = entry.getKey();
+            final String val = getCamelContext().getTypeConverter().convertTo(String.class, entry.getValue());
+
+            params.put(key, val);
+        }
+
+        // add service name, this is always set from an uri path param
+        params.put(ServiceDefinition.SERVICE_META_NAME, serviceName);
 
         // remove all the service related options so the underlying component
         // does not fail because of unknown parameters

@@ -73,6 +73,41 @@ public class CamelCloudZookeeperAutoConfigurationTest {
         }
     }
 
+    @Test
+    public void testZookeeperServerToServiceDefinition() throws Exception {
+        final ZookeeperServer server = new ZookeeperServer(temporaryFolder.newFolder(testName.getMethodName()));
+
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfiguration.class)
+            .web(WebApplicationType.NONE)
+            .run(
+                "--debug=false",
+                "--spring.main.banner-mode=OFF",
+                "--spring.application.name=" + UUID.randomUUID().toString(),
+                "--ribbon.enabled=false",
+                "--ribbon.eureka.enabled=false",
+                "--management.endpoint.enabled=false",
+                "--spring.cloud.zookeeper.enabled=true",
+                "--spring.cloud.zookeeper.connect-string=" + server.connectString(),
+                "--spring.cloud.zookeeper.config.enabled=false",
+                "--spring.cloud.zookeeper.discovery.enabled=true",
+                "--spring.cloud.service-registry.auto-registration.enabled=false"
+            );
+
+        try {
+            Map<String, Converter> converters = context.getBeansOfType(Converter.class);
+
+            assertThat(converters).isNotNull();
+            assertThat(converters.values().stream().anyMatch(ZookeeperServerToServiceDefinition.class::isInstance)).isTrue();
+        } finally {
+
+            // shutdown spring context
+            context.close();
+
+            // shutdown zookeeper
+            server.shutdown();
+        }
+    }
+
     // *************************************
     // Config
     // *************************************
