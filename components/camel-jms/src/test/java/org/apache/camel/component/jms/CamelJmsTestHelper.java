@@ -44,6 +44,14 @@ public final class CamelJmsTestHelper {
         return pooled;
     }
 
+    public static PooledConnectionFactory createPooledPersistentConnectionFactory() {
+        ConnectionFactory cf = createPersistentConnectionFactory();
+        PooledConnectionFactory pooled = new PooledConnectionFactory();
+        pooled.setConnectionFactory(cf);
+        pooled.setMaxConnections(8);
+        return pooled;
+    }
+
     public static ConnectionFactory createConnectionFactory() {
         return createConnectionFactory(null, null);
     }
