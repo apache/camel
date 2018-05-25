@@ -855,7 +855,7 @@ Number of Components: 294 in 201 JAR artifacts (20 deprecated)
 `web3j:cmsUrl` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
-`wordpress:operation` | 2.21 | Integrates Camel with Wordpress.
+`wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
