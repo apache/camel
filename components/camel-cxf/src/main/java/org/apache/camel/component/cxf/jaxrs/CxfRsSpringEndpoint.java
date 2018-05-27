@@ -69,7 +69,8 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
 
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
-        return new SpringJAXRSClientFactoryBean();
+        checkBeanType(bean, JAXRSClientFactoryBean.class);
+        return (JAXRSClientFactoryBean)bean;
     }
 
     @Override
