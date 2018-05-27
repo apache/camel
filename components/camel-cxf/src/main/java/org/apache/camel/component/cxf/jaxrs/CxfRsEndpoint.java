@@ -266,7 +266,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         getNullSafeCxfRsEndpointConfigurer().configure(sfb);
     }
 
-    private CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
+    protected CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
         if (cxfRsEndpointConfigurer == null) {
             return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
         }
@@ -304,10 +304,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
-        // address
-        if (address != null) {
-            cfb.setAddress(address);
-        }
         if (modelRef != null) {
             cfb.setModelRef(modelRef);
         }
@@ -318,6 +314,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
         getNullSafeCxfRsEndpointConfigurer().configure(cfb);
+        // Add the address could be override by message header
+        if (address != null) {
+            cfb.setAddress(address);
+        }
     }
 
     protected void setupCommonFactoryProperties(AbstractJAXRSFactoryBean factory) {

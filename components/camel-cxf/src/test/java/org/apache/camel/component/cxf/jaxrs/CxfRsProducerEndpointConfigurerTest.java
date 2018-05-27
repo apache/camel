@@ -67,6 +67,7 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
             inMessage.setBody(messageContentsList);
         });
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:end").expectedMessageCount(1);
         assertMockEndpointsSatisfied();
     }
 
@@ -81,6 +82,7 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
         });
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:end").expectedMessageCount(1);
         assertMockEndpointsSatisfied();
     }
 
@@ -88,6 +90,8 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
 
         @Override
         public void configure(AbstractJAXRSFactoryBean factoryBean) {
+            // setup the wrong address here, it should be override from the address
+            factoryBean.setAddress("xxxx");
         }
 
         @Override
