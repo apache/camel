@@ -25,6 +25,7 @@ import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ReflectionUtils;
 
 public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private AbstractJAXRSFactoryBean bean;
@@ -69,7 +70,8 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
 
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
-        return new SpringJAXRSClientFactoryBean();
+        checkBeanType(bean, JAXRSClientFactoryBean.class);
+        return newInstanceWithCommonProperties();
     }
 
     @Override
@@ -88,4 +90,14 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     public void setBeanId(String id) {
         this.beanId = id;
     }
+    
+    private JAXRSClientFactoryBean newInstanceWithCommonProperties() {
+        SpringJAXRSClientFactoryBean cfb = new SpringJAXRSClientFactoryBean();
+        
+        if (bean instanceof SpringJAXRSClientFactoryBean) {
+            ReflectionUtils.shallowCopyFieldState(bean, cfb);
+        }
+
+        return cfb;
+    }    
 }
