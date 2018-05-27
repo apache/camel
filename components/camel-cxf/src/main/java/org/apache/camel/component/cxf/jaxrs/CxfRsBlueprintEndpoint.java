@@ -91,6 +91,7 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         checkBeanType(bean, JAXRSClientFactoryBean.class);
+        // TODO Need to find a way to setup the JAXRSClientFactory Bean, as the JAXRSClientFactoryBean properties could be changed by the configurer
         return (RsClientBlueprintBean)bean;
     }
     
