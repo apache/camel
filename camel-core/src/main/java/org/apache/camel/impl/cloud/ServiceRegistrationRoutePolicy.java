@@ -151,6 +151,10 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
         if (serviceName == null) {
             // if not check if the route group is defined use the route group
             serviceName = route.getGroup();
+
+            if (serviceName != null) {
+                properties.put(ServiceDefinition.SERVICE_META_NAME, serviceName);
+            }
         }
 
         if (ObjectHelper.isEmpty(serviceName)) {
@@ -164,6 +168,10 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             // if not check if the route id is custom and use it
             if (route.getRouteContext().getRoute().hasCustomIdAssigned()) {
                 serviceId = route.getId();
+            }
+
+            if (serviceId != null) {
+                properties.put(ServiceDefinition.SERVICE_META_ID, serviceId);
             }
         }
         if (serviceId == null) {
