@@ -146,19 +146,6 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             properties.put(key, val);
         }
 
-        // try to get the service id from route properties
-        String serviceId = properties.get(ServiceDefinition.SERVICE_META_ID);
-        if (serviceId == null) {
-            // if not check if the route id is custom and use it
-            if (route.getRouteContext().getRoute().hasCustomIdAssigned()) {
-                serviceId = route.getId();
-            }
-        }
-        if (serviceId == null) {
-            // finally get the id from the DiscoverableService
-            serviceId = properties.get(ServiceDefinition.SERVICE_META_ID);
-        }
-
         // try to get the service name from route properties
         String serviceName = properties.get(ServiceDefinition.SERVICE_META_NAME);
         if (serviceName == null) {
@@ -170,13 +157,30 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             serviceName = properties.get(ServiceDefinition.SERVICE_META_NAME);
         }
 
-        if (ObjectHelper.isEmpty(serviceId) || ObjectHelper.isEmpty(serviceName)) {
-            LOGGER.debug("Route {} has not enough information for service registration");
+        if (ObjectHelper.isEmpty(serviceName)) {
+            LOGGER.debug("Route {} has not enough information for service registration", route);
             return Optional.empty();
         }
 
-        String serviceHost = properties.get(ServiceDefinition.SERVICE_META_HOST);
-        String servicePort = properties.getOrDefault(ServiceDefinition.SERVICE_META_PORT, "-1");
+        // try to get the service id from route properties
+        String serviceId = properties.get(ServiceDefinition.SERVICE_META_ID);
+        if (serviceId == null) {
+            // if not check if the route id is custom and use it
+            if (route.getRouteContext().getRoute().hasCustomIdAssigned()) {
+                serviceId = route.getId();
+            }
+        }
+        if (serviceId == null) {
+            // then get the id from the DiscoverableService
+            serviceId = properties.get(ServiceDefinition.SERVICE_META_ID);
+        }
+        if (serviceId == null) {
+            // finally auto generate the service id
+            serviceId = getCamelContext().getUuidGenerator().generateUuid();
+        }
+
+        final String serviceHost = properties.get(ServiceDefinition.SERVICE_META_HOST);
+        final String servicePort = properties.getOrDefault(ServiceDefinition.SERVICE_META_PORT, "-1");
 
         // Build the final resource definition from bits collected from the
         // endpoint and the route.
