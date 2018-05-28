@@ -22,7 +22,6 @@ import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.apache.cxf.version.Version;
 import org.junit.Test;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -75,11 +74,12 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://" + BEAN_SERVICE_ENDPOINT_NAME, CxfRsEndpoint.class);
         SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
         
+        assertNotSame("Got the same object but must be different", super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb);
         assertEquals("Got the wrong address", BEAN_SERVICE_ADDRESS, cfb.getAddress());
         assertNotNull("Service class must not be null", cfb.getServiceClass());
         assertEquals("Got the wrong ServiceClass", CustomerService.class, cfb.getServiceClass());
         assertEquals("Got the wrong username", BEAN_SERVICE_USERNAME, cfb.getUsername());
-        assertEquals("Got the wrong password", BEAN_SERVICE_PASSWORD, cfb.getPassword());
+        assertEquals("Got the wrong password", BEAN_SERVICE_PASSWORD, cfb.getPassword());                
     }
 
     public static SpringJAXRSClientFactoryBean serviceEndpoint() {
@@ -94,17 +94,9 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     }    
     
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        String version = Version.getCurrentVersion();
+    protected AbstractXmlApplicationContext createApplicationContext() {      
         
-        ClassPathXmlApplicationContext applicationContext = null;
-        
-        if (version.startsWith("2") && (version.contains("2.5") || version.contains("2.4"))) {
-            applicationContext = new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));
-        } else {
-            applicationContext = new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans-2.6.xml"));    
-        }
-        
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));        
         emulateBeanRegistrationProgrammatically(applicationContext);
         
         return applicationContext;
