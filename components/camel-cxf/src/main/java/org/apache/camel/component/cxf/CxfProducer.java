@@ -287,15 +287,15 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 boi = boi.getUnwrappedOperation();
             }
         }
-        int experctMessagePartsSize = boi.getInput().getMessageParts().size();
+        int expectMessagePartsSize = boi.getInput().getMessageParts().size();
         
-        if (parameters.length < experctMessagePartsSize) {
+        if (parameters.length < expectMessagePartsSize) {
             throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                               + experctMessagePartsSize + ", Parameter size " + parameters.length
+                                               + expectMessagePartsSize + ", Parameter size " + parameters.length
                                                + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
         
-        if (parameters.length > experctMessagePartsSize) {
+        if (parameters.length > expectMessagePartsSize) {
             // need to check the holder parameters        
             int holdersSize = 0;            
             for (Object parameter : parameters) {
@@ -313,9 +313,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 }
             }
           
-            if (holdersSize + experctMessagePartsSize + soapHeadersSize < parameters.length) {
+            if (holdersSize + expectMessagePartsSize + soapHeadersSize < parameters.length) {
                 throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                                   + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
+                                                   + (expectMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
                                                    + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
             }
         }
