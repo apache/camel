@@ -230,7 +230,7 @@
     <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
     <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
     <flatpack-version>3.4.3</flatpack-version>
-    <flink-version>1.4.2</flink-version>
+    <flink-version>1.5.0</flink-version>
     <fop-bundle-version>2.2_1</fop-bundle-version>
     <fop-version>2.2</fop-version>
     <ftpserver-version>1.1.1</ftpserver-version>
