@@ -152,10 +152,6 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             // if not check if the route group is defined use the route group
             serviceName = route.getGroup();
         }
-        if (serviceName == null) {
-            // finally get the name from the DiscoverableService
-            serviceName = properties.get(ServiceDefinition.SERVICE_META_NAME);
-        }
 
         if (ObjectHelper.isEmpty(serviceName)) {
             LOGGER.debug("Route {} has not enough information for service registration", route);
@@ -169,10 +165,6 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
             if (route.getRouteContext().getRoute().hasCustomIdAssigned()) {
                 serviceId = route.getId();
             }
-        }
-        if (serviceId == null) {
-            // then get the id from the DiscoverableService
-            serviceId = properties.get(ServiceDefinition.SERVICE_META_ID);
         }
         if (serviceId == null) {
             // finally auto generate the service id
