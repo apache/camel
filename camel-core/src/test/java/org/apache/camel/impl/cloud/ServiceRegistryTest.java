@@ -41,12 +41,105 @@ public class ServiceRegistryTest  extends ContextTestSupport {
         return false;
     }
 
+
     // *********************
     // Tests
     // *********************
 
     @Test
-    public void testServiceRegistrationWithRouteproperties() throws Exception {
+    public void testServiceRegistrationWithRouteIdAndGroup() throws Exception {
+        final String serviceName = UUID.randomUUID().toString();
+        final String serviceId = UUID.randomUUID().toString();
+        final int port = 9090;
+
+        context.addRouteDefinition(
+            new RouteDefinition()
+                .from("direct:start")
+                .routeGroup(serviceName)
+                .routeId(serviceId)
+                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                .routeProperty("service.meta1", "meta1")
+                .routeProperty("meta2", "meta2")
+                .routePolicy(new ServiceRegistrationRoutePolicy())
+                .to("mock:end")
+        );
+
+        InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
+
+        context.addService(sr);
+        context.start();
+
+        final Map<String, ServiceDefinition> defs = sr.getDefinitions();
+
+        assertThat(defs).hasSize(1);
+
+        // basic properties
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
+
+        // metadata
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
+        assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
+    }
+
+    @Test
+    public void testServiceRegistrationWithRouteIdAndGroupOverride() throws Exception {
+        final String serviceName = UUID.randomUUID().toString();
+        final String serviceId = UUID.randomUUID().toString();
+        final int port = 9090;
+
+        context.addRouteDefinition(
+            new RouteDefinition()
+                .from("direct:start")
+                .routeGroup("service-name")
+                .routeId("service-id")
+                .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
+                .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
+                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                .routeProperty("service.meta1", "meta1")
+                .routeProperty("meta2", "meta2")
+                .routePolicy(new ServiceRegistrationRoutePolicy())
+                .to("mock:end")
+        );
+
+        InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
+
+        context.addService(sr);
+        context.start();
+
+        final Map<String, ServiceDefinition> defs = sr.getDefinitions();
+
+        assertThat(defs).hasSize(1);
+
+        // basic properties
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
+
+        // metadata
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
+        assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
+    }
+
+    // *********************
+    // Tests
+    // *********************
+
+    @Test
+    public void testServiceRegistrationWithRouteProperties() throws Exception {
         final String serviceName = UUID.randomUUID().toString();
         final String serviceId = UUID.randomUUID().toString();
         final int port = 9090;
@@ -86,7 +179,6 @@ public class ServiceRegistryTest  extends ContextTestSupport {
         assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
         assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
         assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
-
     }
 
     // *********************
