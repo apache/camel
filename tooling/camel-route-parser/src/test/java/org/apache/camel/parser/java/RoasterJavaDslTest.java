@@ -39,16 +39,16 @@ public class RoasterJavaDslTest extends CamelTestSupport {
 
     @Test
     public void parseTree() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/MyJavaDslRouteBuilder.java"));
 
         List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".",
-            "src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", true);
+            "src/test/java/org/apache/camel/parse/java/MyJavaDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
-        assertEquals("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", details.getFileName());
+        assertEquals("src/test/java/org/apache/camel/parse/java/MyJavaDslRouteBuilder.java", details.getFileName());
         assertEquals("bar", details.getRouteId());
         assertEquals("configure", details.getMethodName());
-        assertEquals("org.apache.camel.parser.java.MyJavaDslRouteBuilder", details.getClassName());
+        assertEquals("org.apache.camel.parse.java.MyJavaDslRouteBuilder", details.getClassName());
 
         String tree = details.dump(0);
         LOG.info("\n" + tree);

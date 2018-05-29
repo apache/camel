@@ -38,7 +38,7 @@ public class RoasterSplitTokenizeTest {
 
     @Test
     public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/SplitTokenizeTest.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/SplitTokenizeTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
         List<CamelEndpointDetails> details = new ArrayList<>();

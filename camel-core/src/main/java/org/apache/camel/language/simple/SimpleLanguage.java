@@ -157,7 +157,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             // support old simple language syntax
             answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
             if (answer == null) {
-                // use the new parser
+                // use the new parse
                 SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape, cacheExpression);
                 answer = parser.parsePredicate();
             }
@@ -181,7 +181,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             // support old simple language syntax
             answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
             if (answer == null) {
-                // use the new parser
+                // use the new parse
                 SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape, cacheExpression);
                 answer = parser.parseExpression();
             }

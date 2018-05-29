@@ -23,7 +23,7 @@ import groovy.util.XmlSlurper;
 import org.apache.camel.Exchange;
 
 /**
- * DataFormat for using groovy.util.XmlSlurper as parser for XML data
+ * DataFormat for using groovy.util.XmlSlurper as parse for XML data
  */
 public class XmlSlurperDataFormat extends AbstractXmlDataFormat {
 

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 294 in 201 JAR artifacts (20 deprecated)
+Number of Components: 295 in 202 JAR artifacts (20 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -719,6 +719,9 @@ Number of Components: 294 in 201 JAR artifacts (20 deprecated)
 | link:../camel-core/src/main/docs/seda-component.adoc[SEDA] (camel-core) +
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
+| link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
+`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
 
@@ -1072,7 +1075,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 41 in 41 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 43 in 43 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1132,7 +1135,11 @@ Number of Miscellaneous Components: 41 in 41 JAR artifacts (13 deprecated)
 
 | link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) | 2.19 | Camel Cloud integration with Spring Cloud
 
+| link:camel-spring-cloud-consul/src/main/docs/spring-cloud-consul.adoc[Spring Cloud Consul] (camel-spring-cloud-consul) | 2.19 | Camel Cloud integration with Spring Cloud Consul
+
 | link:camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc[Spring Cloud Netflix] (camel-spring-cloud-netflix) | 2.19 | Camel Cloud integration with Spring Cloud Netflix
+
+| link:camel-spring-cloud-zookeeper/src/main/docs/spring-cloud-zookeeper.adoc[Spring Cloud Zookeeper] (camel-spring-cloud-zookeeper) | 2.19 | Camel Cloud integration with Spring Cloud Zookeeper
 
 | link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 

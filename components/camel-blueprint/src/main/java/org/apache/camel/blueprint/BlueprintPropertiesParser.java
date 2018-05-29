@@ -156,7 +156,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             String delegateAnswer = delegate.parseProperty(key, answer != null ? answer : value, properties);
             if (delegateAnswer != null) {
                 answer = delegateAnswer;
-                log.debug("Delegate property parser parsed the property key: {} as value: {}", key, answer);
+                log.debug("Delegate property parse parsed the property key: {} as value: {}", key, answer);
             }
         }
         

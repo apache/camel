@@ -36,8 +36,8 @@ public class DuplicateRouteIdsTest {
     public void testXml() throws Exception {
         List<CamelRouteDetails> list = new ArrayList<>();
 
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myduplicateroutes.xml");
-        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myduplicateroutes.xml";
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parse/xml/myduplicateroutes.xml");
+        String fqn = "src/test/resources/org/apache/camel/camel/parse/xml/myduplicateroutes.xml";
         String baseDir = "src/test/resources";
         XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, list);
 

@@ -31,7 +31,7 @@
       </cm:default-properties>
   </cm:property-placeholder>
 
-    <!-- define the jasypt properties parser with the given password to be used -->
+    <!-- define the jasypt properties parse with the given password to be used -->
     <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
         <property name="password" value="secret"/>
     </bean>

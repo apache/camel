@@ -39,6 +39,13 @@
       <artifactId>camel-zookeeper</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>

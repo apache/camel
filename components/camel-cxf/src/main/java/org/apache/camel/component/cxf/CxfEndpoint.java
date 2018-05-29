@@ -1481,7 +1481,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     public void setServiceFactory(Object serviceFactoryBean) {
-        // needed a setter with this name as the cxf namespace parser expects this name
+        // needed a setter with this name as the cxf namespace parse expects this name
         this.serviceFactoryBean = serviceFactoryBean;
     }
 

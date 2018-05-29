@@ -35,7 +35,7 @@ import org.jboss.forge.roaster.model.source.TypeVariableSource;
  */
 public class AnonymousMethodSource implements MethodSource<JavaClassSource> {
 
-    // this implementation should only implement the needed logic to support the parser
+    // this implementation should only implement the needed logic to support the parse
 
     private final JavaClassSource origin;
     private final Object internal;

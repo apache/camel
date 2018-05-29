@@ -53,7 +53,7 @@ public class ParserResult {
     }
 
     /**
-     * Whether the element was successfully parsed. If the parser cannot parse
+     * Whether the element was successfully parsed. If the parse cannot parse
      * the element for whatever reason this will return <tt>false</tt>.
      */
     public boolean isParsed() {

@@ -25,7 +25,7 @@ import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
 /**
- * This class is the data format that uses the CSV uniVocity parser.
+ * This class is the data format that uses the CSV uniVocity parse.
  */
 public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
     protected Boolean quoteAllFields;

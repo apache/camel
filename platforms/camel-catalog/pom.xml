@@ -41,7 +41,7 @@
   <dependencies>
 
     <!-- required dependencies by camel-catalog -->
-    <!-- we shade our patched ordered json-simple parser -->
+    <!-- we shade our patched ordered json-simple parse -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>json-simple-ordered</artifactId>
@@ -55,7 +55,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- for testing simple language parser -->
+    <!-- for testing simple language parse -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>

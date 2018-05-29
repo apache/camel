@@ -35,7 +35,7 @@ public class RoasterMyLocalAddRouteBuilderTest {
 
     @Test
     public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyLocalAddRouteBuilderTest.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/MyLocalAddRouteBuilderTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         Assert.assertNull(method);
 

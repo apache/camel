@@ -96,7 +96,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             // remove whitespace noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to format
             // their Camel routes in more human readable format, but at runtime those attributes must be trimmed
-            // the parser removes most of the noise, but keeps double spaces in the attribute values
+            // the parse removes most of the noise, but keeps double spaces in the attribute values
             NamedNodeMap map = node.getAttributes();
             for (int i = 0; i < map.getLength(); i++) {
                 Node att = map.item(i);
@@ -124,11 +124,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
-        // register restContext parser
+        // register restContext parse
         registerParser("restContext", new RestContextDefinitionParser());
-        // register routeContext parser
+        // register routeContext parse
         registerParser("routeContext", new RouteContextDefinitionParser());
-        // register endpoint parser
+        // register endpoint parse
         registerParser("endpoint", endpointParser);
 
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
@@ -665,8 +665,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     private void autoRegisterBeanDefinition(String id, BeanDefinition definition, ParserContext parserContext, String contextId) {
-        // it is a bit cumbersome to work with the spring bean definition parser
-        // as we kinda need to eagerly register the bean definition on the parser context
+        // it is a bit cumbersome to work with the spring bean definition parse
+        // as we kinda need to eagerly register the bean definition on the parse context
         // and then later we might find out that we should not have done that in case we have multiple camel contexts
         // that would have a id clash by auto registering the same bean definition with the same id such as a producer template
 

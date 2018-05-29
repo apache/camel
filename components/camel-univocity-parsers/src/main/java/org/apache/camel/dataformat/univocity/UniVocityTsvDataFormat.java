@@ -25,7 +25,7 @@ import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
 
 /**
- * This class is the data format that uses the TSV uniVocity parser.
+ * This class is the data format that uses the TSV uniVocity parse.
  */
 public class UniVocityTsvDataFormat extends AbstractUniVocityDataFormat<TsvFormat, TsvWriterSettings, TsvWriter, TsvParserSettings, TsvParser, UniVocityTsvDataFormat> {
     protected Character escapeChar;

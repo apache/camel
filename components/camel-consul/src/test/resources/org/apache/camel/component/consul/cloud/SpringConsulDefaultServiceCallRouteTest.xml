@@ -33,7 +33,7 @@
 
     <defaultServiceCallConfiguration id="default" component="jetty">
       <!-- service discovery -->
-      <consulServiceDiscovery url="http://localhost:8500"/>
+      <consulServiceDiscovery url="{{consul.url}}"/>
 
       <!-- service filter -->
       <blacklistServiceFilter>

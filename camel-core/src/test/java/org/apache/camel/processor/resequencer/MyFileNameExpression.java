@@ -27,7 +27,7 @@ public class MyFileNameExpression implements Expression {
     }
     
     public Object evaluate(Exchange exchange) {
-        // parser the file name with YYYYMMDD-DNNN pattern
+        // parse the file name with YYYYMMDD-DNNN pattern
         String fileName = getFileName(exchange);
         String[] files = fileName.split("-D");
         Long answer = Long.parseLong(files[0]) * 1000 + Long.parseLong(files[1]);

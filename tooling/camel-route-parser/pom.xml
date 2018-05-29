@@ -42,7 +42,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- the catalog has details the parser needs to parse the Camel Java DSL -->
+    <!-- the catalog has details the parse needs to parse the Camel Java DSL -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog</artifactId>

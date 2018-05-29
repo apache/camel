@@ -2548,7 +2548,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
 
             if (pc != null && text.contains(pc.getPrefixToken())) {
-                // the parser will throw exception if property key was not found
+                // the parse will throw exception if property key was not found
                 String answer = pc.parseUri(text);
                 log.debug("Resolved text: {} -> {}", text, answer);
                 return answer;

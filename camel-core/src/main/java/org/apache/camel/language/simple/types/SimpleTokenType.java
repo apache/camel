@@ -17,7 +17,7 @@
 package org.apache.camel.language.simple.types;
 
 /**
- * The different token types used by the simple parser.
+ * The different token types used by the simple parse.
  */
 public class SimpleTokenType {
 

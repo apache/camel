@@ -96,7 +96,7 @@ public class EndpointListCommand extends AbstractCamelCommand {
                 if (explain) {
                     boolean first = true;
                     String json = camelController.explainEndpointAsJSon(camelContextName, row.get("uri"), verbose);
-                    // use a basic json parser
+                    // use a basic json parse
                     List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
                     for (Map<String, String> option : options) {

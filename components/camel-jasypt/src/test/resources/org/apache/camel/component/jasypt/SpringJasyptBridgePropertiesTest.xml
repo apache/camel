@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- define the jasypt properties parser with the given password to be used -->
+  <!-- define the jasypt properties parse with the given password to be used -->
   <bean id="jasyptParser" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
     <property name="password" value="secret"/>
   </bean>

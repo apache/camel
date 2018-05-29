@@ -58,9 +58,9 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.util.Strings;
 
 /**
- * A Camel Java parser that only depends on the Roaster API.
+ * A Camel Java parse that only depends on the Roaster API.
  * <p/>
- * This implementation is lower level details. For a higher level parser see {@link RouteBuilderParser}.
+ * This implementation is lower level details. For a higher level parse see {@link RouteBuilderParser}.
  */
 public final class CamelJavaParserHelper {
 

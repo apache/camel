@@ -35,7 +35,7 @@ public class RoasterMyNettyTest {
 
     @Test
     public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyNettyTest.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parse/java/MyNettyTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);

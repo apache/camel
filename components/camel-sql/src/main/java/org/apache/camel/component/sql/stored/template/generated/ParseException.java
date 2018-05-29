@@ -6,7 +6,7 @@ package org.apache.camel.component.sql.stored.template.generated;
  * This exception is thrown when parse errors are encountered.
  * You can explicitly create objects of this exception type by
  * calling the method generateParseException in the generated
- * parser.
+ * parse.
  *
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
@@ -22,7 +22,7 @@ public class ParseException extends Exception {
 
   /**
    * This constructor is used by the method "generateParseException"
-   * in the generated parser.  Calling this constructor generates
+   * in the generated parse.  Calling this constructor generates
    * a new object of this type with the fields "currentToken",
    * "expectedTokenSequences", and "tokenImage" set.
    */
@@ -73,7 +73,7 @@ public class ParseException extends Exception {
 
   /**
    * This is a reference to the "tokenImage" array of the generated
-   * parser within which the parse error occurred.  This array is
+   * parse within which the parse error occurred.  This array is
    * defined in the generated ...Constants interface.
    */
   public String[] tokenImage;
@@ -82,7 +82,7 @@ public class ParseException extends Exception {
    * It uses "currentToken" and "expectedTokenSequences" to generate a parse
    * error message and returns it.  If this object has been created
    * due to a parse error, and you do not catch it (it gets thrown
-   * from the parser) the correct error message
+   * from the parse) the correct error message
    * gets displayed.
    */
   private static String initialise(Token currentToken,

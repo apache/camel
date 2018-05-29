@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.cloud;
 
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -154,31 +156,17 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        Message message = exchange.getIn();
+        final Message message = exchange.getIn();
 
         // the values can be dynamic using simple language so compute those
-        String val = uri;
-        if (SimpleLanguage.hasSimpleFunction(val)) {
-            val = SimpleLanguage.simple(val).evaluate(exchange, String.class);
-        }
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_URI, val);
+        final String serviceName = applySimpleLanguage(name, exchange);
+        final String serviceUri = applySimpleLanguage(uri, exchange);
+        final String servicePath = applySimpleLanguage(contextPath, exchange);
+        final String serviceScheme = applySimpleLanguage(scheme, exchange);
 
-        val = contextPath;
-        if (SimpleLanguage.hasSimpleFunction(val)) {
-            val = SimpleLanguage.simple(val).evaluate(exchange, String.class);
-        }
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, val);
-
-        val = scheme;
-        if (SimpleLanguage.hasSimpleFunction(val)) {
-            val = SimpleLanguage.simple(val).evaluate(exchange, String.class);
-        }
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, val);
-
-        String serviceName = name;
-        if (SimpleLanguage.hasSimpleFunction(serviceName)) {
-            serviceName = SimpleLanguage.simple(serviceName).evaluate(exchange, String.class);
-        }
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_URI,serviceUri);
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, servicePath);
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, serviceScheme);
         message.setHeader(ServiceCallConstants.SERVICE_NAME, serviceName);
 
         try {
@@ -189,19 +177,46 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
         }
     }
 
-    private boolean execute(ServiceDefinition server, Exchange exchange, AsyncCallback callback) throws Exception {
-        String host = server.getHost();
-        int port = server.getPort();
+    private boolean execute(ServiceDefinition service, Exchange exchange, AsyncCallback callback) throws Exception {
+        final Message message = exchange.getIn();
+        final String host = service.getHost();
+        final int port = service.getPort();
+        final Map<String, String> meta = service.getMetadata();
 
         LOGGER.debug("Service {} active at server: {}:{}", name, host, port);
 
         // set selected server as header
-        exchange.getIn().setHeader(ServiceCallConstants.SERVICE_HOST, host);
-        exchange.getIn().setHeader(ServiceCallConstants.SERVICE_PORT, port > 0 ? port : null);
-        exchange.getIn().setHeader(ServiceCallConstants.SERVICE_NAME, server.getName());
-        exchange.getIn().setHeader(ServiceCallConstants.SERVICE_META, server.getMetadata());
+        message.setHeader(ServiceCallConstants.SERVICE_HOST, host);
+        message.setHeader(ServiceCallConstants.SERVICE_PORT, port > 0 ? port : null);
+        message.setHeader(ServiceCallConstants.SERVICE_NAME, service.getName());
+        message.setHeader(ServiceCallConstants.SERVICE_META, meta);
+
+        // If context path is not set on service call definition, reuse the one from
+        // ServiceDefinition, if any
+        message.getHeaders().compute(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, (k, v) ->
+            v == null ? meta.get(ServiceDefinition.SERVICE_META_PATH) : v
+        );
+
+        // If port is not set on service call definition, reuse the one from
+        // ServiceDefinition, if any
+        message.getHeaders().compute(ServiceCallConstants.SERVICE_PORT, (k, v) ->
+            v == null ? meta.get(ServiceDefinition.SERVICE_META_PORT) : v
+        );
 
         // use the dynamic send processor to call the service
         return processor.process(exchange, callback);
+    }
+
+    /**
+     * This function applies the simple language to the given expression.
+     *
+     * @param expression the expression
+     * @param exchange the exchange
+     * @return the computed expression
+     */
+    private String applySimpleLanguage(String expression, Exchange exchange) {
+        return SimpleLanguage.hasSimpleFunction(expression)
+            ? SimpleLanguage.simple(expression).evaluate(exchange, String.class)
+            : expression;
     }
 }

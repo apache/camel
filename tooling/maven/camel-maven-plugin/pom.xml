@@ -88,13 +88,13 @@
       <artifactId>camel-catalog-maven</artifactId>
     </dependency>
 
-    <!-- camel route parser -->
+    <!-- camel route parse -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-route-parser</artifactId>
     </dependency>
 
-    <!-- roaster java parser -->
+    <!-- roaster java parse -->
     <dependency>
       <groupId>org.jboss.forge.roaster</groupId>
       <artifactId>roaster-api</artifactId>

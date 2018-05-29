@@ -35,7 +35,7 @@ import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.LRUCache;
 
 /**
- * A parser to parse simple language as a Camel {@link Expression}
+ * A parse to parse simple language as a Camel {@link Expression}
  */
 public class SimpleExpressionParser extends BaseSimpleParser {
 
@@ -63,7 +63,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         try {
             return doParseExpression();
         } catch (SimpleParserException e) {
-            // catch parser exception and turn that into a syntax exceptions
+            // catch parse exception and turn that into a syntax exceptions
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
         } catch (Exception e) {
             // include exception in rethrown exception
@@ -164,7 +164,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             }
         }
 
-        // by returning null, we will let the parser determine what to do
+        // by returning null, we will let the parse determine what to do
         return null;
     }
 
@@ -183,7 +183,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     // grammar
     // --------------------------------------------------------------
 
-    // the expression parser only understands
+    // the expression parse only understands
     // - template = literal texts with can contain embedded functions
     // - function = simple functions such as ${body} etc
     // - unary operator = operator attached to the left hand side node

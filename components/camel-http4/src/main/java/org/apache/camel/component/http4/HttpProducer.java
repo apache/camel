@@ -503,7 +503,7 @@ public class HttpProducer extends DefaultProducer {
                     //When ContentType.parse parse method parse "multipart/form-data;boundary=---------------------------j2radvtrk",
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
-                        // using ContentType.parser for charset
+                        // using ContentType.parse for charset
                         if (contentTypeString.indexOf("charset") > 0 || contentTypeString.indexOf(";") > 0) {
                             contentType = ContentType.parse(contentTypeString);
                         } else {

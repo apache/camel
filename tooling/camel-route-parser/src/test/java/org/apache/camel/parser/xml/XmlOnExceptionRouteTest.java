@@ -36,8 +36,8 @@ public class XmlOnExceptionRouteTest {
     public void testXml() throws Exception {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
 
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel-onexception.xml");
-        String fqn = "src/test/resources/org/apache/camel/parser/xml/mycamel-onexception.xml";
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parse/xml/mycamel-onexception.xml");
+        String fqn = "src/test/resources/org/apache/camel/parse/xml/mycamel-onexception.xml";
         String baseDir = "src/test/resources";
         XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, endpoints);
 

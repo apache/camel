@@ -92,7 +92,7 @@ public class ZooKeeperServiceDiscoveryTest {
                             i ->  {
                                 return i.getPort() == service.getPort()
                                     && i.getAddress().equals(service.getHost())
-                                    && i.getId().equals(service.getMetadata().get("service_id"))
+                                    && i.getId().equals(service.getMetadata().get(ServiceDefinition.SERVICE_META_ID))
                                     && i.getName().equals(service.getName());
                             }
                         ).count()

@@ -30,7 +30,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 
 /**
- * This BeanDefinition parser help to inject the camel context into the beans
+ * This BeanDefinition parse help to inject the camel context into the beans
  *
  * @version 
  */

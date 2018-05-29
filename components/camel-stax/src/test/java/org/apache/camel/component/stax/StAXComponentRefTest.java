@@ -50,7 +50,7 @@ public class StAXComponentRefTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/in")
-                    .routeId("stax-parser")
+                    .routeId("stax-parse")
                     .to("stax:#myHandler")
                     .process(new Processor() {
                         @Override

@@ -1936,6 +1936,10 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${project.version}</bundle>
   </feature>
+  <feature name='camel-service' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-service/${project.version}</bundle>
+  </feature>
   <feature name='camel-servicenow' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>

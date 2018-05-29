@@ -1820,7 +1820,7 @@
        used in either the "defType" param for the QueryComponent (used
        by SearchHandler) or in LocalParams
     -->
-  <!-- example of registering a query parser -->
+  <!-- example of registering a query parse -->
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>
     -->
@@ -1832,7 +1832,7 @@
        Multiple ValueSourceParsers can be registered by name, and then
        used as function names when using the "func" QParser.
     -->
-  <!-- example of registering a custom function parser  -->
+  <!-- example of registering a custom function parse  -->
   <!--
      <valueSourceParser name="myfunc" 
                         class="com.mycompany.MyValueSourceParser" />

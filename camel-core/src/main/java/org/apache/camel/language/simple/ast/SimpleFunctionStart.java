@@ -101,7 +101,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                                 }
                             }
                         } catch (SimpleParserException e) {
-                            // must rethrow parser exception as illegal syntax with details about the location
+                            // must rethrow parse exception as illegal syntax with details about the location
                             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
                         }
                     // if its an inlined function then embed that function as text so it can be evaluated lazy
@@ -118,7 +118,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                 try {
                     return function.createExpression(exp).evaluate(exchange, type);
                 } catch (SimpleParserException e) {
-                    // must rethrow parser exception as illegal syntax with details about the location
+                    // must rethrow parse exception as illegal syntax with details about the location
                     throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
                 }
             }

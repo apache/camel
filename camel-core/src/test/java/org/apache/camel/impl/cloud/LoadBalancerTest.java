@@ -31,10 +31,10 @@ public class LoadBalancerTest {
 
     @BeforeClass
     public static void setUp() {
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 2001);
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 2002);
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 1001);
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 1002);
+        serviceDiscovery.addServer("no-name@127.0.0.1:2001");
+        serviceDiscovery.addServer("no-name@127.0.0.1:2002");
+        serviceDiscovery.addServer("no-name@127.0.0.1:1001");
+        serviceDiscovery.addServer("no-name@127.0.0.1:1002");
     }
 
     @Test

@@ -25,7 +25,7 @@ import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.ConsulTestSupport;
+import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.junit.Test;
 
 public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
@@ -99,6 +99,7 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
                         .component("jetty")
                         .defaultLoadBalancer()
                         .consulServiceDiscovery()
+                            .url(consulUrl())
                         .endParent()
                     .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");

@@ -274,6 +274,7 @@
     <module>camel-saxon-starter</module>
     <module>camel-schematron-starter</module>
     <module>camel-script-starter</module>
+    <module>camel-service-starter</module>
     <module>camel-servicenow-starter</module>
     <module>camel-servlet-starter</module>
     <module>camel-servletlistener-starter</module>
@@ -291,8 +292,10 @@
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
     <module>camel-spring-boot-starter</module>
+    <module>camel-spring-cloud-consul-starter</module>
     <module>camel-spring-cloud-netflix-starter</module>
     <module>camel-spring-cloud-starter</module>
+    <module>camel-spring-cloud-zookeeper-starter</module>
     <module>camel-spring-integration-starter</module>
     <module>camel-spring-javaconfig-starter</module>
     <module>camel-spring-ldap-starter</module>

@@ -37,9 +37,9 @@ import org.jboss.forge.roaster.model.util.Strings;
 import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
 
 /**
- * A Camel XML parser that parses Camel XML routes source code.
+ * A Camel XML parse that parses Camel XML routes source code.
  * <p/>
- * This implementation is higher level details, and uses the lower level parser {@link CamelJavaParserHelper}.
+ * This implementation is higher level details, and uses the lower level parse {@link CamelJavaParserHelper}.
  */
 public final class XmlRouteParser {
 

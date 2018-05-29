@@ -527,7 +527,7 @@ public class PropertiesComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
         }
 
-        // inject the component to the parser
+        // inject the component to the parse
         if (propertiesParser instanceof DefaultPropertiesParser) {
             ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
         }

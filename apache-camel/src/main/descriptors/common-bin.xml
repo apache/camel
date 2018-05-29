@@ -237,6 +237,7 @@
         <include>org.apache.camel:camel-schematron</include>
         <include>org.apache.camel:camel-scr</include>
         <include>org.apache.camel:camel-script</include>
+        <include>org.apache.camel:camel-service</include>
         <include>org.apache.camel:camel-servicenow</include>
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-servletlistener</include>
@@ -256,7 +257,9 @@
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-cloud</include>
+        <include>org.apache.camel:camel-spring-cloud-consul</include>
         <include>org.apache.camel:camel-spring-cloud-netflix</include>
+        <include>org.apache.camel:camel-spring-cloud-zookeeper</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
@@ -545,6 +548,7 @@
         <include>org.apache.camel:camel-saxon-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
         <include>org.apache.camel:camel-script-starter</include>
+        <include>org.apache.camel:camel-service-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>
         <include>org.apache.camel:camel-servletlistener-starter</include>
         <include>org.apache.camel:camel-servlet-starter</include>
@@ -564,7 +568,9 @@
         <include>org.apache.camel:camel-spring-boot</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-consul-starter</include>
         <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-zookeeper-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>
         <include>org.apache.camel:camel-spring-javaconfig-starter</include>
         <include>org.apache.camel:camel-spring-ldap-starter</include>

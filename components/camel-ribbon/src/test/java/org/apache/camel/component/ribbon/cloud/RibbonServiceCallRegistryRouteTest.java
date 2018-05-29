@@ -31,8 +31,8 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer("localhost", 9090);
-                servers.addServer("localhost", 9091);
+                servers.addServer("myService@localhost:9090");
+                servers.addServer("myService@localhost:9091");
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);

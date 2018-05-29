@@ -29,7 +29,7 @@
   <!-- Enables spring config and autowiring through annotations -->
   <context:component-scan base-package="org.apache.camel.component.jasypt" />
 
-  <!-- define the jasypt properties parser with the given password to be
+  <!-- define the jasypt properties parse with the given password to be
     used -->
   <bean id="jasyptParser"
     class="org.apache.camel.component.jasypt.JasyptPropertiesParser">

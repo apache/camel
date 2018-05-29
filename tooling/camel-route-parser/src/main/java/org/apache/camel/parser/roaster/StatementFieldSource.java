@@ -30,7 +30,7 @@ import org.jboss.forge.roaster.model.source.JavaDocSource;
 
 public class StatementFieldSource implements FieldSource {
 
-    // this implementation should only implement the needed logic to support the parser
+    // this implementation should only implement the needed logic to support the parse
 
     private final JavaClassSource origin;
     private final Object internal;

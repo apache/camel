@@ -46,7 +46,7 @@ public final class JSonSchemaHelper {
             return answer;
         }
 
-        // convert into a List<Map<String, String>> structure which is expected as output from this parser
+        // convert into a List<Map<String, String>> structure which is expected as output from this parse
         try {
             JsonObject output = (JsonObject) Jsoner.deserialize(json);
             for (String key : output.keySet()) {

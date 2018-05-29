@@ -15,7 +15,8 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.consul.springboot.ConsulComponentAutoConfiguration,\
-org.apache.camel.component.consul.springboot.cloud.ConsulServiceDiscoveryAutoConfiguration,\
-org.apache.camel.component.consul.springboot.cluster.ConsulClusterServiceAutoConfiguration,\
-org.apache.camel.component.consul.springboot.health.HealthCheckRepositoryAutoConfiguration
+    org.apache.camel.component.consul.springboot.ConsulComponentAutoConfiguration,\
+    org.apache.camel.component.consul.springboot.cloud.ConsulServiceDiscoveryAutoConfiguration,\
+    org.apache.camel.component.consul.springboot.cloud.ConsulServiceRegistryAutoConfiguration,\
+    org.apache.camel.component.consul.springboot.cluster.ConsulClusterServiceAutoConfiguration,\
+    org.apache.camel.component.consul.springboot.health.HealthCheckRepositoryAutoConfiguration

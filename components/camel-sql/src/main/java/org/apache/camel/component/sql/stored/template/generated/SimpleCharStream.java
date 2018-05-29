@@ -9,7 +9,7 @@ package org.apache.camel.component.sql.stored.template.generated;
 
 public class SimpleCharStream
 {
-/** Whether parser is static. */
+/** Whether parse is static. */
   public static final boolean staticFlag = false;
   int bufsize;
   int available;

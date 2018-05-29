@@ -50,7 +50,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.LRUCache;
 
 /**
- * A parser to parse simple language as a Camel {@link Predicate}
+ * A parse to parse simple language as a Camel {@link Predicate}
  */
 public class SimplePredicateParser extends BaseSimpleParser {
 
@@ -77,7 +77,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         try {
             return doParsePredicate();
         } catch (SimpleParserException e) {
-            // catch parser exception and turn that into a syntax exceptions
+            // catch parse exception and turn that into a syntax exceptions
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
         } catch (Exception e) {
             // include exception in rethrown exception
@@ -288,7 +288,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
             return new NullExpression(token);
         }
 
-        // by returning null, we will let the parser determine what to do
+        // by returning null, we will let the parse determine what to do
         return null;
     }
 
@@ -464,7 +464,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // grammar
     // --------------------------------------------------------------
 
-    // the predicate parser understands a lot more than the expression parser
+    // the predicate parse understands a lot more than the expression parse
     // - boolean value = either true or false value (literal)
     // - single quoted = block of nodes enclosed by single quotes
     // - double quoted = block of nodes enclosed by double quotes

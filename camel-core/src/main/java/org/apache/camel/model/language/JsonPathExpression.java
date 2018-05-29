@@ -102,7 +102,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to allow using the easy predicate parser to pre-parse predicates.
+     * Whether to allow using the easy predicate parse to pre-parse predicates.
      */
     public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
         this.allowEasyPredicate = allowEasyPredicate;
