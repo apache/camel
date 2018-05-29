@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.orbitz.consul.EventClient;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
@@ -51,9 +52,9 @@ public class ConsulEventWatchTest extends ConsulTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                fromF("consul:event?key=%s", key)
+                fromF("consul:event?key=%s&blockSeconds=1", key)
                     .to("log:org.apache.camel.component.consul?level=INFO&showAll=true")
-                        .to("mock:event-watch");
+                    .to("mock:event-watch");
             }
         };
     }

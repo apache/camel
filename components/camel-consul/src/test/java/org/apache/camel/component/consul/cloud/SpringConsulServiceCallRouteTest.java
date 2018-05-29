@@ -20,6 +20,7 @@ package org.apache.camel.component.consul.cloud;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
@@ -28,24 +29,42 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.component.consul.support.ConsulContainerSupport;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 
 public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
     private AgentClient client;
     private List<Registration> registrations;
+
+    @Rule
+    public GenericContainer container = ConsulContainerSupport.consulContainer();
 
     // *************************************************************************
     // Setup / tear down
     // *************************************************************************
 
     @Override
+    protected Properties useOverridePropertiesWithPropertiesComponent() {
+        Properties properties = new Properties();
+        properties.put("consul.url", ConsulContainerSupport.consulUrl(container));
+
+        return properties;
+    }
+
+    @Override
     public void doPreSetup() throws Exception {
-        this.client = Consul.builder().build().agentClient();
+        this.client = Consul.builder()
+            .withUrl(ConsulContainerSupport.consulUrl(container))
+            .build()
+            .agentClient();
+
         this.registrations = Arrays.asList(
             ImmutableRegistration.builder()
                 .id("service-1-1")

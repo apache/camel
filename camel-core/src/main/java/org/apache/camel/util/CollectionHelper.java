@@ -20,6 +20,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -154,5 +156,18 @@ public final class CollectionHelper {
                 target.put(newKey, value);
             }
         }
+    }
+
+    /**
+     * Build an unmodifiable map on top of a given map. Note tha thew given map is
+     * copied if not null.
+     *
+     * @param map a map
+     * @return an unmodifiable map.
+     */
+    public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> map) {
+        return map == null
+            ? Collections.emptyMap()
+            : Collections.unmodifiableMap(new HashMap<>(map));
     }
 }

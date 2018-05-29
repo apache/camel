@@ -20,12 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
-import org.apache.camel.util.StringHelper;
 
 public class BlacklistServiceFilter implements ServiceFilter {
     private List<ServiceDefinition> services;
@@ -39,7 +38,7 @@ public class BlacklistServiceFilter implements ServiceFilter {
     }
 
     /**
-     * Set the servers.
+     * Set the servers to blacklist.
      *
      * @param servers server in the format: [service@]host:port.
      */
@@ -49,7 +48,7 @@ public class BlacklistServiceFilter implements ServiceFilter {
     }
 
     /**
-     * Set the servers.
+     * Set the servers to blacklist.
      *
      * @param servers servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
@@ -66,47 +65,27 @@ public class BlacklistServiceFilter implements ServiceFilter {
     }
 
     /**
-     * Add a server to the known list of servers.
+     * Add a server to the known list of servers to blacklist.
      * @param serverString servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void addServer(String serverString) {
-        String[] parts = serverString.split(",");
-        for (String part : parts) {
-            String service = StringHelper.before(part, "@");
-            if (service != null) {
-                part = StringHelper.after(part, "@");
-            }
-            String host = StringHelper.before(part, ":");
-            String port = StringHelper.after(part, ":");
-
-            addServer(service, host, Integer.valueOf(port));
-        }
+        DefaultServiceDefinition.parse(serverString).forEach(this::addServer);
     }
 
     /**
-     * Add a server to the known list of servers.
+     * Remove an existing server from the list of known servers.
      */
-    public void addServer(String host, int port) {
-        addServer(null, host, port, null);
-    }
-
-    /**
-     * Add a server to the known list of servers.
-     */
-    public void addServer(String name, String host, int port) {
-        addServer(name, host, port, null);
-    }
-
-    /**
-     * Add a server to the known list of servers.
-     */
-    public void addServer(String name, String host, int port, Map<String, String> meta) {
-        services.add(new DefaultServiceDefinition(name, host, port, meta));
+    public void removeServer(Predicate<ServiceDefinition> condition) {
+        services.removeIf(condition);
     }
 
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
-        return services.stream().filter(s -> !this.services.contains(s)).collect(Collectors.toList());
+        return services.stream().filter(
+            s -> this.services.stream().noneMatch(b -> b.matches(s))
+        ).collect(
+            Collectors.toList()
+        );
     }
 
     List<ServiceDefinition> getBlacklistedServices() {

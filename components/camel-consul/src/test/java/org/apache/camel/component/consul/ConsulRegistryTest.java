@@ -22,11 +22,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.component.consul.support.ConsulContainerSupport;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,7 +41,7 @@ public class ConsulRegistryTest implements Serializable {
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRegistryTest.class);
+    private static GenericContainer container;
 
     public class ConsulTestClass implements Serializable {
         private static final long serialVersionUID = -4815945688487114891L;
@@ -51,7 +53,15 @@ public class ConsulRegistryTest implements Serializable {
 
     @BeforeClass
     public static void setUp() {
-        registry = new ConsulRegistry.Builder("localhost").build();
+        container = ConsulContainerSupport.consulContainer();
+        container.start();
+
+        registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        container.stop();
     }
 
     @Test

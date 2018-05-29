@@ -719,6 +719,9 @@ Number of Components: 294 in 201 JAR artifacts (20 deprecated)
 | link:../camel-core/src/main/docs/seda-component.adoc[SEDA] (camel-core) +
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
+| link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
+`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
 
