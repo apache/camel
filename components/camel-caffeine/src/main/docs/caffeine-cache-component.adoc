@@ -105,8 +105,8 @@ You can use your cache with the following code:
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")
-                    .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test")
+                    .toF("caffeine-loadcache://%s?cache=#cache&action=PUT&key=1", "test")
+                    .toF("caffeine-loadcache://%s?cache=#cache&key=1&action=GET", "test")
                     .log("Test! ${body}")
                     .to("mock:result");
             }
