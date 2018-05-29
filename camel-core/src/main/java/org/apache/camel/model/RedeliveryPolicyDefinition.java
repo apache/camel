@@ -58,6 +58,8 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
+    private String retryAttemptedLogInterval;
+    @XmlAttribute
     private String logRetryAttempted;
     @XmlAttribute
     private String logStackTrace;
@@ -112,6 +114,9 @@ public class RedeliveryPolicyDefinition {
             }
             if (retryAttemptedLogLevel != null) {
                 answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+            }
+            if (retryAttemptedLogInterval != null) {
+                answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, retryAttemptedLogInterval));
             }
             if (backOffMultiplier != null) {
                 answer.setBackOffMultiplier(CamelContextHelper.parseDouble(context, backOffMultiplier));
@@ -309,6 +314,17 @@ public class RedeliveryPolicyDefinition {
      */
     public RedeliveryPolicyDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }
+
+    /**
+     * Sets the interval to use for logging retry attempts
+     *
+     * @param retryAttemptedLogInterval  the retry logging interval
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition retryAttemptedLogInterval(String retryAttemptedLogInterval) {
+        setRetryAttemptedLogInterval(retryAttemptedLogInterval);
         return this;
     }
 
@@ -712,6 +728,14 @@ public class RedeliveryPolicyDefinition {
 
     public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
+    }
+
+    public String getRetryAttemptedLogInterval() {
+        return retryAttemptedLogInterval;
+    }
+
+    public void setRetryAttemptedLogInterval(String retryAttemptedLogInterval) {
+        this.retryAttemptedLogInterval = retryAttemptedLogInterval;
     }
 
     public String getLogRetryAttempted() {
