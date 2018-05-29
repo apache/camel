@@ -185,6 +185,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DefaultErrorHandlerBuilder retryAttemptedLogInterval(int retryAttemptedLogInterval) {
+        getRedeliveryPolicy().setRetryAttemptedLogInterval(retryAttemptedLogInterval);
+        return this;
+    }
+
     public DefaultErrorHandlerBuilder logStackTrace(boolean logStackTrace) {
         getRedeliveryPolicy().setLogStackTrace(logStackTrace);
         return this;
@@ -207,6 +212,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public DefaultErrorHandlerBuilder logExhausted(boolean logExhausted) {
         getRedeliveryPolicy().setLogExhausted(logExhausted);
+        return this;
+    }
+
+    public DefaultErrorHandlerBuilder logRetryAttempted(boolean logRetryAttempted) {
+        getRedeliveryPolicy().setLogRetryAttempted(logRetryAttempted);
         return this;
     }
 
