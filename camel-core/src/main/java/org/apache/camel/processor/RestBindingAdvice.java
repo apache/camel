@@ -116,7 +116,6 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
         this.queryDefaultValues = queryDefaultValues;
-
     }
     
     @Override
@@ -182,7 +181,30 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             isJson = bindingMode.equals("auto") || bindingMode.contains("json");
         }
 
-        state.put(STATE_KEY_ACCEPT, exchange.getIn().getHeader("Accept", String.class));
+        String accept = exchange.getMessage().getHeader("Accept", String.class);
+        state.put(STATE_KEY_ACCEPT, accept);
+
+        // TODO: option to turn this validation on|off
+
+        // check if the content-type is accepted according to consumes
+        if (!isValidOrAcceptedContentType(consumes, contentType)) {
+            // the content-type must be in a valid otherwise its a HTTP_ERROR 415
+            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
+            // stop routing
+            exchange.setProperty(Exchange.ROUTE_STOP, true);
+            // return
+            return;
+        }
+
+        // check if what is produces is accepted by the client
+        if (!isValidOrAcceptedContentType(produces, accept)) {
+            // the response type is not accepted by the client so its a HTTP_ERROR 406
+            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
+            // stop routing
+            exchange.setProperty(Exchange.ROUTE_STOP, true);
+            // return
+            return;
+        }
 
         String body = null;
         if (exchange.getIn().getBody() != null) {
@@ -431,6 +453,26 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (allowCredentials != null) {
             msg.setHeader("Access-Control-Allow-Credentials", allowCredentials);
         }
+    }
+
+    private static boolean isValidOrAcceptedContentType(String valid, String target) {
+        if (valid == null || target == null) {
+            return true;
+        }
+
+        boolean isXml = valid.toLowerCase(Locale.ENGLISH).contains("xml");
+        boolean isJson = valid.toLowerCase(Locale.ENGLISH).contains("json");
+
+        String type = target.toLowerCase(Locale.ENGLISH);
+
+        if (isXml && !type.contains("xml")) {
+            return false;
+        }
+        if (isJson && !type.contains("json")) {
+            return false;
+        }
+
+        return true;
     }
 
 }
