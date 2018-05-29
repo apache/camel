@@ -40,7 +40,7 @@ public class JsonPathLanguageConfiguration
      */
     private Boolean allowSimple = true;
     /**
-     * Whether to allow using the easy predicate parse to pre-parse predicates.
+     * Whether to allow using the easy predicate parser to pre-parse predicates.
      */
     private Boolean allowEasyPredicate = true;
     /**
