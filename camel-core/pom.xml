@@ -136,7 +136,7 @@
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
     </dependency>
-    <!-- we shade our patched ordered json-simple parse -->
+    <!-- we shade our patched ordered json-simple parser -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>json-simple-ordered</artifactId>

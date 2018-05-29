@@ -706,7 +706,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 pc.setPropertiesResolver(resolver);
             }
 
-            // if using a custom parse
+            // if using a custom parser
             if (ObjectHelper.isNotEmpty(def.getPropertiesParserRef())) {
                 PropertiesParser parser = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesParserRef(),
                                                                              PropertiesParser.class);
