@@ -67,6 +67,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "DEBUG", description = "Sets the logging level to use for log messages when retries are attempted.")
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
+    @Metadata(defaultValue = "0", description = "Sets the interval for log messages when retries are attempted.")
+    private String retryAttemptedLogInterval;
+    @XmlAttribute
     @Metadata(defaultValue = "true", description = "Sets whether to log retry attempts")
     private String logRetryAttempted;
     @XmlAttribute
@@ -121,6 +124,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         }
         if (retryAttemptedLogLevel != null) {
             answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        }
+        if (retryAttemptedLogInterval != null) {
+            answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, retryAttemptedLogInterval));
         }
         if (backOffMultiplier != null) {
             answer.setBackOffMultiplier(CamelContextHelper.parseDouble(context, backOffMultiplier));
@@ -258,6 +264,14 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
 
     public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
+    }
+
+    public String getRetryAttemptedLogInterval() {
+        return retryAttemptedLogInterval;
+    }
+
+    public void setRetryAttemptedLogInterval(String retryAttemptedLogInterval) {
+        this.retryAttemptedLogInterval = retryAttemptedLogInterval;
     }
 
     public String getLogRetryAttempted() {
