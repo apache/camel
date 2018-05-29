@@ -24,6 +24,7 @@ import com.orbitz.consul.model.session.SessionCreatedResponse;
 import com.orbitz.consul.model.session.SessionInfo;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulSessionActions;
+import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 

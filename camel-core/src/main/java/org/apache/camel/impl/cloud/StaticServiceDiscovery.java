@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
@@ -58,7 +58,13 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
             String port = StringHelper.after(server, ":");
 
             if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                addServer(serviceName, host, Integer.valueOf(port));
+                addServer(
+                    DefaultServiceDefinition.builder()
+                        .withName(serviceName)
+                        .withHost(host)
+                        .withPort(Integer.parseInt(port))
+                        .build()
+                );
             }
         }
     }
@@ -85,58 +91,14 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
      * @param serverString servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void addServer(String serverString) {
-        String[] parts = serverString.split(",");
-        for (String part : parts) {
-            String service = StringHelper.before(part, "@");
-            if (service != null) {
-                part = StringHelper.after(part, "@");
-            }
-            String host = StringHelper.before(part, ":");
-            String port = StringHelper.after(part, ":");
-
-            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                addServer(service, host, Integer.valueOf(port));
-            }
-        }
-    }
-
-    /**
-     * Add a server to the known list of servers.
-     */
-    public void addServer(String host, int port) {
-        addServer(null, host, port, null);
-    }
-
-    /**
-     * Add a server to the known list of servers.
-     */
-    public void addServer(String name, String host, int port) {
-        addServer(name, host, port, null);
-    }
-
-    /**
-     * Add a server to the known list of servers.
-     */
-    public void addServer(String name, String host, int port, Map<String, String> meta) {
-        services.add(new DefaultServiceDefinition(name, host, port, meta));
+        DefaultServiceDefinition.parse(serverString).forEach(this::addServer);
     }
 
     /**
      * Remove an existing server from the list of known servers.
      */
-    public void removeServer(String host, int port) {
-        services.removeIf(
-            s -> Objects.equals(host, s.getHost()) && port == s.getPort()
-        );
-    }
-
-    /**
-     * Remove an existing server from the list of known servers.
-     */
-    public void removeServer(String name, String host, int port) {
-        services.removeIf(
-            s -> Objects.equals(name, s.getName()) && Objects.equals(host, s.getHost()) && port == s.getPort()
-        );
+    public void removeServer(Predicate<ServiceDefinition> condition) {
+        services.removeIf(condition);
     }
 
     @Override

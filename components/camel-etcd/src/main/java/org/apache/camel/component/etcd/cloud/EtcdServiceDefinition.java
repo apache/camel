@@ -29,11 +29,12 @@ public class EtcdServiceDefinition extends DefaultServiceDefinition {
 
     @JsonCreator
     public EtcdServiceDefinition(
+        @JsonProperty("id") final String id,
         @JsonProperty("name") final String name,
         @JsonProperty("address") final String address,
         @JsonProperty("port") final Integer port,
         @JsonProperty("tags") final Map<String, String> tags) {
-        super(name, address, port, tags);
+        super(id, name, address, port, tags);
     }
 
     public static Comparator<EtcdServiceDefinition> comparator() {

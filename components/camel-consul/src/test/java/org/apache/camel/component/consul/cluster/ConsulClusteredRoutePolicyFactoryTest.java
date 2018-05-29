@@ -26,23 +26,26 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.consul.support.ConsulContainerSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
+import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
 
-public class ConsulClusteredRoutePolicyIT {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyIT.class);
+public class ConsulClusteredRoutePolicyFactoryTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryTest.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
-    private static final String CONSUL_HOST = System.getProperty("camel.consul.host", Consul.DEFAULT_HTTP_HOST);
-    private static final int CONSUL_PORT = Integer.getInteger("camel.consul.port", Consul.DEFAULT_HTTP_PORT);
+
+    @ClassRule
+    public static GenericContainer container = ConsulContainerSupport.consulContainer();
 
     // ************************************
     // Test
@@ -72,7 +75,7 @@ public class ConsulClusteredRoutePolicyIT {
 
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
-            service.setUrl(String.format("http://%s:%d", CONSUL_HOST, CONSUL_PORT));
+            service.setUrl(ConsulContainerSupport.consulUrl(container));
 
             LOGGER.info("Consul URL {}", service.getUrl());
 
@@ -80,12 +83,12 @@ public class ConsulClusteredRoutePolicyIT {
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(service);
+            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("timer:consul?delay=1s&period=1s")
                         .routeId("route-" + id)
-                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
                         .log("From ${routeId}")
                         .process(e -> contextLatch.countDown());
                 }

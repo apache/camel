@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
+import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -471,6 +472,15 @@ public class CamelAutoConfiguration {
             for (Map.Entry<String, CamelClusterService> entry : clusterServices.entrySet()) {
                 CamelClusterService service = entry.getValue();
                 LOG.info("Using CamelClusterService with id: {} and implementation: {}", service.getId(), service);
+                camelContext.addService(service);
+            }
+        }
+        // service registry
+        Map<String, ServiceRegistry> serviceRegistries = applicationContext.getBeansOfType(ServiceRegistry.class);
+        if (serviceRegistries != null && !serviceRegistries.isEmpty()) {
+            for (Map.Entry<String, ServiceRegistry> entry : serviceRegistries.entrySet()) {
+                ServiceRegistry service = entry.getValue();
+                LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
                 camelContext.addService(service);
             }
         }

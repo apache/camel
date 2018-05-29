@@ -18,6 +18,9 @@ package org.apache.camel.cloud;
 
 import java.util.Map;
 
+import org.apache.camel.util.StringHelper;
+
+
 /**
  * Represents a Service.
  *
@@ -25,6 +28,15 @@ import java.util.Map;
  * @see ServiceDiscovery
  */
 public interface ServiceDefinition {
+    // default service meta-data keys
+    String SERVICE_META_PORT = "service.port";
+    String SERVICE_META_PROTOCOL= "service.protocol";
+    String SERVICE_META_PATH = "service.path";
+
+    /**
+     * Gets the service id.
+     */
+    String getId();
 
     /**
      * Gets the service name.
@@ -50,4 +62,18 @@ public interface ServiceDefinition {
      * Gets a key/value metadata associated with the service.
      */
     Map<String, String> getMetadata();
+
+    /**
+     * Check if a service definition matches.
+     */
+    default boolean matches(ServiceDefinition other) {
+        if (this.equals(other)) {
+            return true;
+        }
+
+        return getPort() == other.getPort()
+            && StringHelper.matches(getName(), other.getName())
+            && StringHelper.matches(getId(), other.getId())
+            && StringHelper.matches(getHost(), other.getHost());
+    }
 }
