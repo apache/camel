@@ -50,7 +50,7 @@ public class CouchDbClientWrapper {
     }
     
     public Object get(String id) {
-    	return client.find(id);
+        return client.find(id);
     }
 
     public CouchDbContext context() {

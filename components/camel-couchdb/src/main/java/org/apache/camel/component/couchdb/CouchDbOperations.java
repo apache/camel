@@ -17,6 +17,6 @@
 package org.apache.camel.component.couchdb;
 
 public enum CouchDbOperations {
-	DELETE,
-	GET
+    DELETE,
+    GET
 }
