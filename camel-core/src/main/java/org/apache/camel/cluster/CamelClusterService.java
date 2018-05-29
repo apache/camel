@@ -100,6 +100,7 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
         );
     }
 
+    @FunctionalInterface
     interface Selector {
         /**
          * Select a specific CamelClusterService instance among a collection.

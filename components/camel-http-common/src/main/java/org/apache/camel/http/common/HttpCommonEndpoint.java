@@ -19,15 +19,18 @@ package org.apache.camel.http.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.cloud.DiscoverableService;
+import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, DiscoverableService {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation
 
@@ -193,6 +196,19 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return true;
     }
 
+    // Service Registration
+    //-------------------------------------------------------------------------
+
+    @Override
+    public ServiceDefinition getServiceDefinition() {
+        // Returns a partial
+        return DefaultServiceDefinition.builder()
+            .withPort(getPort())
+            .addMeta(ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()))
+            .addMeta(ServiceDefinition.SERVICE_META_PATH, getPath())
+            .addMeta(ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol())
+            .build();
+    }
 
     // Properties
     //-------------------------------------------------------------------------

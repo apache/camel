@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
@@ -30,8 +31,8 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // setup a static ribbon server list with these 2 servers to start with
-        servers.addServer("localhost", 9090);
-        servers.addServer("localhost", 9091);
+        servers.addServer("myService@localhost:9090");
+        servers.addServer("myService@localhost:9091");
 
         super.setUp();
     }
@@ -51,7 +52,7 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
 
         // stop the first server and remove it from the known list of servers
         context.stopRoute("9090");
-        servers.removeServer("localhost", 9090);
+        servers.removeServer(s -> ObjectHelper.equal("localhost", s.getHost()) && 9090 == s.getPort());
 
         // call the other active server
         String out3 = template.requestBody("direct:start", null, String.class);

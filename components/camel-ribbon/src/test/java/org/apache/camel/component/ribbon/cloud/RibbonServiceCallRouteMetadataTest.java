@@ -17,11 +17,10 @@
 
 package org.apache.camel.component.ribbon.cloud;
 
-import java.util.Collections;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
+import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -48,8 +47,8 @@ public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer("myService", "localhost", 9090, Collections.singletonMap("contextPath", "app1"));
-                servers.addServer("myService", "localhost", 9090, Collections.singletonMap("contextPath", "app2"));
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090).addMeta("contextPath", "app1").build());
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090).addMeta("contextPath", "app2").build());
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);

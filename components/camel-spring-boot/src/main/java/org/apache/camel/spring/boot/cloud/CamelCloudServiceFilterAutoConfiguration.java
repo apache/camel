@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.cloud.BlacklistServiceFilter;
+import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
@@ -114,7 +115,13 @@ public class CamelCloudServiceFilterAutoConfiguration implements BeanFactoryAwar
                 String port = StringHelper.after(part, ":");
 
                 if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                    blacklist.addServer(entry.getKey(), host, Integer.parseInt(port));
+                    blacklist.addServer(
+                        DefaultServiceDefinition.builder()
+                            .withName(entry.getKey())
+                            .withHost(host)
+                            .withPort(Integer.parseInt(port))
+                            .build()
+                    );
                 }
             }
         }
