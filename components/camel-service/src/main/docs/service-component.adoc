@@ -1,20 +1,17 @@
 [[service-component]]
 == Service Component
-== Master Component
-*Available as of Camel version 2.22*
-
 
 *Available as of Camel version 2.22*
 
 
-### Using the master endpoint
+### Using the service endpoint
 
 
 ### URI format
 
 [source]
 ----
-service:endpoint[?options]
+service:serviceName:endpoint[?options]
 ----
 
 
@@ -72,10 +69,8 @@ with the following path and query parameters:
 Camel provide the following ServiceRegistry implementations:
 
 - camel-consul
-
-Camel provide the following ServiceCall implementations:
-
-- camel-consul
+- camel-zookeeper
+- camel-spring-cloud
 
 ### See Also
 
