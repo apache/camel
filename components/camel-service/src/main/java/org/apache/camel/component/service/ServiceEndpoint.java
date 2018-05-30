@@ -74,13 +74,16 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
         this.serviceDefinition = computeServiceDefinition(component.getCamelContext(), delegateEndpoint);
     }
 
-    @ManagedAttribute(description = "The consumer endpoint to expose as a service", mask = true)
     @Override
     public Endpoint getEndpoint() {
         return this.delegateEndpoint;
     }
 
-    @ManagedAttribute(description = "The service definition", mask = true)
+    @ManagedAttribute(description = "The consumer endpoint to expose as a service", mask = true)
+    public String getDelegateEndpointUri() {
+        return this.delegateEndpoint.getEndpointUri();
+    }
+
     public ServiceDefinition getServiceDefinition() {
         return this.serviceDefinition;
     }
