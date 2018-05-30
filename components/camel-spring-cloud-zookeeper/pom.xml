@@ -38,7 +38,7 @@
 
     <camel.osgi.export.pkg/>
 
-    <spring-cloud-commons-version>2.0.0.RC1</spring-cloud-commons-version>
+    <spring-cloud-commons-version>2.0.0.RC2</spring-cloud-commons-version>
     <spring-cloud-zookeeper-version>2.0.0.RC1</spring-cloud-zookeeper-version>
   </properties>
 
