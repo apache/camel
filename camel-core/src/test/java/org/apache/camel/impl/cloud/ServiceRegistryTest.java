@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ServiceRegistryTest  extends ContextTestSupport {
+public class ServiceRegistryTest extends ContextTestSupport {
 
     // *********************
     // Set up

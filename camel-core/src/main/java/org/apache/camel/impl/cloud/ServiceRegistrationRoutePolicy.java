@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ManagedResource(description = "Clustered Route policy using")
+@ManagedResource(description = "Service Registration Route policy")
 public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistrationRoutePolicy.class);
 
