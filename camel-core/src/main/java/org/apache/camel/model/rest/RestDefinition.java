@@ -801,10 +801,20 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setEnableCORS(getEnableCORS());
             }
-            // register all the default values for the query parameters
             for (RestOperationParamDefinition param : verb.getParams()) {
+                // register all the default values for the query parameters
                 if (RestParamType.query == param.getType() && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), param.getDefaultValue());
+                }
+                // register which parameters are required
+                if (param.getRequired()) {
+                    if (RestParamType.query == param.getType()) {
+                        binding.addRequiredQueryParameter(param.getName());
+                    } else if (RestParamType.header == param.getType()) {
+                        binding.addRequiredHeader(param.getName());
+                    } else if (RestParamType.body == param.getType()) {
+                        binding.setRequiredBody(true);
+                    }
                 }
             }
 
