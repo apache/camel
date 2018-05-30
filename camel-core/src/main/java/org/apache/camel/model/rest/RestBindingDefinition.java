@@ -17,7 +17,9 @@
 package org.apache.camel.model.rest;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -46,6 +48,15 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     @XmlTransient
     private Map<String, String> defaultValues;
+
+    @XmlTransient
+    private Boolean requiredBody;
+
+    @XmlTransient
+    private Set<String> requiredHeaders;
+
+    @XmlTransient
+    private Set<String> requiredQueryParameters;
 
     @XmlAttribute
     private String consumes;
@@ -111,7 +122,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingAdvice(context, null, null, null, null, consumes, produces, mode, skip, validation, cors, corsHeaders, defaultValues);
+            return new RestBindingAdvice(context, null, null, null, null, consumes, produces, mode, skip, validation,
+                cors, corsHeaders, defaultValues, requiredBody != null ? requiredBody : false, requiredQueryParameters, requiredHeaders);
         }
 
         // setup json data format
@@ -209,7 +221,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
             }
         }
 
-        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, validation, cors, corsHeaders, defaultValues);
+        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, validation,
+            cors, corsHeaders, defaultValues, requiredBody != null ? requiredBody : false, requiredQueryParameters, requiredHeaders);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
@@ -262,6 +275,38 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
             defaultValues = new HashMap<>();
         }
         defaultValues.put(paramName, defaultValue);
+    }
+
+    /**
+     * Adds a required query parameter
+     *
+     * @param paramName   query parameter name
+     */
+    public void addRequiredQueryParameter(String paramName) {
+        if (requiredQueryParameters == null) {
+            requiredQueryParameters = new HashSet<>();
+        }
+        requiredQueryParameters.add(paramName);
+    }
+
+    /**
+     * Adds a required HTTP header
+     *
+     * @param headerName   HTTP header name
+     */
+    public void addRequiredHeader(String headerName) {
+        if (requiredHeaders == null) {
+            requiredHeaders = new HashSet<>();
+        }
+        requiredHeaders.add(headerName);
+    }
+
+    public Boolean getRequiredBody() {
+        return requiredBody;
+    }
+
+    public void setRequiredBody(Boolean requiredBody) {
+        this.requiredBody = requiredBody;
     }
 
     /**

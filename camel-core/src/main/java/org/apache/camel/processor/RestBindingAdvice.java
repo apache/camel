@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -63,13 +64,17 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private final boolean enableCORS;
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
+    private final boolean requiredBody;
+    private final Set<String> requiredQueryParameters;
+    private final Set<String> requiredHeaders;
 
     public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                              String consumes, String produces, String bindingMode,
                              boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
                              Map<String, String> corsHeaders,
-                             Map<String, String> queryDefaultValues) throws Exception {
+                             Map<String, String> queryDefaultValues,
+                             boolean requiredBody, Set<String> requiredQueryParameters, Set<String> requiredHeaders) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -118,6 +123,9 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
         this.queryDefaultValues = queryDefaultValues;
+        this.requiredBody = requiredBody;
+        this.requiredQueryParameters = requiredQueryParameters;
+        this.requiredHeaders = requiredHeaders;
     }
     
     @Override
@@ -238,6 +246,41 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 if (exchange.getIn().getHeader(entry.getKey()) == null) {
                     exchange.getIn().setHeader(entry.getKey(), entry.getValue());
                 }
+            }
+        }
+
+        // check for required
+        if (clientRequestValidation) {
+            if (requiredBody) {
+                // the body is required so we need to know if we have a body or not
+                // so force reading the body as a String which we can work with
+                if (body == null) {
+                    body = MessageHelper.extractBodyAsString(exchange.getIn());
+                    if (body != null) {
+                        exchange.getIn().setBody(body);
+                    }
+                }
+                if (body == null) {
+                    // this is a bad request, the client did not include a message body
+                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                    // stop routing and return
+                    exchange.setProperty(Exchange.ROUTE_STOP, true);
+                    return;
+                }
+            }
+            if (requiredQueryParameters != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
+                // this is a bad request, the client did not include some of the required query parameters
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
+            }
+            if (requiredHeaders != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredHeaders)) {
+                // this is a bad request, the client did not include some of the required http headers
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
             }
         }
 
