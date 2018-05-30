@@ -70,6 +70,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private Boolean skipBindingOnErrorCode;
 
     @XmlAttribute
+    private Boolean clientRequestValidation;
+
+    @XmlAttribute
     private Boolean enableCORS;
 
     @XmlAttribute
@@ -165,6 +168,22 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCORS() {
@@ -487,6 +506,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition clientRequestValidation(boolean clientRequestValidation) {
+        if (getVerbs().isEmpty()) {
+            this.clientRequestValidation = clientRequestValidation;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setClientRequestValidation(clientRequestValidation);
+        }
+
+        return this;
+    }
+
     public RestDefinition enableCORS(boolean enableCORS) {
         if (getVerbs().isEmpty()) {
             this.enableCORS = enableCORS;
@@ -759,6 +790,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 binding.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
             } else {
                 binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+            }
+            if (verb.getClientRequestValidation() != null) {
+                binding.setClientRequestValidation(verb.getClientRequestValidation());
+            } else {
+                binding.setClientRequestValidation(getClientRequestValidation());
             }
             if (verb.getEnableCORS() != null) {
                 binding.setEnableCORS(verb.getEnableCORS());

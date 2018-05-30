@@ -59,6 +59,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private final String produces;
     private final String bindingMode;
     private final boolean skipBindingOnErrorCode;
+    private final boolean clientRequestValidation;
     private final boolean enableCORS;
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
@@ -66,7 +67,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                              String consumes, String produces, String bindingMode,
-                             boolean skipBindingOnErrorCode, boolean enableCORS,
+                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
                              Map<String, String> corsHeaders,
                              Map<String, String> queryDefaultValues) throws Exception {
 
@@ -113,6 +114,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         this.produces = produces;
         this.bindingMode = bindingMode;
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+        this.clientRequestValidation = clientRequestValidation;
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
         this.queryDefaultValues = queryDefaultValues;
@@ -184,26 +186,25 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         String accept = exchange.getMessage().getHeader("Accept", String.class);
         state.put(STATE_KEY_ACCEPT, accept);
 
-        // TODO: option to turn this validation on|off
+        // perform client request validation
+        if (clientRequestValidation) {
+            // check if the content-type is accepted according to consumes
+            if (!isValidOrAcceptedContentType(consumes, contentType)) {
+                // the content-type is not something we can process so its a HTTP_ERROR 415
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
+            }
 
-        // check if the content-type is accepted according to consumes
-        if (!isValidOrAcceptedContentType(consumes, contentType)) {
-            // the content-type must be in a valid otherwise its a HTTP_ERROR 415
-            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
-            // stop routing
-            exchange.setProperty(Exchange.ROUTE_STOP, true);
-            // return
-            return;
-        }
-
-        // check if what is produces is accepted by the client
-        if (!isValidOrAcceptedContentType(produces, accept)) {
-            // the response type is not accepted by the client so its a HTTP_ERROR 406
-            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
-            // stop routing
-            exchange.setProperty(Exchange.ROUTE_STOP, true);
-            // return
-            return;
+            // check if what is produces is accepted by the client
+            if (!isValidOrAcceptedContentType(produces, accept)) {
+                // the response type is not accepted by the client so its a HTTP_ERROR 406
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
+            }
         }
 
         String body = null;

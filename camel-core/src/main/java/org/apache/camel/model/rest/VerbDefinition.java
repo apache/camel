@@ -69,6 +69,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private Boolean skipBindingOnErrorCode;
 
     @XmlAttribute
+    private Boolean clientRequestValidation;
+
+    @XmlAttribute
     private Boolean enableCORS;
 
     @XmlAttribute
@@ -206,6 +209,22 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCORS() {
