@@ -139,6 +139,14 @@ public class RestConfigurationDefinitionProperties {
      */
     private Boolean skipBindingOnErrorCode = false;
     /**
+     * Whether to enable validation of the client request to check whether the
+     * Content-Type and Accept headers from the client is supported by the
+     * Rest-DSL configuration of its consumes/produces settings. This can be
+     * turned on, to enable this check. In case of validation error, then HTTP
+     * Status codes 415 or 406 is returned. The default value is false.
+     */
+    private Boolean clientRequestValidation = false;
+    /**
      * Whether to enable CORS headers in the HTTP response. The default value is
      * false.
      */
@@ -325,6 +333,14 @@ public class RestConfigurationDefinitionProperties {
 
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCors() {

@@ -646,6 +646,29 @@ key `verbose` then Camel will now include a header with key `verbose`
 and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
 
+
+=== Client Request Validation
+
+From *Camel 2.22* onwards its possible to enable validation of the incoming client request.
+The validation checks for the following:
+
+- Content-Type header matches what the Rest DSL consumes.
+- Accept header matches what the Rest DSL produces.
+- Missing required data (query, context-path, body).
+
+If the validation fails then Rest DSL will return back an empty response
+with HTTP error code 415 or 406.
+
+The validation is by default turned off (to be backwards compatible).
+It can be turned on via `clientRequestValidation` as shown below:
+
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost")
+    .clientRequestValidation(true);
+----
+
+
 === Integrating a Camel component with Rest DSL
 
 Any Apache Camel component can integrate with the Rest DSL if they can

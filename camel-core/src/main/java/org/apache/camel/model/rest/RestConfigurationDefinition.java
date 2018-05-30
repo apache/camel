@@ -90,6 +90,9 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
 
+    @XmlAttribute
+    private Boolean clientRequestValidation;
+
     @XmlAttribute @Metadata(label = "consumer")
     private Boolean enableCORS;
 
@@ -345,6 +348,22 @@ public class RestConfigurationDefinition {
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCORS() {
@@ -631,6 +650,15 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     */
+    public RestConfigurationDefinition clientRequestValidation(boolean clientRequestValidation) {
+        setClientRequestValidation(clientRequestValidation);
+        return this;
+    }
+
+    /**
      * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
      */
     public RestConfigurationDefinition enableCORS(boolean enableCORS) {
@@ -811,6 +839,9 @@ public class RestConfigurationDefinition {
         }
         if (skipBindingOnErrorCode != null) {
             answer.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+        }
+        if (clientRequestValidation != null) {
+            answer.setClientRequestValidation(clientRequestValidation);
         }
         if (enableCORS != null) {
             answer.setEnableCORS(enableCORS);
