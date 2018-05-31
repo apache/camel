@@ -29,46 +29,109 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 @UriParams
 public class Web3jConfiguration implements Cloneable {
 
-    // TODO: Add javadoc for setter for documentation and add @UriParam to each option
-
     @UriParam(label = "producer", defaultValue = "transaction")
     private String operation = Web3jConstants.TRANSACTION.toLowerCase(); // TODO: Make this an enum
+
+    @UriParam(label = "common", defaultValue = "latest")
     private DefaultBlockParameter fromBlock;
+
+    @UriParam(label = "common", defaultValue = "latest")
     private DefaultBlockParameter toBlock;
+
+    @UriParam(label = "producer", defaultValue = "latest")
     private DefaultBlockParameter atBlock;
+
+    @UriParam(label = "common")
     private List<String> addresses;
+
+    @UriParam(label = "producer")
     private String address;
+
+    @UriParam(label = "common")
     private List<String> topics; //TODO doesn't support list of lists
+
+    @UriParam(label = "producer")
     private BigInteger position;
+
+    @UriParam(label = "producer")
     private String blockHash;
+
+    @UriParam(label = "producer")
     private String sha3HashOfDataToSign;
+
+    @UriParam(label = "producer")
     private String signedTransactionData;
+
+    @UriParam(label = "producer")
     private BigInteger transactionIndex;
+
+    @UriParam(label = "producer")
     private BigInteger filterId;
+
+    @UriParam(label = "producer")
     private String databaseName;
+
+    @UriParam(label = "producer")
     private String keyName;
+
+    @UriParam(label = "producer")
     private String transactionHash;
+
+    @UriParam(label = "producer")
     private String sourceCode;
+
+    @UriParam(label = "producer")
     private String nonce;
+
+    @UriParam(label = "producer")
     private String headerPowHash;
+
+    @UriParam(label = "producer")
     private String mixDigest;
+
+    @UriParam(label = "producer")
     private String hashrate;
+
+    @UriParam(label = "producer")
     private String clientId;
+
+    @UriParam(label = "common")
     private String fromAddress;
+
+    @UriParam(label = "common")
     private String toAddress;
+
+    @UriParam(label = "producer")
     private BigInteger gasPrice;
+
+    @UriParam
     private BigInteger gasLimit;
+
+    @UriParam(label = "producer")
     private BigInteger value;
+
+    @UriParam(label = "producer")
     private String data;
+
+    @UriParam(label = "producer")
     private BigInteger priority;
+
+    @UriParam(label = "producer")
     private BigInteger ttl;
+
+    @UriParam(label = "common")
     private Web3j web3j;
+
+    @UriParam(label = "common")
     private boolean fullTransactionObjects;
 
     public Web3j getWeb3j() {
         return web3j;
     }
 
+    /**
+     * The preconfigured Web3j object.
+     */
     public void setWeb3j(Web3j web3j) {
         this.web3j = web3j;
     }
@@ -77,6 +140,9 @@ public class Web3jConfiguration implements Cloneable {
         return priority;
     }
 
+    /**
+     * The priority of a whisper message.
+     */
     public void setPriority(BigInteger priority) {
         this.priority = priority;
     }
@@ -85,6 +151,9 @@ public class Web3jConfiguration implements Cloneable {
         return ttl;
     }
 
+    /**
+     * The time to live in seconds of a whisper message.
+     */
     public void setTtl(BigInteger ttl) {
         this.ttl = ttl;
     }
@@ -93,6 +162,9 @@ public class Web3jConfiguration implements Cloneable {
         return gasPrice;
     }
 
+    /**
+     * Gas price used for each paid gas.
+     */
     public void setGasPrice(BigInteger gasPrice) {
         this.gasPrice = gasPrice;
     }
@@ -101,6 +173,9 @@ public class Web3jConfiguration implements Cloneable {
         return gasLimit;
     }
 
+    /**
+     * The maximum gas allowed in this block.
+     */
     public void setGasLimit(BigInteger gasLimit) {
         this.gasLimit = gasLimit;
     }
@@ -109,6 +184,9 @@ public class Web3jConfiguration implements Cloneable {
         return value;
     }
 
+    /**
+     * The value sent within a transaction.
+     */
     public void setValue(BigInteger value) {
         this.value = value;
     }
@@ -117,6 +195,9 @@ public class Web3jConfiguration implements Cloneable {
         return data;
     }
 
+    /**
+     * The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.
+     */
     public void setData(String data) {
         this.data = data;
     }
@@ -125,6 +206,9 @@ public class Web3jConfiguration implements Cloneable {
         return fromAddress;
     }
 
+    /**
+     * The address the transaction is send from
+     */
     public void setFromAddress(String fromAddress) {
         this.fromAddress = fromAddress;
     }
@@ -133,6 +217,9 @@ public class Web3jConfiguration implements Cloneable {
         return toAddress;
     }
 
+    /**
+     * The address the transaction is directed to.
+     */
     public void setToAddress(String toAddress) {
         this.toAddress = toAddress;
     }
@@ -141,6 +228,9 @@ public class Web3jConfiguration implements Cloneable {
         return clientId;
     }
 
+    /**
+     * A random hexadecimal(32 bytes) ID identifying the client.
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -149,6 +239,9 @@ public class Web3jConfiguration implements Cloneable {
         return hashrate;
     }
 
+    /**
+     * A hexadecimal string representation (32 bytes) of the hash rate.
+     */
     public void setHashrate(String hashrate) {
         this.hashrate = hashrate;
     }
@@ -157,6 +250,9 @@ public class Web3jConfiguration implements Cloneable {
         return mixDigest;
     }
 
+    /**
+     * The mix digest (256 bits) used for submitting a proof-of-work solution.
+     */
     public void setMixDigest(String mixDigest) {
         this.mixDigest = mixDigest;
     }
@@ -165,6 +261,9 @@ public class Web3jConfiguration implements Cloneable {
         return headerPowHash;
     }
 
+    /**
+     * The header's pow-hash (256 bits) used for submitting a proof-of-work solution.
+     */
     public void setHeaderPowHash(String headerPowHash) {
         this.headerPowHash = headerPowHash;
     }
@@ -173,6 +272,9 @@ public class Web3jConfiguration implements Cloneable {
         return nonce;
     }
 
+    /**
+     * The nonce found (64 bits) used for submitting a proof-of-work solution.
+     */
     public void setNonce(String nonce) {
         this.nonce = nonce;
     }
@@ -181,6 +283,9 @@ public class Web3jConfiguration implements Cloneable {
         return sourceCode;
     }
 
+    /**
+     * The source code to compile.
+     */
     public void setSourceCode(String sourceCode) {
         this.sourceCode = sourceCode;
     }
@@ -189,6 +294,9 @@ public class Web3jConfiguration implements Cloneable {
         return transactionHash;
     }
 
+    /**
+     * The information about a transaction requested by transaction hash.
+     */
     public void setTransactionHash(String transactionHash) {
         this.transactionHash = transactionHash;
     }
@@ -197,6 +305,9 @@ public class Web3jConfiguration implements Cloneable {
         return databaseName;
     }
 
+    /**
+     * The local database name.
+     */
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
     }
@@ -205,6 +316,9 @@ public class Web3jConfiguration implements Cloneable {
         return keyName;
     }
 
+    /**
+     * The key name in the database.
+     */
     public void setKeyName(String keyName) {
         this.keyName = keyName;
     }
@@ -213,6 +327,9 @@ public class Web3jConfiguration implements Cloneable {
         return filterId;
     }
 
+    /**
+     * The filter id to use.
+     */
     public void setFilterId(BigInteger filterId) {
         this.filterId = filterId;
     }
@@ -221,6 +338,9 @@ public class Web3jConfiguration implements Cloneable {
         return transactionIndex;
     }
 
+    /**
+     * The transactions index position in the block.
+     */
     public void setTransactionIndex(BigInteger transactionIndex) {
         this.transactionIndex = transactionIndex;
     }
@@ -229,6 +349,9 @@ public class Web3jConfiguration implements Cloneable {
         return signedTransactionData;
     }
 
+    /**
+     * The signed transaction data for a new message call transaction or a contract creation for signed transactions.
+     */
     public void setSignedTransactionData(String signedTransactionData) {
         this.signedTransactionData = signedTransactionData;
     }
@@ -237,6 +360,9 @@ public class Web3jConfiguration implements Cloneable {
         return blockHash;
     }
 
+    /**
+     * Hash of the block where this transaction was in.
+     */
     public void setBlockHash(String blockHash) {
         this.blockHash = blockHash;
     }
@@ -245,6 +371,9 @@ public class Web3jConfiguration implements Cloneable {
         return sha3HashOfDataToSign;
     }
 
+    /**
+     * Message to sign by calculating an Ethereum specific signature.
+     */
     public void setSha3HashOfDataToSign(String sha3HashOfDataToSign) {
         this.sha3HashOfDataToSign = sha3HashOfDataToSign;
     }
@@ -253,6 +382,9 @@ public class Web3jConfiguration implements Cloneable {
         return position;
     }
 
+    /**
+     * The transaction index position withing a block.
+     */
     public void setPosition(BigInteger position) {
         this.position = position;
     }
@@ -261,10 +393,16 @@ public class Web3jConfiguration implements Cloneable {
         return fromBlock;
     }
 
+    /**
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     */
     public void setFromBlock(String block) {
         this.fromBlock = toDefaultBlockParameter(block);
     }
 
+    /**
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     */
     public void setToBlock(String block) {
         this.toBlock = toDefaultBlockParameter(block);
     }
@@ -294,6 +432,9 @@ public class Web3jConfiguration implements Cloneable {
         return atBlock;
     }
 
+    /**
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     */
     public void setAtBlock(String block) {
         this.atBlock = toDefaultBlockParameter(block);
     }
@@ -302,6 +443,9 @@ public class Web3jConfiguration implements Cloneable {
         return addresses;
     }
 
+    /**
+     * Contract address or a list of addresses.
+     */
     public void setAddresses(List<String> addresses) {
         this.addresses = addresses;
     }
@@ -310,6 +454,9 @@ public class Web3jConfiguration implements Cloneable {
         return topics;
     }
 
+    /**
+     * Topics are order-dependent. Each topic can also be a list of topics.
+     */
     public void setTopics(List<String> topics) {
         this.topics = topics;
     }
@@ -318,6 +465,9 @@ public class Web3jConfiguration implements Cloneable {
         return address;
     }
 
+    /**
+     * Contract address.
+     */
     public void setAddress(String address) {
         this.address = address;
     }
@@ -326,6 +476,9 @@ public class Web3jConfiguration implements Cloneable {
         return fullTransactionObjects;
     }
 
+    /**
+     *  If true it returns the full transaction objects, if false only the hashes of the transactions.
+     */
     public void setFullTransactionObjects(boolean fullTransactionObjects) {
         this.fullTransactionObjects = fullTransactionObjects;
     }
