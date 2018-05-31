@@ -652,7 +652,7 @@ functionality is only applicable for query parameters.
 From *Camel 2.22* onwards its possible to enable validation of the incoming client request.
 The validation checks for the following:
 
-- Content-Type header matches what the Rest DSL consumes. (Returns HTTP Status 416)
+- Content-Type header matches what the Rest DSL consumes. (Returns HTTP Status 415)
 - Accept header matches what the Rest DSL produces. (Returns HTTP Status 406)
 - Missing required data (query parameters, HTTP headers, body). (Returns HTTP Status 400)
 

@@ -71,7 +71,6 @@ public class RestJettyRequiredQueryParameterTest extends BaseJettyTest {
                     .post("{id}/update").consumes("application/json").produces("application/json")
                     .param().name("country").required(true).type(RestParamType.query).endParam()
                         .route()
-                        .to("mock:input")
                         .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
