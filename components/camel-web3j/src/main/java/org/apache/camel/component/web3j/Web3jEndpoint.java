@@ -46,19 +46,22 @@ import org.web3j.protocol.ipc.WindowsIpcService;
 /**
  * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "web3j", syntax = "web3j:cmsUrl", consumerClass = Web3jConsumer.class, label = "web3j,blockchain")
+@UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j client for Ethereum blockchain", syntax = "web3j:host:port", consumerClass = Web3jConsumer.class, label = "blockchain, ethereum")
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
-    @UriPath(description = "URL to the web3j repository")
-    @Metadata(required = "true")
     private final Web3j web3j;
+
+    @UriPath @Metadata(required = "true")
+    private String nodeAddress;
+
     @UriParam
     private Web3jConfiguration configuration;
 
     public Web3jEndpoint(String uri, String remaining, Web3jComponent component, Web3jConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        this.nodeAddress = remaining;
         this.web3j = buildService(remaining, configuration);
     }
 
@@ -101,6 +104,17 @@ public class Web3jEndpoint extends DefaultEndpoint {
         }
 
         return Web3j.build(web3jService);
+    }
+
+    public String getNodeAddress() {
+        return nodeAddress;
+    }
+
+    /**
+     * Sets the node address used to communicate
+     */
+    public void setNodeAddress(String nodeAddress) {
+        this.nodeAddress = nodeAddress;
     }
 
     public static EthFilter buildEthFilter(DefaultBlockParameter fromBlock, DefaultBlockParameter toBlock, List<String> addresses, List<String> topics) {
