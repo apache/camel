@@ -22,7 +22,7 @@ import com.orbitz.consul.CatalogClient;
 import com.orbitz.consul.HealthClient;
 import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.junit.Test;
 

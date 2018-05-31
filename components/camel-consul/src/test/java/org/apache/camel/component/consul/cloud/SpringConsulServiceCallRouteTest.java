@@ -20,7 +20,6 @@ package org.apache.camel.component.consul.cloud;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
@@ -29,21 +28,16 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.component.consul.support.ConsulContainerSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
-public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
-
-    @Rule
-    public GenericContainer container = ConsulContainerSupport.consulContainer();
-
+public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpringTestSupport {
     private AgentClient client;
     private List<Registration> registrations;
 
@@ -52,17 +46,11 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
     // *************************************************************************
 
     @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        Properties properties = new Properties();
-        properties.put("consul.url", ConsulContainerSupport.consulUrl(container));
-
-        return properties;
-    }
-
-    @Override
     public void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         this.client = Consul.builder()
-            .withUrl(ConsulContainerSupport.consulUrl(container))
+            .withUrl(consulUrl())
             .build()
             .agentClient();
 
@@ -106,13 +94,15 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         );
 
         this.registrations.forEach(client::register);
-        super.doPreSetup();
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        registrations.forEach(r -> client.deregister(r.getId()));
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
+        if (client != null) {
+            registrations.forEach(r -> client.deregister(r.getId()));
+        }
     }
 
     // *************************************************************************
@@ -161,5 +151,18 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         }
 
         return processors;
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return ConsulTestSupport.consulContainer();
+    }
+
+    protected String consulUrl() {
+        return String.format(
+            "http://%s:%d",
+            getContainerHost(ConsulTestSupport.CONTAINER_NAME),
+            getContainerPort(ConsulTestSupport.CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT)
+        );
     }
 }

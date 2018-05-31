@@ -26,8 +26,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.support.ConsulContainerSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.junit.Assert;
@@ -40,7 +41,7 @@ import org.testcontainers.containers.GenericContainer;
 public class ConsulClusteredRoutePolicyFactoryTest {
 
     @ClassRule
-    public static GenericContainer container = ConsulContainerSupport.consulContainer();
+    public static GenericContainer container = ConsulTestSupport.consulContainer();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryTest.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
@@ -76,7 +77,7 @@ public class ConsulClusteredRoutePolicyFactoryTest {
 
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
-            service.setUrl(ConsulContainerSupport.consulUrl(container));
+            service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
 
             LOGGER.info("Consul URL {}", service.getUrl());
 

@@ -150,9 +150,8 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         configurationMethod.accept(salesforce);
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        CamelTestSupport.tearDownAfterClass();
+    @Override
+    public void cleanupResources() throws Exception {
         // stop the proxy server after component
         LOG.info("Stopping proxy server...");
         server.stop();

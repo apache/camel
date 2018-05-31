@@ -27,7 +27,7 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.junit.Test;
 import org.springframework.util.SocketUtils;
 

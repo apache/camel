@@ -21,7 +21,6 @@ import java.util.List;
 import com.orbitz.consul.model.health.Node;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCatalogActions;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 

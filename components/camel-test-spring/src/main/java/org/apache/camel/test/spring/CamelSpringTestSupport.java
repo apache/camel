@@ -28,7 +28,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -121,8 +120,10 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         }
     }
 
-    @AfterClass
-    public static void tearSpringDownAfterClass() throws Exception {
+    @Override
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
         if (threadAppContext.get() != null) {
             IOHelper.close(threadAppContext.get());
             threadAppContext.remove();

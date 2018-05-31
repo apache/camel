@@ -22,7 +22,6 @@ import com.orbitz.consul.model.coordinate.Coordinate;
 import com.orbitz.consul.model.coordinate.Datacenter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCoordinatesActions;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

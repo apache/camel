@@ -25,7 +25,7 @@ import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.junit.Test;
 
 public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
@@ -43,6 +43,8 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         client = getConsul().agentClient();
 
         registrations = new ArrayList<>(SERVICE_COUNT);
@@ -64,8 +66,8 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
 
         registrations.forEach(r -> client.deregister(r.getId()));
     }

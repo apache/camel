@@ -14,20 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.support;
+package org.apache.camel.test.testcontainers;
 
-import com.orbitz.consul.Consul;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
-public final class ConsulContainerSupport {
-    private ConsulContainerSupport() {
+public class ContainerAwareTestSupportIT extends ContainerAwareTestSupport {
+    @Test
+    public void testPropertyPlaceholders() throws Exception {
+        final GenericContainer<?> container = getContainer("myconsul");
+
+        final String host = context.resolvePropertyPlaceholders("{{container:host:myconsul}}");
+        Assertions.assertThat(host).isEqualTo(container.getContainerIpAddress());
+
+        final String port = context.resolvePropertyPlaceholders("{{container:port:8500@myconsul}}");
+        Assertions.assertThat(port).isEqualTo("" + container.getMappedPort(8500));
     }
 
-    public static GenericContainer consulContainer() {
+    @Override
+    protected GenericContainer<?> createContainer() {
         return new GenericContainer("consul:1.0.0")
-            .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
-            .waitingFor(new ConsulContainerWaitStrategy())
-            .withLogConsumer(new ConsulContainerLogger())
+            .withNetworkAliases("myconsul")
+            .withExposedPorts(8500)
+            .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
             .withCommand(
                 "agent",
                 "-dev",
@@ -40,7 +50,4 @@ public final class ConsulContainerSupport {
             );
     }
 
-    public static  String consulUrl(GenericContainer container) {
-        return String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
-    }
 }

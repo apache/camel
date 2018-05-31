@@ -41,6 +41,8 @@
     <module>camel-test-cdi</module>
     <module>camel-test-karaf</module>
     <module>camel-test-spring</module>
+    <module>camel-testcontainers</module>
+    <module>camel-testcontainers-spring</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
