@@ -176,11 +176,11 @@ public final class CollectionHelper {
     /**
      * Build a map from varargs.
      */
-    public static <K, V> Map<K, V> mapOf(Supplier<Map<K,V>> creator, K key, V value, Object... keyVals) {
+    public static <K, V> Map<K, V> mapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
         Map<K, V> map = creator.get();
         map.put(key, value);
 
-        for(int i = 0; i < keyVals.length; i += 2) {
+        for (int i = 0; i < keyVals.length; i += 2) {
             map.put(
                 (K) keyVals[i],
                 (V) keyVals[i + 1]
@@ -194,7 +194,7 @@ public final class CollectionHelper {
     /**
      * Build an immutable map from varargs.
      */
-    public static <K, V> Map<K, V> immutableMapOf(Supplier<Map<K,V>> creator, K key, V value, Object... keyVals) {
+    public static <K, V> Map<K, V> immutableMapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
         return Collections.unmodifiableMap(
             mapOf(creator, key, value, keyVals)
         );
