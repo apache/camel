@@ -164,7 +164,7 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
         final String servicePath = applySimpleLanguage(contextPath, exchange);
         final String serviceScheme = applySimpleLanguage(scheme, exchange);
 
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_URI,serviceUri);
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_URI, serviceUri);
         message.setHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, servicePath);
         message.setHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, serviceScheme);
         message.setHeader(ServiceCallConstants.SERVICE_NAME, serviceName);

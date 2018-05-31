@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.cloud.ServiceDefinition;
-import org.junit.Test;
-
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
+
+import org.apache.camel.cloud.ServiceDefinition;
+import org.junit.Test;
 
 public class ServiceDefinitionTest {
     @Test
