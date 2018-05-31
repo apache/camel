@@ -72,7 +72,6 @@ public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
                     .post("{id}/update").consumes("application/json").produces("application/json")
                     .param().name("country").required(true).type(RestParamType.header).endParam()
                         .route()
-                        .to("mock:input")
                         .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };

@@ -70,7 +70,6 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
                     .post("{id}/update").consumes("application/json").produces("application/json")
                     .param().name("body").required(true).type(RestParamType.body).endParam()
                         .route()
-                        .to("mock:input")
                         .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };

@@ -80,7 +80,6 @@ public class RestJettyAcceptTest extends BaseJettyTest {
                 rest("/users/")
                     .post("{id}/update").consumes("application/json").produces("application/json")
                         .route()
-                        .to("mock:input")
                         .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
