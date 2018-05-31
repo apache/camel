@@ -135,14 +135,6 @@
       <version>${spring-boot-version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- testing (docker) -->
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>${testcontainers-version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>

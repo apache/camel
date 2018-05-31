@@ -438,6 +438,8 @@
 	* [Test CDI](test-cdi.adoc)
 	* [Test Karaf](test-karaf.adoc)
 	* [Test Spring](test-spring.adoc)
+	* [Testcontainers](testcontainers.adoc)
+	* [Testcontainers Spring](testcontainers-spring.adoc)
 	* [TestNG](testng.adoc)
 	* [URLRewrite](urlrewrite.adoc)
 	* [XRay](aws-xray.adoc)

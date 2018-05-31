@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 

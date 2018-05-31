@@ -283,6 +283,8 @@
         <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
+        <include>org.apache.camel:camel-testcontainers</include>
+        <include>org.apache.camel:camel-testcontainers-spring</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>

@@ -47,7 +47,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -384,11 +383,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         System.clearProperty("skipStartingCamelContext");
         System.clearProperty("registerBlueprintCamelContextEager");
+
         super.tearDown();
-        if (isCreateCamelContextPerClass()) {
-            // we tear down in after class
-            return;
-        }
 
         // unregister services
         if (bundleContext != null) {
@@ -396,16 +392,17 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
                 bundleContext.ungetService(reg.getReference());
             }
         }
+
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
     }
-    
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+
+    @Override
+    public void cleanupResources() throws Exception {
         if (threadLocalBundleContext.get() != null) {
             CamelBlueprintHelper.disposeBundleContext(threadLocalBundleContext.get());
             threadLocalBundleContext.remove();
         }
-        CamelTestSupport.tearDownAfterClass();
+        super.cleanupResources();
     }
 
     /**

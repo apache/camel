@@ -126,11 +126,6 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         return context;
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        CamelTestSupport.tearDownAfterClass();
-    }
-
     @Override
     public boolean isCreateCamelContextPerClass() {
         // only create the context once for this class

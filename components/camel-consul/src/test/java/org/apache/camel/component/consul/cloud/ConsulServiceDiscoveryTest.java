@@ -27,7 +27,7 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.junit.Test;
 import org.springframework.util.SocketUtils;
 
@@ -42,6 +42,8 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         client = getConsul().agentClient();
         registrations = new ArrayList<>(3);
 
@@ -72,8 +74,8 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
 
         registrations.forEach(r -> client.deregister(r.getId()));
     }

@@ -24,7 +24,6 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.component.consul.support.ConsulContainerSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class ConsulRegistryTest implements Serializable {
 
     @BeforeClass
     public static void setUp() {
-        container = ConsulContainerSupport.consulContainer();
+        container = ConsulTestSupport.consulContainer();
         container.start();
 
         registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));

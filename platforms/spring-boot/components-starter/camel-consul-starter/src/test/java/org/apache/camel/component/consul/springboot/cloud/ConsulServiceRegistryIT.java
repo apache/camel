@@ -23,29 +23,48 @@ import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.catalog.CatalogService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.component.consul.springboot.cloud.support.ConsulContainerSupport;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
+import org.apache.camel.test.testcontainers.Wait;
 import org.junit.Rule;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConsulServiceRegistryIT {
-    protected static final String SERVICE_ID = UUID.randomUUID().toString();
-    protected static final String SERVICE_NAME = "my-service";
-    protected static final String SERVICE_HOST = "localhost";
-    protected static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulServiceRegistryIT.class);
+    private static final String SERVICE_ID = UUID.randomUUID().toString();
+    private static final String SERVICE_NAME = "my-service";
+    private static final String SERVICE_HOST = "localhost";
+    private static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Rule
-    public GenericContainer container = ConsulContainerSupport.consulContainer();
+    public GenericContainer container = new GenericContainer("consul:1.0.0")
+        .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
+        .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+        .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("consul"))
+        .withCommand(
+            "agent",
+            "-dev",
+            "-server",
+            "-bootstrap",
+            "-client",
+            "0.0.0.0",
+            "-log-level",
+            "trace"
+        );
 
     @Test
     public void testServiceRegistry() {
+        final String consulUrl = String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
+
         new ApplicationContextRunner()
             .withUserConfiguration(TestConfiguration.class)
             .withPropertyValues(
@@ -53,7 +72,7 @@ public class ConsulServiceRegistryIT {
                 "spring.main.banner-mode=OFF",
                 "spring.application.name=" + UUID.randomUUID().toString(),
                 "camel.component.consul.service-registry.enabled=true",
-                "camel.component.consul.service-registry.url=" + ConsulContainerSupport.consulUrl(container),
+                "camel.component.consul.service-registry.url=" + consulUrl,
                 "camel.component.consul.service-registry.id=" + UUID.randomUUID().toString(),
                 "camel.component.consul.service-registry.service-host=localhost")
             .run(
@@ -75,7 +94,7 @@ public class ConsulServiceRegistryIT {
                             .build()
                     );
 
-                    final Consul client = Consul.builder().withUrl(ConsulContainerSupport.consulUrl(container)).build();
+                    final Consul client = Consul.builder().withUrl(consulUrl).build();
                     final List<CatalogService> services = client.catalogClient().getService(SERVICE_NAME).getResponse();
 
                     assertThat(services).hasSize(1);
