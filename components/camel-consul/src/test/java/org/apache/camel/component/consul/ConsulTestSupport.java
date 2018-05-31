@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.support;
+package org.apache.camel.component.consul;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,21 +22,20 @@ import java.util.UUID;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
-import org.apache.camel.component.consul.ConsulComponent;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.Wait;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.testcontainers.containers.GenericContainer;
 
-public class ConsulTestSupport extends CamelTestSupport {
+public class ConsulTestSupport extends ContainerAwareTestSupport {
+    public static final String CONTAINER_IMAGE = "consul:1.0.0";
+    public static final String CONTAINER_NAME = "consul";
     public static final String KV_PREFIX = "/camel";
 
     @Rule
     public final TestName testName = new TestName();
-
-    @Rule
-    public GenericContainer container = ConsulContainerSupport.consulContainer();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -78,6 +77,32 @@ public class ConsulTestSupport extends CamelTestSupport {
     }
 
     protected String consulUrl() {
-        return ConsulContainerSupport.consulUrl(container);
+        return String.format(
+            "http://%s:%d",
+            getContainerHost(CONTAINER_NAME),
+            getContainerPort(CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT)
+        );
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return consulContainer();
+    }
+
+    public static GenericContainer consulContainer() {
+        return new GenericContainer(CONTAINER_IMAGE)
+            .withNetworkAliases(CONTAINER_NAME)
+            .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
+            .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+            .withCommand(
+                "agent",
+                "-dev",
+                "-server",
+                "-bootstrap",
+                "-client",
+                "0.0.0.0",
+                "-log-level",
+                "trace"
+            );
     }
 }

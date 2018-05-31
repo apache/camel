@@ -24,9 +24,11 @@ import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.catalog.model.CatalogService;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
-import org.apache.camel.spring.cloud.consul.support.ConsulContainerSupport;
+import org.apache.camel.test.testcontainers.Wait;
 import org.junit.Rule;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -34,17 +36,32 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamelCloudConsulServiceRegistryTest {
-    protected static final String SERVICE_ID = UUID.randomUUID().toString();
-    protected static final String SERVICE_NAME = "my-service";
-    protected static final String SERVICE_HOST = "localhost";
-    protected static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelCloudConsulServiceRegistryTest.class);
+    private static final String SERVICE_ID = UUID.randomUUID().toString();
+    private static final String SERVICE_NAME = "my-service";
+    private static final String SERVICE_HOST = "localhost";
+    private static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Rule
-    public GenericContainer container = ConsulContainerSupport.consulContainer();
+    public GenericContainer container =  new GenericContainer("consul:1.0.0")
+        .withExposedPorts(8500)
+        .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+        .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("consul"))
+        .withCommand(
+            "agent",
+            "-dev",
+            "-server",
+            "-bootstrap",
+            "-client",
+            "0.0.0.0",
+            "-log-level",
+            "trace"
+        );
 
     @Test
     public void testServiceRegistry() throws Exception {

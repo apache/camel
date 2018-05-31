@@ -27,7 +27,6 @@ import com.orbitz.consul.model.agent.Registration;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulHealthActions;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,6 +41,8 @@ public class ConsulHealthTest extends ConsulTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         Random random = new Random();
 
         this.service = UUID.randomUUID().toString();
@@ -62,12 +63,12 @@ public class ConsulHealthTest extends ConsulTestSupport {
         );
 
         this.registrations.forEach(client::register);
-        super.doPreSetup();
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
         registrations.forEach(r -> client.deregister(r.getId()));
     }
 

@@ -567,7 +567,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
             }
         }
 
-        if (IGNORE_TEST_MODULES && (project.getArtifactId().startsWith("camel-test") || project.getArtifactId().startsWith("camel-testng"))) {
+        if (IGNORE_TEST_MODULES && (project.getArtifactId().startsWith("camel-test") || project.getArtifactId().startsWith("camel-testng") || project.getArtifactId().startsWith("camel-testcontainers"))) {
             getLog().debug("Test components are ignored");
             return false;
         }

@@ -21,7 +21,6 @@ import java.util.Random;
 
 import com.orbitz.consul.KeyValueClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.support.ConsulTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
