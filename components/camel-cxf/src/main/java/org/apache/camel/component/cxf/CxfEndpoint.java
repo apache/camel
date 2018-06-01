@@ -88,8 +88,8 @@ import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.headers.Header;
@@ -341,11 +341,11 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() != 0) {
-                sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                sfb.getFeatures().add(new LoggingFeature());
+            LoggingFeature loggingFeature = new LoggingFeature();
+            if (getLoggingSizeLimit() > 0) {
+                loggingFeature.setLimit(getLoggingSizeLimit());
             }
+            sfb.getFeatures().add(loggingFeature);
         }
 
         if (getDataFormat() == DataFormat.PAYLOAD) {
@@ -530,11 +530,12 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() != 0) {
-                factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                factoryBean.getFeatures().add(new LoggingFeature());
+            LoggingFeature loggingFeature = new LoggingFeature();
+            if (getLoggingSizeLimit() > 0) {
+                loggingFeature.setLimit(getLoggingSizeLimit());
+
             }
+            factoryBean.getFeatures().add(loggingFeature);
         }
 
         // set the document-literal wrapped style

@@ -47,8 +47,8 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
@@ -359,11 +359,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
 
         if (isLoggingFeatureEnabled()) {
+            LoggingFeature loggingFeature = new LoggingFeature();
             if (getLoggingSizeLimit() > 0) {
-                factory.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                factory.getFeatures().add(new LoggingFeature());
+                loggingFeature.setLimit(getLoggingSizeLimit());
             }
+            factory.getFeatures().add(loggingFeature);
         }
         if (this.isSkipFaultLogging()) {
             if (factory.getProperties() == null) {
