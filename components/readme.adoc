@@ -854,8 +854,8 @@ Number of Components: 295 in 202 JAR artifacts (20 deprecated)
 | link:camel-weather/src/main/docs/weather-component.adoc[Weather] (camel-weather) +
 `weather:name` | 2.12 | Polls the weather information from Open Weather Map.
 
-| link:camel-web3j/src/main/docs/web3j-component.adoc[web3j] (camel-web3j) +
-`web3j:cmsUrl` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
+| link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j client for Ethereum blockchain] (camel-web3j) +
+`web3j:host:port` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
