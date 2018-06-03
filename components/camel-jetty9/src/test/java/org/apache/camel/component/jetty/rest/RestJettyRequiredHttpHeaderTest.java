@@ -53,7 +53,7 @@ public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(400, cause.getStatusCode());
-            assertEquals("", cause.getResponseBody());
+            assertEquals("Some of the required HTTP headers are missing.", cause.getResponseBody());
         }
     }
 

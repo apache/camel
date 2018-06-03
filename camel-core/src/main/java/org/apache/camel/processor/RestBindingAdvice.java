@@ -263,6 +263,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 if (body == null) {
                     // this is a bad request, the client did not include a message body
                     exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                    exchange.getOut().setBody("The request body is missing.");
                     // stop routing and return
                     exchange.setProperty(Exchange.ROUTE_STOP, true);
                     return;
@@ -271,6 +272,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (requiredQueryParameters != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
                 // this is a bad request, the client did not include some of the required query parameters
                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getOut().setBody("Some of the required query parameters are missing.");
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
@@ -278,6 +280,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (requiredHeaders != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredHeaders)) {
                 // this is a bad request, the client did not include some of the required http headers
                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getOut().setBody("Some of the required HTTP headers are missing.");
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;

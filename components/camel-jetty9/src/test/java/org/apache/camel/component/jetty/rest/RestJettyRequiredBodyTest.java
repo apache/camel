@@ -51,7 +51,7 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(400, cause.getStatusCode());
-            assertEquals("", cause.getResponseBody());
+            assertEquals("The request body is missing.", cause.getResponseBody());
         }
     }
 
