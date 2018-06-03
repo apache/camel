@@ -23,7 +23,6 @@ import java.util.UUID;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import org.apache.camel.component.consul.ConsulComponent;
-import org.apache.camel.component.consul.support.ConsulContainerSupport;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;

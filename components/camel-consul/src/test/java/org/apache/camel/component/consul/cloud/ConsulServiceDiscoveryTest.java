@@ -100,7 +100,7 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
             assertTrue(service.getMetadata().containsKey("a-tag"));
             assertTrue(service.getMetadata().containsKey("key1"));
             assertTrue(service.getMetadata().containsKey("key2"));
-            assertEquals("" + service.getHealth().isHealthy() , service.getMetadata().get("healthy"));
+            assertEquals("" + service.getHealth().isHealthy(), service.getMetadata().get("healthy"));
         }
     }
 }

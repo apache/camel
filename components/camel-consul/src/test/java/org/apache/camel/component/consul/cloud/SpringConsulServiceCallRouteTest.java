@@ -40,11 +40,12 @@ import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
 public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
-    private AgentClient client;
-    private List<Registration> registrations;
 
     @Rule
     public GenericContainer container = ConsulContainerSupport.consulContainer();
+
+    private AgentClient client;
+    private List<Registration> registrations;
 
     // *************************************************************************
     // Setup / tear down

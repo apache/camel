@@ -32,10 +32,10 @@ import org.junit.Test;
 import org.springframework.util.SocketUtils;
 
 public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSupport {
-    protected final static String SERVICE_ID = UUID.randomUUID().toString();
-    protected final static String SERVICE_NAME = "my-service";
-    protected final static String SERVICE_HOST = "localhost";
-    protected final static int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
+    protected static final String SERVICE_ID = UUID.randomUUID().toString();
+    protected static final String SERVICE_NAME = "my-service";
+    protected static final String SERVICE_HOST = "localhost";
+    protected static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     protected Map<String, String> getMetadata() {
         return Collections.emptyMap();

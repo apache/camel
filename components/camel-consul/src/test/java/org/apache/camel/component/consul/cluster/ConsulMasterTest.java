@@ -37,14 +37,15 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
 public class ConsulMasterTest {
+
+    @ClassRule
+    public static GenericContainer container = ConsulContainerSupport.consulContainer();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulMasterTest.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
-
-    @ClassRule
-    public static GenericContainer container = ConsulContainerSupport.consulContainer();
 
     // ************************************
     // Test

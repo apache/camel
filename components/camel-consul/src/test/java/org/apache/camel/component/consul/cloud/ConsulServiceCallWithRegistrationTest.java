@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.springframework.util.SocketUtils;
 
 public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
-    private final static String SERVICE_HOST = "localhost";
+    private static final String SERVICE_HOST = "localhost";
 
     // ******************************
     // Setup / tear down
