@@ -22,19 +22,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-import static org.apache.camel.component.web3j.Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE;
+import static org.apache.camel.component.web3j.Web3jConstants.BLOCK_OBSERVABLE;
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
-import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 import static org.mockito.ArgumentMatchers.any;
 
-public class Web3jConsumerCatchUpToLatestBlocksObservableTest extends Web3jTestSupport {
+public class Web3jConsumerBlockObservableMockTest extends Web3jMockTestSupport {
 
     @Mock
     private Observable<EthBlock> observable;
@@ -44,7 +42,7 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableTest extends Web3jTestS
         mockError.expectedMinimumMessageCount(0);
         mockResult.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.blockObservable(any(Boolean.class))).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -63,7 +61,7 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableTest extends Web3jTestS
         mockResult.expectedMessageCount(0);
         mockError.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.blockObservable(any(Boolean.class))).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -83,7 +81,7 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableTest extends Web3jTestS
         mockResult.expectedHeaderReceived("status", "done");
         mockError.expectedMinimumMessageCount(0);
 
-        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.blockObservable(any(Boolean.class))).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -102,7 +100,7 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableTest extends Web3jTestS
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE + "&fromBlock=5499965&toBlock=5499967")
+                from(getUrl() + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
                         .to("mock:result");
             }
         };

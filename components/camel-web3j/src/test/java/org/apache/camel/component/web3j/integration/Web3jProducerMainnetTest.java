@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.web3j;
+package org.apache.camel.component.web3j.integration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -23,17 +23,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.apache.camel.component.web3j.Web3jConstants.*;
+import static org.apache.camel.component.web3j.Web3jConstants.ETH_BLOCK_NUMBER;
+import static org.apache.camel.component.web3j.Web3jConstants.NET_VERSION;
+import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
+import static org.apache.camel.component.web3j.Web3jConstants.TRANSACTION;
+import static org.apache.camel.component.web3j.Web3jConstants.WEB3_CLIENT_VERSION;
+import static org.apache.camel.component.web3j.Web3jConstants.WEB3_SHA3;
 
-@Ignore("Integration test that requires a locally running synced ethereum node")
-public class Web3jProducerIntegrationTest extends Web3jTestSupport {
+@Ignore("Requires a local node or registration at Infura")
+public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
-    @Override
     protected String getUrl() {
-        return "web3j://http://127.0.0.1:8545?";
+        return "https://mainnet.infura.io/YOUR_INFURA_ID?";
     }
 
     @Test
@@ -61,12 +65,20 @@ public class Web3jProducerIntegrationTest extends Web3jTestSupport {
         assertTrue(body.equals("0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"));
     }
 
+    @Test
+    public void ethBlockNumberTest() throws Exception {
+        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_BLOCK_NUMBER);
+        template.send(exchange);
+        Long body = exchange.getIn().getBody(Long.class);
+        assertTrue(body.longValue() > 5714225); // latest block at time of writing
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION);
+                        .to("web3j://" + getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION);
             }
         };
     }

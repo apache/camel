@@ -14,51 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.web3j;
+package org.apache.camel.component.web3j.integration;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.apache.camel.component.web3j.Web3jConstants.*;
+import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
+import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
-@Ignore("Integration test that requires a locally running synced ethereum node")
-public class Web3jConsumerIntegrationTest extends Web3jTestSupport {
+@Ignore("Requires Ganache instance with 10 transactions")
+public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
 
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint mockResult;
-
-    @Override
-    protected String getUrl() {
-        return "web3j://http://127.0.0.1:8545?";
-    }
-
-    @Test(timeout = 600000L)
-    public void consumerTest() throws InterruptedException {
-        mockResult.setResultWaitTime(600000L);
-        mockResult.expectedMinimumMessageCount(1);
-        mockResult.assertIsSatisfied();
+    @Test
+    public void consumerTest() throws Exception {
+        mockResult.expectedMinimumMessageCount(4); // 3 blocks + DONE exchange
+        mockError.expectedMessageCount(0);
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
-                        .to("mock:result");
+                errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE)
+                from("web3j://" + getUrl()
+                        + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
+                        + "fromBlock=0&"
+                        + "toBlock=2&"
+                        + "fullTransactionObjects=false")
                         .to("mock:result");
-
-                from(getUrl() + OPERATION.toLowerCase() + "=" + PENDING_TRANSACTION_OBSERVABLE)
-                        .to("mock:result");
-
-                from(getUrl() + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
-                        .to("mock:result");
-
             }
         };
     }
+
 }

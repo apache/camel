@@ -22,8 +22,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.Transaction;
 import rx.Observable;
 import rx.Subscription;
@@ -31,11 +29,10 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
-import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
-import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE;
+import static org.apache.camel.component.web3j.Web3jConstants.TRANSACTION_OBSERVABLE;
 import static org.mockito.ArgumentMatchers.any;
 
-public class Web3jConsumerReplyTransactionsObservableTest extends Web3jTestSupport {
+public class Web3jConsumerTransactionObservableMockTest extends Web3jMockTestSupport {
 
     @Mock
     private Observable<Transaction> observable;
@@ -45,7 +42,7 @@ public class Web3jConsumerReplyTransactionsObservableTest extends Web3jTestSuppo
         mockError.expectedMinimumMessageCount(0);
         mockResult.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.replayTransactionsObservable(any(DefaultBlockParameter.class), any(DefaultBlockParameter.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.transactionObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -64,7 +61,7 @@ public class Web3jConsumerReplyTransactionsObservableTest extends Web3jTestSuppo
         mockResult.expectedMessageCount(0);
         mockError.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.replayTransactionsObservable(any(DefaultBlockParameter.class), any(DefaultBlockParameter.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.transactionObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -84,7 +81,7 @@ public class Web3jConsumerReplyTransactionsObservableTest extends Web3jTestSuppo
         mockResult.expectedHeaderReceived("status", "done");
         mockError.expectedMinimumMessageCount(0);
 
-        Mockito.when(mockWeb3j.replayTransactionsObservable(any(DefaultBlockParameter.class), any(DefaultBlockParameter.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.transactionObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -103,7 +100,7 @@ public class Web3jConsumerReplyTransactionsObservableTest extends Web3jTestSuppo
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + REPLAY_TRANSACTIONS_OBSERVABLE + "&fromBlock=5499965&toBlock=5499967")
+                from(getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
                         .to("mock:result");
             }
         };

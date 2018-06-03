@@ -22,33 +22,32 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.Transaction;
+import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.response.Log;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-import static org.apache.camel.component.web3j.Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE;
+import static org.apache.camel.component.web3j.Web3jConstants.ETH_LOG_OBSERVABLE;
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
-import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE;
 import static org.mockito.ArgumentMatchers.any;
 
-public class Web3jConsumerCatchUpToLatestTransactionsObservableTest extends Web3jTestSupport {
+public class Web3jConsumerEthLogObservableMockTest extends Web3jMockTestSupport {
 
     @Mock
-    private Observable<Transaction> observable;
+    private Observable<Log> observable;
 
     @Test
     public void successTest() throws Exception {
         mockError.expectedMinimumMessageCount(0);
         mockResult.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.catchUpToLatestTransactionObservable(any(DefaultBlockParameter.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethLogObservable(any(EthFilter.class))).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Transaction>)args[0]).call(new Transaction());
+                ((Action1<Log>)args[0]).call(new Log());
                 return subscription;
             }
         });
@@ -63,7 +62,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableTest extends Web3
         mockResult.expectedMessageCount(0);
         mockError.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.catchUpToLatestTransactionObservable(any(DefaultBlockParameter.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethLogObservable(any(EthFilter.class))).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -83,7 +82,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableTest extends Web3
         mockResult.expectedHeaderReceived("status", "done");
         mockError.expectedMinimumMessageCount(0);
 
-        Mockito.when(mockWeb3j.catchUpToLatestTransactionObservable(any(DefaultBlockParameter.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethLogObservable(any(EthFilter.class))).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -102,7 +101,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableTest extends Web3
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE + "&fromBlock=5499965")
+                from(getUrl() + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE)
                         .to("mock:result");
             }
         };
