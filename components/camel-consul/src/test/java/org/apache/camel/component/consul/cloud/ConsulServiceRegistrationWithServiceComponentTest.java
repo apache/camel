@@ -27,10 +27,12 @@ import org.apache.camel.impl.JndiRegistry;
 public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulServiceRegistrationTestBase {
 
     protected Map<String, String> getMetadata() {
-        return new HashMap<String, String>() {{
-            put("service.type", "consul");
-            put("service.zone", "US");
-        }};
+        return new HashMap<String, String>() {
+            {
+                put("service.type", "consul");
+                put("service.zone", "US");
+            }
+        };
     }
 
     @Override
