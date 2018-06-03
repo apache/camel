@@ -63,7 +63,7 @@ public class Web3jConfiguration implements Cloneable {
     private String signedTransactionData;
 
     @UriParam(label = "producer")
-    private BigInteger transactionIndex;
+    private BigInteger index;
 
     @UriParam(label = "producer")
     private BigInteger filterId;
@@ -334,15 +334,15 @@ public class Web3jConfiguration implements Cloneable {
         this.filterId = filterId;
     }
 
-    public BigInteger getTransactionIndex() {
-        return transactionIndex;
+    public BigInteger getIndex() {
+        return index;
     }
 
     /**
-     * The transactions index position in the block.
+     * The transactions/uncle index position in the block.
      */
-    public void setTransactionIndex(BigInteger transactionIndex) {
-        this.transactionIndex = transactionIndex;
+    public void setIndex(BigInteger index) {
+        this.index = index;
     }
 
     public String getSignedTransactionData() {

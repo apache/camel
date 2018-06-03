@@ -80,6 +80,7 @@ with the following path and query parameters:
 | *gasPrice* (producer) | Gas price used for each paid gas. |  | BigInteger
 | *hashrate* (producer) | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
 | *headerPowHash* (producer) | The header's pow-hash (256 bits) used for submitting a proof-of-work solution. |  | String
+| *index* (producer) | The transactions/uncle index position in the block. |  | BigInteger
 | *keyName* (producer) | The key name in the database. |  | String
 | *mixDigest* (producer) | The mix digest (256 bits) used for submitting a proof-of-work solution. |  | String
 | *nonce* (producer) | The nonce found (64 bits) used for submitting a proof-of-work solution. |  | String
@@ -90,7 +91,6 @@ with the following path and query parameters:
 | *signedTransactionData* (producer) | The signed transaction data for a new message call transaction or a contract creation for signed transactions. |  | String
 | *sourceCode* (producer) | The source code to compile. |  | String
 | *transactionHash* (producer) | The information about a transaction requested by transaction hash. |  | String
-| *transactionIndex* (producer) | The transactions index position in the block. |  | BigInteger
 | *ttl* (producer) | The time to live in seconds of a whisper message. |  | BigInteger
 | *value* (producer) | The value sent within a transaction. |  | BigInteger
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

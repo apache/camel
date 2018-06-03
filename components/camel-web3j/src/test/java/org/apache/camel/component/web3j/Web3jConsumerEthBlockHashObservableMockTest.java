@@ -22,31 +22,30 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.web3j.protocol.core.methods.response.EthBlock;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-import static org.apache.camel.component.web3j.Web3jConstants.BLOCK_OBSERVABLE;
+import static org.apache.camel.component.web3j.Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE;
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.mockito.ArgumentMatchers.any;
 
-public class Web3jConsumerBlockObservableTest extends Web3jTestSupport {
+public class Web3jConsumerEthBlockHashObservableMockTest extends Web3jMockTestSupport {
 
     @Mock
-    private Observable<EthBlock> observable;
+    private Observable<String> observable;
 
     @Test
     public void successTest() throws Exception {
         mockError.expectedMinimumMessageCount(0);
         mockResult.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.blockObservable(any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethBlockHashObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<EthBlock>)args[0]).call(new EthBlock());
+                ((Action1<String>)args[0]).call(new String());
                 return subscription;
             }
         });
@@ -61,7 +60,7 @@ public class Web3jConsumerBlockObservableTest extends Web3jTestSupport {
         mockResult.expectedMessageCount(0);
         mockError.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.blockObservable(any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethBlockHashObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -81,7 +80,7 @@ public class Web3jConsumerBlockObservableTest extends Web3jTestSupport {
         mockResult.expectedHeaderReceived("status", "done");
         mockError.expectedMinimumMessageCount(0);
 
-        Mockito.when(mockWeb3j.blockObservable(any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethBlockHashObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -100,7 +99,7 @@ public class Web3jConsumerBlockObservableTest extends Web3jTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
+                from(getUrl() + OPERATION.toLowerCase() + "=" + ETH_BLOCK_HASH_OBSERVABLE)
                         .to("mock:result");
             }
         };

@@ -147,9 +147,9 @@ public class Web3jComponentConfiguration
          */
         private BigInteger filterId;
         /**
-         * The transactions index position in the block.
+         * The transactions/uncle index position in the block.
          */
-        private BigInteger transactionIndex;
+        private BigInteger index;
         /**
          * The signed transaction data for a new message call transaction or a
          * contract creation for signed transactions.
@@ -341,12 +341,12 @@ public class Web3jComponentConfiguration
             this.filterId = filterId;
         }
 
-        public BigInteger getTransactionIndex() {
-            return transactionIndex;
+        public BigInteger getIndex() {
+            return index;
         }
 
-        public void setTransactionIndex(BigInteger transactionIndex) {
-            this.transactionIndex = transactionIndex;
+        public void setIndex(BigInteger index) {
+            this.index = index;
         }
 
         public String getSignedTransactionData() {

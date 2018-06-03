@@ -31,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 import org.web3j.protocol.Web3j;
 import rx.Subscription;
 
-public class Web3jTestSupport extends CamelTestSupport {
+public class Web3jMockTestSupport extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResult;
@@ -44,14 +44,6 @@ public class Web3jTestSupport extends CamelTestSupport {
 
     @Mock
     protected Subscription subscription;
-
-
-    public Web3jTestSupport() {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "DEBUG");
-    }
-
 
     @Override
     public boolean isUseAdviceWith() {
@@ -68,10 +60,6 @@ public class Web3jTestSupport extends CamelTestSupport {
     protected String getUrl() {
         return "web3j://http://127.0.0.1:8545?web3j=#mockWeb3j&";
     }
-
-//    protected String getUrl() {
-//        return "web3j://http://127.0.0.1:8545?";
-//    }
 
     protected Exchange createExchangeWithBodyAndHeader(Object body, String key, Object value) {
         DefaultExchange exchange = new DefaultExchange(context);

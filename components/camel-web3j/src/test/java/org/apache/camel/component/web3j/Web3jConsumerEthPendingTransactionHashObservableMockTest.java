@@ -22,32 +22,30 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.web3j.protocol.core.methods.response.Transaction;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
+import static org.apache.camel.component.web3j.Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE;
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
-import static org.apache.camel.component.web3j.Web3jConstants.PENDING_TRANSACTION_OBSERVABLE;
-import static org.apache.camel.component.web3j.Web3jConstants.TRANSACTION_OBSERVABLE;
 import static org.mockito.ArgumentMatchers.any;
 
-public class Web3jConsumerPendingTransactionObservableTest extends Web3jTestSupport {
+public class Web3jConsumerEthPendingTransactionHashObservableMockTest extends Web3jMockTestSupport {
 
     @Mock
-    private Observable<Transaction> observable;
+    private Observable<String> observable;
 
     @Test
     public void successTest() throws Exception {
         mockError.expectedMinimumMessageCount(0);
         mockResult.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.pendingTransactionObservable()).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethPendingTransactionHashObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Transaction>)args[0]).call(new Transaction());
+                ((Action1<String>)args[0]).call(new String());
                 return subscription;
             }
         });
@@ -62,7 +60,7 @@ public class Web3jConsumerPendingTransactionObservableTest extends Web3jTestSupp
         mockResult.expectedMessageCount(0);
         mockError.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.pendingTransactionObservable()).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethPendingTransactionHashObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -82,7 +80,7 @@ public class Web3jConsumerPendingTransactionObservableTest extends Web3jTestSupp
         mockResult.expectedHeaderReceived("status", "done");
         mockError.expectedMinimumMessageCount(0);
 
-        Mockito.when(mockWeb3j.pendingTransactionObservable()).thenReturn(observable);
+        Mockito.when(mockWeb3j.ethPendingTransactionHashObservable()).thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
@@ -101,7 +99,7 @@ public class Web3jConsumerPendingTransactionObservableTest extends Web3jTestSupp
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + PENDING_TRANSACTION_OBSERVABLE)
+                from(getUrl() + OPERATION.toLowerCase() + "=" + ETH_PENDING_TRANSACTION_HASH_OBSERVABLE)
                         .to("mock:result");
             }
         };

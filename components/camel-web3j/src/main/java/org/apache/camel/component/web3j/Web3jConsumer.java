@@ -53,105 +53,104 @@ public class Web3jConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Subscribing: " + this.configuration);
+        LOG.info("Subscribing to: " + endpoint.getNodeAddress());
         switch (configuration.getOperation()) {
         case Web3jConstants.ETH_LOG_OBSERVABLE:
             EthFilter ethFilter = endpoint.buildEthFilter(configuration.getFromBlock(), configuration.getToBlock(), configuration.getAddresses(), configuration.getTopics());
             subscription = web3j.ethLogObservable(ethFilter).subscribe(
                 x -> ethLogObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.ETH_LOG_OBSERVABLE),
+                () -> processDone(Web3jConstants.ETH_LOG_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE:
             subscription = web3j.ethBlockHashObservable().subscribe(
                 x -> ethBlockHashObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE),
+                () -> processDone(Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE:
             subscription = web3j.ethPendingTransactionHashObservable().subscribe(
                 x -> ethPendingTransactionHashObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE),
+                () -> processDone(Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.TRANSACTION_OBSERVABLE:
             subscription = web3j.transactionObservable().subscribe(
                 x -> processTransaction(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.TRANSACTION_OBSERVABLE),
+                () -> processDone(Web3jConstants.TRANSACTION_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.PENDING_TRANSACTION_OBSERVABLE:
             subscription = web3j.pendingTransactionObservable().subscribe(
                 x -> processTransaction(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.PENDING_TRANSACTION_OBSERVABLE),
+                () -> processDone(Web3jConstants.PENDING_TRANSACTION_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.BLOCK_OBSERVABLE:
             subscription = web3j.blockObservable(configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.BLOCK_OBSERVABLE),
+                () -> processDone(Web3jConstants.BLOCK_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.REPLAY_BLOCKS_OBSERVABLE:
             subscription = web3j.replayBlocksObservable(configuration.getFromBlock(), configuration.getToBlock(), configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.REPLAY_BLOCKS_OBSERVABLE),
+                () -> processDone(Web3jConstants.REPLAY_BLOCKS_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE:
             subscription = web3j.replayTransactionsObservable(configuration.getFromBlock(), configuration.getToBlock()).subscribe(
                 x -> processTransaction(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE),
+                () -> processDone(Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE:
             subscription = web3j.catchUpToLatestBlockObservable(configuration.getFromBlock(), configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE),
+                () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE:
             subscription = web3j.catchUpToLatestTransactionObservable(configuration.getFromBlock()).subscribe(
                 x -> processTransaction(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE),
+                () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE:
             subscription = web3j.catchUpToLatestAndSubscribeToNewBlocksObservable(configuration.getFromBlock(), configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE),
+                () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE)
             );
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE:
             subscription = web3j.catchUpToLatestAndSubscribeToNewTransactionsObservable(configuration.getFromBlock()).subscribe(
                 x -> processTransaction(x),
-                t -> processError(t),
-                () -> processDone()
+                t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE),
+                () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE)
             );
             break;
-
 
         default:
             throw new IllegalArgumentException("Unsupported operation " + configuration.getOperation());
@@ -174,13 +173,6 @@ public class Web3jConsumer extends DefaultConsumer {
         return ethFilter;
     }
 
-    private void ethLogObservable(Log x) {
-        LOG.debug("processLogObservable " + x);
-        Exchange exchange = this.getEndpoint().createExchange();
-        exchange.getIn().setBody(x);
-        processEvent(exchange);
-    }
-
     private void ethBlockHashObservable(String x) {
         LOG.debug("processEthBlock " + x);
         Exchange exchange = this.getEndpoint().createExchange();
@@ -196,14 +188,22 @@ public class Web3jConsumer extends DefaultConsumer {
     }
 
     private void blockObservable(EthBlock x) {
-        LOG.debug("processEthBlock " + x);
+        EthBlock.Block block = x.getBlock();
+        LOG.debug("processEthBlock " + block);
         Exchange exchange = this.getEndpoint().createExchange();
-        exchange.getIn().setBody(x);
+        exchange.getIn().setBody(block);
         processEvent(exchange);
     }
 
     private void processTransaction(Transaction x) {
         LOG.debug("processTransaction " + x);
+        Exchange exchange = this.getEndpoint().createExchange();
+        exchange.getIn().setBody(x);
+        processEvent(exchange);
+    }
+
+    private void ethLogObservable(Log x) {
+        LOG.debug("processLogObservable " + x);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setBody(x);
         processEvent(exchange);
@@ -218,15 +218,16 @@ public class Web3jConsumer extends DefaultConsumer {
         }
     }
 
-    private void processDone() {
-        LOG.debug("processDone ");
+    private void processDone(String operation) {
+        LOG.debug("processDone for operation: " + operation);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setHeader("status", "done");
+        exchange.getIn().setHeader("operation", operation);
         processEvent(exchange);
     }
 
-    private void processError(Throwable throwable) {
-        LOG.debug("processError " + throwable);
+    private void processError(Throwable throwable, String operation) {
+        LOG.debug("processError for operation: " + operation + " " + throwable);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.setException(throwable);
         processEvent(exchange);
