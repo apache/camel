@@ -359,7 +359,7 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
                     serviceDiscovery.unregisterService(serviceInstance);
 
                     // remove the serviceId to the list of known server
-                    serviceList.remove((serviceInstance.getId()));
+                    serviceList.remove(serviceInstance.getId());
                 }
             }
         } catch (Exception e) {

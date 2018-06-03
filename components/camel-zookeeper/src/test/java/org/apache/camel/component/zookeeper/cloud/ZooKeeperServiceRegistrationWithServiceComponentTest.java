@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.zookeeper.cloud;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
@@ -27,9 +27,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKeeperServiceRegistrationTestBase {
 
     protected Map<String, String> getMetadata() {
-        return new HashMap<String, String>() {{
-            put("service.type", "zookeeper");
-        }};
+        return Collections.singletonMap("service.type", "zookeeper");
     }
 
     @Override

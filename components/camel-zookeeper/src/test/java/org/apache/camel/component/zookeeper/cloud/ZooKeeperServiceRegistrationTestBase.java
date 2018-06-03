@@ -37,12 +37,12 @@ import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.junit.Test;
 
 public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupport {
-    protected final static String SERVICE_ID = UUID.randomUUID().toString();
-    protected final static String SERVICE_NAME = "my-service";
-    protected final static String SERVICE_HOST = "localhost";
+    protected static final String SERVICE_ID = UUID.randomUUID().toString();
+    protected static final String SERVICE_NAME = "my-service";
+    protected static final String SERVICE_HOST = "localhost";
     protected static final String SERVICE_PATH = "/camel";
-    protected final static int SERVICE_PORT = AvailablePortFinder.getNextAvailable();
-    protected final static int SERVER_PORT = AvailablePortFinder.getNextAvailable();
+    protected static final int SERVICE_PORT = AvailablePortFinder.getNextAvailable();
+    protected static final int SERVER_PORT = AvailablePortFinder.getNextAvailable();
 
     protected ZooKeeperTestSupport.TestZookeeperServer server;
     protected CuratorFramework curator;
