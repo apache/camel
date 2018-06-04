@@ -224,7 +224,7 @@
     <fastjson-version>1.2.46</fastjson-version>
     <fastjson-bundle-version>1.2.46_1</fastjson-bundle-version>
     <felix-configadmin-version>1.8.8</felix-configadmin-version>
-    <felix-connect-version>0.1.0</felix-connect-version>
+    <felix-connect-version>0.2.0</felix-connect-version>
     <felix-fileinstall-version>3.5.2</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
