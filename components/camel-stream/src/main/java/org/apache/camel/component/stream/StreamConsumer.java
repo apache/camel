@@ -34,9 +34,10 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +51,14 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private ExecutorService executor;
+    private FileWatcherStrategy fileWatcher;
+    private volatile boolean watchFileChanged;
     private volatile InputStream inputStream = System.in;
     private volatile InputStream inputStreamToClose;
+    private volatile File file;
     private StreamEndpoint endpoint;
     private String uri;
-    private boolean initialPromptDone;
+    private volatile boolean initialPromptDone;
     private final List<String> lines = new CopyOnWriteArrayList<>();
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
@@ -67,6 +71,22 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // use file watch service if we read from file
+        if (endpoint.isFileWatcher()) {
+            String dir = new File(endpoint.getFileName()).getParent();
+            fileWatcher = new FileWatcherStrategy(dir, (file) -> {
+                String onlyName = file.getName();
+                String target = FileUtil.stripPath(endpoint.getFileName());
+                LOG.trace("File changed: {}", onlyName);
+                if (onlyName.equals(target)) {
+                    // file is changed
+                    watchFileChanged = true;
+                }
+            });
+            fileWatcher.setCamelContext(getEndpoint().getCamelContext());
+        }
+        ServiceHelper.startService(fileWatcher);
 
         // if we scan the stream we are lenient and can wait for the stream to be available later
         if (!endpoint.isScanStream()) {
@@ -87,6 +107,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
+        ServiceHelper.stopAndShutdownService(fileWatcher);
         lines.clear();
 
         // do not close regular inputStream as it may be System.in etc.
@@ -145,9 +166,22 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 if (!eos && isRunAllowed()) {
                     index = processLine(line, false, index);
                 } else if (eos && isRunAllowed() && endpoint.isRetry()) {
-                    //try and re-open stream
-                    br = initializeStream();
+                    boolean reOpen = true;
+                    if (endpoint.isFileWatcher()) {
+                        reOpen = watchFileChanged;
+                    }
+                    if (reOpen) {
+                        LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
+                        br = initializeStream();
+                        // we have re-initialized the stream so lower changed flag
+                        if (endpoint.isFileWatcher()) {
+                            watchFileChanged = false;
+                        }
+                    } else {
+                        LOG.trace("File: {} not changed since last read", file);
+                    }
                 }
+
                 // sleep only if there is no input
                 if (eos) {
                     try {
@@ -271,10 +305,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         
         FileInputStream fileStream;
 
-        File file = new File(fileName);
+        file = new File(fileName);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("File to be scanned : {}, path : {}", file.getName(), file.getAbsolutePath());
+            LOG.debug("File to be scanned: {}, path: {}", file.getName(), file.getAbsolutePath());
         }
 
         if (file.canRead()) {
