@@ -78,7 +78,7 @@ public class JmsMessageIDNotOverridenAMQTest extends CamelTestSupport {
     }
     
     private class MyMessageCreatedStrategy implements MessageCreatedStrategy {
-    	 
+     
         @Override
         public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {
             try {
