@@ -195,8 +195,11 @@ public class CMISProducer extends DefaultProducer {
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create(getEndpoint());
+            CMISSessionFacade sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
+            // make sure to set sessionFacade to the field after successful initialisation
+            // so that it has a valid session
+            this.sessionFacade = sessionFacade;
         }
 
         return sessionFacade;
