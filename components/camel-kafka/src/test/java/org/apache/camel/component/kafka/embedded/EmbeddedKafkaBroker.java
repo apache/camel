@@ -50,7 +50,7 @@ public class EmbeddedKafkaBroker extends ExternalResource {
 
     private KafkaServer kafkaServer;
     private File logDir;
-    private ZkUtils zkUtils = null;
+    private ZkUtils zkUtils;
 
     public EmbeddedKafkaBroker(int brokerId, String zkConnection) {
         this(brokerId, AvailablePortFinder.getNextAvailable(), zkConnection, new Properties());
@@ -95,8 +95,8 @@ public class EmbeddedKafkaBroker extends ExternalResource {
 
 
     private KafkaServer startBroker(Properties props) {
-    	zkUtils = ZkUtils.apply(
-    			zkConnection,
+        zkUtils = ZkUtils.apply(
+                zkConnection,
                 30000,
                 30000,
                 false);
