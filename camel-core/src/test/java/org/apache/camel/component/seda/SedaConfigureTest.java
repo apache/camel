@@ -21,11 +21,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.SedaConstants;
 
 /**
  * @version
  */
 public class SedaConfigureTest extends ContextTestSupport {
+    
 
     @SuppressWarnings("unchecked")
     public void testBlockingQueueConfigured() throws Exception {
@@ -50,7 +52,7 @@ public class SedaConfigureTest extends ContextTestSupport {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo", SedaEndpoint.class);
         assertFalse("blockWhenFull: wrong default", endpoint.isBlockWhenFull());
         assertEquals("concurrentConsumers: wrong default", 1, endpoint.getConcurrentConsumers());
-        assertEquals("size (remainingCapacity): wrong default", Integer.MAX_VALUE, endpoint.getSize());
+        assertEquals("size (remainingCapacity): wrong default", SedaConstants.QUEUE_SIZE, endpoint.getSize());
         assertEquals("timeout: wrong default", 30000L, endpoint.getTimeout());
     }
 }

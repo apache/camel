@@ -39,7 +39,7 @@ public class SedaComponentConfiguration
      * Sets the default maximum capacity of the SEDA queue (i.e., the number of
      * messages it can hold).
      */
-    private Integer queueSize;
+    private Integer queueSize = 1000;
     /**
      * Sets the default number of concurrent threads processing exchanges.
      */
