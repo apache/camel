@@ -27,11 +27,11 @@ public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
         SedaEndpoint seda = context.getEndpoint("seda:foo", SedaEndpoint.class);
         assertEquals(0, seda.getQueue().size());
 
-        for (int i = 0; i < 1200; i++) {
+        for (int i = 0; i < 1000; i++) {
             template.sendBody("seda:foo", "Message " + i);
         }
 
-        assertEquals(1200, seda.getQueue().size());
+        assertEquals(1000, seda.getQueue().size());
     }
 
     public void testSedaDefaultBoundedQueueSize() throws Exception {
