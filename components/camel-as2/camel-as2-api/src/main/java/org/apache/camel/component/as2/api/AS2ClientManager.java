@@ -46,7 +46,7 @@ public class AS2ClientManager {
     //
 
     /**
-     * Prefix for all AS2 HTTP Context Attributes used by the Http Client
+     * Prefix for all AS2 HTTP Context Attributes used by the AS2 Client
      * Manager.
      */
     public static final String CAMEL_AS2_CLIENT_PREFIX = "camel-as2.client.";

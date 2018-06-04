@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.camel.component.as2.api.AS2Header;
-import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
@@ -42,6 +41,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class EntityParserTest {
+    
+    public static final String REPORT_CONTENT_TYPE_VALUE =
+            "multipart/report; report-type=disposition-notification; boundary=\"----=_Part_56_1672293592.1028122454656\"";
 
     public static final String REPORT_TYPE_HEADER_VALUE =
             "disposition-notification; boundary=\"----=_Part_56_1672293592.1028122454656\"\r\n";
@@ -160,10 +162,9 @@ public class EntityParserTest {
     public void parseMessageDispositionNotificationReportMessageTest() throws Exception {
         HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
         HttpMessageUtils.setHeaderValue(response, AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
-        HttpMessageUtils.setHeaderValue(response, AS2Header.REPORT_TYPE, REPORT_TYPE_HEADER_VALUE);
 
         BasicHttpEntity entity = new BasicHttpEntity();
-        entity.setContentType(AS2MimeType.MULTIPART_REPORT);
+        entity.setContentType(REPORT_CONTENT_TYPE_VALUE);
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         entity.setContent(is);
         EntityUtils.setMessageEntity(response, entity);

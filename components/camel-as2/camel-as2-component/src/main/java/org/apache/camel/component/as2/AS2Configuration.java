@@ -220,7 +220,7 @@ public class AS2Configuration {
      *
      * <p> Used in message ids sent by endpoint.
      *
-     * @param clientFqdn - the FQDN of client.
+     * @param clientFqdn - the FQDN of server.
      */
     public void setServerFqdn(String serverFqdn) {
         if (clientFqdn == null) {

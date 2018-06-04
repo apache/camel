@@ -26,13 +26,18 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -41,8 +46,11 @@ import org.apache.http.HttpVersion;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
+import org.apache.http.protocol.HttpDateGenerator;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
@@ -96,7 +104,6 @@ public class AS2MessageTest {
             + "UNT+23+00000000000117'\n"
             + "UNZ+1+00000000000778'";
 
-    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AS2MessageTest.class);
 
     private static final String METHOD = "POST";
@@ -113,7 +120,8 @@ public class AS2MessageTest {
     private static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] {"sha1", "md5"};
 
-
+    private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
+    
     private static AS2ServerConnection testServer;
 
     private AS2SignedDataGenerator gen;
@@ -190,8 +198,9 @@ public class AS2MessageTest {
                     throws HttpException, IOException {
                 try {
                     org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
-                    context.setAttribute(SUBJECT, SUBJECT);
-                    context.setAttribute(FROM, AS2_NAME);
+                    context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
+                    context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
+                    LOG.debug(Util.printMessage(request));
                 } catch (Exception e) {
                     throw new HttpException("Failed to parse AS2 Message Entity", e);
                 }
@@ -390,6 +399,33 @@ public class AS2MessageTest {
         
         // Validate Signature
         assertTrue("Signature is invalid", responseSignedEntity.isValid());
+    }
+    
+    @Test
+    public void synchronousMdnMessageTest() throws Exception {
+
+        AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
+                certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
+
+        // Create plain edi request message
+        ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, false);
+        HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_TO, AS2_NAME);
+        EntityUtils.setMessageEntity(request, ediEntity);
+
+        HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        String httpdate = DATE_GENERATOR.getCurrentDate();
+        response.setHeader(HTTP.DATE_HEADER, httpdate);
+
+        // Create a receipt for edi message
+        DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(request,
+                response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null,
+                null, null, null, null, null, "boundary", true);
+
+        // Send MDN
+        mdnManager.send(mdn, TARGET_HOST, TARGET_PORT, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME);
+
     }
     
 }

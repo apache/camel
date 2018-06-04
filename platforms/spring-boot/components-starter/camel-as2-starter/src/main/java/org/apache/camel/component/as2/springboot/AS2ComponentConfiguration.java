@@ -111,7 +111,7 @@ public class AS2ComponentConfiguration
          * Used in message ids sent by endpoint.
          * 
          * @param clientFqdn
-         *            - the FQDN of client.
+         *            - the FQDN of server.
          */
         private String serverFqdn;
         /**
