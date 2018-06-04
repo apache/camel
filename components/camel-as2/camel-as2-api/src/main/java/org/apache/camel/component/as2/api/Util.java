@@ -172,11 +172,15 @@ public final class Util {
         if (message instanceof HttpEntityEnclosingRequest) {
             // Write entity
             HttpEntity entity = ((HttpEntityEnclosingRequest)message).getEntity();
-            entity.writeTo(out);
+            if (entity != null) {
+                entity.writeTo(out);
+            }
         } else if (message instanceof HttpResponse) {
             // Write entity
             HttpEntity entity = ((HttpResponse)message).getEntity();
-            entity.writeTo(out);
+            if (entity != null) {
+                entity.writeTo(out);
+            }
         }
     }
 

@@ -39,7 +39,6 @@ import org.apache.http.ParseException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.io.AbstractMessageParser;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.apache.http.message.BasicLineParser;
 import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
@@ -297,7 +296,7 @@ public final class EntityParser {
             inbuffer.bind(entity.getContent());
 
             // Get Boundary Value
-            String boundary = HttpMessageUtils.getBoundaryParameterValue(message, AS2Header.REPORT_TYPE);
+            String boundary = HttpMessageUtils.getBoundaryParameterValue(message, AS2Header.CONTENT_TYPE);
             if (boundary == null) {
                 throw new HttpException("Failed to retrive boundary value");
             }
@@ -557,8 +556,6 @@ public final class EntityParser {
             //
             // End Disposition Notification Body Part
 
-            ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_REPORT, charset);
-            dispositionNotificationMultipartReportEntity.setContentType(contentType);
             dispositionNotificationMultipartReportEntity.setContentTransferEncoding(contentTransferEncoding);
             return dispositionNotificationMultipartReportEntity;
         } catch (Exception e) {
@@ -672,7 +669,7 @@ public final class EntityParser {
                 break;
             case AS2MimeType.MULTIPART_REPORT:
                 String multipartReportBoundary = AS2HeaderUtils.getBoundaryParameterValue(headers,
-                        AS2Header.REPORT_TYPE);
+                        AS2Header.CONTENT_TYPE);
                 entity = parseMultipartReportEntityBody(inbuffer, multipartReportBoundary, charset.name(),
                         contentTransferEncoding);
                 skipToBoundary(inbuffer, boundary);

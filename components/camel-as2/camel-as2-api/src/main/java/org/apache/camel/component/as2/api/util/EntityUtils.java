@@ -35,6 +35,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpMessage;
@@ -236,6 +237,10 @@ public final class EntityUtils {
             ((HttpEntityEnclosingRequest) message).setEntity(entity);
         } else if (message instanceof HttpResponse) {
             ((HttpResponse) message).setEntity(entity);
+        }
+        Header contentTypeHeader = entity.getContentType(); 
+        if (contentTypeHeader != null) {
+            message.setHeader(contentTypeHeader);
         }
         long contentLength = entity.getContentLength();
         message.setHeader(AS2Header.CONTENT_LENGTH, Long.toString(contentLength));
