@@ -50,6 +50,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     private boolean scanStream;
     @UriParam(label = "consumer")
     private boolean retry;
+    @UriParam(label = "consumer")
+    private boolean fileWatcher;
     @UriParam(label = "producer")
     private boolean closeOnDone;
     @UriParam(label = "consumer")
@@ -82,6 +84,9 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         StreamConsumer answer = new StreamConsumer(this, processor, getEndpointUri());
+        if (isFileWatcher() && !"file".equals(getKind())) {
+            throw new IllegalArgumentException("File watcher is only possible if reading streams from files");
+        }
         configureConsumer(answer);
         return answer;
     }
@@ -224,12 +229,25 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Will retry opening the file if it's overwritten, somewhat like tail --retry
+     * Will retry opening the stream if it's overwritten, somewhat like tail --retry
+     * <p/>
+     * If reading from files then you should also enable the fileWatcher option, to make it work reliable.
      */
     public void setRetry(boolean retry) {
         this.retry = retry;
     }
-    
+
+    public boolean isFileWatcher() {
+        return fileWatcher;
+    }
+
+    /**
+     * To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten, somewhat like tail --retry
+     */
+    public void setFileWatcher(boolean fileWatcher) {
+        this.fileWatcher = fileWatcher;
+    }
+
     public boolean isCloseOnDone() {
         return closeOnDone;
     }
