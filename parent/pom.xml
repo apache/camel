@@ -499,7 +499,7 @@
     <milo-version>0.2.1</milo-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
-    <mina2-version>2.0.17</mina2-version>
+    <mina2-version>2.0.18</mina2-version>
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockwebserver-version>0.0.17</mockwebserver-version>
