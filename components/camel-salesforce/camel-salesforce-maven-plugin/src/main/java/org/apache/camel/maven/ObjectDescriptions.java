@@ -18,12 +18,14 @@ package org.apache.camel.maven;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,6 +33,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
@@ -61,6 +64,10 @@ final class ObjectDescriptions {
 
     SObjectDescription descriptionOf(final String name) {
         return descriptions.computeIfAbsent(name, this::fetchDescriptionOf);
+    }
+
+    List<SObjectField> externalIdsOf(final String name) {
+        return descriptionOf(name).getFields().stream().filter(SObjectField::isExternalId).collect(Collectors.toList());
     }
 
     Iterable<SObjectDescription> fetched() {
