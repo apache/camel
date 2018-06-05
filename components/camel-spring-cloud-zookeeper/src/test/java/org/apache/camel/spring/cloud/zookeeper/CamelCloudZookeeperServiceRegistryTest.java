@@ -42,10 +42,11 @@ import org.springframework.util.SocketUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamelCloudZookeeperServiceRegistryTest {
-    protected final static String SERVICE_ID = UUID.randomUUID().toString();
-    protected final static String SERVICE_NAME = "my-service";
-    protected final static String SERVICE_HOST = "localhost";
-    protected final static int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
+
+    protected static final String SERVICE_ID = UUID.randomUUID().toString();
+    protected static final String SERVICE_NAME = "my-service";
+    protected static final String SERVICE_HOST = "localhost";
+    protected static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Rule
     public final TestName testName = new TestName();
