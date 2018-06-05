@@ -24,9 +24,13 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
+import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
@@ -34,8 +38,11 @@ import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.entity.TextPlainEntity;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.camel.component.as2.api.util.MicUtils;
+import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -70,6 +77,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -117,7 +125,9 @@ public class AS2MessageTest {
     private static final String FROM = "mrAS@example.org";
     private static final String CLIENT_FQDN = "client.example.org";
     private static final String SERVER_FQDN = "server.example.org";
+    private static final String REPORTING_UA = "Server Responding with MDN";
     private static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
+    private static final String DISPOSITION_NOTIFICATION_OPTIONS = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] {"sha1", "md5"};
 
     private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
@@ -407,25 +417,57 @@ public class AS2MessageTest {
         AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
 
-        // Create plain edi request message
+        // Create plain edi request message to acknowledge
         ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, false);
         HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_TO, AS2_NAME);
+        String originalMessageId = Util.createMessageId(SERVER_FQDN);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.MESSAGE_ID, originalMessageId);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, DISPOSITION_NOTIFICATION_OPTIONS);
         EntityUtils.setMessageEntity(request, ediEntity);
 
+        // Create response for MDN creation.
         HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         String httpdate = DATE_GENERATOR.getCurrentDate();
         response.setHeader(HTTP.DATE_HEADER, httpdate);
+        response.setHeader(AS2Header.SERVER, REPORTING_UA);
 
         // Create a receipt for edi message
+        Map<String, String> extensionFields = new HashMap<String, String>();
+        extensionFields.put("Original-Recipient", "rfc822;" + AS2_NAME);
+        AS2DispositionModifier dispositionModifier = AS2DispositionModifier.createWarning("AS2 is cool!");
+        String[] failureFields = new String[] {"failure-field-1" };
+        String[] errorFields = new String[] {"error-field-1"};
+        String[] warningFields = new String[] {"warning-field-1"};
         DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(request,
-                response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null,
-                null, null, null, null, null, "boundary", true);
+                response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, dispositionModifier,
+                failureFields, errorFields, warningFields, 
+                extensionFields, null, "boundary", true);
 
         // Send MDN
-        mdnManager.send(mdn, TARGET_HOST, TARGET_PORT, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME);
-
+        HttpCoreContext httpContext = mdnManager.send(mdn, TARGET_HOST, TARGET_PORT, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME);
+        HttpRequest mndRequest = httpContext.getRequest();
+        DispositionNotificationMultipartReportEntity reportEntity = HttpMessageUtils.getEntity(mndRequest, DispositionNotificationMultipartReportEntity.class);
+        assertNotNull("Request does not contain resport", reportEntity);
+        assertEquals("Report entity contains invalid number of parts", 2, reportEntity.getPartCount());
+        assertTrue("Report first part is not text entity", reportEntity.getPart(0) instanceof TextPlainEntity);
+        assertTrue("Report second part is not MDN entity", reportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity);
+        AS2MessageDispositionNotificationEntity mdnEntity = (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
+        assertEquals("Unexpected value for Reporting UA", REPORTING_UA, mdnEntity.getReportingUA());
+        assertEquals("Unexpected value for Final Recipient", AS2_NAME, mdnEntity.getFinalRecipient());
+        assertEquals("Unexpected value for Original Message ID", originalMessageId, mdnEntity.getOriginalMessageId());
+        assertEquals("Unexpected value for Disposition Mode", DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, mdnEntity.getDispositionMode());
+        assertEquals("Unexpected value for Disposition Type", AS2DispositionType.PROCESSED, mdnEntity.getDispositionType());
+        assertEquals("Unexpected value for Disposition Modifier", dispositionModifier, mdnEntity.getDispositionModifier());
+        assertArrayEquals("Unexpected value for Failure Fields", failureFields, mdnEntity.getFailureFields());
+        assertArrayEquals("Unexpected value for Error Fields", errorFields, mdnEntity.getErrorFields());
+        assertArrayEquals("Unexpected value for Warning Fields", warningFields, mdnEntity.getWarningFields());
+        assertEquals("Unexpected value for Extension Fields", extensionFields, mdnEntity.getExtensionFields());
+        ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request);
+        ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
+        assertEquals("Unexpected value for Recieved Content Mic", expectedMic.getEncodedMessageDigest(), mdnMic.getEncodedMessageDigest());
+        LOG.debug(Util.printMessage(mndRequest));
     }
     
 }
