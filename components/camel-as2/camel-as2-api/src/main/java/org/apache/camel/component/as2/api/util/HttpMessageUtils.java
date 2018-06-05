@@ -23,6 +23,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpMessage;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.io.SessionInputBuffer;
 import org.apache.http.util.Args;
@@ -48,11 +49,18 @@ public final class HttpMessageUtils {
         }
     }
 
-    public static <T> T getEntity(HttpMessage request, Class<T> type) {
-        if (request instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
+    public static <T> T getEntity(HttpMessage message, Class<T> type) {
+        Args.notNull(message, "message");
+        Args.notNull(type, "type");
+        if (message instanceof HttpEntityEnclosingRequest) {
+            HttpEntity entity = ((HttpEntityEnclosingRequest)message).getEntity();
             if (entity != null && type.isInstance(entity)) {
                 return type.cast(entity);
+            }
+        } else if (message instanceof HttpResponse) {
+            HttpEntity entity = ((HttpResponse)message).getEntity();
+            if (entity != null && type.isInstance(entity)) {
+                type.cast(entity);
             }
         }
         return null;
