@@ -142,7 +142,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this(ExpressionNodeHelper.toExpressionDefinition(expression));
     }
 
-    public AggregateDefinition(ExpressionDefinition correlationExpression) {
+    private AggregateDefinition(ExpressionDefinition correlationExpression) {
         setExpression(correlationExpression);
 
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();

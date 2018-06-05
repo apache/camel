@@ -6,7 +6,7 @@ The Throttler Pattern allows you to ensure that a specific endpoint does not get
 === Options
 
 // eip options: START
-The Throttle EIP supports 5 options which are listed below:
+The Throttle EIP supports 6 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -16,6 +16,7 @@ The Throttle EIP supports 5 options which are listed below:
 | *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | false | Boolean
 | *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
 | *rejectExecution* | Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false | false | Boolean
+| *correlationExpression* | The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together. |  | NamespaceAware Expression
 |===
 // eip options: END
 
