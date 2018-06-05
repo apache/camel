@@ -1,24 +1,35 @@
-[[web3j-component]]
 == Web3j client for Ethereum blockchain Component
 
 *Available as of Camel version 2.22*
+*Available as of Camel version 2.22*
 
 
-The web3j component uses the
+The *Ethereum* blockchain component uses the
 https://github.com/web3j/web3j[web3j] client
-API and allows you to read/write from geth/parity compatible Ethereum nodes.
+API and allows you to interact with Ethereum compatible nodes such as https://github.com/ethereum/go-ethereum/wiki/geth[Geth], https://github.com/paritytech/parity[Parity], https://github.com/jpmorganchase/quorum/wiki[Quorum], https://infura.io[Infura], etc.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-web3j</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
 
 === URI Format
 
 [source,text]
 ----
-web3j://ethereumServerUrl[?options]
+web3j://<local/remote host:port or local IPC path>[?options]
 ----
 
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
-
 === Web3j Options
+
 
 // component options: START
 The Web3j client for Ethereum blockchain component supports 2 options which are listed below.
@@ -32,6 +43,7 @@ The Web3j client for Ethereum blockchain component supports 2 options which are 
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
+
 
 // endpoint options: START
 The Web3j client for Ethereum blockchain endpoint is configured using URI syntax:
@@ -96,3 +108,47 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+
+### Message Headers
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`All URI options` |All URI options can also be set as exchange headers.
+
+|=======================================================================
+
+
+
+### Samples
+
+Listen for new mined blocks and send the block hash to a jms queue:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("web3j://http://127.0.0.1:7545?operation=ETH_BLOCK_HASH_OBSERVABLE")
+    .to("jms:queue:blocks");
+---------------------------------------------------------------------------------------------
+
+Use the block hash code to retrieve the block and full transaction details:
+
+[source,java]
+---------------------------------------------------------
+from("jms:queue:blocks")
+    .setHeader(BLOCK_HASH, body())
+    .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BLOCK_BY_HASH&fullTransactionObjects=true");
+---------------------------------------------------------
+
+Read the balance of an address at a specific block number:
+
+[source,java]
+--------------------------------------------------------
+from("direct:start")
+    .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BALANCE&address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952&atBlock=10");
+--------------------------------------------------------
