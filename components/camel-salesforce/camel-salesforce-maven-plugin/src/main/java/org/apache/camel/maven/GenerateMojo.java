@@ -43,6 +43,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -72,6 +73,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
         public String enumTypeName(final String name) {
             return (name.endsWith("__c") ? name.substring(0, name.length() - 3) : name) + "Enum";
+        }
+
+        public List<SObjectField> externalIdsOf(final String name) {
+            return descriptions.externalIdsOf(name);
         }
 
         public String getEnumConstant(final String value) {
@@ -129,6 +134,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             }
         }
 
+        public String getLookupRelationshipName(final SObjectField field) {
+            return StringHelper.notEmpty(field.getRelationshipName(), "relationshipName", field.getName());
+        }
+
         public List<PickListValue> getUniqueValues(final SObjectField field) {
             if (field.getPicklistValues().isEmpty()) {
                 return field.getPicklistValues();
@@ -176,6 +185,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
         public boolean isExternalId(final SObjectField field) {
             return field.isExternalId();
+        }
+
+        public boolean isLookup(final SObjectField field) {
+            return "reference".equals(field.getType());
         }
 
         public boolean isMultiSelectPicklist(final SObjectField field) {
@@ -261,6 +274,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
     private static final String PICKLIST = "picklist";
+    private static final String SOBJECT_LOOKUP_VM = "/sobject-lookup.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
     private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
@@ -273,6 +287,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
     @Parameter
     Map<String, String> customTypes;
+
+    ObjectDescriptions descriptions;
 
     VelocityEngine engine;
 
@@ -295,8 +311,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
      */
     @Parameter(property = "camelSalesforce.packageName", defaultValue = "org.apache.camel.salesforce.dto")
     String packageName;
-
-    private ObjectDescriptions descriptions;
 
     /**
      * Exclude Salesforce SObjects that match pattern.
@@ -351,6 +365,43 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 StandardCharsets.UTF_8)) {
                 final Template optionalTemplate = engine.getTemplate(SOBJECT_POJO_OPTIONAL_VM, UTF_8);
                 optionalTemplate.merge(context, writer);
+            }
+        }
+
+        // generate ExternalIds Lookup class for all lookup fields that point to
+        // an Object that has at least one externalId
+        final Set<String> generatedLookupObjects = new HashSet<>();
+        for (final SObjectField field : description.getFields()) {
+            if (!utility.isLookup(field)) {
+                continue;
+            }
+
+            for (final String reference : field.getReferenceTo()) {
+                final List<SObjectField> externalIds = descriptions.externalIdsOf(reference);
+
+                for (final SObjectField externalId : externalIds) {
+                    final String lookupClassName = reference + "_Lookup";
+
+                    if (generatedLookupObjects.contains(lookupClassName)) {
+                        continue;
+                    }
+
+                    generatedLookupObjects.add(lookupClassName);
+                    final String lookupClassFileName = lookupClassName + JAVA_EXT;
+                    final File lookupClassFile = new File(pkgDir, lookupClassFileName);
+
+                    context.put("field", externalId);
+                    context.put("lookupRelationshipName", field.getRelationshipName());
+                    context.put("lookupType", lookupClassName);
+                    context.put("externalIdsList", externalIds);
+                    context.put("lookupClassName", lookupClassName);
+
+                    try (final Writer writer = new OutputStreamWriter(new FileOutputStream(lookupClassFile),
+                        StandardCharsets.UTF_8)) {
+                        final Template lookupClassTemplate = engine.getTemplate(SOBJECT_LOOKUP_VM, UTF_8);
+                        lookupClassTemplate.merge(context, writer);
+                    }
+                }
             }
         }
 
