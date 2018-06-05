@@ -140,6 +140,8 @@ public class AS2ServerConnection {
                 while (!Thread.interrupted()) {
 
                     this.httpService.handleRequest(this.serverConnection, context);
+                    
+                    // Send asynchronous MDN if any.
 
                 }
             } catch (final ConnectionClosedException ex) {
