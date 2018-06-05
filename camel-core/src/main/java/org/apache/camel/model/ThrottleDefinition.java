@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -55,12 +56,26 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private Boolean callerRunsWhenRejected;
     @XmlAttribute
     private Boolean rejectExecution;
-    
+    @XmlElement(name = "correlationExpression")
+    private ExpressionSubElementDefinition correlationExpression;
+
     public ThrottleDefinition() {
     }
 
     public ThrottleDefinition(Expression maximumRequestsPerPeriod) {
         super(maximumRequestsPerPeriod);
+    }
+
+    public ThrottleDefinition(Expression maximumRequestsPerPeriod, Expression correlationExpression) {
+        this(ExpressionNodeHelper.toExpressionDefinition(maximumRequestsPerPeriod), correlationExpression);
+    }
+
+    private ThrottleDefinition(ExpressionDefinition maximumRequestsPerPeriod, Expression correlationExpression) {
+        super(maximumRequestsPerPeriod);
+
+        ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
+        cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
+        setCorrelationExpression(cor);
     }
 
     @Override
@@ -93,9 +108,14 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         if (maxRequestsExpression == null) {
             throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
         }
+        
+        Expression correlation = null;
+        if (correlationExpression != null) {
+            correlation = correlationExpression.createExpression(routeContext);
+        }
 
         boolean reject = getRejectExecution() != null && getRejectExecution();
-        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject);
+        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
         if (getCallerRunsWhenRejected() == null) {
@@ -104,6 +124,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         } else {
             answer.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
+
         return answer;
     }
 
@@ -255,5 +276,17 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public void setRejectExecution(Boolean rejectExecution) {
         this.rejectExecution = rejectExecution;
+    }
+
+    /**
+     * The expression used to calculate the correlation key to use for throttle grouping.
+     * The Exchange which has the same correlation key is throttled together.
+     */
+    public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
+        this.correlationExpression = correlationExpression;
+    }
+
+    public ExpressionSubElementDefinition getCorrelationExpression() {
+        return correlationExpression;
     }
 }
