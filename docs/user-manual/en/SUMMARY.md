@@ -210,6 +210,7 @@
 	* [Google Calendar](google-calendar-component.adoc)
 	* [Google Drive](google-drive-component.adoc)
 	* [Google Mail](google-mail-component.adoc)
+	* [Google Mail Stream](google-mail-stream-component.adoc)
 	* [Google Pubsub](google-pubsub-component.adoc)
 	* [Gora](gora-component.adoc)
 	* [Grape](grape-component.adoc)

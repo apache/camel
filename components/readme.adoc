@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 296 in 203 JAR artifacts (20 deprecated)
+Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -298,6 +298,9 @@ Number of Components: 296 in 203 JAR artifacts (20 deprecated)
 
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | 2.15 | The google-mail component provides access to Google Mail.
+
+| link:camel-google-mail/src/main/docs/google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) +
+`google-mail-stream:index` | 2.22 | The google-mail component provides access to Google Mail.
 
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
