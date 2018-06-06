@@ -46,7 +46,8 @@ import org.web3j.protocol.ipc.WindowsIpcService;
 /**
  * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j client for Ethereum blockchain", syntax = "web3j:host:port", consumerClass = Web3jConsumer.class, label = "blockchain, ethereum")
+@UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:host:port",
+    consumerClass = Web3jConsumer.class, label = "bitcoin,blockchain")
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 

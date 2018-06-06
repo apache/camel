@@ -129,6 +129,7 @@
 	* [Apache Flink](flink-component.adoc)
 	* [Apache Spark](spark-component.adoc)
 	* [APNS](apns-component.adoc)
+	* [AS2](as2-component.adoc)
 	* [Asterisk](asterisk-component.adoc)
 	* [Atmos](atmos-component.adoc)
 	* [Atmosphere Websocket](atmosphere-websocket-component.adoc)
@@ -380,7 +381,7 @@
 	* [Velocity](velocity-component.adoc)
 	* [Vert.x](vertx-component.adoc)
 	* [Weather](weather-component.adoc)
-	* [Web3j client for Ethereum blockchain](web3j-component.adoc)
+	* [Web3j Ethereum Blockchain](web3j-component.adoc)
 	* [Wordpress](wordpress-component.adoc)
 	* [XChange](xchange-component.adoc)
 	* [XML RPC](xmlrpc-component.adoc)
@@ -399,7 +400,6 @@
 
 <!-- others: START -->
 * Miscellaneous Components
-	* [As2 Parent](as2-parent.adoc)
 	* [BAM](bam.adoc)
 	* [Blueprint](blueprint.adoc)
 	* [CDI](cdi.adoc)
