@@ -115,11 +115,11 @@ public class GoogleMailStreamComponentConfiguration
         /**
          * The query to execute on gmail box
          */
-        private String query;
+        private String query = "is:unread";
         /**
          * Max results to be returned
          */
-        private Long maxResults;
+        private Long maxResults = 10L;
         /**
          * Comma separated list of labels to take into account
          */
