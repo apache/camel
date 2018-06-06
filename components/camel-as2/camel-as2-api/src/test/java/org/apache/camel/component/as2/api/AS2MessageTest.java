@@ -197,7 +197,7 @@ public class AS2MessageTest {
         certList.add(signingCert);
         certList.add(issueCert);
 
-        testServer = new AS2ServerConnection(AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, 8080,
+        testServer = new AS2ServerConnection(AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate());
         testServer.listen("*", new HttpRequestHandler() {
             @Override
