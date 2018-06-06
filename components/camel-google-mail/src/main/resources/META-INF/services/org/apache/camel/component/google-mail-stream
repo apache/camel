@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class=org.apache.camel.component.mail.stream.GoogleMailStreamComponent
+class=org.apache.camel.component.google.mail.stream.GoogleMailStreamComponent
