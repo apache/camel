@@ -54,10 +54,10 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     @UriParam
     private String applicationName;
 
-    @UriParam
+    @UriParam(defaultValue="is:unread")
     private String query = "is:unread";
 
-    @UriParam
+    @UriParam(defaultValue="10")
     private long maxResults = 10L;
 
     @UriParam
