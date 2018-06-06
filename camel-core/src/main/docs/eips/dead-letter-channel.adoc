@@ -143,7 +143,7 @@ this by enabling the *useOriginalMessage* option as shown below:
 ----
 // will use original body
 errorHandler(deadLetterChannel("jms:queue:dead")
-   .useOriginalMessage().maximumRedeliveries(5).redeliverDelay(5000);
+   .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
 ----
 
 Then the messages routed to the `jms:queue:dead` is the original input.
@@ -176,7 +176,7 @@ Redelivery is disabled by default.
 The default redeliver policy will use the following values:
 
 * maximumRedeliveries=0
-* redeliverDelay=1000L (1 second)
+* redeliveryDelay=1000L (1 second)
 * maximumRedeliveryDelay = 60 * 1000L (60 seconds)
 * And the exponential backoff and collision avoidance is turned off.
 * The retriesExhaustedLogLevel are set to LoggingLevel.ERROR
@@ -416,7 +416,7 @@ redelivery is allowed or not; notice that any in progress redelivery
 will still be executed. This option can only disallow any redelivery to
 be executed *after* the stopping of a route/shutdown of Camel has been
 triggered. If a redelivery is dissallowed then a
-`RejectedExcutionException` is set on the link:exchange.html[Exchange]
+`RejectedExecutionException` is set on the link:exchange.html[Exchange]
 and the processing of the link:exchange.html[Exchange] stops. This means
 any consumer will see the link:exchange.html[Exchange] as failed due the
 `RejectedExecutionException`.
