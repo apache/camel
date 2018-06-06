@@ -906,7 +906,7 @@
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
     <bundle dependency='true'>mvn:commons-digester/commons-digester/${commons-digester-version}</bundle>
@@ -1319,7 +1319,8 @@
     <feature version='${project.version}'>camel-core</feature>
     <!-- All those bundles should be optional I think, but the commons-jxpath osgi metadata is not really good -->
     <feature>war</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
+    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jxpath/${project.version}</bundle>
@@ -1963,7 +1964,7 @@
   </feature>
   <feature name='camel-shiro' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-configuration2/${commons-configuration2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.shiro/shiro-core/${shiro-version}</bundle>
@@ -2387,7 +2388,7 @@
      <!-- NOTICE: XOM cannot be included by default due to an incompatible license; please review its license model and install the dependency manually if you agree. -->
     <details>Before using this feature make sure to install this bundle first manually: mvn:xom/xom/${xom-version}</details>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ezmorph/${ezmorph-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json-lib/${jsonlib-bundle-version}</bundle>
