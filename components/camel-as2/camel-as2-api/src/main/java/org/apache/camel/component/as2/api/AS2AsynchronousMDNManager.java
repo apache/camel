@@ -18,6 +18,8 @@ package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
@@ -30,6 +32,7 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.HttpCoreContext;
@@ -42,6 +45,7 @@ import org.apache.http.protocol.RequestDate;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
+import org.apache.http.util.Args;
 
 public class AS2AsynchronousMDNManager {
 
@@ -74,37 +78,6 @@ public class AS2AsynchronousMDNManager {
     public static final String AS2_CONNECTION = CAMEL_AS2_ASYNC_MDN_PREFIX + "as2-connection";
 
     /**
-     * The HTTP Context Attribute indicating the target host MDN sent to.
-     */
-    public static final String TARGET_HOST = CAMEL_AS2_ASYNC_MDN_PREFIX + "target-host";
-
-    /**
-     * The HTTP Context Attribute indicating the target port MDN sent to.
-     */
-    public static final String TARGET_PORT = CAMEL_AS2_ASYNC_MDN_PREFIX + "target-port";
-
-    /**
-     * The HTTP Context Attribute containing the subject header sent in MDN.
-     */
-    public static final String SUBJECT = CAMEL_AS2_ASYNC_MDN_PREFIX + "subject";
-
-    /**
-     * The HTTP Context Attribute containing the internet e-mail address of this
-     * responding system
-     */
-    public static final String FROM = CAMEL_AS2_ASYNC_MDN_PREFIX + "from";
-
-    /**
-     * The HTTP Context Attribute indicating the AS2 name of MDN recipient.
-     */
-    public static final String AS2_TO = CAMEL_AS2_ASYNC_MDN_PREFIX + "as2-to";
-
-    /**
-     * The HTTP Context Attribute indicating the AS2 name of MDN sender.
-     */
-    public static final String AS2_FROM = CAMEL_AS2_ASYNC_MDN_PREFIX + "as2-from";
-
-    /**
      * The HTTP Context Attribute indicating the AS2 name of MDN sender.
      */
     public static final String RECIPIENT_ADDRESS = CAMEL_AS2_ASYNC_MDN_PREFIX + "recipient-address";
@@ -130,38 +103,37 @@ public class AS2AsynchronousMDNManager {
                 .build();
     }
 
-    public HttpCoreContext send(DispositionNotificationMultipartReportEntity mdn,
-                                String targetHostName,
-                                Integer targetPortNumber,
-                                String requestUri,
-                                String subject,
-                                String from,
-                                String as2From,
-                                String as2To)
+    public HttpCoreContext send(DispositionNotificationMultipartReportEntity mdn, 
+                                String recipientDeliveryAddress)
             throws HttpException {
-        if (targetHostName == null || targetHostName.length() == 0) {
-            targetHostName = "localhost";
+        Args.notNull(mdn, "mdn");
+        Args.notNull(recipientDeliveryAddress, "recipientDeliveryAddress");
+        
+        URI uri = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(recipientDeliveryAddress);
+            uri = uriBuilder.build();
+            
+        } catch (URISyntaxException e) {
+            throw new HttpException("Invalid recipient delivery address URL", e);
         }
-        if (targetPortNumber == null || targetPortNumber < 0) {
-            targetPortNumber = 80;
-        }
+        
+        String requestUri = buildRequestURI(uri);
         
         AS2BHttpClientConnection httpConnection = new AS2BHttpClientConnection(8 * 1024);
         
         try {
-            HttpHost targetHost = new HttpHost(targetHostName, targetPortNumber);
+            
+            HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
 
             // Create socket and bind to connection;
             Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
             httpConnection.bind(socket);
-
+            
             // Add Context attributes
             HttpCoreContext httpContext = HttpCoreContext.create();
             httpContext.setTargetHost(targetHost);
-            httpContext.setAttribute(AS2AsynchronousMDNManager.SUBJECT, subject);
-            httpContext.setAttribute(AS2AsynchronousMDNManager.FROM, from);
-            httpContext.setAttribute(AS2AsynchronousMDNManager.AS2_FROM, as2From);
-            httpContext.setAttribute(AS2AsynchronousMDNManager.AS2_TO, as2To);
+            httpContext.setAttribute(RECIPIENT_ADDRESS, recipientDeliveryAddress);
 
             BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
             request.setHeader(AS2Header.CONTENT_TYPE, mdn.getMainMessageContentType());
@@ -201,5 +173,21 @@ public class AS2AsynchronousMDNManager {
         httpexecutor.postProcess(response, httpProcessor, httpContext);
 
         return response;
+    }
+    
+    private String buildRequestURI(URI uri) {
+        StringBuilder sb = new StringBuilder();
+        if (uri.getPath() != null) {
+            sb.append(uri.getPath());
+        }
+        if (uri.getQuery() != null) {
+            sb.append('?');
+            sb.append(uri.getQuery());
+        }
+        if (uri.getFragment() != null) {
+            sb.append('#');
+            sb.append(uri.getFragment());
+        }
+        return sb.toString();
     }
 }
