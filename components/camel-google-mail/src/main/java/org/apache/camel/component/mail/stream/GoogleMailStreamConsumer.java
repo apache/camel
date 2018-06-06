@@ -25,6 +25,12 @@ import java.util.Queue;
 
 import javax.mail.internet.AddressException;
 
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.ListMessagesResponse;
+import com.google.api.services.gmail.model.Message;
+import com.google.api.services.gmail.model.ModifyMessageRequest;
+import com.google.common.base.Splitter;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -35,81 +41,76 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.ListMessagesResponse;
-import com.google.api.services.gmail.model.Message;
-import com.google.api.services.gmail.model.ModifyMessageRequest;
-import com.google.common.base.Splitter;
 
 /**
  * The GoogleMail consumer.
  */
 public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(GoogleMailStreamConsumer.class);
-	private String unreadLabelId;
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleMailStreamConsumer.class);
+    private String unreadLabelId;
 
-	public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId) {
-		super(endpoint, processor);
-		this.unreadLabelId = unreadLabelId;
-	}
+    public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId) {
+        super(endpoint, processor);
+        this.unreadLabelId = unreadLabelId;
+    }
 
-	protected GoogleMailStreamConfiguration getConfiguration() {
-		return getEndpoint().getConfiguration();
-	}
+    protected GoogleMailStreamConfiguration getConfiguration() {
+        return getEndpoint().getConfiguration();
+    }
 
-	protected Gmail getClient() {
-		return getEndpoint().getClient();
-	}
+    protected Gmail getClient() {
+        return getEndpoint().getClient();
+    }
 
-	@Override
-	public GoogleMailStreamEndpoint getEndpoint() {
-		return (GoogleMailStreamEndpoint) super.getEndpoint();
-	}
+    @Override
+    public GoogleMailStreamEndpoint getEndpoint() {
+        return (GoogleMailStreamEndpoint)super.getEndpoint();
+    }
 
-	@Override
-	protected int poll() throws Exception {
-		com.google.api.services.gmail.Gmail.Users.Messages.List request = getClient().users().messages().list("me");
-		if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
-			request.setQ(getConfiguration().getQuery());
-		}
-		if (ObjectHelper.isNotEmpty(getConfiguration().getMaxResults())) {
-			request.setMaxResults(getConfiguration().getMaxResults());
-		}
-		if (ObjectHelper.isNotEmpty(getConfiguration().getLabels())) {
-			request.setLabelIds(splitLabels(getConfiguration().getLabels()));
-		}
+    @Override
+    protected int poll() throws Exception {
+        com.google.api.services.gmail.Gmail.Users.Messages.List request = getClient().users().messages().list("me");
+        if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
+            request.setQ(getConfiguration().getQuery());
+        }
+        if (ObjectHelper.isNotEmpty(getConfiguration().getMaxResults())) {
+            request.setMaxResults(getConfiguration().getMaxResults());
+        }
+        if (ObjectHelper.isNotEmpty(getConfiguration().getLabels())) {
+            request.setLabelIds(splitLabels(getConfiguration().getLabels()));
+        }
 
-		Queue<Exchange> answer = new LinkedList<>();
+        Queue<Exchange> answer = new LinkedList<>();
 
-		ListMessagesResponse c = request.execute();
-		if (c.getMessages() != null) {
-		for (Iterator iterator = c.getMessages().iterator(); iterator.hasNext();) {
-			Message message = (Message) iterator.next();
-			Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
-			Exchange exchange = ((GoogleMailStreamEndpoint) getEndpoint())
-					.createExchange(getEndpoint().getExchangePattern(), mess);
-			answer.add(exchange);
-		}}
+        ListMessagesResponse c = request.execute();
+        if (c.getMessages() != null) {
+            for (Iterator iterator = c.getMessages().iterator(); iterator.hasNext();) {
+                Message message = (Message)iterator.next();
+                Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
+                Exchange exchange = ((GoogleMailStreamEndpoint)getEndpoint()).createExchange(getEndpoint().getExchangePattern(), mess);
+                answer.add(exchange);
+            }
+        }
 
-		return processBatch(CastUtils.cast(answer));
-	}
+        return processBatch(CastUtils.cast(answer));
+    }
 
-	@Override
-	public int processBatch(Queue<Object> exchanges) throws Exception {
-		int total = exchanges.size();
+    @Override
+    public int processBatch(Queue<Object> exchanges) throws Exception {
+        int total = exchanges.size();
 
-		for (int index = 0; index < total && isBatchAllowed(); index++) {
-			// only loop if we are started (allowed to run)
-			final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
-			// add current index and total as properties
-			exchange.setProperty(Exchange.BATCH_INDEX, index);
-			exchange.setProperty(Exchange.BATCH_SIZE, total);
-			exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
+            // only loop if we are started (allowed to run)
+            final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
+            // add current index and total as properties
+            exchange.setProperty(Exchange.BATCH_INDEX, index);
+            exchange.setProperty(Exchange.BATCH_SIZE, total);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
 
-			// update pending number of exchanges
-			pendingExchanges = total - index - 1;
-			
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
+
             // add on completion to handle after work when the exchange is done
             exchange.addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
@@ -126,71 +127,65 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-			getAsyncProcessor().process(exchange, new AsyncCallback() {
-				@Override
-				public void done(boolean doneSync) {
-					LOG.trace("Processing exchange done");
-				}
-			});
-		}
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    LOG.trace("Processing exchange done");
+                }
+            });
+        }
 
-		return total;
-	}
+        return total;
+    }
 
-	private List<String> splitLabels(String labels) throws AddressException {
-		List<String> labelsList = Splitter.on(',').splitToList(getConfiguration().getLabels());
-		return labelsList;
-	}
+    private List<String> splitLabels(String labels) throws AddressException {
+        List<String> labelsList = Splitter.on(',').splitToList(getConfiguration().getLabels());
+        return labelsList;
+    }
 
-	/**
-	 * Strategy to delete the message after being processed.
-	 *
-	 * @param exchange
-	 *            the exchange
-	 * @throws IOException
-	 */
-	protected void processCommit(Exchange exchange, String unreadLabelId) {
-		try {
-		if (getConfiguration().isMarkAsRead()) {
-			String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
+    /**
+     * Strategy to delete the message after being processed.
+     *
+     * @param exchange the exchange
+     * @throws IOException
+     */
+    protected void processCommit(Exchange exchange, String unreadLabelId) {
+        try {
+            if (getConfiguration().isMarkAsRead()) {
+                String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
 
-			LOG.trace("Marking email {} as read",id);
+                LOG.trace("Marking email {} as read", id);
 
-			List<String> remove = new ArrayList<String>();
-			remove.add(unreadLabelId);
-			ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
-			getClient().users().messages()
-					.modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
-					.execute();
+                List<String> remove = new ArrayList<String>();
+                remove.add(unreadLabelId);
+                ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
+                getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
 
-			LOG.trace("Marked email {} as read",id);
-		}
-		} catch (Exception e) {
+                LOG.trace("Marked email {} as read", id);
+            }
+        } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
         }
 
-	}
-
-	/**
-	 * Strategy when processing the exchange failed.
-	 *
-	 * @param exchange
-	 *            the exchange
-	 * @throws IOException
-	 */
-	protected void processRollback(Exchange exchange, String unreadLabelId) {
-		try {
-			LOG.warn("Exchange failed, so rolling back mail {} to un " + exchange);
-
-			List<String> add = new ArrayList<String>();
-			add.add(unreadLabelId);
-			ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
-			getClient().users().messages()
-					.modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
-					.execute();
-	} catch (Exception e) {
-        getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
     }
-	}
+
+    /**
+     * Strategy when processing the exchange failed.
+     *
+     * @param exchange the exchange
+     * @throws IOException
+     */
+    protected void processRollback(Exchange exchange, String unreadLabelId) {
+        try {
+            LOG.warn("Exchange failed, so rolling back mail {} to un " + exchange);
+
+            List<String> add = new ArrayList<String>();
+            add.add(unreadLabelId);
+            ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
+            getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
+        }
+    }
 
 }

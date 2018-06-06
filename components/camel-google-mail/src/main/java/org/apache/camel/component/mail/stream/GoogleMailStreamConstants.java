@@ -18,14 +18,13 @@ package org.apache.camel.component.mail.stream;
 
 /**
  * Constants used in Camel Google Mail Stream
- * 
  */
 public interface GoogleMailStreamConstants {
 
-    String MAIL_TO                     = "CamelGoogleMailStreamTo";
-    String MAIL_FROM                   = "CamelGoogleMailStreamFrom";
-    String MAIL_CC                     = "CamelGoogleMailStreamCc";
-    String MAIL_BCC                    = "CamelGoogleMailStreamBcc";
-    String MAIL_SUBJECT                = "CamelGoogleMailStreamSubject";
-    String MAIL_ID                     = "CamelGoogleMailId";
+    String MAIL_TO = "CamelGoogleMailStreamTo";
+    String MAIL_FROM = "CamelGoogleMailStreamFrom";
+    String MAIL_CC = "CamelGoogleMailStreamCc";
+    String MAIL_BCC = "CamelGoogleMailStreamBcc";
+    String MAIL_SUBJECT = "CamelGoogleMailStreamSubject";
+    String MAIL_ID = "CamelGoogleMailId";
 }

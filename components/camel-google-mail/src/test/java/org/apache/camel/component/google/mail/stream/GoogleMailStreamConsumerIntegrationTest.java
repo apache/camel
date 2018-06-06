@@ -22,23 +22,22 @@ import org.junit.Test;
 
 public class GoogleMailStreamConsumerIntegrationTest extends AbstractGoogleMailStreamTestSupport {
 
-	@Test
-	public void testConsumePrefixedMessages() throws Exception {
-		MockEndpoint mock = getMockEndpoint("mock:result");
-		mock.expectedMinimumMessageCount(1);
-		assertMockEndpointsSatisfied();
-	}
+    @Test
+    public void testConsumePrefixedMessages() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        assertMockEndpointsSatisfied();
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
 
-				from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=10")
-								.to("mock:result");
+                from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=10").to("mock:result");
 
-			}
-		};
-	}
+            }
+        };
+    }
 }
