@@ -151,9 +151,9 @@
       <artifactId>guava</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.commons-beanutils</artifactId>
-      <version>${commons-beanutils-bundle-version}</version>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${commons-beanutils-version}</version>
     </dependency>
   </dependencies>
 
