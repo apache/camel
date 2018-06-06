@@ -38,9 +38,9 @@ public class SedaComponent extends UriEndpointComponent {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = SedaConstants.MAX_CONCURRENT_CONSUMERS;
 
-    @Metadata(label = "consumer", defaultValue = ""+SedaConstants.CONCURRENT_CONSUMERS)
+    @Metadata(label = "consumer", defaultValue = "" + SedaConstants.CONCURRENT_CONSUMERS)
     protected int concurrentConsumers = SedaConstants.CONCURRENT_CONSUMERS;
-    @Metadata(label = "advanced", defaultValue = ""+SedaConstants.QUEUE_SIZE )
+    @Metadata(label = "advanced", defaultValue = "" + SedaConstants.QUEUE_SIZE)
     protected int queueSize = SedaConstants.QUEUE_SIZE;
     @Metadata(label = "advanced")
     protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<>();
