@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 295 in 202 JAR artifacts (20 deprecated)
+Number of Components: 296 in 203 JAR artifacts (20 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -25,6 +25,9 @@ Number of Components: 295 in 202 JAR artifacts (20 deprecated)
 
 | link:camel-apns/src/main/docs/apns-component.adoc[APNS] (camel-apns) +
 `apns:name` | 2.8 | For sending notifications to Apple iOS devices.
+
+| link:camel-as2/camel-as2-component/src/main/docs/as2-component.adoc[AS2] (camel-as2) +
+`as2:name` |  | Represents a AS2 endpoint.
 
 | link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
 `asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
@@ -854,7 +857,7 @@ Number of Components: 295 in 202 JAR artifacts (20 deprecated)
 | link:camel-weather/src/main/docs/weather-component.adoc[Weather] (camel-weather) +
 `weather:name` | 2.12 | Polls the weather information from Open Weather Map.
 
-| link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j client for Ethereum blockchain] (camel-web3j) +
+| link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) +
 `web3j:host:port` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
@@ -1075,13 +1078,11 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 45 in 45 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
-
-| link:camel-as2-parent/src/main/docs/as2-parent.adoc[As2 Parent] (camel-as2-parent) |  | Camel AS2 parent
 
 | link:camel-bam/src/main/docs/bam.adoc[BAM] (camel-bam) | 1.0 | *deprecated* Business Activity Monitoring
 
