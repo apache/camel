@@ -43,6 +43,7 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -114,9 +115,9 @@ public class AS2MessageTest {
     private static final Logger LOG = LoggerFactory.getLogger(AS2MessageTest.class);
 
     private static final String METHOD = "POST";
-    private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:8080/handle-receipts";
     private static final String TARGET_HOST = "localhost";
-    private static final int TARGET_PORT = 8080;
+    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable(8080);
+    private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT + "/handle-receipts";
     private static final String AS2_VERSION = "1.1";
     private static final String USER_AGENT = "Camel AS2 Endpoint";
     private static final String REQUEST_URI = "/";
