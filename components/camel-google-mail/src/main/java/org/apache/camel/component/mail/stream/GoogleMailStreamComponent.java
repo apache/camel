@@ -18,6 +18,8 @@ package org.apache.camel.component.mail.stream;
 
 import java.util.Map;
 
+import com.google.api.services.gmail.Gmail;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
@@ -25,71 +27,68 @@ import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
-import com.google.api.services.gmail.Gmail;
-
 /**
  * Represents the component that manages {@link GoogleMailStreamEndpoint}.
  */
 public class GoogleMailStreamComponent extends DefaultComponent {
 
-	@Metadata(label = "advanced")
-	private Gmail client;
-	@Metadata(label = "advanced")
-	private GoogleMailClientFactory clientFactory;
-	@Metadata(label = "advanced")
-	private GoogleMailStreamConfiguration configuration;
-	
+    @Metadata(label = "advanced")
+    private Gmail client;
+    @Metadata(label = "advanced")
+    private GoogleMailClientFactory clientFactory;
+    @Metadata(label = "advanced")
+    private GoogleMailStreamConfiguration configuration;
+
     public GoogleMailStreamComponent() {
         this(null);
     }
 
     public GoogleMailStreamComponent(CamelContext context) {
         super(context);
-        
+
         this.configuration = new GoogleMailStreamConfiguration();
     }
 
-	public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
-		if (client == null) {
-			client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-					googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopes(),
-					googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
-					googleMailConfiguration.getAccessToken());
-		}
-		return client;
-	}
+    public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
+        if (client == null) {
+            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopes(),
+                                                   googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
+                                                   googleMailConfiguration.getAccessToken());
+        }
+        return client;
+    }
 
-	/**
-	 * The client Factory
-	 */
-	public GoogleMailClientFactory getClientFactory() {
-		if (clientFactory == null) {
-			clientFactory = new BatchGoogleMailClientFactory();
-		}
-		return clientFactory;
-	}
+    /**
+     * The client Factory
+     */
+    public GoogleMailClientFactory getClientFactory() {
+        if (clientFactory == null) {
+            clientFactory = new BatchGoogleMailClientFactory();
+        }
+        return clientFactory;
+    }
 
-	public GoogleMailStreamConfiguration getConfiguration() {
-		return configuration;
-	}
+    public GoogleMailStreamConfiguration getConfiguration() {
+        return configuration;
+    }
 
-	/**
-	 * The configuration
-	 */
-	public void setConfiguration(GoogleMailStreamConfiguration configuration) {
-		this.configuration = configuration;
-	}
+    /**
+     * The configuration
+     */
+    public void setConfiguration(GoogleMailStreamConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-	public void setClientFactory(GoogleMailClientFactory clientFactory) {
-		this.clientFactory = clientFactory;
-	}
+    public void setClientFactory(GoogleMailClientFactory clientFactory) {
+        this.clientFactory = clientFactory;
+    }
 
-	@Override
-	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-		final GoogleMailStreamConfiguration configuration = this.configuration.copy();
-		setProperties(configuration, parameters);
-		GoogleMailStreamEndpoint endpoint = new GoogleMailStreamEndpoint(uri, this, configuration);
-		setProperties(endpoint, parameters);
-		return endpoint;
-	}
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        final GoogleMailStreamConfiguration configuration = this.configuration.copy();
+        setProperties(configuration, parameters);
+        GoogleMailStreamEndpoint endpoint = new GoogleMailStreamEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
+    }
 }

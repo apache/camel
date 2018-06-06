@@ -35,7 +35,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
 
     @UriPath
     private String index;
-    
+
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
 
@@ -53,19 +53,18 @@ public class GoogleMailStreamConfiguration implements Cloneable {
 
     @UriParam
     private String applicationName;
-    
+
     @UriParam
     private String query = "is:unread";
-    
+
     @UriParam
     private long maxResults = 10L;
-    
+
     @UriParam
     private String labels;
-    
+
     @UriParam
     private boolean markAsRead;
-    
 
     public String getClientId() {
         return clientId;
@@ -94,7 +93,8 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
+     * OAuth 2 access token. This typically expires after an hour so
+     * refreshToken is recommended for long term usage.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -105,7 +105,9 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can
+     * obtain a new accessToken whenever the current one expires - a necessity
+     * if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -127,72 +129,74 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info.
+     * Specifies the level of permissions you want a mail application to have to
+     * a user account. See https://developers.google.com/gmail/api/auth/scopes
+     * for more info.
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
     }
 
     public String getIndex() {
-		return index;
-	}
+        return index;
+    }
 
     /**
      * Specifies an index for the endpoint
      */
-	public void setIndex(String index) {
-		this.index = index;
-	}   
-	
-	public String getQuery() {
-		return query;
-	}
+    public void setIndex(String index) {
+        this.index = index;
+    }
+
+    public String getQuery() {
+        return query;
+    }
 
     /**
      * The query to execute on gmail box
      */
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public void setQuery(String query) {
+        this.query = query;
+    }
 
-	public long getMaxResults() {
-		return maxResults;
-	}
+    public long getMaxResults() {
+        return maxResults;
+    }
 
     /**
      * Max results to be returned
      */
-	public void setMaxResults(long maxResults) {
-		this.maxResults = maxResults;
-	}
+    public void setMaxResults(long maxResults) {
+        this.maxResults = maxResults;
+    }
 
-	public String getLabels() {
-		return labels;
-	}
+    public String getLabels() {
+        return labels;
+    }
 
     /**
      * Comma separated list of labels to take into account
      */
-	public void setLabels(String labels) {
-		this.labels = labels;
-	}
-	
-	public boolean isMarkAsRead() {
-		return markAsRead;
-	}
-	
+    public void setLabels(String labels) {
+        this.labels = labels;
+    }
+
+    public boolean isMarkAsRead() {
+        return markAsRead;
+    }
+
     /**
      * Mark the message as read once it has been consumed
      */
-	public void setMarkAsRead(boolean markAsRead) {
-		this.markAsRead = markAsRead;
-	}
-    
+    public void setMarkAsRead(boolean markAsRead) {
+        this.markAsRead = markAsRead;
+    }
+
     // *************************************************
     //
     // *************************************************
 
-	public GoogleMailStreamConfiguration copy() {
+    public GoogleMailStreamConfiguration copy() {
         try {
             return (GoogleMailStreamConfiguration)super.clone();
         } catch (CloneNotSupportedException e) {
