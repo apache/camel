@@ -228,7 +228,9 @@ public class ComponentModel {
 
     public String getDocLink() {
         // special for these components
-        if ("camel-box".equals(artifactId)) {
+        if ("camel-as2".equals(artifactId)) {
+            return "camel-as2/camel-as2-component/src/main/docs";
+        } else if ("camel-box".equals(artifactId)) {
             return "camel-box/camel-box-component/src/main/docs";
         } else if ("camel-linkedin".equals(artifactId)) {
             return "camel-linkedin/camel-linkedin-component/src/main/docs";
