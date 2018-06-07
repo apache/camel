@@ -21,14 +21,12 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
 import org.mockito.Mockito;
 
 /**
@@ -44,8 +42,8 @@ public class TelegramTestSupport extends CamelTestSupport {
     /**
      * Restores the status of {@code TelegramServiceProvider} if it has been mocked.
      */
-    @After
-    public void tearDown() {
+    @Override
+    public void doPostTearDown() throws Exception {
         if (telegramServiceMocked) {
             TelegramServiceProvider.get().restoreDefaultService();
             this.telegramServiceMocked = false;
