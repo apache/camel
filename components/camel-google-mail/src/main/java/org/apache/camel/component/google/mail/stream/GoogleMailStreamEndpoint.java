@@ -17,13 +17,17 @@
 package org.apache.camel.component.google.mail.stream;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.internet.AddressException;
 
 import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.ListLabelsResponse;
 import com.google.api.services.gmail.model.MessagePartHeader;
+import com.google.common.base.Splitter;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -35,6 +39,7 @@ import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The google-mail component provides access to Google Mail.
@@ -64,7 +69,7 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         String unreadLabelId = null;
-        String readLabelId = null;
+        List labelsIds = new ArrayList<>();
         ListLabelsResponse listResponse = getClient().users().labels().list("me").execute();
         for (Label label : listResponse.getLabels()) {
             Label countLabel = getClient().users().labels().get("me", label.getId()).execute();
@@ -72,7 +77,18 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
                 unreadLabelId = countLabel.getId();
             }
         }
-        final GoogleMailStreamConsumer consumer = new GoogleMailStreamConsumer(this, processor, unreadLabelId);
+        if (ObjectHelper.isNotEmpty(getConfiguration().getLabels())) {
+            List<String> plainLabels = splitLabels(getConfiguration().getLabels());
+            for (Label label : listResponse.getLabels()) {
+                Label countLabel = getClient().users().labels().get("me", label.getId()).execute();
+                for (String plainLabel : plainLabels) {
+                    if (countLabel.getName().equalsIgnoreCase(plainLabel)) {
+                        labelsIds.add(countLabel.getId());
+                    }
+                }
+            }
+        }
+        final GoogleMailStreamConsumer consumer = new GoogleMailStreamConsumer(this, processor, unreadLabelId, labelsIds);
         configureConsumer(consumer);
         return consumer;
     }
@@ -133,5 +149,10 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
                 message.setHeader(GoogleMailStreamConstants.MAIL_BCC, header.getValue());
             }
         }
+    }
+    
+    private List<String> splitLabels(String labels) throws AddressException {
+        List<String> labelsList = Splitter.on(',').splitToList(getConfiguration().getLabels());
+        return labelsList;
     }
 }

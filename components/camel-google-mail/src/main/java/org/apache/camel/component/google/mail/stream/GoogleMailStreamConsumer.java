@@ -23,13 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import javax.mail.internet.AddressException;
-
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
-import com.google.common.base.Splitter;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -49,10 +46,12 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleMailStreamConsumer.class);
     private String unreadLabelId;
+    private List labelsIds;
 
-    public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId) {
+    public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId, List labelsIds) {
         super(endpoint, processor);
         this.unreadLabelId = unreadLabelId;
+        this.labelsIds = labelsIds;
     }
 
     protected GoogleMailStreamConfiguration getConfiguration() {
@@ -77,8 +76,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         if (ObjectHelper.isNotEmpty(getConfiguration().getMaxResults())) {
             request.setMaxResults(getConfiguration().getMaxResults());
         }
-        if (ObjectHelper.isNotEmpty(getConfiguration().getLabels())) {
-            request.setLabelIds(splitLabels(getConfiguration().getLabels()));
+        if (ObjectHelper.isNotEmpty(labelsIds)) {
+            request.setLabelIds(labelsIds);
         }
 
         Queue<Exchange> answer = new LinkedList<>();
@@ -136,11 +135,6 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return total;
-    }
-
-    private List<String> splitLabels(String labels) throws AddressException {
-        List<String> labelsList = Splitter.on(',').splitToList(getConfiguration().getLabels());
-        return labelsList;
     }
 
     /**
