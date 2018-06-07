@@ -33,6 +33,7 @@ public interface MetaDataExtension extends ComponentExtension {
         // Common meta-data attributes
         String CONTENT_TYPE = Exchange.CONTENT_TYPE;
         String JAVA_TYPE = "Java-Type";
+        String CONTEXT = "Meta-Context";
 
         /**
          * Returns an attribute associated with this meta data by name.
