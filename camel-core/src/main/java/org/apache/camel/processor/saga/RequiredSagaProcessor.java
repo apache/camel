@@ -49,9 +49,9 @@ public class RequiredSagaProcessor extends SagaProcessor {
                 inheritedCoordinator = false;
             }
 
-            coordinatorFuture.whenComplete((coordinator, ex2) -> ifNotException(ex2, exchange, callback, () -> {
+            coordinatorFuture.whenComplete((coordinator, ex2) -> ifNotException(ex2, exchange, !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
                 setCurrentSagaCoordinator(exchange, coordinator);
-                coordinator.beginStep(exchange, step).whenComplete((done, ex3) -> ifNotException(ex3, exchange, callback, () -> {
+                coordinator.beginStep(exchange, step).whenComplete((done, ex3) -> ifNotException(ex3, exchange, !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
                     super.process(exchange, doneSync -> {
                         if (!inheritedCoordinator) {
                             // Saga starts and ends here
