@@ -18,13 +18,12 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
-import org.junit.Assert;
 
 public class SagaOptionsTest extends ContextTestSupport {
-
 
     public void testHeaderForwardedToComplete() throws Exception {
 
@@ -49,12 +48,21 @@ public class SagaOptionsTest extends ContextTestSupport {
 
         try {
             template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola");
-            Assert.fail("Should throw an exception");
+            fail("Should throw an exception");
         } catch (Exception ex) {
             // OK
         }
 
         compensate.assertIsSatisfied();
+    }
+
+    public void testRouteDoesNotHangOnOptionError() throws Exception {
+        try {
+            template.sendBody("direct:wrong-expression", "Hello");
+            fail("Should throw an exception");
+        } catch (RuntimeCamelException ex) {
+            // OK
+        }
     }
 
     @Override
@@ -81,6 +89,11 @@ public class SagaOptionsTest extends ContextTestSupport {
                         .setHeader("myname", constant("TryToOverride"))
                         .setHeader("name", constant("TryToOverride"))
                         .to("mock:endpoint");
+
+                from("direct:wrong-expression")
+                        .saga()
+                        .option("id", simple("${10 / 0}"))
+                        .to("log:info");
 
             }
         };
