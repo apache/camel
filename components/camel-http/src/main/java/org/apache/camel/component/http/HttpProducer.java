@@ -247,7 +247,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         Object responseBody = extractResponseBody(method, exchange, getEndpoint().isIgnoreResponseBody());
-        if (transferException && responseBody != null && responseBody instanceof Exception) {
+        if (transferException && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
         }
