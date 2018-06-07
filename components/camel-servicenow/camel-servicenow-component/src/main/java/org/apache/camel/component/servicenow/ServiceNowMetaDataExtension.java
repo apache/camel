@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
@@ -468,12 +469,12 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         private final String instanceName;
         private final String objectName;
         private final String objectType;
-        private final Stack<String> stack;
+        private final Deque<String> stack;
 
         MetaContext(Map<String, Object> parameters) {
             this.parameters = parameters;
             this.configuration = getComponent(ServiceNowComponent.class).getConfiguration().copy();
-            this.stack = new Stack<>();
+            this.stack = new ArrayDeque<>();
 
             try {
                 IntrospectionSupport.setProperties(configuration, new HashMap<>(parameters));
@@ -522,7 +523,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             return objectName;
         }
 
-        public Stack<String> getStack() {
+        public Deque<String> getStack() {
             return stack;
         }
     }
