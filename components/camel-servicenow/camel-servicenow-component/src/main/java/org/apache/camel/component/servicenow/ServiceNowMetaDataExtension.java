@@ -64,20 +64,28 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     @Override
     public Optional<MetaDataExtension.MetaData> meta(Map<String, Object> parameters) {
-        try {
+        final String objectType = (String)parameters.get("objectType");
+
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE)) {
             final MetaContext context = new MetaContext(parameters);
 
-            if (!ObjectHelper.equalIgnoreCase(context.getObjectType(), "table")) {
-                throw new UnsupportedOperationException("Unsupported object type <" + context.getObjectType() + ">");
-            }
+            // validate meta parameters
+            ObjectHelper.notNull(context.getObjectType(), "objectType");
+            ObjectHelper.notNull(context.getObjectName(), "objectName");
 
             return tableMeta(context);
-
-        } catch (UnsupportedOperationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
+
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_IMPORT)) {
+            final MetaContext context = new MetaContext(parameters);
+
+            // validate mate parameters
+            ObjectHelper.notNull(context.getObjectType(), "objectType");
+
+            return importSetMeta(context);
+        }
+
+        throw new UnsupportedOperationException("Unsupported object type <" + objectType + ">");
     }
 
     private Optional<MetaDataExtension.MetaData> tableMeta(MetaContext context) {
@@ -85,10 +93,6 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             final List<String> names = getObjectHierarchy(context);
             final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
             final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
-
-            if (names.isEmpty()) {
-                return Optional.empty();
-            }
 
             // Schema
             root.put("$schema", "http://json-schema.org/schema#");
@@ -117,6 +121,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 MetaDataBuilder.on(getCamelContext())
                     .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
                     .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                    .withAttribute(MetaData.CONTEXT, ServiceNowConstants.RESOURCE_TABLE)
                     .withAttribute("date.format", dateFormat)
                     .withAttribute("time.format", timeFormat)
                     .withAttribute("date-time.format", dateFormat + " " + timeFormat)
@@ -126,6 +131,67 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Optional<MetaDataExtension.MetaData> importSetMeta(MetaContext context) {
+        try {
+            Optional<JsonNode> response = context.getClient().reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(context.getConfiguration().getApiVersion())
+                .path("table")
+                .path("sys_db_object")
+                .query("sysparm_exclude_reference_link", "true")
+                .query("sysparm_fields", "name%2Csys_id")
+                .query("sysparm_query", "name=sys_import_set_row")
+                .trasform(HttpMethod.GET, this::findResultNode);
+
+            if (response.isPresent()) {
+                final JsonNode node = response.get();
+                final JsonNode sysId = node.findValue("sys_id");
+
+                if (sysId == null) {
+                    throw new RuntimeException("Unable to determine sys_id of sys_import_set_row");
+                }
+
+                response = context.getClient().reset()
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_db_object")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Csys_name")
+                    .queryF("sysparm_query", "super_class=%s", sysId.textValue())
+                    .trasform(HttpMethod.GET, this::findResultNode);
+
+                if (response.isPresent()) {
+                    final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
+
+                    processResult(response.get(), n -> {
+                        final JsonNode name = n.findValue("name");
+                        final JsonNode label = n.findValue("sys_name");
+
+                        if (name != null && label != null) {
+                            root.put(name.textValue(), label.textValue());
+                        }
+                    });
+
+                    return Optional.of(
+                        MetaDataBuilder.on(getCamelContext())
+                            .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                            .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                            .withAttribute(MetaData.CONTEXT, ServiceNowConstants.RESOURCE_IMPORT)
+                            .withPayload(root)
+                            .build()
+                    );
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return Optional.empty();
     }
 
     // ********************************
@@ -322,6 +388,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     // Helpers
     // *************************************
 
+    /**
+     * Determine the hierarchy of a table by inspecting the super_class attribute.
+     */
     private List<String> getObjectHierarchy(MetaContext context) throws Exception {
         List<String> hierarchy = new ArrayList<>();
         String query = String.format("name=%s", context.getObjectName());
@@ -339,9 +408,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
-                JsonNode node = response.get();
-                JsonNode nameNode = node.findValue("name");
-                JsonNode classNode = node.findValue("super_class");
+                final JsonNode node = response.get();
+                final JsonNode nameNode = node.findValue("name");
+                final JsonNode classNode = node.findValue("super_class");
 
                 if (nameNode != null && classNode != null) {
                     query = String.format("sys_id=%s", classNode.textValue());
@@ -401,20 +470,22 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         private final String objectType;
         private final Stack<String> stack;
 
-        MetaContext(Map<String, Object> parameters) throws Exception {
+        MetaContext(Map<String, Object> parameters) {
             this.parameters = parameters;
             this.configuration = getComponent(ServiceNowComponent.class).getConfiguration().copy();
             this.stack = new Stack<>();
 
-            IntrospectionSupport.setProperties(configuration, new HashMap<>(parameters));
+            try {
+                IntrospectionSupport.setProperties(configuration, new HashMap<>(parameters));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
             this.instanceName = (String)parameters.getOrDefault("instanceName", getComponent(ServiceNowComponent.class).getInstanceName());
-            this.objectType = (String)parameters.getOrDefault("objectType", "table");
+            this.objectType = (String)parameters.getOrDefault("objectType", ServiceNowConstants.RESOURCE_TABLE);
             this.objectName = (String)parameters.getOrDefault("objectName", configuration.getTable());
 
             ObjectHelper.notNull(instanceName, "instanceName");
-            ObjectHelper.notNull(objectName, "objectName");
-            ObjectHelper.notNull(objectType, "objectType");
 
             // Configure Api and OAuthToken ULRs using instanceName
             if (!configuration.hasApiUrl()) {
