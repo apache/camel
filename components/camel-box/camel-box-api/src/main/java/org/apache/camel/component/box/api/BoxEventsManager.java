@@ -63,8 +63,6 @@ public class BoxEventsManager {
      *            - the starting position of the event stream.
      * @param listener
      *            - the listener to add to event stream.
-     * 
-     * @return The event stream.
      */
     public void listen(EventListener listener, Long startingPosition) {
         try {
