@@ -624,7 +624,7 @@
     <smack-version>4.2.4</smack-version>
     <snakeyaml-version>1.21</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
-    <snmp4j-version>2.6.0_1</snmp4j-version>
+    <snmp4j-version>2.6.2_1</snmp4j-version>
     <solr-bundle-version>5.5.2_1</solr-bundle-version>
     <!-- solr version aligned with lucene -->
     <solr-version>5.5.2</solr-version>
