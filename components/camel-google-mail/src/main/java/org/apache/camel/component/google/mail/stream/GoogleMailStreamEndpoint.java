@@ -123,10 +123,9 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
         List<MessagePart> parts = mail.getPayload().getParts();
         if (parts != null && parts.get(0).getBody().getData() != null) {
-                byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim().toString()); // get
-                                                                                                                                   // body
-                String body = new String(bodyBytes, StandardCharsets.UTF_8);
-                message.setBody(body);
+            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim().toString()); // get                                                                                                                       // body
+            String body = new String(bodyBytes, StandardCharsets.UTF_8);
+            message.setBody(body);
         }
         setHeaders(message, mail.getPayload().getHeaders());
         return exchange;
@@ -135,19 +134,19 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     private void setHeaders(Message message, List<MessagePartHeader> headers) {
         for (MessagePartHeader header : headers) {
             String headerName = header.getName();
-            if (("SUBJECT").equalsIgnoreCase(headerName)) {
+            if ("SUBJECT".equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_SUBJECT, header.getValue());
             }
-            if (("TO").equalsIgnoreCase(headerName)) {
+            if ("TO".equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_TO, header.getValue());
             }
-            if (("FROM").equalsIgnoreCase(headerName)) {
+            if ("FROM".equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_FROM, header.getValue());
             }
-            if (("CC").equalsIgnoreCase(headerName)) {
+            if ("CC".equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_CC, header.getValue());
             }
-            if (("BCC").equalsIgnoreCase(headerName)) {
+            if ("BCC".equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_BCC, header.getValue());
             }
         }
