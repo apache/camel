@@ -751,8 +751,8 @@
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
-    <zxing-version>3.3.2</zxing-version>
-    <zxing-bundle-version>3.3.2_1</zxing-bundle-version>
+    <zxing-version>3.3.3</zxing-version>
+    <zxing-bundle-version>3.3.3_1</zxing-bundle-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
