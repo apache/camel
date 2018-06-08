@@ -1,4 +1,3 @@
-package org.apache.camel.test.testcontainers.spring;
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,9 +14,9 @@ package org.apache.camel.test.testcontainers.spring;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.testcontainers.spring;
 
 import org.apache.camel.test.testcontainers.Wait;
-import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
