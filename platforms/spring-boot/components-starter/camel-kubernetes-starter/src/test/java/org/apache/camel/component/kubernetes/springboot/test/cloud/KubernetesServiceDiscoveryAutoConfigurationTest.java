@@ -20,7 +20,8 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.model.cloud.springboot.KubernetesServiceCallServiceDiscoveryConfigurationProperties;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,35 +30,40 @@ public class KubernetesServiceDiscoveryAutoConfigurationTest {
 
     @Test
     public void testServiceDiscoveryDisabled() {
-        new ApplicationContextRunner()
-            .withUserConfiguration(TestConfiguration.class)
-            .withPropertyValues(
-                "spring.main.banner-mode=off",
-                "camel.cloud.kubernetes.service-discovery.enabled=false")
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfiguration.class)
+            .web(false)
             .run(
-                context -> {
-                    assertThat(context).doesNotHaveBean(KubernetesServiceCallServiceDiscoveryConfigurationProperties.class);
-                    assertThat(context).getBeans(ServiceDiscovery.class).doesNotContainKeys("kubernetes-service-discovery");
-                }
+                "--debug=false",
+                "--spring.main.banner-mode=OFF",
+                "--camel.cloud.kubernetes.service-discovery.enabled=false"
             );
+
+        try {
+            assertThat(context.getBeansOfType(KubernetesServiceCallServiceDiscoveryConfigurationProperties.class)).isEmpty();
+            assertThat(context.getBeansOfType(ServiceDiscovery.class)).doesNotContainKeys("kubernetes-service-discovery");
+        } finally {
+            context.close();
+        }
     }
 
 
     @Test
     public void testServiceDiscoveryEnabled() {
-        new ApplicationContextRunner()
-            .withUserConfiguration(TestConfiguration.class)
-            .withPropertyValues(
-                "spring.main.banner-mode=off",
-                "camel.cloud.kubernetes.service-discovery.enabled=true")
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfiguration.class)
+            .web(false)
             .run(
-                context -> {
-                    assertThat(context).hasSingleBean(KubernetesServiceCallServiceDiscoveryConfigurationProperties.class);
-                    assertThat(context).getBeans(ServiceDiscovery.class).containsKeys("kubernetes-service-discovery");
-                }
+                "--debug=false",
+                "--spring.main.banner-mode=OFF",
+                "--camel.cloud.kubernetes.service-discovery.enabled=true"
             );
-    }
 
+        try {
+            assertThat(context.getBeansOfType(KubernetesServiceCallServiceDiscoveryConfigurationProperties.class)).hasSize(1);
+            assertThat(context.getBeansOfType(ServiceDiscovery.class)).containsKeys("kubernetes-service-discovery");
+        } finally {
+            context.close();
+        }
+    }
 
     @EnableAutoConfiguration
     @Configuration
