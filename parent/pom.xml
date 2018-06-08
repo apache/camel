@@ -177,8 +177,8 @@
     <deltaspike-version>1.8.2</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.1.0</derby-version>
-    <digitalocean-api-client-version>2.14</digitalocean-api-client-version>
-    <digitalocean-api-client-bundle-version>2.14_1</digitalocean-api-client-bundle-version>
+    <digitalocean-api-client-version>2.15</digitalocean-api-client-version>
+    <digitalocean-api-client-bundle-version>2.15_1</digitalocean-api-client-bundle-version>
     <disruptor-version>3.3.8</disruptor-version>
     <dnsjava-version>2.1.8</dnsjava-version>
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
