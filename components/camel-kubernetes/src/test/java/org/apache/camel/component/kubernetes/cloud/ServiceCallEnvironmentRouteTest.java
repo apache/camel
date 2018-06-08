@@ -45,7 +45,7 @@ public class ServiceCallEnvironmentRouteTest extends CamelTestSupport {
                 KubernetesConfiguration kubernetesConfiguration = new KubernetesConfiguration();
 
                 ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();
-                config.setServiceDiscovery(new KubernetesEnvServiceDiscovery(kubernetesConfiguration));
+                config.kubernetesEnvServiceDiscovery();
 
                 // register configuration
                 context.setServiceCallConfiguration(config);
