@@ -2078,7 +2078,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ldap/${spring-ldap-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-batch-core/${spring-batch-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-batch-infrastructure/${spring-batch-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.springframework.data/spring-data-commons/${spring-data-commons-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-data-commons/${spring-data-commons-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -2087,9 +2087,9 @@
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-tx</feature>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
-    <bundle dependency='true'>mvn:org.springframework.data/spring-data-keyvalue/${spring-data-keyvalue-version}</bundle>
-    <bundle dependency='true'>mvn:org.springframework.data/spring-data-commons/${spring-data-commons-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-data-redis/${spring-data-redis-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-data-keyvalue/${spring-data-keyvalue-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-data-commons/${spring-data-commons-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-redis/${project.version}</bundle>
