@@ -145,6 +145,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processCommit(Exchange exchange, String unreadLabelId) {
         try {
+            System.err.println("mark as read!" + getConfiguration().isMarkAsRead());
             if (getConfiguration().isMarkAsRead()) {
                 String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
 

@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.mail.stream;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.ListLabelsResponse;
+import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.common.base.Splitter;
 
@@ -63,7 +65,7 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new IllegalArgumentException("The camel google mail stream component doesn't support producer");
+        throw new UnsupportedOperationException("The camel google mail stream component doesn't support producer");
     }
 
     @Override
@@ -119,13 +121,12 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
         Exchange exchange = super.createExchange();
         Message message = exchange.getIn();
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
-        if (mail.getPayload().getParts() != null) {
-            if (mail.getPayload().getParts().get(0).getBody().getData() != null) {
-                byte[] bodyBytes = Base64.decodeBase64(mail.getPayload().getParts().get(0).getBody().getData().trim().toString()); // get
+        List<MessagePart> parts = mail.getPayload().getParts();
+        if (parts != null && parts.get(0).getBody().getData() != null) {
+                byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim().toString()); // get
                                                                                                                                    // body
-                String body = new String(bodyBytes, "UTF-8");
+                String body = new String(bodyBytes, StandardCharsets.UTF_8);
                 message.setBody(body);
-            }
         }
         setHeaders(message, mail.getPayload().getHeaders());
         return exchange;
@@ -133,26 +134,26 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
 
     private void setHeaders(Message message, List<MessagePartHeader> headers) {
         for (MessagePartHeader header : headers) {
-            if (header.getName().equalsIgnoreCase("SUBJECT") || header.getName().equalsIgnoreCase("subject")) {
+            String headerName = header.getName();
+            if (("SUBJECT").equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_SUBJECT, header.getValue());
             }
-            if (header.getName().equalsIgnoreCase("TO") || header.getName().equalsIgnoreCase("to")) {
+            if (("TO").equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_TO, header.getValue());
             }
-            if (header.getName().equalsIgnoreCase("FROM") || header.getName().equalsIgnoreCase("from")) {
+            if (("FROM").equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_FROM, header.getValue());
             }
-            if (header.getName().equalsIgnoreCase("CC") || header.getName().equalsIgnoreCase("cc")) {
+            if (("CC").equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_CC, header.getValue());
             }
-            if (header.getName().equalsIgnoreCase("BCC") || header.getName().equalsIgnoreCase("bcc")) {
+            if (("BCC").equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_BCC, header.getValue());
             }
         }
     }
     
     private List<String> splitLabels(String labels) throws AddressException {
-        List<String> labelsList = Splitter.on(',').splitToList(getConfiguration().getLabels());
-        return labelsList;
+        return Splitter.on(',').splitToList(labels);
     }
 }

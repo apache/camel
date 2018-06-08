@@ -35,7 +35,7 @@ public class GoogleMailStreamConsumerIntegrationTest extends AbstractGoogleMailS
             @Override
             public void configure() {
 
-                from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=10").to("mock:result");
+                from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=30").to("mock:result");
 
             }
         };
