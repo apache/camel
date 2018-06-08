@@ -123,7 +123,7 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
         List<MessagePart> parts = mail.getPayload().getParts();
         if (parts != null && parts.get(0).getBody().getData() != null) {
-            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim().toString()); // get                                                                                                                       // body
+            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim().toString()); 
             String body = new String(bodyBytes, StandardCharsets.UTF_8);
             message.setBody(body);
         }
