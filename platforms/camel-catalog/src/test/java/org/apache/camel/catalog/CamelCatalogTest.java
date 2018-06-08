@@ -1094,6 +1094,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testTransactedAndPolicyNoOutputs() throws Exception {
+        String json = catalog.modelJSonSchema("transacted");
+        assertNotNull(json);
+        assertTrue(json.contains("\"output\": false"));
+        assertFalse(json.contains("\"outputs\":"));
+
+        json = catalog.modelJSonSchema("policy");
+        assertNotNull(json);
+        assertTrue(json.contains("\"output\": false"));
+        assertFalse(json.contains("\"outputs\":"));
+    }
+
+    @Test
     public void testDataFormatAsciiDoc() throws Exception {
         String doc = catalog.dataFormatAsciiDoc("json-jackson");
         assertNotNull(doc);
