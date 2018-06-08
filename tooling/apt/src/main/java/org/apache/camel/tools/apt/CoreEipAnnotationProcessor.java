@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
@@ -183,6 +184,12 @@ public class CoreEipAnnotationProcessor {
 
         buffer.append("\n  \"properties\": {");
         boolean first = true;
+
+        if ("false".equals(eipModel.getOutput())) {
+            // filter out outputs if we do not support it (and preserve order so we need to use linked hash-set)
+            options = options.stream().filter(o -> !"outputs".equals(o.getName())).collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
         for (EipOption entry : options) {
             if (first) {
                 first = false;
@@ -190,6 +197,7 @@ public class CoreEipAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
+
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
@@ -1051,6 +1059,11 @@ public class CoreEipAnnotationProcessor {
         // if we are route/rest then we accept output
         if ("route".equals(model.getName()) || "rest".equals(model.getName())) {
             return true;
+        }
+
+        // special for transacted/policy which should not have output
+        if ("policy".equals(model.getName()) || "transacted".equals(model.getName())) {
+            return false;
         }
 
         for (EipOption option : options) {

@@ -42,6 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     // TODO: Align this code with TransactedDefinition
+    // TODO: Camel 3 should be NoOutputDefinition
 
     @XmlTransient
     protected Class<? extends Policy> type;
