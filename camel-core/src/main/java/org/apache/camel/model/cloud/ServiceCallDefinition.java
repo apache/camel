@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -782,9 +781,11 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
         final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
 
-        if (loadBalancer instanceof CamelContextAware) {
-            ((CamelContextAware) loadBalancer).setCamelContext(camelContext);
-        }
+        ObjectHelper.trySetCamelContext(serviceDiscovery, camelContext);
+        ObjectHelper.trySetCamelContext(serviceFilter, camelContext);
+        ObjectHelper.trySetCamelContext(serviceChooser, camelContext);
+        ObjectHelper.trySetCamelContext(loadBalancer, camelContext);
+
         if (loadBalancer instanceof ServiceDiscoveryAware) {
             ((ServiceDiscoveryAware) loadBalancer).setServiceDiscovery(serviceDiscovery);
         }
