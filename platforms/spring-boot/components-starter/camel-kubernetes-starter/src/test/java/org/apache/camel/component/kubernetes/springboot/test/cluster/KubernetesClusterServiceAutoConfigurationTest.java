@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext
 @ContextConfiguration(classes = KubernetesClusterServiceAutoConfiguration.class)
 @SpringBootTest(properties = {
+        "spring.main.banner-mode=off",
         "camel.component.kubernetes.cluster.service.enabled=true",
         "camel.component.kubernetes.cluster.service.id=myid1",
         "camel.component.kubernetes.cluster.service.master-url=http://myurl:9000",
