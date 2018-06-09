@@ -87,7 +87,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                 try {
                     values.put(option, expression.evaluate(exchange, Object.class));
                 } catch (Exception ex) {
-                    return CompletableFuture.supplyAsync(() -> {throw new RuntimeCamelException("Cannot evaluate saga option '" + option + "'", ex);});
+                    return CompletableFuture.supplyAsync(() -> {
+                        throw new RuntimeCamelException("Cannot evaluate saga option '" + option + "'", ex);
+                    });
                 }
             }
         }
