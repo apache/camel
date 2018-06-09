@@ -296,6 +296,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
+        if (endpoint.getHttpHeaders() != null) {
+            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
+        }
         return c.getInputStream();
     }
 

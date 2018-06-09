@@ -91,6 +91,11 @@ public class StreamProducer extends DefaultProducer {
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         c.setDoOutput(true);
+
+        if (endpoint.getHttpHeaders() != null) {
+            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
+        }
+
         return c.getOutputStream();
     }
 
