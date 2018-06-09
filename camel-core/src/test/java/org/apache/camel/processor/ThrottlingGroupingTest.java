@@ -39,19 +39,20 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     }
     
     public void testGroupingWithDynamicHeaderExpression() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
-        getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result2").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom", "Saloon");
         getMockEndpoint("mock:resultdynamic").expectedBodiesReceived("Hello Dynamic World", "Bye Dynamic World");
         
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("max", null);
 
         template.sendBodyAndHeaders("seda:a", "Kaboom", headers);
+        template.sendBodyAndHeaders("seda:a", "Saloon", headers);
         
         headers.put("max", "2");
         template.sendBodyAndHeaders("seda:a", "Hello World", headers);
         template.sendBodyAndHeaders("seda:b", "Bye World", headers);
-
+        headers.put("max", "2");
         headers.put("key", "1");
         template.sendBodyAndHeaders("seda:c", "Hello Dynamic World", headers);
         headers.put("key", "2");
@@ -68,8 +69,8 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("seda:a").throttle(1, header("max")).to("mock:result");
-                from("seda:b").throttle(2, header("max")).to("mock:result");
-                from("seda:c").throttle(header("key"), header("max")).to("mock:resultdynamic");
+                from("seda:b").throttle(2, header("max")).to("mock:result2");
+                from("seda:c").throttle(header("key"), header("max")).timePeriodMillis(2000).to("mock:resultdynamic");
             }
         };
     }

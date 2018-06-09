@@ -66,7 +66,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         super(maximumRequestsPerPeriod);
     }
 
-    public ThrottleDefinition(Expression maximumRequestsPerPeriod, Expression correlationExpression) {
+    public ThrottleDefinition(Expression correlationExpression, Expression maximumRequestsPerPeriod) {
         this(ExpressionNodeHelper.toExpressionDefinition(maximumRequestsPerPeriod), correlationExpression);
     }
 
