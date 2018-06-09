@@ -101,7 +101,8 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor {
         ifNotException(ex, exchange, false, null, null, callback, code);
     }
 
-    protected void ifNotException(Throwable ex, Exchange exchange, boolean handleCompletion, CamelSagaCoordinator coordinator, CamelSagaCoordinator previousCoordinator, AsyncCallback callback, Runnable code) {
+    protected void ifNotException(Throwable ex, Exchange exchange, boolean handleCompletion, CamelSagaCoordinator coordinator,
+                                  CamelSagaCoordinator previousCoordinator, AsyncCallback callback, Runnable code) {
         if (ex != null) {
             exchange.setException(ex);
             if (handleCompletion) {
