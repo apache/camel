@@ -296,6 +296,12 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
+        if (endpoint.getConnectTimeout() > 0) {
+            c.setConnectTimeout(endpoint.getConnectTimeout());
+        }
+        if (endpoint.getReadTimeout() > 0) {
+            c.setReadTimeout(endpoint.getReadTimeout());
+        }
         if (endpoint.getHttpHeaders() != null) {
             endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
         }
