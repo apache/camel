@@ -450,8 +450,8 @@
     <leveldbjni-version>1.8</leveldbjni-version>
     <leveldb-api-version>0.10</leveldb-api-version>
     <leveldb-version>0.10</leveldb-version>
-    <libphonenumber-version>8.8.11</libphonenumber-version>
-    <libphonenumber-bundle-version>8.8.11_1</libphonenumber-bundle-version>
+    <libphonenumber-version>8.9.7</libphonenumber-version>
+    <libphonenumber-bundle-version>8.9.7_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
