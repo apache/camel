@@ -75,6 +75,10 @@ public class StreamEndpoint extends DefaultEndpoint {
     private GroupStrategy groupStrategy = new DefaultGroupStrategy();
     @UriParam(label = "advanced", prefix = "httpHeaders.", multiValue = true)
     private Map<String, Object> httpHeaders;
+    @UriParam(label = "advanced")
+    private int connectTimeout;
+    @UriParam(label = "advanced")
+    private int readTimeout;
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
         super(endpointUri, component);
@@ -312,6 +316,38 @@ public class StreamEndpoint extends DefaultEndpoint {
      */
     public void setHttpHeaders(Map<String, Object> httpHeaders) {
         this.httpHeaders = httpHeaders;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used
+     * when opening a communications link to the resource referenced
+     * by this URLConnection.  If the timeout expires before the
+     * connection can be established, a
+     * java.net.SocketTimeoutException is raised. A timeout of zero is
+     * interpreted as an infinite timeout.
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Sets the read timeout to a specified timeout, in
+     * milliseconds. A non-zero value specifies the timeout when
+     * reading from Input stream when a connection is established to a
+     * resource. If the timeout expires before there is data available
+     * for read, a java.net.SocketTimeoutException is raised. A
+     * timeout of zero is interpreted as an infinite timeout.
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     // Implementations
