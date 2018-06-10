@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.univocity;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 
-import com.univocity.parsers.fixed.FixedWidthFieldLengths;
+import com.univocity.parsers.fixed.FixedWidthFields;
 import com.univocity.parsers.fixed.FixedWidthFormat;
 import com.univocity.parsers.fixed.FixedWidthParser;
 import com.univocity.parsers.fixed.FixedWidthParserSettings;
@@ -188,7 +188,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      *
      * @return new {@code FixedWidthFieldLengths} based on the header and field lengthsl
      */
-    private FixedWidthFieldLengths createFixedWidthFieldLengths() {
+    private FixedWidthFields createFixedWidthFieldLengths() {
         // Ensure that the field lengths have been defined.
         if (fieldLengths == null) {
             throw new IllegalArgumentException("The fieldLengths must have been defined in order to use the fixed-width format.");
@@ -196,7 +196,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
 
         // If there's no header then we only use their length
         if (headers == null) {
-            return new FixedWidthFieldLengths(fieldLengths);
+            return new FixedWidthFields(fieldLengths);
         }
 
         // Use both headers and field lengths (same size and no duplicate headers)
@@ -210,7 +210,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
         if (fields.size() != headers.length) {
             throw new IllegalArgumentException("The headers cannot have duplicates in order to use the fixed-width format.");
         }
-        return new FixedWidthFieldLengths(fields);
+        return new FixedWidthFields(fields);
     }
 
     @Override
