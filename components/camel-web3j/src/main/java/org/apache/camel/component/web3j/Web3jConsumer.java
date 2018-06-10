@@ -56,7 +56,7 @@ public class Web3jConsumer extends DefaultConsumer {
         LOG.info("Subscribing to: " + endpoint.getNodeAddress());
         switch (configuration.getOperation()) {
         case Web3jConstants.ETH_LOG_OBSERVABLE:
-            EthFilter ethFilter = endpoint.buildEthFilter(configuration.getFromBlock(), configuration.getToBlock(), configuration.getAddresses(), configuration.getTopics());
+            EthFilter ethFilter = Web3jEndpoint.buildEthFilter(configuration.getFromBlock(), configuration.getToBlock(), configuration.getAddresses(), configuration.getTopics());
             subscription = web3j.ethLogObservable(ethFilter).subscribe(
                 x -> ethLogObservable(x),
                 t -> processError(t, Web3jConstants.ETH_LOG_OBSERVABLE),

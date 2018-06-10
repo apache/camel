@@ -17,7 +17,6 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import io.micrometer.core.instrument.Meter;

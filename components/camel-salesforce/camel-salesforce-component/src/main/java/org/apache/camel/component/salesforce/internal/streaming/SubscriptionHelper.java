@@ -175,8 +175,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
                         LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
                         // reconnected to Salesforce, subscribe to existing channels
-                        final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map =
-                                new HashMap<>();
+                        final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map = new HashMap<>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
                         for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {

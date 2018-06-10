@@ -30,7 +30,7 @@ import org.apache.camel.component.as2.api.AS2ServerConnection;
  */
 public final class AS2ConnectionHelper {
 
-    private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<Integer, AS2ServerConnection>();
+    private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<>();
 
     /**
      * Prevent instantiation
