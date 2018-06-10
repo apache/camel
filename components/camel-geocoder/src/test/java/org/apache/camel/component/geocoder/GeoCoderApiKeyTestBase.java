@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.geocoder;
 
-public final class GeoCoderConstants {
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AssumptionViolatedException;
+import org.junit.Before;
 
-    public static final String ADDRESS = "CamelGeoCoderAddress";
-    public static final String LATLNG = "CamelGeoCoderLatlng";
-    public static final String LAT = "CamelGeoCoderLat";
-    public static final String LNG = "CamelGeoCoderLng";
-    public static final String STATUS = "CamelGeoCoderStatus";
-    public static final String REGION_CODE = "CamelGeoCoderRegionCode";
-    public static final String REGION_NAME = "CamelGeoCoderRegionName";
-    public static final String CITY = "CamelGeoCoderCity";
-    public static final String COUNTRY_LONG = "CamelGeoCoderCountryLong";
-    public static final String COUNTRY_SHORT = "CamelGeoCoderCountryShort";
-    public static final String POSTAL_CODE = "CamelGeoCoderPostalCode";
+public class GeoCoderApiKeyTestBase extends CamelTestSupport {
 
-    private GeoCoderConstants() {
+    @Before
+    public void before() {
+        String apiKey = getApiKey();
+        if (apiKey == null) {
+            throw new AssumptionViolatedException("API key not found in CAMEL_GEOCODER_APIKEY environment variable, skipping this test");
+        }
     }
 
+    protected String getApiKey() {
+        return System.getenv("CAMEL_GEOCODER_APIKEYx");
+    }
 }
