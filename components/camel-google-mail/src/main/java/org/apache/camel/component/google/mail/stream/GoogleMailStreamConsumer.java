@@ -83,8 +83,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
         ListMessagesResponse c = request.execute();
         if (c.getMessages() != null) {
-            for (Object element : c.getMessages()) {
-                Message message = (Message)element;
+            for (Message message : c.getMessages()) {
                 Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
                 Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), mess);
                 answer.add(exchange);
