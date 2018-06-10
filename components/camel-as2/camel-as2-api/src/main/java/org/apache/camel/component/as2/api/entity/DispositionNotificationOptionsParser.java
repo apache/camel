@@ -52,7 +52,7 @@ public class DispositionNotificationOptionsParser {
         Args.notNull(buffer, "buffer");
         Args.notNull(cursor, "cursor");
 
-        Map<String, Parameter> parameters = new HashMap<String, Parameter>();
+        Map<String, Parameter> parameters = new HashMap<>();
         while (!cursor.atEnd()) {
             Parameter parameter = AS2HeaderUtils.parseParameter(buffer, cursor);
             parameters.put(parameter.getAttribute(), parameter);

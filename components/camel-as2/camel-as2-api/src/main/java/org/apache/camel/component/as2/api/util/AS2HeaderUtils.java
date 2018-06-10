@@ -126,7 +126,7 @@ public final class AS2HeaderUtils {
             cursor.updatePos(cursor.getPos() + 1);
         }
 
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         while (!cursor.atEnd()) {
             String value = TOKEN_PARSER.parseValue(buffer, cursor, VALUE_DELIMS);
             values.add(value);

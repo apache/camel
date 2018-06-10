@@ -52,7 +52,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     public static final Map<ASN1ObjectIdentifier, String> STANDARD_MICALGS;
 
     static {
-        Map<ASN1ObjectIdentifier, String> stdMicAlgs = new HashMap<ASN1ObjectIdentifier, String>();
+        Map<ASN1ObjectIdentifier, String> stdMicAlgs = new HashMap<>();
 
         stdMicAlgs.put(CMSAlgorithm.MD5, "md5");
         stdMicAlgs.put(CMSAlgorithm.SHA1, "sha-1");
@@ -113,7 +113,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     public ContentType createMultipartSignedContentType(String boundary) {
         StringBuffer header = new StringBuffer(AS2MediaType.MULTIPART_SIGNED);
         header.append("; boundary=" + boundary);
-        Set<String> micAlgSet = new HashSet<String>();
+        Set<String> micAlgSet = new HashSet<>();
 
         // Collect algorithm names used by pre-calculated signers
         for (@SuppressWarnings("rawtypes")
@@ -121,7 +121,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
             SignerInformation signer = (SignerInformation) it.next();
             ASN1ObjectIdentifier digestOID = signer.getDigestAlgorithmID().getAlgorithm();
 
-            String micAlg = (String) STANDARD_MICALGS.get(digestOID);
+            String micAlg = STANDARD_MICALGS.get(digestOID);
 
             if (micAlg == null) {
                 micAlgSet.add("unknown");
@@ -136,7 +136,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
             SignerInfoGenerator signerInfoGen = (SignerInfoGenerator) it.next();
             ASN1ObjectIdentifier digestOID = signerInfoGen.getDigestAlgorithm().getAlgorithm();
 
-            String micAlg = (String) STANDARD_MICALGS.get(digestOID);
+            String micAlg = STANDARD_MICALGS.get(digestOID);
 
             if (micAlg == null) {
                 micAlgSet.add("unknown");
@@ -147,9 +147,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
 
         // Add algorithm names to multipart signed header.
         int count = 0;
-        for (Iterator<String> it = micAlgSet.iterator(); it.hasNext();) {
-            String alg = it.next();
-
+        for (String micAlg : micAlgSet) {
             if (count == 0) {
                 if (micAlgSet.size() != 1) {
                     header.append("; micalg=\"");
@@ -160,7 +158,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
                 header.append(',');
             }
 
-            header.append(alg);
+            header.append(micAlg);
 
             count++;
         }

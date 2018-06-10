@@ -183,7 +183,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void plainMessageSendTest() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelAS2.requestUri", REQUEST_URI);
         // parameter type is String
@@ -257,7 +257,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void multipartSignedMessageTest() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelAS2.requestUri", REQUEST_URI);
         // parameter type is String
@@ -403,7 +403,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         X509Certificate signingCert = Utils.makeCertificate(
                 serverSigningKP, signingDN, issueKP, issueDN);
 
-        serverCertList = new ArrayList<X509Certificate>();
+        serverCertList = new ArrayList<>();
 
         serverCertList.add(signingCert);
         serverCertList.add(issueCert);
@@ -436,7 +436,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         signingCert = Utils.makeCertificate(
                                         signingKP, signingDN, issueKP, issueDN);
 
-        certList = new ArrayList<X509Certificate>();
+        certList = new ArrayList<>();
 
         certList.add(signingCert);
         certList.add(issueCert);

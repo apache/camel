@@ -163,7 +163,7 @@ public class AS2MessageTest {
         signingKP = kpg.generateKeyPair();
         signingCert = Utils.makeCertificate(signingKP, signingDN, issueKP, issueDN);
 
-        certList = new ArrayList<X509Certificate>();
+        certList = new ArrayList<>();
 
         certList.add(signingCert);
         certList.add(issueCert);
@@ -192,7 +192,7 @@ public class AS2MessageTest {
         KeyPair signingKP = kpg.generateKeyPair();
         X509Certificate signingCert = Utils.makeCertificate(signingKP, signingDN, issueKP, issueDN);
 
-        List<X509Certificate> certList = new ArrayList<X509Certificate>();
+        List<X509Certificate> certList = new ArrayList<>();
 
         certList.add(signingCert);
         certList.add(issueCert);
@@ -460,7 +460,7 @@ public class AS2MessageTest {
         response.setHeader(AS2Header.SERVER, REPORTING_UA);
 
         // Create a receipt for edi message
-        Map<String, String> extensionFields = new HashMap<String, String>();
+        Map<String, String> extensionFields = new HashMap<>();
         extensionFields.put("Original-Recipient", "rfc822;" + AS2_NAME);
         AS2DispositionModifier dispositionModifier = AS2DispositionModifier.createWarning("AS2 is cool!");
         String[] failureFields = new String[] {"failure-field-1"};
