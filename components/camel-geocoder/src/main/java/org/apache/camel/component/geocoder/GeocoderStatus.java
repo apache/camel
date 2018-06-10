@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.geocoder;
 
-public final class GeoCoderConstants {
+public enum GeocoderStatus {
+    ERROR,
+    INVALID_REQUEST,
+    ACCESS_NOT_CONFIGURED,
+    OK,
+    OVER_QUERY_LIMIT,
+    OVER_DAILY_LIMIT,
+    REQUEST_DENIED,
+    UNKNOWN_ERROR,
+    ZERO_RESULTS;
 
-    public static final String ADDRESS = "CamelGeoCoderAddress";
-    public static final String LATLNG = "CamelGeoCoderLatlng";
-    public static final String LAT = "CamelGeoCoderLat";
-    public static final String LNG = "CamelGeoCoderLng";
-    public static final String STATUS = "CamelGeoCoderStatus";
-    public static final String REGION_CODE = "CamelGeoCoderRegionCode";
-    public static final String REGION_NAME = "CamelGeoCoderRegionName";
-    public static final String CITY = "CamelGeoCoderCity";
-    public static final String COUNTRY_LONG = "CamelGeoCoderCountryLong";
-    public static final String COUNTRY_SHORT = "CamelGeoCoderCountryShort";
-    public static final String POSTAL_CODE = "CamelGeoCoderPostalCode";
-
-    private GeoCoderConstants() {
+    public String value() {
+        return name();
     }
 
+    public static GeocoderStatus fromValue(String v) {
+        return valueOf(v);
+    }
 }
