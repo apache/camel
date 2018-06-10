@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
@@ -106,6 +107,7 @@ public final class UniVocityFixedWidthDataFormatMarshalTest extends CamelTestSup
      * Tests that we can marshal fixed-width using and advanced configuration
      */
     @Test
+    @Ignore("TODO: Should be fixed from univocity-parsers 2.6.4 onward. https://github.com/uniVocity/univocity-parsers/issues/238")
     public void shouldMarshalUsingAdvancedConfiguration() throws Exception {
         template.sendBody("direct:advanced", Arrays.asList(
                 asMap("A", null, "B", ""),

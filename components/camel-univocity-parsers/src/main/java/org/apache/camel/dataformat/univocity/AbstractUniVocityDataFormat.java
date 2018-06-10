@@ -116,15 +116,13 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
             }
         }
 
+        HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
+        CPS settings = parserSettings.get();
+        settings.setProcessor(headerRowProcessor);
+        P parser = createParser(settings);
+        // univocity-parsers is responsible for closing the reader, even in case of error
         Reader reader = new InputStreamReader(stream, getCharsetName(exchange));
-        try {
-            HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
-            CPS settings = parserSettings.get();
-            settings.setRowProcessor(headerRowProcessor);
-            return unmarshaller.unmarshal(reader, createParser(settings), headerRowProcessor);
-        } finally {
-            reader.close();
-        }
+        return unmarshaller.unmarshal(reader, parser, headerRowProcessor);
     }
 
     /**

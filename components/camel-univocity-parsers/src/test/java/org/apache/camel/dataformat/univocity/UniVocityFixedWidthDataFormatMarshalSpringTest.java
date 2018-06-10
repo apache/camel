@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -105,6 +106,7 @@ public final class UniVocityFixedWidthDataFormatMarshalSpringTest extends CamelS
      * Tests that we can marshal fixed-width using and advanced configuration
      */
     @Test
+    @Ignore("TODO: Should be fixed from univocity-parsers 2.6.4 onward. https://github.com/uniVocity/univocity-parsers/issues/238")
     public void shouldMarshalUsingAdvancedConfiguration() throws Exception {
         template.sendBody("direct:advanced", Arrays.asList(
                 asMap("A", null, "B", ""),
