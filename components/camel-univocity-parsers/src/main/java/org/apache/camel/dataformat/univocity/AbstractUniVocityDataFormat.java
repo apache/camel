@@ -70,7 +70,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     private volatile Marshaller<W> marshaller;
 
     // We're using a ThreadLocal for the parser settings because in order to retrieve the headers we need to change the
-    // settings each time we're parsing...
+    // settings each time we're parsing
     private volatile ThreadLocal<CPS> parserSettings;
     private final Object parserSettingsToken = new Object();
     private volatile Unmarshaller<P> unmarshaller;
@@ -312,7 +312,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      *
      * @param numberOfRecordsToRead the number of records to read
      * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonParserSettings#setNumberOfRecordsToRead(int)
+     * @see com.univocity.parsers.common.CommonParserSettings#setNumberOfRecordsToRead(long)
      */
     public DF setNumberOfRecordsToRead(Integer numberOfRecordsToRead) {
         this.numberOfRecordsToRead = numberOfRecordsToRead;
