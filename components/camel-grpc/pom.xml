@@ -70,6 +70,12 @@
       <artifactId>javassist</artifactId>
       <version>${javassist-version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${grpc-guava-version}</version>
+    </dependency>
 
     <dependency>
       <groupId>io.netty</groupId>
