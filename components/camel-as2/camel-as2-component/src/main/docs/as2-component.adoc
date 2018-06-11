@@ -1,7 +1,7 @@
 [[as2-component]]
 == AS2 Component
 
-*Available as of Camel version 2.20*
+*Available as of Camel version 2.22*
 
 [source,xml]
 ------------------------------------------------------------
