@@ -30,8 +30,9 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationCommon {
      * When using client, then the client queries the kubernetes master to
      * obtain a list of active pods that provides the service, and then random
      * (or round robin) select a pod. When using dns the service name is
-     * resolved as name.namespace.service.dnsDomain. When using environment then
-     * environment variables are used to lookup the service. By default
+     * resolved as name.namespace.svc.dnsDomain. When using dnssrv the service
+     * name is resolved with SRV query for _._...svc... When using environment
+     * then environment variables are used to lookup the service. By default
      * environment is used.
      */
     private String lookup = "environment";
@@ -39,6 +40,14 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationCommon {
      * Sets the DNS domain to use for DNS lookup.
      */
     private String dnsDomain;
+    /**
+     * Sets the Port Name to use for DNS/DNSSRV lookup.
+     */
+    private String portName;
+    /**
+     * Sets the Port Protocol to use for DNS/DNSSRV lookup.
+     */
+    private String portProtocol;
     /**
      * Sets the namespace to use. Will by default use namespace from the ENV
      * variable KUBERNETES_MASTER.
@@ -126,6 +135,22 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationCommon {
 
     public void setDnsDomain(String dnsDomain) {
         this.dnsDomain = dnsDomain;
+    }
+
+    public String getPortName() {
+        return portName;
+    }
+
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
+
+    public String getPortProtocol() {
+        return portProtocol;
+    }
+
+    public void setPortProtocol(String portProtocol) {
+        this.portProtocol = portProtocol;
     }
 
     public String getNamespace() {

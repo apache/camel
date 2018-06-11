@@ -94,6 +94,9 @@ public class KubernetesConfiguration implements Cloneable {
     @UriParam
     private String portName;
 
+    @UriParam(defaultValue = "tcp")
+    private String portProtocol = "tcp";
+
     @UriParam
     private String dnsDomain;
     
@@ -310,6 +313,17 @@ public class KubernetesConfiguration implements Cloneable {
      */
     public void setPortName(String portName) {
         this.portName = portName;
+    }
+
+    public String getPortProtocol() {
+        return portProtocol;
+    }
+
+    /**
+     * The port protocol, used for ServiceCall EIP
+     */
+    public void setPortProtocol(String portProtocol) {
+        this.portProtocol = portProtocol;
     }
 
     public String getDnsDomain() {

@@ -46,4 +46,9 @@ public class KubernetesEnvServiceDiscovery extends KubernetesServiceDiscovery {
             throw new RuntimeCamelException(e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "KubernetesEnvServiceDiscovery";
+    }
 }
