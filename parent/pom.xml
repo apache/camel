@@ -5623,7 +5623,7 @@
 
       <!-- Update JAXB version here -->
       <properties>
-        <jaxb-version>2.3.0</jaxb-version>
+        <jaxb-version>2.3.0.1</jaxb-version>
       </properties>
 
       <dependencies>
