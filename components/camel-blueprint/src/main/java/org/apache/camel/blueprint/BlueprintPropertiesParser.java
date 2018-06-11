@@ -26,7 +26,9 @@ import java.util.Set;
 
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholder;
+import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholderExt;
 import org.apache.aries.blueprint.ext.PropertyPlaceholder;
+import org.apache.aries.blueprint.ext.PropertyPlaceholderExt;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -47,8 +49,9 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     private final PropertiesComponent propertiesComponent;
     private final BlueprintContainer container;
     private final PropertiesParser delegate;
-    private final Set<AbstractPropertyPlaceholder> placeholders = new LinkedHashSet<>();
+    private final Set<PropertyPlaceholderWrapper> placeholders = new LinkedHashSet<PropertyPlaceholderWrapper>();
     private Method method;
+    private Method oldMethod;
 
     public BlueprintPropertiesParser(PropertiesComponent propertiesComponent, BlueprintContainer container, PropertiesParser delegate) {
         super(propertiesComponent);
@@ -71,7 +74,8 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             ComponentMetadata meta = container.getComponentMetadata(id);
             if (meta instanceof ExtendedBeanMetadata) {
                 Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
-                if (clazz != null && AbstractPropertyPlaceholder.class.isAssignableFrom(clazz)) {
+                if (clazz != null && (AbstractPropertyPlaceholder.class.isAssignableFrom(clazz)
+                        || AbstractPropertyPlaceholderExt.class.isAssignableFrom(clazz))) {
                     ids.add(id);
                 }
             }
@@ -88,16 +92,35 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     public void addPropertyPlaceholder(String id) {
         Object component = container.getComponentInstance(id);
 
-        if (component instanceof AbstractPropertyPlaceholder) {
-            AbstractPropertyPlaceholder placeholder = (AbstractPropertyPlaceholder) component;
-            placeholders.add(placeholder);
+        // new API
+        if (component instanceof AbstractPropertyPlaceholderExt) {
+            AbstractPropertyPlaceholderExt placeholder = (AbstractPropertyPlaceholderExt) component;
+            placeholders.add(new AbstractPropertyPlaceholderExtWrapper(placeholder));
 
             log.debug("Adding Blueprint PropertyPlaceholder: {}", id);
 
             if (method == null) {
                 try {
-                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("retrieveValue", String.class);
+                    method = AbstractPropertyPlaceholderExt.class.getDeclaredMethod("retrieveValue", String.class);
                     method.setAccessible(true);
+                } catch (NoSuchMethodException e) {
+                    throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
+                            + " as the method retrieveValue is not accessible", e);
+                }
+            }
+        }
+
+        // old, deprecated API
+        if (component instanceof AbstractPropertyPlaceholder) {
+            AbstractPropertyPlaceholder placeholder = (AbstractPropertyPlaceholder) component;
+            placeholders.add(new AbstractPropertyPlaceholderWrapper(placeholder));
+
+            log.debug("Adding Blueprint PropertyPlaceholder: {}", id);
+
+            if (oldMethod == null) {
+                try {
+                    oldMethod = AbstractPropertyPlaceholder.class.getDeclaredMethod("retrieveValue", String.class);
+                    oldMethod.setAccessible(true);
                 } catch (NoSuchMethodException e) {
                     throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
                             + " as the method retrieveValue is not accessible", e);
@@ -122,12 +145,15 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
 
         // lookup key in blueprint and return its value
         if (answer == null && key != null) {
-            for (AbstractPropertyPlaceholder placeholder : placeholders) {
+            for (PropertyPlaceholderWrapper placeholder : placeholders) {
                 boolean isDefault = false;
                 if (placeholders.size() > 1) {
                     // okay we have multiple placeholders and we want to return the answer that
                     // is not the default placeholder if there is multiple keys
-                    if (placeholder instanceof PropertyPlaceholder) {
+                    if (placeholder instanceof PropertyPlaceholderExt) {
+                        Map map = ((PropertyPlaceholderExt) placeholder).getDefaultProperties();
+                        isDefault = map != null && map.containsKey(key);
+                    } else if (placeholder instanceof PropertyPlaceholder) {
                         Map map = ((PropertyPlaceholder) placeholder).getDefaultProperties();
                         isDefault = map != null && map.containsKey(key);
                     }
@@ -135,7 +161,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                 }
                 
                 try {
-                    String candidate = (String) ObjectHelper.invokeMethod(method, placeholder, key);
+                    String candidate = placeholder.retrieveValue(key);
     
                     if (candidate != null) {
                         if (answer == null || !isDefault) {
@@ -162,6 +188,46 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
         
         log.trace("Returning parsed property key: {} as value: {}", key, answer);
         return answer;
+    }
+
+    private interface PropertyPlaceholderWrapper {
+
+        /**
+         * Retrieves the String value (or {@code null}) from underlying placeholder
+         * @param key
+         * @return
+         */
+        String retrieveValue(String key);
+    }
+
+    private class AbstractPropertyPlaceholderExtWrapper implements PropertyPlaceholderWrapper {
+
+        private AbstractPropertyPlaceholderExt delegate;
+
+        public AbstractPropertyPlaceholderExtWrapper(AbstractPropertyPlaceholderExt delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public String retrieveValue(String key) {
+            Object v = ObjectHelper.invokeMethod(method, delegate, key);
+            return v == null ? null : v.toString();
+        }
+    }
+
+    private class AbstractPropertyPlaceholderWrapper implements PropertyPlaceholderWrapper {
+
+        private AbstractPropertyPlaceholder delegate;
+
+        public AbstractPropertyPlaceholderWrapper(AbstractPropertyPlaceholder delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public String retrieveValue(String key) {
+            Object v = ObjectHelper.invokeMethod(oldMethod, delegate, key);
+            return v == null ? null : v.toString();
+        }
     }
 
 }

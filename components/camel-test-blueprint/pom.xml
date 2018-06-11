@@ -66,13 +66,8 @@
              with felix-connect, and you may get a weird error if wrong order -->
         <dependency>
             <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.api</artifactId>
+            <artifactId>org.apache.aries.proxy</artifactId>
             <version>${aries-blueprint-proxy-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <version>${aries-blueprint-proxy-impl-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
