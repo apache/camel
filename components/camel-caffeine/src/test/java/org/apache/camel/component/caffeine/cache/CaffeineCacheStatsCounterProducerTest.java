@@ -45,7 +45,7 @@ public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupp
             assertEquals(map.get(k), elements.get(k));
         });
         
-        assertEquals(2, getMetricRegistry().meter("camelcache.hits").getCount());
+        assertEquals(2, getMetricRegistry().counter("camelcache.hits").getCount());
     }
 
     // ****************************
