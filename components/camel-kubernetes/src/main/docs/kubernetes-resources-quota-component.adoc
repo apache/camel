@@ -36,7 +36,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -47,6 +47,7 @@ with the following path and query parameters:
 | *kubernetesClient* (producer) | Default KubernetesClient to use if provided |  | KubernetesClient
 | *operation* (producer) | Producer operation to do on Kubernetes |  | String
 | *portName* (producer) | The port name, used for ServiceCall EIP |  | String
+| *portProtocol* (producer) | The port protocol, used for ServiceCall EIP | tcp | String
 | *connectionTimeout* (advanced) | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *caCertData* (security) | The CA Cert Data |  | String

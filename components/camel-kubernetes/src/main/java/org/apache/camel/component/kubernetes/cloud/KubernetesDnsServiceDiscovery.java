@@ -25,12 +25,23 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 public class KubernetesDnsServiceDiscovery extends KubernetesServiceDiscovery {
-    private ConcurrentMap<String, List<ServiceDefinition>> cache;
+    private final ConcurrentMap<String, List<ServiceDefinition>> cache;
+    private final String namespace;
+    private final String zone;
 
     public KubernetesDnsServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);
+
+        this.namespace = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
+        this.zone = configuration.getDnsDomain();
+
+        // validation
+        ObjectHelper.notNull(namespace, "Namespace");
+        ObjectHelper.notNull(zone, "DNS Domain");
+
         this.cache = new ConcurrentHashMap<>();
     }
 
@@ -44,5 +55,13 @@ public class KubernetesDnsServiceDiscovery extends KubernetesServiceDiscovery {
             name,
             name + "." + getConfiguration().getNamespace() + ".svc." + getConfiguration().getDnsDomain(),
             -1);
+    }
+
+    @Override
+    public String toString() {
+        return "KubernetesDnsServiceDiscovery{"
+            + "namespace='" + namespace + '\''
+            + ", zone='" + zone + '\''
+            + '}';
     }
 }

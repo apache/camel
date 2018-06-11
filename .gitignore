@@ -18,4 +18,5 @@ components/camel-solr/data
 .factorypath
 .pmd
 .sts4-cache
+log-camel-lsp.out
 
