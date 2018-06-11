@@ -16,6 +16,7 @@
  */
 package org.apache.camel.blueprint;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -26,9 +27,7 @@ import java.util.Set;
 
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholder;
-import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholderExt;
 import org.apache.aries.blueprint.ext.PropertyPlaceholder;
-import org.apache.aries.blueprint.ext.PropertyPlaceholderExt;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -75,13 +74,29 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             if (meta instanceof ExtendedBeanMetadata) {
                 Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
                 if (clazz != null && (AbstractPropertyPlaceholder.class.isAssignableFrom(clazz)
-                        || AbstractPropertyPlaceholderExt.class.isAssignableFrom(clazz))) {
+                        || newPlaceholderClass(clazz) != null)) {
                     ids.add(id);
                 }
             }
         }
 
         return ids.toArray(new String[ids.size()]);
+    }
+
+    /**
+     * Obtains a {@link Class} instance for "org.apache.aries.blueprint.ext.AbstractPropertyPlaceholderExt"
+     * @param clazz
+     * @return
+     */
+    private Class<?> newPlaceholderClass(Class<?> clazz) {
+        Class<?> c = clazz;
+        while (c != null) {
+            if ("org.apache.aries.blueprint.ext.AbstractPropertyPlaceholderExt".equals(c.getName())) {
+                return c;
+            }
+            c = c.getSuperclass();
+        }
+        return null;
     }
 
     /**
@@ -93,27 +108,27 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
         Object component = container.getComponentInstance(id);
 
         // new API
-        if (component instanceof AbstractPropertyPlaceholderExt) {
-            AbstractPropertyPlaceholderExt placeholder = (AbstractPropertyPlaceholderExt) component;
-            placeholders.add(new AbstractPropertyPlaceholderExtWrapper(placeholder));
+        if (component != null) {
+            Class<?> clazz = newPlaceholderClass(component.getClass());
+            if (clazz != null) {
+                log.debug("Adding Blueprint PropertyPlaceholder: {}", id);
 
-            log.debug("Adding Blueprint PropertyPlaceholder: {}", id);
-
-            if (method == null) {
-                try {
-                    method = AbstractPropertyPlaceholderExt.class.getDeclaredMethod("retrieveValue", String.class);
-                    method.setAccessible(true);
-                } catch (NoSuchMethodException e) {
-                    throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
-                            + " as the method retrieveValue is not accessible", e);
+                if (method == null) {
+                    try {
+                        method = clazz.getDeclaredMethod("retrieveValue", String.class);
+                        method.setAccessible(true);
+                    } catch (NoSuchMethodException e) {
+                        throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
+                                + " as the method retrieveValue is not accessible", e);
+                    }
                 }
+                placeholders.add(new PropertyPlaceholderWrapper(component, method));
             }
         }
 
         // old, deprecated API
         if (component instanceof AbstractPropertyPlaceholder) {
             AbstractPropertyPlaceholder placeholder = (AbstractPropertyPlaceholder) component;
-            placeholders.add(new AbstractPropertyPlaceholderWrapper(placeholder));
 
             log.debug("Adding Blueprint PropertyPlaceholder: {}", id);
 
@@ -126,6 +141,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                             + " as the method retrieveValue is not accessible", e);
                 }
             }
+            placeholders.add(new PropertyPlaceholderWrapper(placeholder, oldMethod));
         }
     }
 
@@ -150,13 +166,8 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                 if (placeholders.size() > 1) {
                     // okay we have multiple placeholders and we want to return the answer that
                     // is not the default placeholder if there is multiple keys
-                    if (placeholder instanceof PropertyPlaceholderExt) {
-                        Map map = ((PropertyPlaceholderExt) placeholder).getDefaultProperties();
-                        isDefault = map != null && map.containsKey(key);
-                    } else if (placeholder instanceof PropertyPlaceholder) {
-                        Map map = ((PropertyPlaceholder) placeholder).getDefaultProperties();
-                        isDefault = map != null && map.containsKey(key);
-                    }
+                    Map map = placeholder.getDefaultProperties();
+                    isDefault = map != null && map.containsKey(key);
                     log.trace("Blueprint property key: {} is part of default properties: {}", key, isDefault);
                 }
                 
@@ -190,43 +201,31 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
         return answer;
     }
 
-    private interface PropertyPlaceholderWrapper {
+    private class PropertyPlaceholderWrapper {
 
-        /**
-         * Retrieves the String value (or {@code null}) from underlying placeholder
-         * @param key
-         * @return
-         */
-        String retrieveValue(String key);
-    }
+        private Object delegate;
+        private Method method;
 
-    private class AbstractPropertyPlaceholderExtWrapper implements PropertyPlaceholderWrapper {
-
-        private AbstractPropertyPlaceholderExt delegate;
-
-        public AbstractPropertyPlaceholderExtWrapper(AbstractPropertyPlaceholderExt delegate) {
+        public PropertyPlaceholderWrapper(Object delegate, Method method) {
             this.delegate = delegate;
+            this.method = method;
         }
 
-        @Override
         public String retrieveValue(String key) {
             Object v = ObjectHelper.invokeMethod(method, delegate, key);
             return v == null ? null : v.toString();
         }
-    }
 
-    private class AbstractPropertyPlaceholderWrapper implements PropertyPlaceholderWrapper {
-
-        private AbstractPropertyPlaceholder delegate;
-
-        public AbstractPropertyPlaceholderWrapper(AbstractPropertyPlaceholder delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public String retrieveValue(String key) {
-            Object v = ObjectHelper.invokeMethod(oldMethod, delegate, key);
-            return v == null ? null : v.toString();
+        public Map getDefaultProperties() {
+            if (delegate instanceof PropertyPlaceholder) {
+                return ((PropertyPlaceholder) delegate).getDefaultProperties();
+            }
+            try {
+                Method getDefaultProperties = delegate.getClass().getMethod("getDefaultProperties");
+                return getDefaultProperties == null ? null : (Map) getDefaultProperties.invoke(delegate);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                return null;
+            }
         }
     }
 
