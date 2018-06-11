@@ -38,7 +38,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
 
     /**
      * Gets the field lengths.
-     * It's used to construct uniVocity {@link com.univocity.parsers.fixed.FixedWidthFieldLengths} instance.
+     * It's used to construct uniVocity {@link com.univocity.parsers.fixed.FixedWidthFields} instance.
      *
      * @return the field lengths
      */
@@ -48,7 +48,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
 
     /**
      * Sets the field lengths
-     * It's used to construct uniVocity {@link com.univocity.parsers.fixed.FixedWidthFieldLengths} instance.
+     * It's used to construct uniVocity {@link com.univocity.parsers.fixed.FixedWidthFields} instance.
      *
      * @param fieldLengths the field length
      * @return current data format instance, fluent API
@@ -131,7 +131,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      */
     @Override
     protected FixedWidthWriterSettings createWriterSettings() {
-        return new FixedWidthWriterSettings(createFixedWidthFieldLengths());
+        return new FixedWidthWriterSettings(createFixedWidthFields());
     }
 
     /**
@@ -147,7 +147,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      */
     @Override
     protected FixedWidthParserSettings createParserSettings() {
-        return new FixedWidthParserSettings(createFixedWidthFieldLengths());
+        return new FixedWidthParserSettings(createFixedWidthFields());
     }
 
     @Override
@@ -183,12 +183,12 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
     }
 
     /**
-     * Creates the {@link com.univocity.parsers.fixed.FixedWidthFieldLengths} instance based on the headers and field
+     * Creates the {@link com.univocity.parsers.fixed.FixedWidthFields} instance based on the headers and field
      * lengths.
      *
-     * @return new {@code FixedWidthFieldLengths} based on the header and field lengthsl
+     * @return new {@code FixedWidthFields} based on the header and field lengths.
      */
-    private FixedWidthFields createFixedWidthFieldLengths() {
+    private FixedWidthFields createFixedWidthFields() {
         // Ensure that the field lengths have been defined.
         if (fieldLengths == null) {
             throw new IllegalArgumentException("The fieldLengths must have been defined in order to use the fixed-width format.");
