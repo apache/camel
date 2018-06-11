@@ -176,7 +176,7 @@
     <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
     <deltaspike-version>1.8.2</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
-    <derby-version>10.14.1.0</derby-version>
+    <derby-version>10.14.2.0</derby-version>
     <digitalocean-api-client-version>2.15</digitalocean-api-client-version>
     <digitalocean-api-client-bundle-version>2.15_1</digitalocean-api-client-bundle-version>
     <disruptor-version>3.3.8</disruptor-version>
