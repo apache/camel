@@ -116,7 +116,7 @@ public final class UniVocityFixedWidthDataFormatMarshalTest extends CamelTestSup
         result.assertIsSatisfied();
 
         String body = assertIsInstanceOf(String.class, result.getExchanges().get(0).getIn().getBody());
-        assertEquals(join("N/A__empty", "one__two__"), body);
+        assertEquals(join("_____empty", "one__two__"), body);
     }
 
     @Override
