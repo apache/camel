@@ -57,6 +57,7 @@
     <infinispan-spring-boot-version>2.0.0.Beta1</infinispan-spring-boot-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <groovy-version>2.4.15</groovy-version>
+    <grpc-guava-version>20.0</grpc-guava-version>
 
     <!-- Plugin versions -->
     <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
