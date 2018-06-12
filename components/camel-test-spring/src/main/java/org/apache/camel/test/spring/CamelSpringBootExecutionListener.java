@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +25,9 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 public class CamelSpringBootExecutionListener extends AbstractTestExecutionListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
-
     protected static ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
