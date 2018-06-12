@@ -43,7 +43,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Component used for transferring data secure and reliable over the internet using the AS2 protocol.
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.20.0", title = "AS2", syntax = "as2:name", consumerClass = AS2Consumer.class, label = "AS2")
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:name", consumerClass = AS2Consumer.class, label = "AS2")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriPath @Metadata(required = "true")
