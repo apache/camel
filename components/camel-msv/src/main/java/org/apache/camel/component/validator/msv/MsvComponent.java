@@ -27,7 +27,6 @@ import org.apache.camel.spi.Metadata;
  * The <a href="http://camel.apache.org/msv.html">MSV Component</a> uses the
  * <a href="https://msv.dev.java.net/">MSV library</a> to perform XML validation using pluggable XML schema languages.
  *
- * @version 
  */
 public class MsvComponent extends ValidatorComponent {
     @Metadata(label = "advanced")
