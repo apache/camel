@@ -11,12 +11,12 @@ The Throttle EIP supports 6 options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *correlationExpression* | The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together. |  | NamespaceAware Expression
 | *executorServiceRef* | To use a custom thread pool (ScheduledExecutorService) by the throttler. |  | String
 | *timePeriodMillis* | Sets the time period during which the maximum request count is valid for | 1000 | Long
 | *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | false | Boolean
 | *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
 | *rejectExecution* | Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false | false | Boolean
+| *correlationExpression* | The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together. |  | NamespaceAware Expression
 |===
 // eip options: END
 

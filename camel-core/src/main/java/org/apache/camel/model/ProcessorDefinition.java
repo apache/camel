@@ -2296,8 +2296,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
      * will default ensure at most 10 messages per second.
      *
-     * @param correlationExpressionKey  is a correlation key that can throttle by the given key instead of overall throttling
      * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @param correlationExpressionKey  is a correlation key that can throttle by the given key instead of overall throttling
      * @return the builder
      */
     public ThrottleDefinition throttle(long correlationExpressionKey, Expression maximumRequestCount) {
@@ -2317,8 +2317,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
      * will default ensure at most 10 messages per second.
      *
-     * @param correlationExpressionKey  is a correlation key as an expression that can throttle by the given key instead of overall throttling
      * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @param correlationExpressionKey  is a correlation key as an expression that can throttle by the given key instead of overall throttling
      * @return the builder
      */
     public ThrottleDefinition throttle(Expression correlationExpressionKey, Expression maximumRequestCount) {
