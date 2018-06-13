@@ -44,8 +44,6 @@ import org.apache.camel.spi.RouteContext;
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
     // TODO: Camel 3.0 Should not support outputs
 
-    @XmlElement(name = "correlationExpression")
-    private ExpressionSubElementDefinition correlationExpression;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
@@ -58,6 +56,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private Boolean callerRunsWhenRejected;
     @XmlAttribute
     private Boolean rejectExecution;
+    @XmlElement(name = "correlationExpression")
+    private ExpressionSubElementDefinition correlationExpression;
 
     public ThrottleDefinition() {
     }
