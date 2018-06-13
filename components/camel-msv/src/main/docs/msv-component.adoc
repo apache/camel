@@ -114,7 +114,7 @@ with the following path and query parameters:
 ### Example
 
 The following
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-msv/src/test/resources/org/apache/camel/component/validator/msv/camelContext.xml[example]
+https://github.com/apache/camel/blob/master/components/camel-msv/src/test/resources/org/apache/camel/component/validator/msv/camelContext.xml[example]
 shows how to configure a route from endpoint *direct:start* which then
 goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given
