@@ -459,10 +459,10 @@
     <log4j2-version>2.11.0</log4j2-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
-    <lucene-bundle-version>6.6.0_2</lucene-bundle-version>
+    <lucene-bundle-version>7.2.1_1</lucene-bundle-version>
     <!-- lucene aligned with elasticsearch version of lucene in use -->
-    <lucene-version>7.0.0</lucene-version>
-    <lucene-version-range>[5,7)</lucene-version-range>
+    <lucene-version>7.2.1</lucene-version>
+    <lucene-version-range>[7,8)</lucene-version-range>
     <lightcouch-version>0.2.0</lightcouch-version>
     <lightcouch-bundle-version>0.2.0_1</lightcouch-bundle-version>
     <lz4-version>1.4.1</lz4-version>
@@ -626,10 +626,10 @@
     <snakeyaml-version>1.21</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.2_1</snmp4j-version>
-    <solr-bundle-version>5.5.2_1</solr-bundle-version>
+    <solr-bundle-version>7.2.1_1</solr-bundle-version>
     <!-- solr version aligned with lucene -->
-    <solr-version>7.0.0</solr-version>
-    <solr-version-range>[5,7)</solr-version-range>
+    <solr-version>7.2.1</solr-version>
+    <solr-version-range>[7,8)</solr-version-range>
     <spark-version>1.6.1</spark-version>
     <spark-rest-version>2.7.2</spark-rest-version>
     <spark-rest-bundle-version>2.7.2_1</spark-rest-bundle-version>
