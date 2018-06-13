@@ -27,8 +27,6 @@ import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.ClientSpanThreadBinder;
 import com.github.kristofa.brave.ServerSpan;
 import com.github.kristofa.brave.ServerSpanThreadBinder;
-import com.github.kristofa.brave.SpanCollector;
-import com.github.kristofa.brave.scribe.ScribeSpanCollector;
 import com.twitter.zipkin.gen.Span;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -60,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.Reporter;
+import zipkin2.reporter.libthrift.LibthriftSender;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
@@ -114,7 +113,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private String hostName;
     private int port;
     private float rate = 1.0f;
-    private SpanCollector spanCollector;
     private Reporter<zipkin2.Span> spanReporter;
     private Map<String, String> clientServiceMappings = new HashMap<>();
     private Map<String, String> serverServiceMappings = new HashMap<>();
@@ -206,16 +204,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         this.rate = rate;
     }
 
-    /**
-     * Returns the legacy span collector or null if using the reporter
-     *
-     * @deprecated use {@link #getSpanReporter()}
-     */
-    @Deprecated
-    public SpanCollector getSpanCollector() {
-        return spanCollector;
-    }
-
     /** Sets the reporter used to send timing data (spans) to the zipkin server. */
     public void setSpanReporter(Reporter<zipkin2.Span> spanReporter) {
         this.spanReporter = spanReporter;
@@ -224,12 +212,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     /** Returns the reporter used to send timing data (spans) to the zipkin server. */
     public Reporter<zipkin2.Span> getSpanReporter() {
         return spanReporter;
-    }
-
-    /** @deprecated use {@link #setSpanReporter(Reporter)} */
-    @Deprecated
-    public void setSpanCollector(SpanCollector spanCollector) {
-        this.spanCollector = spanCollector;
     }
 
     public String getServiceName() {
@@ -346,13 +328,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
 
         if (spanReporter == null) {
-            if (spanCollector != null) { // possible via setter
-            } else if (endpoint != null) {
+            if (endpoint != null) {
                 LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {} ", endpoint);
                 spanReporter = AsyncReporter.create(URLConnectionSender.create(endpoint));
             } else if (hostName != null && port > 0) {
                 LOG.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
-                spanCollector = new ScribeSpanCollector(hostName, port);
+                LibthriftSender sender = LibthriftSender.newBuilder().host(hostName).port(port).build();
+                spanReporter = AsyncReporter.create(sender);
             } else {
                 // is there a zipkin service setup as ENV variable to auto register a span reporter
                 String host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
@@ -368,13 +350,14 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                     if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
                         LOG.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
                         int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
-                        spanCollector = new ScribeSpanCollector(host, num);
+                        LibthriftSender sender = LibthriftSender.newBuilder().host(host).port(num).build();
+                        spanReporter = AsyncReporter.create(sender);
                     }
                 }
             }
         }
 
-        if (spanReporter == null && spanCollector == null) {
+        if (spanReporter == null) {
             // Try to lookup the span reporter from the registry if only one instance is present
             Set<Reporter> reporters = camelContext.getRegistry().findByType(Reporter.class);
             if (reporters.size() == 1) {
@@ -382,9 +365,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             }
         }
 
-        if (spanCollector == null) {
-            ObjectHelper.notNull(spanReporter, "Reporter<zipkin2.Span>", this);
-        }
+        ObjectHelper.notNull(spanReporter, "Reporter<zipkin2.Span>", this);
 
         if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
             LOG.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
@@ -529,14 +510,9 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     private Brave newBrave(String serviceName) {
-        Brave.Builder builder = new Brave.Builder(serviceName)
-            .traceSampler(com.github.kristofa.brave.Sampler.create(rate));
-        if (spanReporter != null) {
-            builder = builder.spanReporter(spanReporter);
-        } else if (spanCollector != null) {
-            builder.spanCollector(spanCollector);
-        }
-        return builder.build();
+        return new Brave.Builder(serviceName)
+            .traceSampler(com.github.kristofa.brave.Sampler.create(rate))
+            .spanReporter(spanReporter).build();
     }
 
     private Brave getBrave(String serviceName) {
