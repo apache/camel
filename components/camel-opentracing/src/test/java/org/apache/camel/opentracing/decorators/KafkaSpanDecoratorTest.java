@@ -92,7 +92,7 @@ public class KafkaSpanDecoratorTest {
 
     @Test
     public void testPrePartitionAsIntegerHeaderAndOffsetAsLongHeader() {
-        Long testOffset = 4875454l;
+        Long testOffset = 4875454L;
         Integer testPartition = 0;
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
