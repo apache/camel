@@ -2284,6 +2284,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return answer;
     }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * Here another parameter correlationExpressionKey is introduced for the functionality which
+     * will throttle based on the key expression to group exchanges. This will make key-based throttling
+     * instead of overall throttling.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second.
+     *
+     * @param correlationExpressionKey  is a correlation key that can throttle by the given key instead of overall throttling
+     * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(long correlationExpressionKey, Expression maximumRequestCount) {
+        ThrottleDefinition answer = new ThrottleDefinition(ExpressionBuilder.constantExpression(correlationExpressionKey), maximumRequestCount);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * Here another parameter correlationExpressionKey is introduced for the functionality which
+     * will throttle based on the key expression to group exchanges. This will make key-based throttling
+     * instead of overall throttling.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second.
+     *
+     * @param correlationExpressionKey  is a correlation key as an expression that can throttle by the given key instead of overall throttling
+     * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(Expression correlationExpressionKey, Expression maximumRequestCount) {
+        ThrottleDefinition answer = new ThrottleDefinition(correlationExpressionKey, maximumRequestCount);
+        addOutput(answer);
+        return answer;
+    }
     
     /**
      * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>

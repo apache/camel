@@ -16,8 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +36,11 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,25 +70,32 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
 
     private static final String PROPERTY_EXCHANGE_QUEUED_TIMESTAMP = "CamelThrottlerExchangeQueuedTimestamp";
     private static final String PROPERTY_EXCHANGE_STATE = "CamelThrottlerExchangeState";
+    // (throttling grouping) defaulted as 1 because there will be only one queue which is similar to implementation
+    // when there is no grouping for throttling
+    private static final Integer NO_CORRELATION_QUEUE_ID = new Integer(1);
 
     private enum State { SYNC, ASYNC, ASYNC_REJECTED }
 
     private final Logger log = LoggerFactory.getLogger(Throttler.class);
     private final CamelContext camelContext;
-    private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
     private final ExecutorService asyncExecutor;
     private final boolean shutdownAsyncExecutor;
 
     private volatile long timePeriodMillis;
-    private volatile int throttleRate;
     private String id;
     private Expression maxRequestsPerPeriodExpression;
     private boolean rejectExecution;
     private boolean asyncDelayed;
     private boolean callerRunsWhenRejected = true;
+    private Expression correlationExpression;
+    // below 2 fields added for (throttling grouping)
+    private Map<Integer, DelayQueue<ThrottlePermit>> delayQueueCache;
+    private Map<Integer, Integer> throttleRatesMap = new HashMap<>();
+    private ExecutorService delayQueueCacheExecutorService;
+    
 
     public Throttler(final CamelContext camelContext, final Processor processor, final Expression maxRequestsPerPeriodExpression, final long timePeriodMillis,
-                     final ExecutorService asyncExecutor, final boolean shutdownAsyncExecutor, final boolean rejectExecution) {
+                     final ExecutorService asyncExecutor, final boolean shutdownAsyncExecutor, final boolean rejectExecution, Expression correlation) {
         super(processor);
         this.camelContext = camelContext;
         this.rejectExecution = rejectExecution;
@@ -93,6 +109,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         }
         this.timePeriodMillis = timePeriodMillis;
         this.asyncExecutor = asyncExecutor;
+        this.correlationExpression = correlation;
     }
 
     @Override
@@ -111,13 +128,21 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                 throw new RejectedExecutionException("Run is not allowed");
             }
 
-            calculateAndSetMaxRequestsPerPeriod(exchange);
+            Integer key;
+            if (correlationExpression != null) {
+                key = correlationExpression.evaluate(exchange, Integer.class);
+            } else {
+                key = NO_CORRELATION_QUEUE_ID;
+            }
+            
+            DelayQueue<ThrottlePermit> delayQueue = locateDelayQueue(key);
+            calculateAndSetMaxRequestsPerPeriod(delayQueue, exchange, key);
             ThrottlePermit permit = delayQueue.poll();
 
             if (permit == null) {
                 if (isRejectExecution()) {
                     throw new ThrottlerRejectedExecutionException("Exceeded the max throttle rate of "
-                            + throttleRate + " within " + timePeriodMillis + "ms");
+                            + throttleRatesMap.get(key) + " within " + timePeriodMillis + "ms");
                 } else {
                     // delegate to async pool
                     if (isAsyncDelayed() && !exchange.isTransacted() && state == State.SYNC) {
@@ -135,7 +160,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                     if (log.isTraceEnabled()) {
                         elapsed = System.currentTimeMillis() - start;
                     }
-                    enqueuePermit(permit, exchange);
+                    enqueuePermit(permit, exchange, delayQueue);
 
                     if (state == State.ASYNC) {
                         if (log.isTraceEnabled()) {
@@ -147,7 +172,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                     }
                 }
             } else {
-                enqueuePermit(permit, exchange);
+                enqueuePermit(permit, exchange, delayQueue);
 
                 if (state == State.ASYNC) {
                     if (log.isTraceEnabled()) {
@@ -192,6 +217,26 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         }
     }
 
+    private DelayQueue<ThrottlePermit> locateDelayQueue(final Integer key) throws InterruptedException, ExecutionException {        
+        CompletableFuture<DelayQueue<ThrottlePermit>> futureDelayQueue = new CompletableFuture<>();
+
+        delayQueueCacheExecutorService.submit(() -> {
+            futureDelayQueue.complete(findDelayQueue(key));
+        });
+        DelayQueue<ThrottlePermit> currentQueue = futureDelayQueue.get();   
+        return currentQueue;
+    }
+
+    private DelayQueue<ThrottlePermit> findDelayQueue(Integer key) {
+        DelayQueue<ThrottlePermit> currentDelayQueue = delayQueueCache.get(key);
+        if (currentDelayQueue == null) {
+            currentDelayQueue = new DelayQueue<>();
+            throttleRatesMap.put(key, 0);
+            delayQueueCache.put(key, currentDelayQueue);
+        }
+        return currentDelayQueue;
+    }
+
     /**
      * Delegate blocking on the DelayQueue to an asyncExecutor. Except if the executor rejects the submission
      * and isCallerRunsWhenRejected() is enabled, then this method will delegate back to process(), but not
@@ -222,8 +267,10 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
 
     /**
      * Returns a permit to the DelayQueue, first resetting it's delay to be relative to now.
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    protected void enqueuePermit(final ThrottlePermit permit, final Exchange exchange) {
+    protected void enqueuePermit(final ThrottlePermit permit, final Exchange exchange, DelayQueue<ThrottlePermit> delayQueue) throws InterruptedException, ExecutionException {
         permit.setDelayMs(getTimePeriodMillis());
         delayQueue.put(permit);
         // try and incur the least amount of overhead while releasing permits back to the queue
@@ -235,7 +282,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
     /**
      * Evaluates the maxRequestsPerPeriodExpression and adjusts the throttle rate up or down.
      */
-    protected void calculateAndSetMaxRequestsPerPeriod(final Exchange exchange) throws Exception {
+    protected void calculateAndSetMaxRequestsPerPeriod(DelayQueue<ThrottlePermit> delayQueue, final Exchange exchange, final Integer key) throws Exception {
         Integer newThrottle = maxRequestsPerPeriodExpression.evaluate(exchange, Integer.class);
 
         if (newThrottle != null && newThrottle < 0) {
@@ -243,12 +290,14 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         }
 
         synchronized (this) {
+            Integer throttleRate = throttleRatesMap.get(key);
             if (newThrottle == null && throttleRate == 0) {
                 throw new RuntimeExchangeException("The maxRequestsPerPeriodExpression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
             }
 
             if (newThrottle != null) {
                 if (newThrottle != throttleRate) {
+                    // get the queue from the cache
                     // decrease
                     if (throttleRate > newThrottle) {
                         int delta = throttleRate - newThrottle;
@@ -273,24 +322,67 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                             log.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
                         }
                     }
-                    throttleRate = newThrottle;
+                    throttleRatesMap.put(key, newThrottle);
                 }
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void doStart() throws Exception {
         if (isAsyncDelayed()) {
             ObjectHelper.notNull(asyncExecutor, "executorService", this);
         }
+        if (camelContext != null) {
+            int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(camelContext);
+            if (maxSize > 0) {
+                delayQueueCache = LRUCacheFactory.newLRUCache(16, maxSize, false);
+                log.debug("DelayQueues cache size: {}", maxSize);
+            } else {
+                delayQueueCache = LRUCacheFactory.newLRUCache(100);
+                log.debug("Defaulting DelayQueues cache size: {}", 100);
+            }
+        }
+        if (delayQueueCache != null) {
+            ServiceHelper.startService(delayQueueCache);
+        }
+        if (delayQueueCacheExecutorService == null) {
+            String name = getClass().getSimpleName() + "-DelayQueueLocatorTask";
+            delayQueueCacheExecutorService = createDelayQueueCacheExecutorService(name);
+        }
         super.doStart();
     }
+    
+    /**
+     * Strategy to create the thread pool for locating right DelayQueue from the case as a background task
+     *
+     * @param name  the suggested name for the background thread
+     * @return the thread pool
+     */
+    protected synchronized ExecutorService createDelayQueueCacheExecutorService(String name) {
+        // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+        return camelContext.getExecutorServiceManager().newCachedThreadPool(this, name);
+    }
 
+    @SuppressWarnings("rawtypes")
     @Override
     protected void doShutdown() throws Exception {
         if (shutdownAsyncExecutor && asyncExecutor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(asyncExecutor);
+        }
+        if (delayQueueCacheExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(delayQueueCacheExecutorService);
+        }
+        if (delayQueueCache != null) {
+            ServiceHelper.stopService(delayQueueCache);
+            if (log.isDebugEnabled()) {
+                if (delayQueueCache instanceof LRUCache) {
+                    log.debug("Clearing deleay queues cache[size={}, hits={}, misses={}, evicted={}]",
+                            delayQueueCache.size(), ((LRUCache) delayQueueCache).getHits(), ((LRUCache) delayQueueCache).getMisses(), ((LRUCache) delayQueueCache).getEvicted());
+                }
+            }
+            delayQueueCache.clear();
         }
         super.doShutdown();
     }
@@ -365,9 +457,11 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
 
     /**
      * Gets the current maximum request per period value.
+     * If it is grouped throttling applied with correlationExpression 
+     * than the max per period within the group will return
      */
     public int getCurrentMaximumRequestsPerPeriod() {
-        return throttleRate;
+        return Collections.max(throttleRatesMap.entrySet(), (entry1, entry2) -> entry1.getValue() - entry2.getValue()).getValue();
     }
 
     /**
