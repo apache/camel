@@ -25,7 +25,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
@@ -114,7 +113,6 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("CAMEL-12104")
     public void testTimeout() throws Exception {
         String out = template.requestBodyAndHeader("direct:start", "Bye World", "priority", "slow", String.class);
         assertTrue(out.contains("The OUT message was not received within: 5000 millis."));
