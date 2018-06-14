@@ -542,7 +542,7 @@
     <openhft-affinity-version>3.1.7</openhft-affinity-version>
     <openhft-compiler-version>2.3.0</openhft-compiler-version>
     <openhft-lang-version>6.8.2</openhft-lang-version>
-    <openjpa-version>2.4.2</openjpa-version>
+    <openjpa-version>2.4.3</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <openstack4j-version>3.0.2</openstack4j-version>
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
