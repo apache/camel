@@ -124,7 +124,7 @@
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
     <chronicle-map-version>2.4.17</chronicle-map-version>
     <chronicle-network-version>1.16.0</chronicle-network-version>
-    <chronicle-queue-version>4.16.3</chronicle-queue-version>
+    <chronicle-queue-version>4.16.4</chronicle-queue-version>
     <chronicle-threads-version>1.16.0</chronicle-threads-version>
     <chronicle-wire-version>1.16.2</chronicle-wire-version>
     <chunk-templates-version>3.3.1</chunk-templates-version>
