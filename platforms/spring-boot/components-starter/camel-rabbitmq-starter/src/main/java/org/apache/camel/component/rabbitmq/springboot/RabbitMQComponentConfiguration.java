@@ -88,7 +88,7 @@ public class RabbitMQComponentConfiguration
     /**
      * Connection requested channel max (max number of channels offered)
      */
-    private Integer requestedChannelMax = 0;
+    private Integer requestedChannelMax = 2047;
     /**
      * Connection requested frame max (max size of frame offered)
      */
