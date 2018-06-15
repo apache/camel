@@ -64,7 +64,7 @@ The RabbitMQ component supports 48 options which are listed below.
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
 | *autoDetectConnection Factory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
-| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 0 | int
+| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
 | *automaticRecovery Enabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
@@ -179,7 +179,7 @@ with the following path and query parameters:
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *queueArgs* (advanced) | *Deprecated* Key/value args for configuring the queue parameters when declare=true |  | Map
 | *queueArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
-| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 0 | int
+| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
 | *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | long
