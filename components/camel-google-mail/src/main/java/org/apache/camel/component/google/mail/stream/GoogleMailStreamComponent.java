@@ -51,7 +51,7 @@ public class GoogleMailStreamComponent extends DefaultComponent {
 
     public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopes(),
+            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(),
                                                    googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
                                                    googleMailConfiguration.getAccessToken());
         }

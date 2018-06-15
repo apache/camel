@@ -51,7 +51,7 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
     public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
         if (client == null) {
             client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), 
-                    googleMailConfiguration.getScopes(), googleMailConfiguration.getApplicationName(),
+                    googleMailConfiguration.getApplicationName(),
                     googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
         }
         return client;
