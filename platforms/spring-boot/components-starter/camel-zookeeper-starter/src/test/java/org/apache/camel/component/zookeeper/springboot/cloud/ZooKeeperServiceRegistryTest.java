@@ -16,13 +16,7 @@
  */
 package org.apache.camel.component.zookeeper.springboot.cloud;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -31,18 +25,15 @@ import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceRegistry;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.util.IOHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.test.TestingServer;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.apache.zookeeper.server.NIOServerCnxnFactory;
-import org.apache.zookeeper.server.ZooKeeperServer;
-import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -72,10 +63,13 @@ public class ZooKeeperServiceRegistryTest {
 
     @Test
     public void testServiceRegistry() throws Exception {
-        final ZooKeeperTestServer zkServer = new ZooKeeperTestServer(temporaryFolder.newFolder());
+        final int zkPort =  AvailablePortFinder.getNextAvailable();
+        final File zkDir =  temporaryFolder.newFolder();
+
+        final TestingServer zkServer = new TestingServer(zkPort, zkDir);
         zkServer.start();
 
-        final ZooKeeperTestClient zkClient = new ZooKeeperTestClient(zkServer.serverList());
+        final ZooKeeperTestClient zkClient = new ZooKeeperTestClient("localhost:" + zkPort);
         zkClient.start();
 
         try {
@@ -86,7 +80,7 @@ public class ZooKeeperServiceRegistryTest {
                     "spring.main.banner-mode=OFF",
                     "spring.application.name=" + UUID.randomUUID().toString(),
                     "camel.component.zookeeper.service-registry.enabled=true",
-                    "camel.component.zookeeper.service-registry.nodes=" + zkServer.serverList(),
+                    "camel.component.zookeeper.service-registry.nodes=localhost:" + zkPort,
                     "camel.component.zookeeper.service-registry.id=" + UUID.randomUUID().toString(),
                     "camel.component.zookeeper.service-registry.base-path=" + SERVICE_PATH,
                     "camel.component.zookeeper.service-registry.service-host=localhost")
@@ -136,96 +130,6 @@ public class ZooKeeperServiceRegistryTest {
     // *************************************
     // Helpers
     // *************************************
-
-    public static class ZooKeeperTestServer {
-        private NIOServerCnxnFactory connectionFactory;
-        private ZooKeeperServer zkServer;
-
-        public ZooKeeperTestServer(File root) throws Exception {
-            zkServer = new ZooKeeperServer();
-
-            File dataDir = new File(root, "log");
-            File snapDir = new File(root, "data");
-            FileTxnSnapLog ftxn = new FileTxnSnapLog(dataDir, snapDir);
-
-            zkServer.setTxnLogFactory(ftxn);
-            zkServer.setTickTime(1000);
-
-            connectionFactory = new NIOServerCnxnFactory();
-            connectionFactory.configure(new InetSocketAddress("localhost", AvailablePortFinder.getNextAvailable()), 0);
-            connectionFactory.startup(zkServer);
-        }
-
-        public String serverList() {
-            return "localhost:" + connectionFactory.getLocalPort();
-        }
-
-        private String send4LetterWord(String hp, String cmd) throws IOException {
-            String split[] = hp.split(":");
-            String host = split[0];
-            int port;
-            try {
-                port = Integer.parseInt(split[1]);
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Problem parsing " + hp + e.toString());
-            }
-
-            Socket sock = new Socket(host, port);
-            BufferedReader reader = null;
-            try {
-                OutputStream outstream = sock.getOutputStream();
-                outstream.write(cmd.getBytes());
-                outstream.flush();
-
-                reader = IOHelper.buffered(new InputStreamReader(sock.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                return sb.toString();
-            } finally {
-                sock.close();
-                if (reader != null) {
-                    reader.close();
-                }
-            }
-        }
-
-        public void start() throws Exception {
-            long start = System.currentTimeMillis();
-            while (true) {
-                try {
-                    String result = send4LetterWord(serverList(), "stat");
-                    if (result.startsWith("Zookeeper version:")) {
-                        return;
-                    }
-                } catch (IOException e) {
-                    LOGGER.info("server {} not up {}", LOGGER, e);
-                }
-
-                if (System.currentTimeMillis() > start + 1000) {
-                    break;
-                }
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-        }
-
-        public void stop() throws Exception {
-            connectionFactory.shutdown();
-            connectionFactory.join();
-            zkServer.shutdown();
-
-            while (zkServer.isRunning()) {
-                zkServer.shutdown();
-                Thread.sleep(100);
-            }
-        }
-    }
 
     public static class ZooKeeperTestClient {
         private final CuratorFramework curator;

@@ -49,6 +49,9 @@
     <jackson-version>1.9.12</jackson-version>
     <testcontainers-version>1.7.3</testcontainers-version>
 
+    <!-- needed for testing -->
+    <curator-version>2.12.0</curator-version>
+
     <!-- Needed by starters -->
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <google-guava-version>19.0</google-guava-version>
