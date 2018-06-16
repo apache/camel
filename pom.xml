@@ -52,7 +52,7 @@
     <compiler.fork>false</compiler.fork>
 
     <maven-compiler-plugin-version>3.7.0</maven-compiler-plugin-version>
-    <maven-surefire-plugin-version>2.21.0</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
