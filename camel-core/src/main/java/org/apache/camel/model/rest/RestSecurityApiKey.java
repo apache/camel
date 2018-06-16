@@ -44,6 +44,13 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         return name;
     }
 
+    public RestSecurityApiKey() {
+    }
+
+    public RestSecurityApiKey(RestDefinition rest) {
+        super(rest);
+    }
+
     /**
      * The name of the header or query parameter to be used.
      */
@@ -71,5 +78,23 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
      */
     public void setInQuery(Boolean inQuery) {
         this.inQuery = inQuery;
+    }
+
+    public RestSecurityApiKey withHeader(String name) {
+        setName(name);
+        setInHeader(true);
+        setInQuery(false);
+        return this;
+    }
+
+    public RestSecurityApiKey withQuery(String name) {
+        setName(name);
+        setInQuery(true);
+        setInHeader(false);
+        return this;
+    }
+
+    public RestSecuritiesDefinition end() {
+        return rest.getSecurityDefinitions();
     }
 }
