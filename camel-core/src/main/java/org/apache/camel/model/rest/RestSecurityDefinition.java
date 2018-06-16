@@ -30,13 +30,20 @@ import org.apache.camel.spi.Metadata;
 public abstract class RestSecurityDefinition {
 
     @XmlTransient
-    private RestDefinition rest;
+    RestDefinition rest;
 
     @XmlAttribute(required = true) @Metadata(required = "true")
     private String key;
 
     @XmlAttribute
     private String description;
+
+    public RestSecurityDefinition() {
+    }
+
+    public RestSecurityDefinition(RestDefinition rest) {
+        this.rest = rest;
+    }
 
     /**
      * Ends the configuration of this security
@@ -67,4 +74,5 @@ public abstract class RestSecurityDefinition {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

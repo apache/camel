@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -34,12 +35,22 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecuritiesDefinition {
 
+    @XmlTransient
+    private RestDefinition rest;
+
     @XmlElements({
         @XmlElement(name = "apiKey", type = RestSecurityApiKey.class),
         @XmlElement(name = "basicAuth", type = RestSecurityBasicAuth.class),
         @XmlElement(name = "oauth2", type = RestSecurityOAuth2.class)
     })
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
+
+    public RestSecuritiesDefinition() {
+    }
+
+    public RestSecuritiesDefinition(RestDefinition rest) {
+        this.rest = rest;
+    }
 
     public List<RestSecurityDefinition> getSecurityDefinitions() {
         return securityDefinitions;
@@ -48,4 +59,45 @@ public class RestSecuritiesDefinition {
     public void setSecurityDefinitions(List<RestSecurityDefinition> securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
     }
+
+    public RestSecurityApiKey apiKey(String key) {
+        return apiKey(key, null);
+    }
+
+    public RestSecurityApiKey apiKey(String key, String description) {
+        RestSecurityApiKey auth = new RestSecurityApiKey(rest);
+        auth.setKey(key);
+        auth.setDescription(description);
+        securityDefinitions.add(auth);
+        return auth;
+    }
+
+    public RestSecuritiesDefinition basicAuth(String key) {
+        return basicAuth(key, null);
+    }
+
+    public RestSecuritiesDefinition basicAuth(String key, String description) {
+        RestSecurityBasicAuth auth = new RestSecurityBasicAuth(rest);
+        securityDefinitions.add(auth);
+        auth.setKey(key);
+        auth.setDescription(description);
+        return this;
+    }
+
+    public RestSecurityOAuth2 oauth2(String key) {
+        return oauth2(key, null);
+    }
+
+    public RestSecurityOAuth2 oauth2(String key, String description) {
+        RestSecurityOAuth2 auth = new RestSecurityOAuth2(rest);
+        auth.setKey(key);
+        auth.setDescription(description);
+        securityDefinitions.add(auth);
+        return auth;
+    }
+
+    public RestDefinition end() {
+        return rest;
+    }
+
 }

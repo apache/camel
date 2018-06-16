@@ -46,6 +46,13 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     @XmlElement(name = "scopes")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();
 
+    public RestSecurityOAuth2() {
+    }
+
+    public RestSecurityOAuth2(RestDefinition rest) {
+        super(rest);
+    }
+
     public String getAuthorizationUrl() {
         return authorizationUrl;
     }
@@ -92,4 +99,39 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     public void setScopes(List<RestPropertyDefinition> scopes) {
         this.scopes = scopes;
     }
+
+    public RestSecurityOAuth2 authorizationUrl(String authorizationUrl) {
+        setAuthorizationUrl(authorizationUrl);
+        setFlow("implicit");
+        return this;
+    }
+
+    public RestSecurityOAuth2 password(String tokenUrl) {
+        setTokenUrl(tokenUrl);
+        setFlow("password");
+        return this;
+    }
+
+    public RestSecurityOAuth2 application(String tokenUrl) {
+        setTokenUrl(tokenUrl);
+        setFlow("application");
+        return this;
+    }
+
+    public RestSecurityOAuth2 accessCode(String authorizationUrl, String tokenUrl) {
+        setAuthorizationUrl(authorizationUrl);
+        setTokenUrl(tokenUrl);
+        setFlow("accessCode");
+        return this;
+    }
+
+    public RestSecurityOAuth2 withScope(String key, String description) {
+        scopes.add(new RestPropertyDefinition(key, description));
+        return this;
+    }
+
+    public RestSecuritiesDefinition end() {
+        return rest.getSecurityDefinitions();
+    }
+
 }
