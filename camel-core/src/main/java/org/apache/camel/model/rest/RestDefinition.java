@@ -425,6 +425,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * To configure security definitions.
+     */
+    public RestSecuritiesDefinition securityDefinitions() {
+        if (securityDefinitions == null) {
+            securityDefinitions = new RestSecuritiesDefinition(this);
+        }
+        return securityDefinitions;
+    }
+
     public RestDefinition produces(String mediaType) {
         if (getVerbs().isEmpty()) {
             this.produces = mediaType;
@@ -616,11 +626,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setRoute(route);
         return route;
-    }
-
-    public RestSecurityDefinition securityDefinition(String id) {
-        //return new RestSecurityDefinition(this, id);
-        return null;
     }
 
     // Implementation

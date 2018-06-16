@@ -42,13 +42,12 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-//                restConfiguration()
-//                    .apiSecurityProperty("petstore_auth", "type", "oauth2")
-//                    .apiSecurityProperty("petstore_auth", "authorizationUrl", "http://petstore.swagger.io/oauth/dialog")
-//                    .apiSecurityProperty("petstore_auth", "flow", "implicit");
-
-                // this user REST service is json only
                 rest("/user").tag("dude").description("User rest service")
+                    // setup security definitions
+                    .securityDefinitions()
+                        .oauth2("petstore_auth").authorizationUrl("http://petstore.swagger.io/oauth/dialog").end()
+                        .apiKey("api_key").withHeader("myHeader").end()
+                    .end()
                     .consumes("application/json").produces("application/json")
 
                     .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
@@ -88,8 +87,12 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
         String json = mapper.writeValueAsString(swagger);
 
         log.info(json);
-System.out.println(json);
 
+        assertTrue(json.contains("\"securityDefinitions\" : {"));
+        assertTrue(json.contains("\"type\" : \"oauth2\","));
+        assertTrue(json.contains("\"authorizationUrl\" : \"http://petstore.swagger.io/oauth/dialog\","));
+        assertTrue(json.contains("\"type\" : \"apiKey\","));
+        assertTrue(json.contains("\"in\" : \"header\""));
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));

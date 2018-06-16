@@ -31,4 +31,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityBasicAuth extends RestSecurityDefinition {
 
+    public RestSecurityBasicAuth() {
+    }
+
+    public RestSecurityBasicAuth(RestDefinition rest) {
+        super(rest);
+    }
 }
