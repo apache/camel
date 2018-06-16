@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -77,6 +78,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     private Boolean apiDocs;
+
+    @XmlElement(name = "securityDefinitions") // use the name swagger uses
+    private RestSecuritiesDefinition securityDefinitions;
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
@@ -148,6 +152,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public List<VerbDefinition> getVerbs() {
         return verbs;
+    }
+
+    public RestSecuritiesDefinition getSecurityDefinitions() {
+        return securityDefinitions;
+    }
+
+    /**
+     * Sets the security definitions such as Basic, OAuth2 etc.
+     */
+    public void setSecurityDefinitions(RestSecuritiesDefinition securityDefinitions) {
+        this.securityDefinitions = securityDefinitions;
     }
 
     /**
@@ -601,6 +616,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setRoute(route);
         return route;
+    }
+
+    public RestSecurityDefinition securityDefinition(String id) {
+        //return new RestSecurityDefinition(this, id);
+        return null;
     }
 
     // Implementation
