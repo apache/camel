@@ -113,7 +113,7 @@ Since Camel *2.12.4/2.13.1* it is possible to reference logger instance. For exa
 </route>
 ----
 
-==== Using Logger instance from the the Registry
+==== Using Logger instance from the Registry
 
 As of *Camel 2.12.4/2.13.1*, if no logger name or logger instance is passed to log DSL,
  there is a Registry lookup performed to find single instance of org.slf4j.Logger.

@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 /**
  * Utility class for parsing, used by the Camel Exec component.<br>
- * Note: the class should be dropped, when the the commons-exec library
+ * Note: the class should be dropped, when the commons-exec library
  * implements similar functionality.
  */
 public final class ExecParseUtils {

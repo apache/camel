@@ -35,7 +35,7 @@ public class XChangeComponent extends DefaultComponent {
         XChangeConfiguration configuration = new XChangeConfiguration(this);
         setProperties(configuration, parameters);
 
-        // Set the the required name of the exchange
+        // Set the required name of the exchange
         configuration.setName(remaining);
 
         XChange exchange = createXChange(configuration);

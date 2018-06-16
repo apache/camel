@@ -637,7 +637,7 @@ from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefaul
 ...
 <bean id="xadesProperties"
     class="org.apache.camel.component.xmlsecurity.api.XAdESSignatureProperties">
-    <!-- For more properties see the the previous Java DSL example. 
+    <!-- For more properties see the previous Java DSL example. 
          If you want to have a signing certificate then use the bean class DefaultXAdESSignatureProperties (see the previous Java DSL example). -->
     <property name="signaturePolicy" value="ExplicitId" />
     <property name="sigPolicyId" value="http://www.test.com/policy.pdf" />

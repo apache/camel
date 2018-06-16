@@ -280,7 +280,7 @@ from("seda:people").marshal(df).convertBodyTo(String.class).to("jms:queue:people
 
 In the code above we marshal the data from a Object representation as a
 `List` of rows as `Maps`. The rows as `Map` contains the column name as
-the key, and the the corresponding value. This structure can be created
+the key, and the corresponding value. This structure can be created
 in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.

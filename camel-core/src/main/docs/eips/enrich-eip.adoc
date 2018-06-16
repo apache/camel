@@ -113,7 +113,7 @@ from("direct:resource")
 ----
 
 The content enricher (`enrich`) retrieves additional data from a _resource endpoint_ in order to enrich an incoming message (contained in the _original exchange_).
-An aggregation strategy is used to combine the original exchange and the _resource exchange_. The first parameter of the `AggregationStrategy.aggregate(Exchange, Exchange)` method corresponds to the the original exchange, the second parameter the resource exchange.
+An aggregation strategy is used to combine the original exchange and the _resource exchange_. The first parameter of the `AggregationStrategy.aggregate(Exchange, Exchange)` method corresponds to the original exchange, the second parameter the resource exchange.
 The results from the resource endpoint are stored in the resource exchange's out-message. Here's an example template for implementing an aggregation strategy:
 
 [source,java]

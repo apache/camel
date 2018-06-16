@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
  
-    <!-- this is an included XML file where we only the the routeContext -->
+    <!-- this is an included XML file where we only the routeContext -->
     <routeContext id="barContext" xmlns="http://camel.apache.org/schema/spring">
         <route id="bar">
         	<from uri="direct:bar"/>

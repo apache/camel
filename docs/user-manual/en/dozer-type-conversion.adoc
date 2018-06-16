@@ -139,7 +139,7 @@ Conversion] framework. Its configured by creating an instance of
 `DozerTypeConverterLoader` providing it the camel context and an
 optional Dozer mapper. If no mapper is supplied, Camel's registry will
 be searched for suitable instances. The loader will query the Dozer
-Mapper for the the types it converts and a register them with Camel's
+Mapper for the types it converts and a register them with Camel's
 type conversion framework to be handled by the mapper.
 
 [NOTE]

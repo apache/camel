@@ -235,7 +235,7 @@ Configure the destination and conduit with Blueprint
 From *Camel 2.11.x*, Camel Transport supports to be configured with
 Blueprint.
 
-If you are using blueprint, you should use the the namespace
+If you are using blueprint, you should use the namespace
 `http://cxf.apache.org/transports/camel/blueprint` and import the schema
 like the blow.
 
