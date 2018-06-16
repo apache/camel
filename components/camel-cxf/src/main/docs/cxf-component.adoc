@@ -758,7 +758,7 @@ may need to throw the SOAP Fault from the camel context. +
 Then throw it as you like
 
 If your CXF endpoint is working in the `MESSAGE` data format, you could
-set the the SOAP Fault message in the message body and set the response
+set the SOAP Fault message in the message body and set the response
 code in the message header.
 
 Same for using POJO data format. You can set the SOAPFault on the out

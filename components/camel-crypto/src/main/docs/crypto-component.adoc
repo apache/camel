@@ -33,7 +33,7 @@ key, is shared around to anyone interested in verifying the signed
 messages. Messages are signed by using the private key to encrypting a
 digest of the message. This encrypted digest is transmitted along with
 the message. On the other side the verifier recalculates the message
-digest and uses the public key to decrypt the the digest in the
+digest and uses the public key to decrypt the digest in the
 signature. If both digests match the verifier knows only the holder of
 the private key could have created the signature.
 

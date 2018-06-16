@@ -33,7 +33,7 @@ public interface ComponentResolver {
      * @param name the component name to resolve
      * @param context the context to load the component if it can be resolved
      * @return the component which is added to the context or null if it cannot be resolved
-     * @throws Exception is thrown if the the component could not be loaded
+     * @throws Exception is thrown if the component could not be loaded
      */
     Component resolveComponent(String name, CamelContext context) throws Exception;
 }

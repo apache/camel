@@ -159,7 +159,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
 
         Collection<X509Certificate> allowedVerifyCerts = conf.getCertificates(exchange);
         if (allowedVerifyCerts.isEmpty()) {
-            throw new CryptoCmsNoCertificateForSignerInfosException("Cannot verify the signatures of the the PKCS7/CMS Signed Data object: No verifier certificate is configured.");
+            throw new CryptoCmsNoCertificateForSignerInfosException("Cannot verify the signatures of the PKCS7/CMS Signed Data object: No verifier certificate is configured.");
         }
 
         JcaCertStore certStore = new JcaCertStore(allowedVerifyCerts);

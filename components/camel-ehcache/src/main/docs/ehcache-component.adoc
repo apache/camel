@@ -87,8 +87,8 @@ with the following path and query parameters:
 | *configurationUri* (common) | URI pointing to the Ehcache XML configuration file's location |  | String
 | *createCacheIfNotExist* (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *eventFiring* (consumer) | Set the the delivery mode (synchronous, asynchronous) | ASYNCHRONOUS | EventFiring
-| *eventOrdering* (consumer) | Set the the delivery mode (ordered, unordered) | ORDERED | EventOrdering
+| *eventFiring* (consumer) | Set the delivery mode (synchronous, asynchronous) | ASYNCHRONOUS | EventFiring
+| *eventOrdering* (consumer) | Set the delivery mode (ordered, unordered) | ORDERED | EventOrdering
 | *eventTypes* (consumer) | Set the type of events to listen for | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern

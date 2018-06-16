@@ -45,7 +45,7 @@
       <from uri="file://target/inbox"/>
       <split>
         <xpath>/stocks/stock</xpath>
-        <!-- throttle 10 msg/sec being send the the ActiveMQ queue -->
+        <!-- throttle 10 msg/sec being send the ActiveMQ queue -->
         <throttle>
           <constant>10</constant>
           <!-- store the stock symbol as a header -->
