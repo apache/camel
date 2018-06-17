@@ -569,7 +569,7 @@
     <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
     <protonpack-version>1.8</protonpack-version>
     <pubnub-version>4.19.0</pubnub-version>
-    <qpid-broker-version>7.0.4</qpid-broker-version>
+    <qpid-broker-version>7.0.5</qpid-broker-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-proton-j-version>0.27.1</qpid-proton-j-version>
     <qpid-jms-client-version>0.33.0</qpid-jms-client-version>
