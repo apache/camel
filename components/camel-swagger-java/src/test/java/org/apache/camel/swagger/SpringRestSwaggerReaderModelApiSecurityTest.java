@@ -21,54 +21,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
-    }
+public class SpringRestSwaggerReaderModelApiSecurityTest extends CamelSpringTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest("/user").tag("dude").description("User rest service")
-                    // setup security definitions
-                    .securityDefinitions()
-                        .oauth2("petstore_auth").authorizationUrl("http://petstore.swagger.io/oauth/dialog").end()
-                        .apiKey("api_key").withHeader("myHeader").end()
-                    .end()
-                    .consumes("application/json").produces("application/json")
-
-                    .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
-                        .responseMessage().message("The user returned").endResponseMessage()
-                        // setup security for this rest verb
-                        .security("api_key")
-                        .param().name("id").type(RestParamType.path).description("The id of the user to get").endParam()
-                        .param().name("date").type(RestParamType.path).description("The date").dataFormat("date").endParam()
-                        .to("bean:userService?method=getUser(${header.id})")
-
-                    .put().description("Updates or create a user").type(User.class)
-                        // setup security for this rest verb
-                        .security("petstore_auth", "write:pets,read:pets")
-                        .param().name("body").type(RestParamType.body).description("The user to update or create").endParam()
-                        .to("bean:userService?method=updateUser")
-
-                    .get("/findAll").description("Find all users").outTypeList(User.class)
-                        .responseMessage().message("All the found users").endResponseMessage()
-                        .to("bean:userService?method=listUsers");
-            }
-        };
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/swagger/SpringRestSwaggerReaderModelApiSecurityTest.xml");
     }
 
     @Test
@@ -111,5 +74,4 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
         assertFalse(json.contains("\"enum\""));
         context.stop();
     }
-
 }

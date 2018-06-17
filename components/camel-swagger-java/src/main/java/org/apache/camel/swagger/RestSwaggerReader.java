@@ -158,7 +158,15 @@ public class RestSwaggerReader {
                     RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
                     OAuth2Definition auth = new OAuth2Definition();
                     auth.setDescription(rs.getDescription());
-                    auth.setFlow(rs.getFlow());
+                    String flow = rs.getFlow();
+                    if (flow == null) {
+                        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
+                            flow = "accessCode";
+                        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
+                            flow = "implicit";
+                        }
+                    }
+                    auth.setFlow(flow);
                     auth.setAuthorizationUrl(rs.getAuthorizationUrl());
                     auth.setTokenUrl(rs.getTokenUrl());
                     for (RestPropertyDefinition scope : rs.getScopes()) {
