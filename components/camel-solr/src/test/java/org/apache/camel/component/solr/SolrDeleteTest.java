@@ -21,7 +21,7 @@ import java.util.Arrays;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
+@Ignore("At this stage, a single Test class inheriting from SolrComponentTestSupport is supported per test run")
 public class SolrDeleteTest extends SolrComponentTestSupport {
 
     public SolrDeleteTest(SolrFixtures.TestServerType serverToTest) {

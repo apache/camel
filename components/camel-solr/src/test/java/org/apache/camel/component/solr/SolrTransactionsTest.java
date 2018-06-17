@@ -19,7 +19,7 @@ package org.apache.camel.component.solr;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
+@Ignore("Rollback is currently not supported in SolrCloud mode. (SOLR-4895)")
 public class SolrTransactionsTest extends SolrComponentTestSupport {
 
     public SolrTransactionsTest(SolrFixtures.TestServerType serverToTest) {
