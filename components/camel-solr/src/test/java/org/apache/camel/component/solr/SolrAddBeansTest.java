@@ -23,7 +23,7 @@ import org.apache.solr.client.solrj.beans.Field;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
+@Ignore("At this stage, a single Test class inheriting from SolrComponentTestSupport is supported per test run")
 public class SolrAddBeansTest extends SolrComponentTestSupport {
 
     public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {

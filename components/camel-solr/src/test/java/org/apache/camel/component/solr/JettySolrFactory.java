@@ -100,6 +100,7 @@ public final class JettySolrFactory {
         System.setProperty("solr.solr.home", solrHome);
         System.setProperty("jetty.testMode", "true");
         System.setProperty("solr.data.dir", "target/test-classes/solr/data" + (dataDirNo++));
+        System.setProperty("solr.log.dir", "target/");
 
         // Instruct Solr to keep the index in memory, for faster testing.
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");

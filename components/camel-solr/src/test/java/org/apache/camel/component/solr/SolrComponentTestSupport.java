@@ -74,14 +74,14 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
         SolrClient solrServer = solrFixtures.getServer();
-        return solrServer.query(solrQuery);
+        return solrServer.query("collection1", solrQuery);
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         SolrFixtures.createSolrFixtures();
     }
- 
+
     @AfterClass
     public static void afterClass() throws Exception {
         SolrFixtures.teardownSolrFixtures();
@@ -102,7 +102,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
             }
         };
     }
-    
+
     @Parameters
     public static Collection<Object[]> serverTypes() {
         Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},

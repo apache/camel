@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
+@Ignore("Assert.fail:88 expected:<0> but was:<12>")
 public class SolrUpdateTest extends SolrComponentTestSupport {
     private SolrEndpoint solrEndpoint;
 
@@ -51,7 +51,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws Exception {
 
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", "MA147LL/A");        
+        doc.addField("id", "MA147LL/A");
         String docAsXml = ClientUtils.toXML(doc);
         template.sendBodyAndHeader("direct:start", docAsXml, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         solrCommit();
