@@ -21,6 +21,7 @@ import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,7 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.RefModel;
 import io.swagger.models.Response;
+import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
@@ -74,6 +76,7 @@ import org.apache.camel.model.rest.RestSecurityApiKey;
 import org.apache.camel.model.rest.RestSecurityBasicAuth;
 import org.apache.camel.model.rest.RestSecurityDefinition;
 import org.apache.camel.model.rest.RestSecurityOAuth2;
+import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
@@ -134,33 +137,35 @@ public class RestSwaggerReader {
 
         // setup security definitions
         RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
-        for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
-            if (def instanceof RestSecurityBasicAuth) {
-                BasicAuthDefinition auth = new BasicAuthDefinition();
-                auth.setDescription(def.getDescription());
-                swagger.addSecurityDefinition(def.getKey(), auth);
-            } else if (def instanceof RestSecurityApiKey) {
-                RestSecurityApiKey rs = (RestSecurityApiKey) def;
-                ApiKeyAuthDefinition auth = new ApiKeyAuthDefinition();
-                auth.setDescription(rs.getDescription());
-                auth.setName(rs.getName());
-                if (rs.getInHeader() != null && rs.getInHeader()) {
-                    auth.setIn(In.HEADER);
-                } else {
-                    auth.setIn(In.QUERY);
+        if (sd != null) {
+            for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
+                if (def instanceof RestSecurityBasicAuth) {
+                    BasicAuthDefinition auth = new BasicAuthDefinition();
+                    auth.setDescription(def.getDescription());
+                    swagger.addSecurityDefinition(def.getKey(), auth);
+                } else if (def instanceof RestSecurityApiKey) {
+                    RestSecurityApiKey rs = (RestSecurityApiKey) def;
+                    ApiKeyAuthDefinition auth = new ApiKeyAuthDefinition();
+                    auth.setDescription(rs.getDescription());
+                    auth.setName(rs.getName());
+                    if (rs.getInHeader() != null && rs.getInHeader()) {
+                        auth.setIn(In.HEADER);
+                    } else {
+                        auth.setIn(In.QUERY);
+                    }
+                    swagger.addSecurityDefinition(def.getKey(), auth);
+                } else if (def instanceof RestSecurityOAuth2) {
+                    RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
+                    OAuth2Definition auth = new OAuth2Definition();
+                    auth.setDescription(rs.getDescription());
+                    auth.setFlow(rs.getFlow());
+                    auth.setAuthorizationUrl(rs.getAuthorizationUrl());
+                    auth.setTokenUrl(rs.getTokenUrl());
+                    for (RestPropertyDefinition scope : rs.getScopes()) {
+                        auth.addScope(scope.getKey(), scope.getValue());
+                    }
+                    swagger.addSecurityDefinition(def.getKey(), auth);
                 }
-                swagger.addSecurityDefinition(def.getKey(), auth);
-            } else if (def instanceof RestSecurityOAuth2) {
-                RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
-                OAuth2Definition auth = new OAuth2Definition();
-                auth.setDescription(rs.getDescription());
-                auth.setFlow(rs.getFlow());
-                auth.setAuthorizationUrl(rs.getAuthorizationUrl());
-                auth.setTokenUrl(rs.getTokenUrl());
-                for (RestPropertyDefinition scope : rs.getScopes()) {
-                    auth.addScope(scope.getKey(), scope.getValue());
-                }
-                swagger.addSecurityDefinition(def.getKey(), auth);
             }
         }
 
@@ -279,6 +284,19 @@ public class RestSwaggerReader {
 
             if (verb.getDescriptionText() != null) {
                 op.summary(verb.getDescriptionText());
+            }
+
+            // security
+            for (SecurityDefinition sd : verb.getSecurity()) {
+                List<String> scopes = new ArrayList<>();
+                if (sd.getScopes() != null) {
+                    Iterator<Object> it = ObjectHelper.createIterator(sd.getScopes());
+                    while (it.hasNext()) {
+                        String scope = it.next().toString();
+                        scopes.add(scope);
+                    }
+                }
+                op.addSecurity(sd.getKey(), scopes);
             }
 
             for (RestOperationParamDefinition param : verb.getParams()) {

@@ -37,4 +37,5 @@ RestSecurityApiKey
 RestSecurityBasicAuth
 RestSecuritiesDefinition
 RestSecurityOAuth2
+SecurityDefinition
 VerbDefinition
