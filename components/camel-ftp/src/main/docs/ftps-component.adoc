@@ -26,7 +26,7 @@ For more information you can look at <<ftp-component,FTP component>>
 The options below are exclusive for the FTPS component.
 
 // component options: START
-The FTPS component supports 2 options which are listed below.
+The FTPS component supports 2 options, which are listed below.
 
 
 

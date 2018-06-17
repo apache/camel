@@ -39,7 +39,7 @@ You can append query options to the URI in the following format,
 ### JT400 options
 
 // component options: START
-The JT400 component supports 2 options which are listed below.
+The JT400 component supports 2 options, which are listed below.
 
 
 

@@ -26,7 +26,7 @@ you can construct the syntax as follows:
 ### Mvel Options
 
 // language options: START
-The MVEL language supports 1 options which are listed below.
+The MVEL language supports 1 options, which are listed below.
 
 
 

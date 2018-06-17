@@ -8,7 +8,7 @@ The Twitter Streaming component consumes twitter statuses using Streaming API.
 ### Component Options
 
 // component options: START
-The Twitter Streaming component supports 9 options which are listed below.
+The Twitter Streaming component supports 9 options, which are listed below.
 
 
 

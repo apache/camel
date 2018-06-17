@@ -50,7 +50,7 @@ Recipient List
 
 
 // language options: START
-The EL language supports 1 options which are listed below.
+The EL language supports 1 options, which are listed below.
 
 
 

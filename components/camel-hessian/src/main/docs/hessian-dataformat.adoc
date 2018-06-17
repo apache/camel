@@ -20,7 +20,7 @@ If you want to use Hessian Data Format from Maven, add the following dependency 
 ### Options
 
 // dataformat options: START
-The Hessian dataformat supports 4 options which are listed below.
+The Hessian dataformat supports 4 options, which are listed below.
 
 
 

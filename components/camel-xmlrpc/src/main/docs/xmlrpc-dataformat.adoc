@@ -40,7 +40,7 @@ not.
 ### XmlRpc Dataformat Options
 
 // dataformat options: START
-The XML RPC dataformat supports 2 options which are listed below.
+The XML RPC dataformat supports 2 options, which are listed below.
 
 
 

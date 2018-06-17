@@ -59,7 +59,7 @@ Service Account Email and Service Account Key can be found in the GCP JSON crede
 ### Options
 
 // component options: START
-The Google BigQuery component supports 4 options which are listed below.
+The Google BigQuery component supports 4 options, which are listed below.
 
 
 

@@ -172,7 +172,7 @@ wrapping.
 
 
 // component options: START
-The Avro component supports 2 options which are listed below.
+The Avro component supports 2 options, which are listed below.
 
 
 

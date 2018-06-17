@@ -43,7 +43,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JDBC component supports 2 options which are listed below.
+The JDBC component supports 2 options, which are listed below.
 
 
 

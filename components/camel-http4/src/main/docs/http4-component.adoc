@@ -52,7 +52,7 @@ route, use the <<jetty-component,Jetty Component>> instead.
 
 
 // component options: START
-The HTTP4 component supports 18 options which are listed below.
+The HTTP4 component supports 18 options, which are listed below.
 
 
 

@@ -111,7 +111,7 @@ aggregator in this scenario.
 
 
 // component options: START
-The Simple JMS Batch component supports 5 options which are listed below.
+The Simple JMS Batch component supports 5 options, which are listed below.
 
 
 

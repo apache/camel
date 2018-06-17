@@ -44,7 +44,7 @@ for this component:
 
 
 // component options: START
-The Olingo2 component supports 3 options which are listed below.
+The Olingo2 component supports 3 options, which are listed below.
 
 
 

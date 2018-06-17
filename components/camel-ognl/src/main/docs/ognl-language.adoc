@@ -28,7 +28,7 @@ you can construct the syntax as follows:
 
 
 // language options: START
-The OGNL language supports 1 options which are listed below.
+The OGNL language supports 1 options, which are listed below.
 
 
 

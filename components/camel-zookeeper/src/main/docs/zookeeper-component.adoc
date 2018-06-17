@@ -42,7 +42,7 @@ _znode_) that will be the target of the endpoint:
 ### Options
 
 // component options: START
-The ZooKeeper component supports 2 options which are listed below.
+The ZooKeeper component supports 2 options, which are listed below.
 
 
 

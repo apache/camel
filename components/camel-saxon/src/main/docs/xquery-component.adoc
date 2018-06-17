@@ -16,7 +16,7 @@ Recipient List.
 
 
 // component options: START
-The XQuery component supports 4 options which are listed below.
+The XQuery component supports 4 options, which are listed below.
 
 
 

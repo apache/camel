@@ -84,7 +84,7 @@ in path such as `/api/{version}/users/{id}`.
 ### Options
 
 // component options: START
-The REST Swagger component supports 7 options which are listed below.
+The REST Swagger component supports 7 options, which are listed below.
 
 
 

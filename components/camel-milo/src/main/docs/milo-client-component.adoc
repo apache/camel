@@ -22,7 +22,7 @@ for this component:
 
 
 // component options: START
-The OPC UA Client component supports 6 options which are listed below.
+The OPC UA Client component supports 6 options, which are listed below.
 
 
 

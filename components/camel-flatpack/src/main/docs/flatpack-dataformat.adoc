@@ -22,7 +22,7 @@ trailers for the marshal operation.
 ### Options
 
 // dataformat options: START
-The Flatpack dataformat supports 9 options which are listed below.
+The Flatpack dataformat supports 9 options, which are listed below.
 
 
 

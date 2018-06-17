@@ -31,7 +31,7 @@ web3j://<local/remote host:port or local IPC path>[?options]
 
 
 // component options: START
-The Web3j Ethereum Blockchain component supports 2 options which are listed below.
+The Web3j Ethereum Blockchain component supports 2 options, which are listed below.
 
 
 

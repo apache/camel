@@ -102,7 +102,7 @@ The supported operations are:
 
 
 // component options: START
-The HBase component supports 3 options which are listed below.
+The HBase component supports 3 options, which are listed below.
 
 
 

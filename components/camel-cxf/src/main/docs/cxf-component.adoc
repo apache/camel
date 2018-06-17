@@ -109,7 +109,7 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 
 
 // component options: START
-The CXF component supports 4 options which are listed below.
+The CXF component supports 4 options, which are listed below.
 
 
 

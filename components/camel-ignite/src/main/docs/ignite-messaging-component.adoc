@@ -10,7 +10,7 @@ This endpoint supports producers (to send messages) and consumers (to receive me
 ### Options
 
 // component options: START
-The Ignite Messaging component supports 4 options which are listed below.
+The Ignite Messaging component supports 4 options, which are listed below.
 
 
 

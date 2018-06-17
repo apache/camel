@@ -72,7 +72,7 @@ with the following path and query parameters:
 
 
 // component options: START
-The JCache component supports 5 options which are listed below.
+The JCache component supports 5 options, which are listed below.
 
 
 

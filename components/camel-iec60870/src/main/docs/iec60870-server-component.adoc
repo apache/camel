@@ -21,7 +21,7 @@ for this component:
 
 
 // component options: START
-The IEC 60870 Server component supports 2 options which are listed below.
+The IEC 60870 Server component supports 2 options, which are listed below.
 
 
 

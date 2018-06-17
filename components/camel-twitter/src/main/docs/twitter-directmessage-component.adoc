@@ -8,7 +8,7 @@ The Twitter Direct Message Component consumes/produces a user's direct messages.
 ### Component Options
 
 // component options: START
-The Twitter Direct Message component supports 9 options which are listed below.
+The Twitter Direct Message component supports 9 options, which are listed below.
 
 
 

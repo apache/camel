@@ -26,7 +26,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS Kinesis Firehose component supports 5 options which are listed below.
+The AWS Kinesis Firehose component supports 5 options, which are listed below.
 
 
 

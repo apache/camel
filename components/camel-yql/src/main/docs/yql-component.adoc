@@ -33,7 +33,7 @@ Where *query* represents the YQL query.
 === Options
 
 // component options: START
-The Yahoo Query Language component supports 2 options which are listed below.
+The Yahoo Query Language component supports 2 options, which are listed below.
 
 
 

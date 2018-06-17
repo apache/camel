@@ -29,7 +29,7 @@ Where *`someUri`* can be any URI with any query parameters.
 === Options
 
 // component options: START
-The Stub component supports 5 options which are listed below.
+The Stub component supports 5 options, which are listed below.
 
 
 

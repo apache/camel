@@ -14,7 +14,7 @@ The endpoint tries to run the object passed in the body of the IN message as the
 ### Options
 
 // component options: START
-The Ignite Compute component supports 4 options which are listed below.
+The Ignite Compute component supports 4 options, which are listed below.
 
 
 

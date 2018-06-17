@@ -41,7 +41,7 @@ for this component:
 
 
 // component options: START
-The MLLP component supports 5 options which are listed below.
+The MLLP component supports 5 options, which are listed below.
 
 
 

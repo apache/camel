@@ -9,7 +9,7 @@ that supports encoding.
 === Options
 
 // dataformat options: START
-The String Encoding dataformat supports 2 options which are listed below.
+The String Encoding dataformat supports 2 options, which are listed below.
 
 
 

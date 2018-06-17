@@ -53,7 +53,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Linkedin component supports 2 options which are listed below.
+The Linkedin component supports 2 options, which are listed below.
 
 
 

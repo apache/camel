@@ -56,7 +56,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Google Mail component supports 3 options which are listed below.
+The Google Mail component supports 3 options, which are listed below.
 
 
 

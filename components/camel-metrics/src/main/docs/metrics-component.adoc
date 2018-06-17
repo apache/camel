@@ -45,7 +45,7 @@ metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ### Options
 
 // component options: START
-The Metrics component supports 2 options which are listed below.
+The Metrics component supports 2 options, which are listed below.
 
 
 

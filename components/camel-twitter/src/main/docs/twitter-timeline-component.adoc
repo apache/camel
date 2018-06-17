@@ -8,7 +8,7 @@ The Twitter Timeline component consumes twitter timeline or update the status of
 ### Component Options
 
 // component options: START
-The Twitter Timeline component supports 9 options which are listed below.
+The Twitter Timeline component supports 9 options, which are listed below.
 
 
 

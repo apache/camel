@@ -84,7 +84,7 @@ You append query options to the URI using the following format,
 
 
 // component options: START
-The Simple JMS2 component supports 15 options which are listed below.
+The Simple JMS2 component supports 15 options, which are listed below.
 
 
 

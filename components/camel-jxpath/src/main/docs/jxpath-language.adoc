@@ -26,7 +26,7 @@ from("queue:foo").filter().
 
 
 // language options: START
-The JXPath language supports 2 options which are listed below.
+The JXPath language supports 2 options, which are listed below.
 
 
 

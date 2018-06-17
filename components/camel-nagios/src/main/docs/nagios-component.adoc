@@ -39,7 +39,7 @@ you to send notifications to Nagios.
 
 
 // component options: START
-The Nagios component supports 2 options which are listed below.
+The Nagios component supports 2 options, which are listed below.
 
 
 

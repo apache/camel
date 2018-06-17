@@ -22,7 +22,7 @@ as we really don't want to turn well formed HTML into ugly HTML.
 
 
 // dataformat options: START
-The TidyMarkup dataformat supports 3 options which are listed below.
+The TidyMarkup dataformat supports 3 options, which are listed below.
 
 
 

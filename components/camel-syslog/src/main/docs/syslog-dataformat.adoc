@@ -48,7 +48,7 @@ renamed to `SyslogDataFormat`.
 ### Options
 
 // dataformat options: START
-The Syslog dataformat supports 1 options which are listed below.
+The Syslog dataformat supports 1 options, which are listed below.
 
 
 

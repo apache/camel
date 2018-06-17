@@ -55,7 +55,7 @@ LogEIP.
 
 
 // component options: START
-The Log component supports 2 options which are listed below.
+The Log component supports 2 options, which are listed below.
 
 
 

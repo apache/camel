@@ -15,7 +15,7 @@ etcd:namespace/path[?options]
 ### URI Options
 
 // component options: START
-The etcd component supports 7 options which are listed below.
+The etcd component supports 7 options, which are listed below.
 
 
 
