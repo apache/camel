@@ -37,7 +37,7 @@ vertx:channelName[?options]
 
 
 // component options: START
-The Vert.x component supports 7 options which are listed below.
+The Vert.x component supports 7 options, which are listed below.
 
 
 

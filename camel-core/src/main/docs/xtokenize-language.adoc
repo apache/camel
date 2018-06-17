@@ -16,7 +16,7 @@ For more details see Splitter.
 === XML Tokenizer Options
 
 // language options: START
-The XML Tokenize language supports 4 options which are listed below.
+The XML Tokenize language supports 4 options, which are listed below.
 
 
 

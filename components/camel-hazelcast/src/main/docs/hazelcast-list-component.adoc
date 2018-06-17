@@ -8,7 +8,7 @@ The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcas
 ### Options
 
 // component options: START
-The Hazelcast List component supports 3 options which are listed below.
+The Hazelcast List component supports 3 options, which are listed below.
 
 
 

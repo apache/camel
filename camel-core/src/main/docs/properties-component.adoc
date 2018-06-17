@@ -15,7 +15,7 @@ Where *key* is the key for the property to lookup
 === Options
 
 // component options: START
-The Properties component supports 17 options which are listed below.
+The Properties component supports 17 options, which are listed below.
 
 
 

@@ -44,7 +44,7 @@ section presents them all.
 
 
 // dataformat options: START
-The uniVocity TSV dataformat supports 15 options which are listed below.
+The uniVocity TSV dataformat supports 15 options, which are listed below.
 
 
 

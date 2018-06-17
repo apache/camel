@@ -35,7 +35,7 @@ Destination Name can be either a topic or a subscription name.
 === Options
 
 // component options: START
-The Google Pubsub component supports 2 options which are listed below.
+The Google Pubsub component supports 2 options, which are listed below.
 
 
 

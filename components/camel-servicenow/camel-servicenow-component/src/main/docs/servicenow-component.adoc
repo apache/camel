@@ -31,7 +31,7 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 14 options which are listed below.
+The ServiceNow component supports 14 options, which are listed below.
 
 
 

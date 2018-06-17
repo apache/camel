@@ -51,7 +51,7 @@ Where *topic* is the name of the topic.
 === Options
 
 // component options: START
-The Paho component supports 4 options which are listed below.
+The Paho component supports 4 options, which are listed below.
 
 
 

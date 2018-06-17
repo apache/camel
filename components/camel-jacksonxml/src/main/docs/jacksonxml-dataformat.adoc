@@ -33,7 +33,7 @@ from("activemq:My.Queue").
 
 
 // dataformat options: START
-The JacksonXML dataformat supports 15 options which are listed below.
+The JacksonXML dataformat supports 15 options, which are listed below.
 
 
 

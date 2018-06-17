@@ -50,7 +50,7 @@ component should connect to.
 
 
 // component options: START
-The JGroups component supports 4 options which are listed below.
+The JGroups component supports 4 options, which are listed below.
 
 
 

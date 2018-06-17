@@ -76,7 +76,7 @@ inject the session-related fields into the FIX message.
 ### Options
 
 // component options: START
-The QuickFix component supports 6 options which are listed below.
+The QuickFix component supports 6 options, which are listed below.
 
 
 

@@ -9,7 +9,7 @@ The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast
 ### Options
 
 // component options: START
-The Hazelcast Map component supports 3 options which are listed below.
+The Hazelcast Map component supports 3 options, which are listed below.
 
 
 

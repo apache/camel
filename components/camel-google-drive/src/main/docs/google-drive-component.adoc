@@ -63,7 +63,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Google Drive component supports 3 options which are listed below.
+The Google Drive component supports 3 options, which are listed below.
 
 
 

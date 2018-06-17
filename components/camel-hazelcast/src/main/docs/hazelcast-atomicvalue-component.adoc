@@ -12,7 +12,7 @@ An atomic number is an object that simply provides a grid wide number (long).
 ### Options
 
 // component options: START
-The Hazelcast Atomic Number component supports 3 options which are listed below.
+The Hazelcast Atomic Number component supports 3 options, which are listed below.
 
 
 

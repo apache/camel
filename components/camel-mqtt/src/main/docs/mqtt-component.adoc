@@ -36,7 +36,7 @@ Where *name* is the name you want to assign the component.
 
 
 // component options: START
-The MQTT component supports 4 options which are listed below.
+The MQTT component supports 4 options, which are listed below.
 
 
 

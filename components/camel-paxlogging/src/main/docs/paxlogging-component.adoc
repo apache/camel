@@ -38,7 +38,7 @@ configured in the PaxLogging service configuration.
 
 
 // component options: START
-The OSGi PAX Logging component supports 2 options which are listed below.
+The OSGi PAX Logging component supports 2 options, which are listed below.
 
 
 

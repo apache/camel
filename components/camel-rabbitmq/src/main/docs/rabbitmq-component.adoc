@@ -47,7 +47,7 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component supports 48 options which are listed below.
+The RabbitMQ component supports 48 options, which are listed below.
 
 
 

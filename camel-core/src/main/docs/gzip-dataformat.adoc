@@ -16,7 +16,7 @@ using `gzip` tool.
 === Options
 
 // dataformat options: START
-The GZip dataformat supports 1 options which are listed below.
+The GZip dataformat supports 1 options, which are listed below.
 
 
 

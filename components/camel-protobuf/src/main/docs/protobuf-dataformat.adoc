@@ -24,7 +24,7 @@ https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf Java T
 ### Protobuf Options
 
 // dataformat options: START
-The Protobuf dataformat supports 3 options which are listed below.
+The Protobuf dataformat supports 3 options, which are listed below.
 
 
 

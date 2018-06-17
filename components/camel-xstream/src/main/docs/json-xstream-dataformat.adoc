@@ -26,7 +26,7 @@ Maven users will need to add the following dependency to their
 ### Options
 
 // dataformat options: START
-The JSon XStream dataformat supports 19 options which are listed below.
+The JSon XStream dataformat supports 19 options, which are listed below.
 
 
 

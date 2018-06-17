@@ -43,7 +43,7 @@ The GoogleMail Component uses the following URI format:
 
 
 // component options: START
-The Google Mail Stream component supports 3 options which are listed below.
+The Google Mail Stream component supports 3 options, which are listed below.
 
 
 

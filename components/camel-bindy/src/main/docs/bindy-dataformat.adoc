@@ -56,7 +56,7 @@ class names instead of package names now.
 === Options
 
 // dataformat options: START
-The Bindy dataformat supports 5 options which are listed below.
+The Bindy dataformat supports 5 options, which are listed below.
 
 
 

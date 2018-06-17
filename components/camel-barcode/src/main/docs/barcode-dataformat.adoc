@@ -30,7 +30,7 @@ the download page for the latest versions).
 ### Barcode Options
 
 // dataformat options: START
-The Barcode dataformat supports 5 options which are listed below.
+The Barcode dataformat supports 5 options, which are listed below.
 
 
 

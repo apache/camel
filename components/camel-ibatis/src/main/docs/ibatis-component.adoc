@@ -57,7 +57,7 @@ the root of the classpath and expected named as `SqlMapConfig.xml`. +
 
 
 // component options: START
-The iBatis component supports 4 options which are listed below.
+The iBatis component supports 4 options, which are listed below.
 
 
 

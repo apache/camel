@@ -36,7 +36,7 @@ for this component:
 
 
 // component options: START
-The Braintree component supports 2 options which are listed below.
+The Braintree component supports 2 options, which are listed below.
 
 
 

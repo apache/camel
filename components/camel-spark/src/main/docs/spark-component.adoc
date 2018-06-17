@@ -52,7 +52,7 @@ spark:{rdd|dataframe|hive}
 
 
 // component options: START
-The Apache Spark component supports 3 options which are listed below.
+The Apache Spark component supports 3 options, which are listed below.
 
 
 

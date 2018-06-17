@@ -1,7 +1,7 @@
 @if{componentOptions.isEmpty()}
 The @{title} component has no options.
 @else{}
-The @{title} component supports @{componentOptions.size()} options which are listed below.
+The @{title} component supports @{componentOptions.size()} options, which are listed below.
 @end{}
 
 @if{!componentOptions.isEmpty()}

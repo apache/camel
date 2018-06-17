@@ -33,7 +33,7 @@ kafka:topic[?options]
 
 
 // component options: START
-The Kafka component supports 8 options which are listed below.
+The Kafka component supports 8 options, which are listed below.
 
 
 

@@ -23,7 +23,7 @@ from("queue:books.new")
 
 
 // language options: START
-The JsonPath language supports 7 options which are listed below.
+The JsonPath language supports 7 options, which are listed below.
 
 
 

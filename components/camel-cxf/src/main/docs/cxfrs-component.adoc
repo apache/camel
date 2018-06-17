@@ -55,7 +55,7 @@ cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 
 
 // component options: START
-The CXF-RS component supports 3 options which are listed below.
+The CXF-RS component supports 3 options, which are listed below.
 
 
 

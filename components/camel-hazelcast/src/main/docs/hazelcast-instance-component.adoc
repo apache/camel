@@ -12,7 +12,7 @@ Hazelcast makes sense in one single "server node", but it's extremly powerful in
 ### Options
 
 // component options: START
-The Hazelcast Instance component supports 3 options which are listed below.
+The Hazelcast Instance component supports 3 options, which are listed below.
 
 
 

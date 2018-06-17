@@ -44,7 +44,7 @@ section presents them all.
 
 
 // dataformat options: START
-The uniVocity CSV dataformat supports 18 options which are listed below.
+The uniVocity CSV dataformat supports 18 options, which are listed below.
 
 
 

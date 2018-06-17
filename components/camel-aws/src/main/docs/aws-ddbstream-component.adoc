@@ -27,7 +27,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS DynamoDB Streams component supports 5 options which are listed below.
+The AWS DynamoDB Streams component supports 5 options, which are listed below.
 
 
 

@@ -22,7 +22,7 @@ for this component:
 ### Zendesk Options
 
 // component options: START
-The Zendesk component supports 3 options which are listed below.
+The Zendesk component supports 3 options, which are listed below.
 
 
 

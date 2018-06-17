@@ -17,7 +17,7 @@
 
 
 // component options: START
-The AS2 component supports 2 options which are listed below.
+The AS2 component supports 2 options, which are listed below.
 
 
 

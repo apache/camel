@@ -17,7 +17,7 @@ parser] than other common parsers currently used.
 
 
 // dataformat options: START
-The Boon dataformat supports 3 options which are listed below.
+The Boon dataformat supports 3 options, which are listed below.
 
 
 

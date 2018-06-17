@@ -39,7 +39,7 @@ accessible from the registry.
 
 
 // component options: START
-The Infinispan component supports 3 options which are listed below.
+The Infinispan component supports 3 options, which are listed below.
 
 
 

@@ -33,7 +33,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine LoadCache component supports 2 options which are listed below.
+The Caffeine LoadCache component supports 2 options, which are listed below.
 
 
 

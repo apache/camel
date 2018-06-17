@@ -39,7 +39,7 @@ from("queue:foo").
 === XPath Language options
 
 // language options: START
-The XPath language supports 9 options which are listed below.
+The XPath language supports 9 options, which are listed below.
 
 
 

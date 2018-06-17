@@ -50,7 +50,7 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The Netty4 component supports 5 options which are listed below.
+The Netty4 component supports 5 options, which are listed below.
 
 
 

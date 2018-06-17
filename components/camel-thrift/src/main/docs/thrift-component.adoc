@@ -29,7 +29,7 @@ thrift://service[?options]
 ### Endpoint Options
 
 // component options: START
-The Thrift component supports 2 options which are listed below.
+The Thrift component supports 2 options, which are listed below.
 
 
 

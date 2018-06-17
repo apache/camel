@@ -48,7 +48,7 @@ micrometer:[ counter | summary | timer ]:metricname[?options]
 ### Options
 
 // component options: START
-The Micrometer component supports 2 options which are listed below.
+The Micrometer component supports 2 options, which are listed below.
 
 
 

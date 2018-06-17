@@ -31,7 +31,7 @@ Where *servers* represents the list of NATS servers.
 
 
 // component options: START
-The Nats component supports 2 options which are listed below.
+The Nats component supports 2 options, which are listed below.
 
 
 

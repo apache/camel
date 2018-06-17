@@ -30,7 +30,7 @@ END:VCALENDAR
 ### Options
 
 // dataformat options: START
-The iCal dataformat supports 2 options which are listed below.
+The iCal dataformat supports 2 options, which are listed below.
 
 
 

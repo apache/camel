@@ -55,7 +55,7 @@ settings which is mandatory to configure before using.
 
 
 // component options: START
-The Twitter component supports 9 options which are listed below.
+The Twitter component supports 9 options, which are listed below.
 
 
 

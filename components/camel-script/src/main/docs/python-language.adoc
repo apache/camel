@@ -24,7 +24,7 @@ Recipient List
 ### Python Language Options
 
 // language options: START
-The Python language supports 1 options which are listed below.
+The Python language supports 1 options, which are listed below.
 
 
 

@@ -53,7 +53,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty 9 component supports 33 options which are listed below.
+The Jetty 9 component supports 33 options, which are listed below.
 
 
 

@@ -44,7 +44,7 @@ section presents them all.
 
 
 // dataformat options: START
-The uniVocity Fixed Length dataformat supports 17 options which are listed below.
+The uniVocity Fixed Length dataformat supports 17 options, which are listed below.
 
 
 

@@ -10,7 +10,7 @@ Currently only the **Posts** and **Users** operations are supported.
 === Options
 
 // component options: START
-The Wordpress component supports 2 options which are listed below.
+The Wordpress component supports 2 options, which are listed below.
 
 
 

@@ -38,7 +38,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Ehcache component supports 7 options which are listed below.
+The Ehcache component supports 7 options, which are listed below.
 
 
 

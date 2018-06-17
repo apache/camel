@@ -13,7 +13,7 @@ Even if you configure a fixed operation in the endpoint URI, you can vary it per
 ### Options
 
 // component options: START
-The Ignite Cache component supports 4 options which are listed below.
+The Ignite Cache component supports 4 options, which are listed below.
 
 
 

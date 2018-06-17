@@ -10,7 +10,7 @@ SEDA component differs from the rest components provided. It implements a work-q
 ### Options
 
 // component options: START
-The Hazelcast SEDA component supports 3 options which are listed below.
+The Hazelcast SEDA component supports 3 options, which are listed below.
 
 
 

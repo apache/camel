@@ -53,7 +53,7 @@ provided directly in the camel-core.
 === Options
 
 // component options: START
-The Validator component supports 2 options which are listed below.
+The Validator component supports 2 options, which are listed below.
 
 
 

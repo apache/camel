@@ -11,7 +11,7 @@ Ringbuffer is a distributed data structure where the data is stored in a ring-li
 ### Options
 
 // component options: START
-The Hazelcast Ringbuffer component supports 3 options which are listed below.
+The Hazelcast Ringbuffer component supports 3 options, which are listed below.
 
 
 

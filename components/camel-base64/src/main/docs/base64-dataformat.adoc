@@ -8,7 +8,7 @@ The Base64 data format is used for base64 encoding and decoding.
 === Options
 
 // dataformat options: START
-The Base64 dataformat supports 4 options which are listed below.
+The Base64 dataformat supports 4 options, which are listed below.
 
 
 

@@ -32,7 +32,7 @@ elasticsearch5://clusterName[?options]
 
 
 // component options: START
-The Elasticsearch5 component supports 2 options which are listed below.
+The Elasticsearch5 component supports 2 options, which are listed below.
 
 
 

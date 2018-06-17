@@ -81,7 +81,7 @@ both signing and verifying should be configured identically.
 ### Options
 
 // component options: START
-The Crypto (JCE) component supports 2 options which are listed below.
+The Crypto (JCE) component supports 2 options, which are listed below.
 
 
 

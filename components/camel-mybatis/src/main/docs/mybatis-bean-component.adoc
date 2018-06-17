@@ -31,7 +31,7 @@ the `configurationUri` option on the `MyBatisComponent` component.
 === Options
 
 // component options: START
-The MyBatis Bean component supports 3 options which are listed below.
+The MyBatis Bean component supports 3 options, which are listed below.
 
 
 

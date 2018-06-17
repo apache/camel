@@ -59,7 +59,7 @@ from("vm:bar?concurrentConsumers=5").to("file://output");
 === Options
 
 // component options: START
-The VM component supports 5 options which are listed below.
+The VM component supports 5 options, which are listed below.
 
 
 

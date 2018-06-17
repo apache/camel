@@ -19,7 +19,7 @@ rest://method:path[:uriTemplate]?[options]
 === URI Options
 
 // component options: START
-The REST component supports 4 options which are listed below.
+The REST component supports 4 options, which are listed below.
 
 
 

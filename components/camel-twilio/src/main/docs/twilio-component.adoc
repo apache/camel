@@ -22,7 +22,7 @@ for this component:
 ### Twilio Options
 
 // component options: START
-The Twilio component supports 3 options which are listed below.
+The Twilio component supports 3 options, which are listed below.
 
 
 

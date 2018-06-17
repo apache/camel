@@ -34,7 +34,7 @@ Where endpoint is any Camel endpoint you want to run in master/slave mode.
 ### Options
 
 // component options: START
-The ZooKeeper Master component supports 7 options which are listed below.
+The ZooKeeper Master component supports 7 options, which are listed below.
 
 
 

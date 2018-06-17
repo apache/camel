@@ -576,7 +576,7 @@ for details on how to generated the DTO.
 
 
 // component options: START
-The Salesforce component supports 29 options which are listed below.
+The Salesforce component supports 29 options, which are listed below.
 
 
 
