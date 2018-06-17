@@ -573,6 +573,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
+     * Sets the security setting for this verb.
+     */
+    public RestDefinition security(String key) {
+        return security(key, null);
+    }
+
+    /**
+     * Sets the security setting for this verb.
+     */
+    public RestDefinition security(String key, String scopes) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        SecurityDefinition sd = new SecurityDefinition();
+        sd.setKey(key);
+        sd.setScopes(scopes);
+        verb.getSecurity().add(sd);
+        return this;
+    }
+
+    /**
      * Routes directly to the given static endpoint.
      * <p/>
      * If you need additional routing capabilities, then use {@link #route()} instead.
