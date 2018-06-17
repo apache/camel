@@ -40,15 +40,15 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
     @XmlAttribute(name = "inQuery")
     private Boolean inQuery;
 
-    public String getName() {
-        return name;
-    }
-
     public RestSecurityApiKey() {
     }
 
     public RestSecurityApiKey(RestDefinition rest) {
         super(rest);
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
