@@ -25,7 +25,7 @@
     ">
 
   <!-- to use a logger as the span reporter (for testing) -->
-  <bean id="logSpanReporter" class="com.github.kristofa.brave.LoggingReporter"/>
+  <bean id="logSpanReporter" class="org.apache.camel.zipkin.LogSpanReporterTest"/>
 
   <!-- setup zipkin tracer -->
   <bean id="zipkinTracer" class="org.apache.camel.zipkin.ZipkinTracer">

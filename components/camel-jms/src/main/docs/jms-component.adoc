@@ -196,7 +196,7 @@ about these properties by consulting the relevant Spring documentation.
 
 
 // component options: START
-The JMS component supports 80 options, which are listed below.
+The JMS component supports 80 options which are listed below.
 
 
 
