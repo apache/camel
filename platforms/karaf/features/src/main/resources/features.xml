@@ -2483,12 +2483,10 @@
   <feature name='camel-zipkin' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.zipkin.brave/brave-core/${brave-zipkin-version}</bundle>
-    <bundle dependency='true'>mvn:io.zipkin.brave/brave-spancollector-scribe/${brave-zipkin-version}</bundle>
-    <!-- io.zipkin.brave/brave-core depends on both versions of zipkin, io.zipkin.brave/brave does not -->
-    <bundle dependency='true'>mvn:io.zipkin.java/zipkin/${zipkin-version}</bundle>
     <bundle dependency='true'>mvn:io.zipkin.zipkin2/zipkin/${zipkin-version}</bundle>
     <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-reporter/${zipkin-reporter-version}</bundle>
     <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-sender-urlconnection/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-sender-libthrift/${zipkin-reporter-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${zipkin-libthrift-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>
