@@ -52,11 +52,15 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
 
                     .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
                         .responseMessage().message("The user returned").endResponseMessage()
+                        // setup security for this rest verb
+                        .security("api_key")
                         .param().name("id").type(RestParamType.path).description("The id of the user to get").endParam()
                         .param().name("date").type(RestParamType.path).description("The date").dataFormat("date").endParam()
                         .to("bean:userService?method=getUser(${header.id})")
 
                     .put().description("Updates or create a user").type(User.class)
+                        // setup security for this rest verb
+                        .security("petstore_auth", "write:pets,read:pets")
                         .param().name("body").type(RestParamType.body).description("The user to update or create").endParam()
                         .to("bean:userService?method=updateUser")
 
@@ -94,6 +98,9 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
         assertTrue(json.contains("\"type\" : \"apiKey\","));
         assertTrue(json.contains("\"in\" : \"header\""));
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
+        assertTrue(json.contains("\"security\" : [ {"));
+        assertTrue(json.contains("\"petstore_auth\" : [ \"write:pets\", \"read:pets\" ]"));
+        assertTrue(json.contains("\"api_key\" : [ ]"));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertTrue(json.contains("\"x-className\""));

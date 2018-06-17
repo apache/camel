@@ -31,6 +31,7 @@
     <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
+        <security key="ausss" scopes="write:pets,read:pets"/>
       </get>
     </rest>
   </restContext>
