@@ -16,8 +16,6 @@
  */
 package org.apache.camel.zipkin;
 
-import com.github.kristofa.brave.IdConversion;
-import com.github.kristofa.brave.SpanId;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
@@ -28,13 +26,6 @@ import org.apache.camel.StreamCache;
 public final class ZipkinHelper {
 
     private ZipkinHelper() {
-    }
-
-    public static SpanId createSpanId(String traceId, String spanId, String parentSpanId) {
-        if (parentSpanId != null) {
-            return SpanId.builder().traceId(IdConversion.convertToLong(traceId)).spanId(IdConversion.convertToLong(spanId)).parentId(IdConversion.convertToLong(parentSpanId)).build();
-        }
-        return SpanId.builder().traceId(IdConversion.convertToLong(traceId)).spanId(IdConversion.convertToLong(spanId)).build();
     }
 
     public static StreamCache prepareBodyForLogging(Exchange exchange, boolean streams) {
