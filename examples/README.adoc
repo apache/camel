@@ -11,11 +11,13 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 102 (8 deprecated)
+Number of Examples: 105 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
 | Example | Category | Description
+
+| link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
@@ -34,7 +36,7 @@ Number of Examples: 102 (8 deprecated)
 
 | link:camel-example-reload/Readme.md[Reload] (camel-example-reload) | Beginner | An example that live reloads routes when the XML file is updated
 
-| link:camel-example-rest-swagger/README.md[Rest Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
+| link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
 
 | link:camel-example-servlet-tomcat/README.md[Servlet Tomcat] (camel-example-servlet-tomcat) | Beginner | An example using Camel Servlet with Apache Tomcat
 
@@ -48,7 +50,7 @@ Number of Examples: 102 (8 deprecated)
 
 | link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
 
-| link:camel-example-spring-boot-xml/readme.adoc[Spring Boot Xml] (camel-example-spring-boot-xml) | Beginner | An example showing how to work with Camel routes in XML files and Spring Boot
+| link:camel-example-spring-boot-xml/readme.adoc[Spring Boot XML] (camel-example-spring-boot-xml) | Beginner | An example showing how to work with Camel routes in XML files and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
@@ -66,19 +68,19 @@ Number of Examples: 102 (8 deprecated)
 
 | link:camel-example-cdi-kubernetes/README.md[CDI Kubernetes] (camel-example-cdi-kubernetes) | Cloud | An example running Camel CDI on Kubernetes
 
-| link:camel-example-grpc-kubernetes/README.adoc[Grpc Kubernetes] (camel-example-grpc-kubernetes) | Cloud | An example showing the Camel gRPC component with Spring Boot running on Kubernetes
+| link:camel-example-grpc-kubernetes/README.adoc[gRPC Kubernetes] (camel-example-grpc-kubernetes) | Cloud | An example showing the Camel gRPC component with Spring Boot running on Kubernetes
 
 | link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
 
-| link:camel-example-spring-boot-grpc/README.adoc[Spring Boot Grpc] (camel-example-spring-boot-grpc) | Cloud | An example showing the Camel gRPC component with Spring Boot
+| link:camel-example-spring-boot-grpc/README.adoc[gRPC Spring Boot] (camel-example-spring-boot-grpc) | Cloud | An example showing the Camel gRPC component with Spring Boot
 
 | link:camel-example-spring-boot-infinispan/README.adoc[Spring Boot Infinispan] (camel-example-spring-boot-infinispan) | Cloud | An example showing the Camel Infinispan component with Spring Boot
 
-| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot Servicecall] (camel-example-spring-boot-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Boot
+| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot ServiceCall] (camel-example-spring-boot-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Boot
 
 | link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
 
-| link:camel-example-spring-cloud-serviceregistry/README.adoc[Spring Cloud Service registry] (camel-example-spring-cloud-serviceregistry) | Cloud | An example showing how to work with Camel Service Registry and Spring Cloud
+| link:camel-example-spring-cloud-serviceregistry/README.adoc[Spring Cloud ServiceRegistry] (camel-example-spring-cloud-serviceregistry) | Cloud | An example showing how to work with Camel Service registry and Spring Cloud
 
 | link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Clustering | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
 
@@ -179,6 +181,8 @@ Number of Examples: 102 (8 deprecated)
   
 
 | link:camel-example-swagger-osgi/README.md[Swagger OSGi] (camel-example-swagger-osgi) | OSGi | An example using REST DSL in XML and Swagger API
+
+| link:camel-example-ceylon/ReadMe.md[Ceylon] (camel-example-ceylon) | Other Languages | A Camel route using Ceylon
 
 | link:camel-example-groovy/ReadMe.md[Groovy] (camel-example-groovy) | Other Languages | *deprecated* A Camel route using Groovy DSL
 

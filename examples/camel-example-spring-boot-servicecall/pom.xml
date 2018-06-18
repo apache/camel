@@ -36,6 +36,7 @@
 
   <properties>
     <category>Cloud</category>
+    <title>Spring Boot ServiceCall</title>
   </properties>
 
   <modules>

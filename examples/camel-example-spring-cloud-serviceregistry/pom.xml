@@ -36,6 +36,7 @@
 
   <properties>
     <category>Cloud</category>
+    <title>Spring Cloud ServiceRegistry</title>
   </properties>
 
   <!-- spring-cloud with support for spring boot 2 is not in maven central yet -->
