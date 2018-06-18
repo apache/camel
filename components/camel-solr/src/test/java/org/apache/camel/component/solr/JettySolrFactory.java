@@ -45,7 +45,7 @@ public final class JettySolrFactory {
     private static int dataDirNo;
     
     private JettySolrFactory() {
-        // Util classs
+        // Util class
     }
 
     private static SSLConfig buildSSLConfig(boolean useSsl, boolean sslClientAuth) {

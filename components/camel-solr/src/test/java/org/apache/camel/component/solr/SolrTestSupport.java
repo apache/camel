@@ -35,7 +35,7 @@ public abstract class SolrTestSupport extends CamelTestSupport {
     protected static int getPort() {
         return port;
     }
-    
+
     protected static int getHttpsPort() {
         return httpsPort;
     }

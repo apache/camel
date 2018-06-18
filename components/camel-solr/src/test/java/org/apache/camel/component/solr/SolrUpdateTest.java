@@ -39,7 +39,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     public SolrUpdateTest(SolrFixtures.TestServerType serverToTest) {
         super(serverToTest);
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {

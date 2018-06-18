@@ -54,16 +54,15 @@ public class SolrCloudFixture {
         TEMP_DIR.mkdirs();
         System.out.println("Created: " + TEMP_DIR.getAbsolutePath());
     }
-    
+
     static Logger log = Logger.getLogger(SolrCloudFixture.class);
-    
 
     MiniSolrCloudCluster miniCluster;
     File testDir;
     SolrZkClient zkClient;
 
     CloudSolrClient solrClient;
-    
+
     public SolrCloudFixture(String solrHome) throws Exception {
         String xml = IOHelper.loadText(new FileInputStream(new File(solrHome, "solr-no-core.xml")));
         miniCluster = new MiniSolrCloudCluster(1, "/solr", new File("target/tmp").toPath(), xml, null, null);
@@ -79,7 +78,7 @@ public class SolrCloudFixture {
                 log.info("JETTY RUNNING AT " + jetty.getBaseUrl() + " PORT " + jetty.getLocalPort());
             }
         }
-        
+
         solrClient = new CloudSolrClient.Builder().withZkHost(zkAddr).build();
         solrClient.connect();
 
