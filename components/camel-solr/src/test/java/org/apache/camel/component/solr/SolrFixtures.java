@@ -59,7 +59,6 @@ public class SolrFixtures {
             return "solr://localhost:" + port + "/solr/collection1";
         }
     }
-        
 
     SolrClient getServer() {
         if (serverType == TestServerType.USE_HTTPS) {
