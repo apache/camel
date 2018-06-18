@@ -88,13 +88,8 @@
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <!-- version 2.19.1 causes pax-exam to fail when testing the 2nd/3rd container when testing all  -->
-        <!-- so we use an older version of surefire which works -->
-        <version>2.16</version>
         <configuration>
-          <!-- do not re-run these tests -->
-          <!-- not supported by older version of surefire -->
-          <!--<rerunFailingTestsCount>0</rerunFailingTestsCount>-->
+          <rerunFailingTestsCount>0</rerunFailingTestsCount>
           <systemPropertyVariables>
             <karafVersion>${karaf4-version}</karafVersion>
             <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
