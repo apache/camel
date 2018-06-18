@@ -16,6 +16,13 @@
  */
 package org.apache.camel.zipkin;
 
+import java.io.Closeable;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import brave.Span;
 import brave.Tracing;
 import brave.propagation.B3Propagation;
@@ -25,12 +32,7 @@ import brave.propagation.TraceContext;
 import brave.propagation.TraceContext.Extractor;
 import brave.propagation.TraceContext.Injector;
 import brave.sampler.Sampler;
-import java.io.Closeable;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
