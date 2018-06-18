@@ -91,6 +91,10 @@
       <version>${hamcrest-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -112,13 +116,6 @@
             <version>${weld2-version}</version>
           </dependency>
         </dependencies>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <!-- need older version of surefire to make test work -->
-        <version>2.19.1</version>
       </plugin>
     </plugins>
   </build>
