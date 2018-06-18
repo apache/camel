@@ -33,6 +33,8 @@
 
   <properties>
     <main.class>org.apache.camel.examples.grpc.HelloCamelServer</main.class>
+    <!-- gRPC requires strong own of the Google Guava version -->
+    <google-guava-version>${grpc-guava-version}</google-guava-version>
   </properties>
 
   <dependencies>
@@ -50,12 +52,6 @@
       <groupId>io.grpc</groupId>
       <artifactId>grpc-stub</artifactId>
       <version>${grpc-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${grpc-guava-version}</version>
     </dependency>
   </dependencies>
   <build>

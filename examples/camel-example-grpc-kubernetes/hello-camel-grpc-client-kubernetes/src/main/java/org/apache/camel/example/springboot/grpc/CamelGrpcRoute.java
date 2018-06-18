@@ -23,7 +23,7 @@ import org.apache.camel.examples.CamelHelloRequest;
 import org.springframework.stereotype.Component;
 
 /**
- * A simple Camel Grpc route example using Spring-boot
+ * A simple Camel gRPC route example using Spring-boot
  */
 @Component
 public class CamelGrpcRoute extends RouteBuilder {

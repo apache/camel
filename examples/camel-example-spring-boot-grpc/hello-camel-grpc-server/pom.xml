@@ -30,6 +30,11 @@
   <artifactId>camel-example-hello-grpc-server</artifactId>
   <name>Camel :: Example :: gRPC :: Hello Camel Server</name>
   <description>An example showing a simple gRPC server</description>
+  
+  <properties>
+    <!-- gRPC requires strong own of the Google Guava version -->
+    <google-guava-version>${grpc-guava-version}</google-guava-version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -46,12 +51,6 @@
       <groupId>io.grpc</groupId>
       <artifactId>grpc-stub</artifactId>
       <version>${grpc-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${grpc-guava-version}</version>
     </dependency>
   </dependencies>
   <build>
