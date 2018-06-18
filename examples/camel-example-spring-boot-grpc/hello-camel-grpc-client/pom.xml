@@ -30,11 +30,13 @@
 
   <artifactId>camel-example-hello-grpc-client</artifactId>
   <name>Camel :: Example :: gRPC :: Hello Camel Client</name>
-  <description>An example showing the Camel Grpc component with Spring Boot</description>
+  <description>An example showing the Camel gRPC component with Spring Boot</description>
 
   <properties>
     <category>Cloud</category>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
+    <!-- gRPC requires strong own of the Google Guava version -->
+    <google-guava-version>${grpc-guava-version}</google-guava-version>
   </properties>
 
   <!-- Spring-Boot and Camel BOM -->
