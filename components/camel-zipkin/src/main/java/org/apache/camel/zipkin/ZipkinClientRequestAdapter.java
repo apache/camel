@@ -16,8 +16,9 @@
  */
 package org.apache.camel.zipkin;
 
-import brave.SpanCustomizer;
 import java.util.Locale;
+
+import brave.SpanCustomizer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
