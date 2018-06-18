@@ -35,6 +35,7 @@
 
   <properties>
     <category>Cloud</category>
+    <title>gRPC Spring Boot</title>
   </properties>
 
   <modules>
