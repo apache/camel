@@ -1448,6 +1448,11 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (recoverService != null) {
             camelContext.getExecutorServiceManager().shutdown(recoverService);
         }
+        
+        if (timeoutCheckerExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(timeoutCheckerExecutorService);
+        }
+        
         ServiceHelper.stopServices(timeoutMap, processor, deadLetterProducerTemplate);
 
         if (closedCorrelationKeys != null) {
