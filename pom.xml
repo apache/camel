@@ -53,6 +53,8 @@
 
     <maven-compiler-plugin-version>3.7.0</maven-compiler-plugin-version>
     <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
+    <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
+    <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
