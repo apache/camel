@@ -16,8 +16,8 @@ The **micrometer:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
 are link:#MicrometerComponent-counter[counter], link:#MicrometerComponent-distributionSummary[summary],
 and link:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
-simple way to measure behaviour of application. Configurable
-reporting backends (via Micrometer registries) is enabling different integration options for
+simple way to measure the behaviour of an application. Configurable
+reporting backends (via Micrometer registries) enable different integration options for
 collecting and visualizing statistics.
 
 The component also provides
@@ -78,7 +78,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *metricsType* | *Required* Type of metrics |  | Type
 | *metricsName* | *Required* Name of metrics |  | String
-| *tags* | Tags of metrics |  | Tag>
+| *tags* | Tags of metrics |  | Tag
 |===
 
 
@@ -474,7 +474,7 @@ The following options is supported on the factory:
 At runtime the metrics can be accessed from Java API or JMX which allows
 to gather the data as json output.
 
-From Java code you can do get the service from the CamelContext as
+From Java code you can get the service from the CamelContext as
 shown:
 
 [source,java]
@@ -524,7 +524,7 @@ See more details at Advanced configuration of CamelContext using Spring.
 
 ### Exposing Micrometer statistics in JMX
 
-Micrometer uses Registry implementations in order to publish statistics. While in production scenarios
+Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios
 it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for
 test or local deployments to publish statistics to JMX.
 
@@ -563,4 +563,4 @@ an MBean name.
 ### Example
 
 `camel-example-micrometer` provides an example how to set up Micrometer monitoring with
-Camel using String Java configuration and a Prometheus backend.
+Camel using Java configuration and a Prometheus backend.
