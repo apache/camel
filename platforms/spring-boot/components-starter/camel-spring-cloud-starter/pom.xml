@@ -50,16 +50,4 @@
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
-  <!--START OF GENERATED CODE-->
-  <repositories>
-    <repository>
-      <id>spring-milestones</id>
-      <name>Spring Milestones</name>
-      <url>https://repo.spring.io/libs-milestone</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  <!--END OF GENERATED CODE-->
 </project>

@@ -39,7 +39,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
-    <spring.cloud-version>2.0.0.M7</spring.cloud-version>
   </properties>
 
   <dependencyManagement>
@@ -55,7 +54,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-consul-dependencies</artifactId>
-        <version>${spring.cloud-version}</version>
+        <version>${spring-cloud-consul-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
