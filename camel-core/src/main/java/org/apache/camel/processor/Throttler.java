@@ -290,14 +290,13 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
             throw new IllegalStateException("The maximumRequestsPerPeriod must be a positive number, was: " + newThrottle);
         }
 
-        Object lockOnSync = null;
+        Object lockOnSync = this;
         Integer currentThrottleRate = throttleRate;
         if (correlationExpression != null) {
             currentThrottleRate = throttleRatesMap.get(key);
-            lockOnSync = new Integer(currentThrottleRate.intValue());
-        } else {
-            lockOnSync = this;
+            lockOnSync = key;
         }
+
         synchronized (lockOnSync) {
             if (newThrottle == null && currentThrottleRate == 0) {
                 throw new RuntimeExchangeException("The maxRequestsPerPeriodExpression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
@@ -333,7 +332,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                     if (correlationExpression != null) {
                         throttleRatesMap.put(key, newThrottle);
                     } else {
-                    	throttleRate = newThrottle;
+                        throttleRate = newThrottle;
                     }
                 }
             }
