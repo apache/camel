@@ -160,6 +160,16 @@
                   <fromJavadoc/>
                 </api>
                 <api>
+                  <apiName>dispute</apiName>
+                  <proxyClass>com.braintreegateway.DisputeGateway</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>documentUpload</apiName>
+                  <proxyClass>com.braintreegateway.DocumentUploadGateway</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
                   <apiName>merchantAccount</apiName>
                   <proxyClass>com.braintreegateway.MerchantAccountGateway</proxyClass>
                   <fromJavadoc/>
