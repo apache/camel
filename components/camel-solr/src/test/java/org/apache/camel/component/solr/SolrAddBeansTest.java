@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("At this stage, a single Test class inheriting from SolrComponentTestSupport is supported per test run")
 public class SolrAddBeansTest extends SolrComponentTestSupport {
 
     public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {
