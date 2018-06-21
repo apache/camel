@@ -18,10 +18,8 @@ package org.apache.camel.component.solr;
 
 import java.util.Arrays;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("At this stage, a single Test class inheriting from SolrComponentTestSupport is supported per test run")
 public class SolrDeleteTest extends SolrComponentTestSupport {
 
     public SolrDeleteTest(SolrFixtures.TestServerType serverToTest) {

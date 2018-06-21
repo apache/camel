@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Assert.fail:88 expected:<0> but was:<12>")
 public class SolrUpdateTest extends SolrComponentTestSupport {
     private SolrEndpoint solrEndpoint;
 
