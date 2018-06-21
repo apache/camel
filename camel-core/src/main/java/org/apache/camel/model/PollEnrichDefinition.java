@@ -72,6 +72,11 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "pollEnrich";
+    }
+
+    @Override
     public String getLabel() {
         return "pollEnrich[" + getExpression() + "]";
     }

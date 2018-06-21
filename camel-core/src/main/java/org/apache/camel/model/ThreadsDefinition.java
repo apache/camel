@@ -165,6 +165,11 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     }
 
     @Override
+    public String getShortName() {
+        return "threads";
+    }
+
+    @Override
     public String getLabel() {
         return "threads";
     }

@@ -41,6 +41,11 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
     }
     
     @Override
+    public String getShortName() {
+        return "doFinally";
+    }
+
+    @Override
     public String getLabel() {
         return "doFinally";
     }

@@ -97,6 +97,11 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
     
     @Override
+    public String getShortName() {
+        return "bean";
+    }
+
+    @Override
     public String getLabel() {
         return "bean[" + description() + "]";
     }

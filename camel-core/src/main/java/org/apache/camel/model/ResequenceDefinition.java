@@ -286,6 +286,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     }
     
     @Override
+    public String getShortName() {
+        return "resequence";
+    }
+
+    @Override
     public String getLabel() {
         return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + "]";
     }

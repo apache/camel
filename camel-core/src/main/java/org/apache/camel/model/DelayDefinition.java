@@ -61,6 +61,11 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     @Override
+    public String getShortName() {
+        return "delay";
+    }
+
+    @Override
     public String getLabel() {
         return "delay[" + getExpression() + "]";
     }

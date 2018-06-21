@@ -244,6 +244,11 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     // -------------------------------------------------------------------------
 
     @Override
+    public String getShortName() {
+        return "choice";
+    }
+
+    @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer("choice[");
         List<WhenDefinition> list = getWhenClauses();

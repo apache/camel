@@ -76,6 +76,11 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     }
     
     @Override
+    public String getShortName() {
+        return "log";
+    }
+
+    @Override
     public String getLabel() {
         return "log";
     }

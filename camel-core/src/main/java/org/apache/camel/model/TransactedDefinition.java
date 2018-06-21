@@ -93,6 +93,11 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     }
 
     @Override
+    public String getShortName() {
+        return "transacted";
+    }
+
+    @Override
     public String getLabel() {
         String desc = description();
         if (ObjectHelper.isEmpty(desc)) {

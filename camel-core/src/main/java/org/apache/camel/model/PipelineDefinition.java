@@ -38,6 +38,11 @@ public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "pipeline";
+    }
+
+    @Override
     public String getLabel() {
         return "pipeline";
     }

@@ -59,6 +59,11 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     }
 
     @Override
+    public String getShortName() {
+        return "throwException";
+    }
+
+    @Override
     public String getLabel() {
         return "throwException[" + description() + "]";
     }

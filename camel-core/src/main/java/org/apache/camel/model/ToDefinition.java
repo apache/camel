@@ -59,6 +59,11 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "to";
+    }
+
+    @Override
     public String toString() {
         return "To[" + getLabel() + "]";
     }

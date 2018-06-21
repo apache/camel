@@ -104,6 +104,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     @Override
+    public String getShortName() {
+        return "recipientList";
+    }
+
+    @Override
     public String getLabel() {
         return "recipientList[" + getExpression() + "]";
     }

@@ -70,6 +70,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     @Override
+    public String getShortName() {
+        return "interceptSendToEndpoint";
+    }
+
+    @Override
     public String getLabel() {
         return "interceptSendToEndpoint[" + uri + "]";
     }
