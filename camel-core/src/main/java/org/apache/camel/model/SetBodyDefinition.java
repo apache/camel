@@ -48,6 +48,11 @@ public class SetBodyDefinition extends NoOutputExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "setBody";
+    }
+
+    @Override
     public String getLabel() {
         return "setBody[" + getExpression() + "]";
     }

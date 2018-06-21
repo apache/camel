@@ -63,6 +63,11 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         return "Routes: " + routes;
     }
 
+    @Override
+    public String getShortName() {
+        return "routes";
+    }
+
     public String getLabel() {
         return "Route " + getId();
     }

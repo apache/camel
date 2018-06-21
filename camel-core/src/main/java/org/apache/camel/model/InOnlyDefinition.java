@@ -51,6 +51,11 @@ public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
     }
     
     @Override
+    public String getShortName() {
+        return "inOnly";
+    }
+
+    @Override
     public String getLabel() {
         return "inOnly";
     }

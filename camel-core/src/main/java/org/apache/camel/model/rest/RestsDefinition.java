@@ -48,6 +48,11 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         return "Rests: " + rests;
     }
 
+    @Override
+    public String getShortName() {
+        return "rests";
+    }
+
     public String getLabel() {
         return "Rest " + getId();
     }

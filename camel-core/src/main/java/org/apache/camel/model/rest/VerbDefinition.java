@@ -111,6 +111,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 
     @Override
+    public String getShortName() {
+        return "verb";
+    }
+
+    @Override
     public String getLabel() {
         if (method != null) {
             return method;

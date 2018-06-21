@@ -62,6 +62,11 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
     
     @Override
+    public String getShortName() {
+        return "dynamicRouter";
+    }
+
+    @Override
     public String getLabel() {
         return "dynamicRouter[" + getExpression() + "]";
     }

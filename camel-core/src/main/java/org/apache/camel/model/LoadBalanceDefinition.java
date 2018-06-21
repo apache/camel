@@ -321,6 +321,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     }
 
     @Override
+    public String getShortName() {
+        return "loadBalance";
+    }
+
+    @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer("loadBalance[");
         List<ProcessorDefinition<?>> list = getOutputs();

@@ -92,6 +92,11 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
     }
 
     @Override
+    public String getShortName() {
+        return "inputType";
+    }
+
+    @Override
     public String getLabel() {
         return "inputType[" + urn + "]";
     }

@@ -63,6 +63,11 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "sort";
+    }
+
+    @Override
     public String getLabel() {
         return "sort[" + getExpression() + "]";
     }

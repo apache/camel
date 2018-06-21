@@ -57,6 +57,11 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "hystrix";
+    }
+
+    @Override
     public String getLabel() {
         return "hystrix";
     }

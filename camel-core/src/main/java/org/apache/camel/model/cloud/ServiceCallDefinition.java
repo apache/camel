@@ -138,6 +138,11 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     @Override
+    public String getShortName() {
+        return "serviceCall";
+    }
+
+    @Override
     public String getLabel() {
         return "serviceCall";
     }

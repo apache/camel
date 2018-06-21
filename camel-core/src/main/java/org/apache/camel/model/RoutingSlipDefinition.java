@@ -77,6 +77,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     @Override
+    public String getShortName() {
+        return "routingSlip";
+    }
+
+    @Override
     public String getLabel() {
         return "routingSlip[" + getExpression() + "]";
     }

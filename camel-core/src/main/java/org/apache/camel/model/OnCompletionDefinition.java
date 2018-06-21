@@ -94,6 +94,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     @Override
+    public String getShortName() {
+        return "onCompletion";
+    }
+
+    @Override
     public String getLabel() {
         return "onCompletion";
     }

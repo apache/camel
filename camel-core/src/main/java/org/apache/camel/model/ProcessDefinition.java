@@ -64,6 +64,11 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "process";
+    }
+
+    @Override
     public String getLabel() {
         if (ref != null) {
             return "ref:" + ref;

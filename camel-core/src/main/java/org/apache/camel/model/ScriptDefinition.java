@@ -48,6 +48,11 @@ public class ScriptDefinition extends NoOutputExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "script";
+    }
+
+    @Override
     public String getLabel() {
         return "script[" + getExpression() + "]";
     }

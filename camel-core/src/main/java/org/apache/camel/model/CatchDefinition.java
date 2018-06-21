@@ -76,6 +76,11 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "doCatch";
+    }
+
+    @Override
     public String getLabel() {
         return "doCatch[ " + getExceptionClasses() + "]";
     }

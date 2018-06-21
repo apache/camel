@@ -64,6 +64,11 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "setProperty";
+    }
+
+    @Override
     public String getLabel() {
         return "setProperty[" + getPropertyName() + "]";
     }

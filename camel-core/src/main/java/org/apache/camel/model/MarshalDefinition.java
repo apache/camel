@@ -155,6 +155,11 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "marshal";
+    }
+
+    @Override
     public String getLabel() {
         return "marshal[" + description() + "]";
     }
