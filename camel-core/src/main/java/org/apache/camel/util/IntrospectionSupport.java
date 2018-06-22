@@ -68,7 +68,7 @@ public final class IntrospectionSupport {
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     @SuppressWarnings("unchecked")
-    private static final LRUCache<Class<?>, ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
+    private static final Map<Class<?>, ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
     private static final Object LOCK = new Object();
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
@@ -132,7 +132,8 @@ public final class IntrospectionSupport {
      * This implementation will clear its introspection cache.
      */
     public static void stop() {
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
+            LRUCache CACHE = (LRUCache) IntrospectionSupport.CACHE;
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{CACHE.size(), CACHE.getHits(), CACHE.getMisses(), CACHE.getEvicted()});
         }
         CACHE.clear();

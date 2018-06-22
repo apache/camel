@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.util.concurrent.ThreadHelper;
@@ -31,8 +33,23 @@ public final class LRUCacheFactory {
 
     private static final AtomicBoolean INIT = new AtomicBoolean();
 
+    private static final boolean USE_SIMPLE_CACHE;
+
     private LRUCacheFactory() {
     }
+
+    static {
+        USE_SIMPLE_CACHE = "true".equalsIgnoreCase(System.getProperty("CamelSimpleLRUCacheFactory", "false"));
+        if (!USE_SIMPLE_CACHE) {
+            boolean warmUp = "true".equalsIgnoreCase(System.getProperty("CamelWarmUpLRUCacheFactory", "true"));
+            if (warmUp) {
+                // warm-up LRUCache which happens in a background test, which can speedup starting Camel
+                // as the warm-up can run concurrently with starting up Camel and the runtime container Camel may be running inside
+                warmUp();
+            }
+        }
+    }
+
 
     /**
      * Warm-up the LRUCache to startup Apache Camel faster.
@@ -64,9 +81,12 @@ public final class LRUCacheFactory {
      * @param maximumCacheSize the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public static LRUCache newLRUCache(int maximumCacheSize) {
+    public static <K, V> Map<K, V> newLRUCache(int maximumCacheSize) {
         LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
-        return new LRUCache(maximumCacheSize);
+        if (USE_SIMPLE_CACHE) {
+            return new SimpleLRUCache<>(maximumCacheSize);
+        }
+        return new LRUCache<>(maximumCacheSize);
     }
 
     /**
@@ -77,9 +97,12 @@ public final class LRUCacheFactory {
      * @param maximumCacheSize the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public static LRUCache newLRUCache(int initialCapacity, int maximumCacheSize) {
+    public static <K, V> Map<K, V> newLRUCache(int initialCapacity, int maximumCacheSize) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
-        return new LRUCache(initialCapacity, maximumCacheSize);
+        if (USE_SIMPLE_CACHE) {
+            return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
+        }
+        return new LRUCache<>(initialCapacity, maximumCacheSize);
     }
 
     /**
@@ -91,9 +114,12 @@ public final class LRUCacheFactory {
      * @param stopOnEviction   whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public static LRUCache newLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
+    public static <K, V> Map<K, V> newLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
-        return new LRUCache(initialCapacity, maximumCacheSize, stopOnEviction);
+        if (USE_SIMPLE_CACHE) {
+            return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
+        }
+        return new LRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
     /**
@@ -103,9 +129,12 @@ public final class LRUCacheFactory {
      * @param maximumCacheSize the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public static LRUSoftCache newLRUSoftCache(int maximumCacheSize) {
+    public static <K, V> Map<K, V> newLRUSoftCache(int maximumCacheSize) {
         LOG.trace("Creating LRUSoftCache with maximumCacheSize: {}", maximumCacheSize);
-        return new LRUSoftCache(maximumCacheSize);
+        if (USE_SIMPLE_CACHE) {
+            return new SimpleLRUCache<>(maximumCacheSize);
+        }
+        return new LRUSoftCache<>(maximumCacheSize);
     }
 
     /**
@@ -115,8 +144,51 @@ public final class LRUCacheFactory {
      * @param maximumCacheSize the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public static LRUWeakCache newLRUWeakCache(int maximumCacheSize) {
+    public static <K, V> Map<K, V> newLRUWeakCache(int maximumCacheSize) {
         LOG.trace("Creating LRUWeakCache with maximumCacheSize: {}", maximumCacheSize);
-        return new LRUWeakCache(maximumCacheSize);
+        if (USE_SIMPLE_CACHE) {
+            return new SimpleLRUCache<>(maximumCacheSize);
+        }
+        return new LRUWeakCache<>(maximumCacheSize);
     }
+
+    private static class SimpleLRUCache<K, V> extends LinkedHashMap<K, V> {
+
+        static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+        private final int maximumCacheSize;
+        private final boolean stopOnEviction;
+
+        public SimpleLRUCache(int maximumCacheSize) {
+            this(16, maximumCacheSize, maximumCacheSize > 0);
+        }
+
+        public SimpleLRUCache(int initialCapacity, int maximumCacheSize) {
+            this(initialCapacity, maximumCacheSize, maximumCacheSize > 0);
+        }
+
+        public SimpleLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
+            super(initialCapacity, DEFAULT_LOAD_FACTOR, true);
+            this.maximumCacheSize = maximumCacheSize;
+            this.stopOnEviction = stopOnEviction;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+            if (size() >= maximumCacheSize) {
+                if (stopOnEviction) {
+                    Object value = eldest.getValue();
+                    try {
+                        // stop service as its evicted from cache
+                        ServiceHelper.stopService(value);
+                    } catch (Exception e) {
+                        LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+    }
+
 }
