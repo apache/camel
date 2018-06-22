@@ -210,8 +210,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicBoolean vetoStated = new AtomicBoolean();
     private JAXBContext jaxbContext;
-    private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
-    private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);
+    private CamelContextNameStrategy nameStrategy = createCamelContextNameStrategy();
+    private ManagementNameStrategy managementNameStrategy = createManagementNameStrategy();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private EndpointRegistry<EndpointKey> endpoints;
@@ -227,7 +227,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Injector injector;
     private ComponentResolver componentResolver;
     private boolean autoCreateComponents = true;
-    private LanguageResolver languageResolver = new DefaultLanguageResolver();
+    private LanguageResolver languageResolver;
     private final Map<String, Language> languages = new HashMap<>();
     private Registry registry;
     private List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
@@ -242,8 +242,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     private Set<LogListener> logListeners = new LinkedHashSet<>();
-    private HeadersMapFactory headersMapFactory = new DefaultHeadersMapFactory();
-
+    private HeadersMapFactory headersMapFactory = createHeadersMapFactory();
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
@@ -269,40 +268,40 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final Object errorHandlerExecutorServiceLock = new Object();
     private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
-    private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
+    private DataFormatResolver dataFormatResolver;
     private Map<String, String> globalOptions = new HashMap<>();
-    private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
+    private FactoryFinderResolver factoryFinderResolver;
     private FactoryFinder defaultFactoryFinder;
     private PropertiesComponent propertiesComponent;
     private StreamCachingStrategy streamCachingStrategy;
     private final Map<String, FactoryFinder> factories = new HashMap<>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
-    private ClassResolver classResolver = new DefaultClassResolver(this);
+    private ClassResolver classResolver = createClassResolver();
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
-    private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
-    private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
-    private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
-    private ProcessorFactory processorFactory = new DefaultProcessorFactory();
-    private MessageHistoryFactory messageHistoryFactory = new DefaultMessageHistoryFactory();
+    private ServicePool<Endpoint, Producer> producerServicePool = createProducerServicePool();
+    private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = createPollingConsumerServicePool();
+    private NodeIdFactory nodeIdFactory = createNodeIdFactory();
+    private ProcessorFactory processorFactory = createProcessorFactory();
+    private MessageHistoryFactory messageHistoryFactory = createMessageHistoryFactory();
     private InterceptStrategy defaultTracer;
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
-    private InflightRepository inflightRepository = new DefaultInflightRepository();
-    private AsyncProcessorAwaitManager asyncProcessorAwaitManager = new DefaultAsyncProcessorAwaitManager();
+    private InflightRepository inflightRepository = createInflightRepository();
+    private AsyncProcessorAwaitManager asyncProcessorAwaitManager = createAsyncProcessorAwaitManager();
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
-    private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy(this);
+    private ShutdownStrategy shutdownStrategy = createShutdownStrategy();
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceManager executorServiceManager;
     private Debugger debugger;
     private UuidGenerator uuidGenerator = createDefaultUuidGenerator();
-    private UnitOfWorkFactory unitOfWorkFactory = new DefaultUnitOfWorkFactory();
+    private UnitOfWorkFactory unitOfWorkFactory = createUnitOfWorkFactory();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
     private ModelJAXBContextFactory modelJAXBContextFactory;
@@ -311,11 +310,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<ValidatorDefinition> validators = new ArrayList<>();
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
     private ReloadStrategy reloadStrategy;
-    private final RuntimeCamelCatalog runtimeCamelCatalog = new DefaultRuntimeCamelCatalog(this, true);
+    private final RuntimeCamelCatalog runtimeCamelCatalog = createRuntimeCamelCatalog();
     private SSLContextParameters sslContextParameters;
-    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
-    private RouteController routeController = new DefaultRouteController(this);
-    private HealthCheckRegistry healthCheckRegistry = new DefaultHealthCheckRegistry(this);
+    private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
+        @Override
+        public Set<String> initialValue() {
+            return new HashSet<>();
+        }
+    };
+    private RouteController routeController = createRouteController();
+    private HealthCheckRegistry healthCheckRegistry = createHealthCheckRegistry();
+
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -331,7 +336,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             LRUCacheFactory.warmUp();
         }
 
-        this.executorServiceManager = new DefaultExecutorServiceManager(this);
+        this.executorServiceManager = createExecutorServiceManager();
 
         // create a provisional (temporary) endpoint registry at first since end users may access endpoints before CamelContext is started
         // we will later transfer the endpoints to the actual DefaultEndpointRegistry later, but we do this to starup Camel faster.
@@ -340,13 +345,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
 
-        // use WebSphere specific resolver if running on WebSphere
-        if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
-            log.info("Using WebSphere specific PackageScanClassResolver");
-            packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
-        } else {
-            packageScanClassResolver = new DefaultPackageScanClassResolver();
-        }
+        packageScanClassResolver = createPackageScanClassResolver();
 
         // setup management strategy first since end users may use it to add event notifiers
         // using the management strategy before the CamelContext has been started
@@ -2638,7 +2637,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public LanguageResolver getLanguageResolver() {
         if (languageResolver == null) {
-            languageResolver = new DefaultLanguageResolver();
+            languageResolver = createLanguageResolver();
         }
         return languageResolver;
     }
@@ -3383,7 +3382,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
         // and we needed to create endpoints up-front as it may be accessed before this context is started
-        endpoints = new DefaultEndpointRegistry(this, endpoints);
+        endpoints = createEndpointRegistry(endpoints);
         // add this as service and force pre-start them
         addService(endpoints, true, true);
         // special for executorServiceManager as want to stop it manually so false in stopOnShutdown
@@ -3403,9 +3402,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // Initialize declarative transformer/validator registry
-        transformerRegistry = new DefaultTransformerRegistry(this, transformers);
+        transformerRegistry = createTransformerRegistry(transformers);
         addService(transformerRegistry, true, true);
-        validatorRegistry = new DefaultValidatorRegistry(this, validators);
+        validatorRegistry = createValidatorRegistry(validators);
         addService(validatorRegistry, true, true);
 
         // optimised to not include runtimeEndpointRegistry unlesstartServices its enabled or JMX statistics is in extended mode
@@ -4245,9 +4244,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public FactoryFinder getDefaultFactoryFinder() {
         if (defaultFactoryFinder == null) {
-            defaultFactoryFinder = factoryFinderResolver.resolveDefaultFactoryFinder(getClassResolver());
+            defaultFactoryFinder = getFactoryFinderResolver().resolveDefaultFactoryFinder(getClassResolver());
         }
         return defaultFactoryFinder;
+    }
+
+    public FactoryFinderResolver getFactoryFinderResolver() {
+        if (factoryFinderResolver == null) {
+            factoryFinderResolver = createFactoryFinderResolver();
+        }
+        return factoryFinderResolver;
     }
 
     public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
@@ -4258,7 +4264,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         synchronized (factories) {
             FactoryFinder answer = factories.get(path);
             if (answer == null) {
-                answer = factoryFinderResolver.resolveFactoryFinder(getClassResolver(), path);
+                answer = getFactoryFinderResolver().resolveFactoryFinder(getClassResolver(), path);
                 factories.put(path, answer);
             }
             return answer;
@@ -4452,6 +4458,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public DataFormatResolver getDataFormatResolver() {
+        if (dataFormatResolver == null) {
+            dataFormatResolver = createDataFormatResolver();
+        }
         return dataFormatResolver;
     }
 
@@ -4460,7 +4469,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public DataFormat resolveDataFormat(String name) {
-        DataFormat answer = dataFormatResolver.resolveDataFormat(name, this);
+        DataFormat answer = getDataFormatResolver().resolveDataFormat(name, this);
 
         // inject CamelContext if aware
         if (answer instanceof CamelContextAware) {
@@ -4471,7 +4480,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public DataFormat createDataFormat(String name) {
-        DataFormat answer = dataFormatResolver.createDataFormat(name, this);
+        DataFormat answer = getDataFormatResolver().createDataFormat(name, this);
 
         // inject CamelContext if aware
         if (answer instanceof CamelContextAware) {
@@ -4722,7 +4731,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         DefaultManagementNameStrategy.setCounter(value);
     }
 
-    private static UuidGenerator createDefaultUuidGenerator() {
+    protected UuidGenerator createDefaultUuidGenerator() {
         if (System.getProperty("com.google.appengine.runtime.environment") != null) {
             // either "Production" or "Development"
             return new JavaUuidGenerator();
@@ -4775,4 +4784,110 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry) {
         this.healthCheckRegistry = ObjectHelper.notNull(healthCheckRegistry, "HealthCheckRegistry");
     }
+
+    protected NodeIdFactory createNodeIdFactory() {
+        return new DefaultNodeIdFactory();
+    }
+
+    protected FactoryFinderResolver createFactoryFinderResolver() {
+        return new DefaultFactoryFinderResolver();
+    }
+
+    protected ClassResolver createClassResolver() {
+        return new DefaultClassResolver(this);
+    }
+
+    protected ProcessorFactory createProcessorFactory() {
+        return new DefaultProcessorFactory();
+    }
+
+    protected DataFormatResolver createDataFormatResolver() {
+        return new DefaultDataFormatResolver();
+    }
+
+    protected MessageHistoryFactory createMessageHistoryFactory() {
+        return new DefaultMessageHistoryFactory();
+    }
+
+    protected InflightRepository createInflightRepository() {
+        return new DefaultInflightRepository();
+    }
+
+    protected AsyncProcessorAwaitManager createAsyncProcessorAwaitManager() {
+        return new DefaultAsyncProcessorAwaitManager();
+    }
+
+    protected RouteController createRouteController() {
+        return new DefaultRouteController(this);
+    }
+
+    protected HealthCheckRegistry createHealthCheckRegistry() {
+        return new DefaultHealthCheckRegistry(this);
+    }
+
+
+    protected ShutdownStrategy createShutdownStrategy() {
+        return new DefaultShutdownStrategy(this);
+    }
+
+    protected PackageScanClassResolver createPackageScanClassResolver() {
+        PackageScanClassResolver packageScanClassResolver;
+        // use WebSphere specific resolver if running on WebSphere
+        if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
+            log.info("Using WebSphere specific PackageScanClassResolver");
+            packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
+        } else {
+            packageScanClassResolver = new DefaultPackageScanClassResolver();
+        }
+        return packageScanClassResolver;
+    }
+
+    protected ExecutorServiceManager createExecutorServiceManager() {
+        return new DefaultExecutorServiceManager(this);
+    }
+
+    protected ServicePool<Endpoint, Producer> createProducerServicePool() {
+        return new SharedProducerServicePool(100);
+    }
+
+    protected ServicePool<Endpoint, PollingConsumer> createPollingConsumerServicePool() {
+        return new SharedPollingConsumerServicePool(100);
+    }
+
+    protected UnitOfWorkFactory createUnitOfWorkFactory() {
+        return new DefaultUnitOfWorkFactory();
+    }
+
+    protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
+        return new DefaultRuntimeCamelCatalog(this, true);
+    }
+
+    protected CamelContextNameStrategy createCamelContextNameStrategy() {
+        return new DefaultCamelContextNameStrategy();
+    }
+
+    protected ManagementNameStrategy createManagementNameStrategy() {
+        return new DefaultManagementNameStrategy(this);
+    }
+
+    protected HeadersMapFactory createHeadersMapFactory() {
+        return new DefaultHeadersMapFactory();
+    }
+
+    protected LanguageResolver createLanguageResolver() {
+        return new DefaultLanguageResolver();
+    }
+
+    protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {
+        return new DefaultEndpointRegistry(this, endpoints);
+    }
+
+    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry(List<ValidatorDefinition> validators) throws Exception {
+        return new DefaultValidatorRegistry(this, validators);
+    }
+
+    protected TransformerRegistry<TransformerKey> createTransformerRegistry(List<TransformerDefinition> transformers) throws Exception {
+        return new DefaultTransformerRegistry(this, transformers);
+    }
+
 }
