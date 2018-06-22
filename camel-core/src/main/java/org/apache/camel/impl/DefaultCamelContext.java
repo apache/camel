@@ -42,6 +42,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -461,9 +462,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             final AtomicBoolean created = new AtomicBoolean(false);
 
             // atomic operation to get/create a component. Avoid global locks.
-            final Component component = components.computeIfAbsent(name, comp -> {
-                created.set(true);
-                return initComponent(name, autoCreateComponents);
+            final Component component = components.computeIfAbsent(name, new Function<String, Component>() {
+                @Override
+                public Component apply(String comp) {
+                    created.set(true);
+                    return DefaultCamelContext.this.initComponent(name, autoCreateComponents);
+                }
             });
 
             // Start the component after its creation as if it is a component proxy
@@ -3267,7 +3271,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
-    private void doStartCamel() throws Exception {
+    protected void doStartCamel() throws Exception {
 
         // custom properties may use property placeholders so resolve those early on
         if (globalOptions != null && !globalOptions.isEmpty()) {
@@ -3507,13 +3511,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // shutdown await manager to trigger interrupt of blocked threads to attempt to free these threads graceful
         shutdownServices(asyncProcessorAwaitManager);
 
-        shutdownServices(getRouteStartupOrder().stream()
-            .sorted(Comparator.comparing(RouteStartupOrder::getStartupOrder).reversed())
-            .map(DefaultRouteStartupOrder.class::cast)
-            .map(DefaultRouteStartupOrder::getRouteService)
-            .collect(Collectors.toList()), false);
+        routeStartupOrder.sort(new Comparator<RouteStartupOrder>() {
+            @Override
+            public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
+                // Reversed order
+                return Integer.compare(o2.getStartupOrder(), o1.getStartupOrder());
+            }
+        });
+        List<RouteService> list = new ArrayList<>();
+        for (RouteStartupOrder startupOrder : routeStartupOrder) {
+            DefaultRouteStartupOrder order = (DefaultRouteStartupOrder) startupOrder;
+            RouteService routeService = order.getRouteService();
+            list.add(routeService);
+        }
+        shutdownServices(list, false);
         // do not clear route services or startup listeners as we can start Camel again and get the route back as before
-        getRouteStartupOrder().clear();
+        routeStartupOrder.clear();
 
         // but clear any suspend routes
         suspendedRouteServices.clear();
