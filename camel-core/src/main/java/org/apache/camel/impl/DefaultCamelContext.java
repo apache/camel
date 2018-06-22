@@ -596,7 +596,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     // Endpoint Management Methods
     // -----------------------------------------------------------------------
 
-    public EndpointRegistry getEndpointRegistry() {
+    public EndpointRegistry<EndpointKey> getEndpointRegistry() {
         return endpoints;
     }
 
@@ -4655,7 +4655,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     @Override
-    public TransformerRegistry getTransformerRegistry() {
+    public TransformerRegistry<TransformerKey> getTransformerRegistry() {
         return transformerRegistry;
     }
 
@@ -4675,7 +4675,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     @Override
-    public ValidatorRegistry getValidatorRegistry() {
+    public ValidatorRegistry<ValidatorKey> getValidatorRegistry() {
         return validatorRegistry;
     }
 
