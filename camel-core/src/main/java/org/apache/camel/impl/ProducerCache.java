@@ -136,7 +136,7 @@ public class ProducerCache extends ServiceSupport {
      * @return the cache
      */
     @SuppressWarnings("unchecked")
-    protected static LRUCache<String, Producer> createLRUCache(int cacheSize) {
+    protected static Map<String, Producer> createLRUCache(int cacheSize) {
         // Use a regular cache as we want to ensure that the lifecycle of the producers
         // being cache is properly handled, such as they are stopped when being evicted
         // or when this cache is stopped. This is needed as some producers requires to

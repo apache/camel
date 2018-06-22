@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
@@ -32,7 +33,6 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
-import org.apache.camel.util.LRUCache;
 
 /**
  * A parser to parse simple language as a Camel {@link Expression}
@@ -40,7 +40,7 @@ import org.apache.camel.util.LRUCache;
 public class SimpleExpressionParser extends BaseSimpleParser {
 
     // use caches to avoid re-parsing the same expressions over and over again
-    private LRUCache<String, Expression> cacheExpression;
+    private Map<String, Expression> cacheExpression;
 
     @Deprecated
     public SimpleExpressionParser(String expression) {
@@ -53,7 +53,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     }
 
     public SimpleExpressionParser(String expression, boolean allowEscape,
-                                  LRUCache<String, Expression> cacheExpression) {
+                                  Map<String, Expression> cacheExpression) {
         super(expression, allowEscape);
         this.cacheExpression = cacheExpression;
     }

@@ -57,7 +57,7 @@ public class MBeanInfoAssembler implements Service {
     // use a cache to speedup gathering JMX MBeanInfo for known classes
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    private LRUCache<Class<?>, MBeanAttributesAndOperations> cache;
+    private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
     public MBeanInfoAssembler() {
     }
@@ -75,7 +75,8 @@ public class MBeanInfoAssembler implements Service {
     @Override
     public void stop() throws Exception {
         if (cache != null) {
-            if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled() && cache instanceof LRUCache) {
+                LRUCache cache = (LRUCache) this.cache;
                 LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
             }
             cache.clear();

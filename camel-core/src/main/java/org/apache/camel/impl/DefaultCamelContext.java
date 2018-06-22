@@ -329,13 +329,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * Use one of the other constructors to force use an explicit registry / JNDI.
      */
     public DefaultCamelContext() {
-        boolean warmUp = "true".equalsIgnoreCase(System.getProperty("CamelWarmUpLRUCacheFactory", "true"));
-        if (warmUp) {
-            // warm-up LRUCache which happens in a background test, which can speedup starting Camel
-            // as the warm-up can run concurrently with starting up Camel and the runtime container Camel may be running inside
-            LRUCacheFactory.warmUp();
-        }
-
         this.executorServiceManager = createExecutorServiceManager();
 
         // create a provisional (temporary) endpoint registry at first since end users may access endpoints before CamelContext is started
