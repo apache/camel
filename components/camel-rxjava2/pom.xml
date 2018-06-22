@@ -60,12 +60,6 @@
             <artifactId>rxjava</artifactId>
             <version>${rxjava2-version}</version>
         </dependency>
-        <dependency>
-            <!-- See https://github.com/ReactiveX/RxJava/issues/5999 -->
-            <groupId>com.github.akarnokd</groupId>
-            <artifactId>rxjava2-extensions</artifactId>
-            <version>${rxjava2-extensions-version}</version>
-        </dependency>
 
         <!-- test dependencies -->
         <dependency>
