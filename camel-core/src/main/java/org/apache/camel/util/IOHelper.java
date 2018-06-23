@@ -417,6 +417,29 @@ public final class IOHelper {
         }
     }
 
+    public static void closeIterator(Object it) throws IOException {
+        if (it instanceof java.util.Scanner) {
+            // special for Scanner which implement the Closeable since JDK7
+            java.util.Scanner scanner = (java.util.Scanner) it;
+            scanner.close();
+            IOException ioException = scanner.ioException();
+            if (ioException != null) {
+                throw ioException;
+            }
+        } else if (it instanceof Scanner) {
+            // special for Scanner which implement the Closeable since JDK7
+            Scanner scanner = (Scanner) it;
+            scanner.close();
+            IOException ioException = scanner.ioException();
+            if (ioException != null) {
+                throw ioException;
+            }
+
+        } else if (it instanceof Closeable) {
+            IOHelper.closeWithException((Closeable) it);
+        }
+    }
+
     public static void validateCharset(String charset) throws UnsupportedCharsetException {
         if (charset != null) {
             if (Charset.isSupported(charset)) {

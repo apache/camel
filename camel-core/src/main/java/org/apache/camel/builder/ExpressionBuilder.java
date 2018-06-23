@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
+import org.apache.camel.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1558,8 +1558,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(token).evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(text);
+                Scanner scanner = ObjectHelper.getScanner(exchange, value, text);
                 return scanner;
             }
 
@@ -1625,18 +1624,16 @@ public final class ExpressionBuilder {
      */
     public static Expression regexTokenizeExpression(final Expression expression,
                                                      final String regexTokenizer) {
-        final Pattern pattern = Pattern.compile(regexTokenizer);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(pattern);
+                Scanner scanner = ObjectHelper.getScanner(exchange, value, regexTokenizer);
                 return scanner;
             }
 
             @Override
             public String toString() {
-                return "regexTokenize(" + expression + ", " + pattern.pattern() + ")";
+                return "regexTokenize(" + expression + ", " + regexTokenizer + ")";
             }
         };
     }

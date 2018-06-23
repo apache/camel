@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
+import org.apache.camel.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,7 +122,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
         @Override
         void init() {
             // use scan end token as delimiter which supports attributes/namespaces
-            this.scanner = new Scanner(in, charset).useDelimiter(scanEndToken);
+            this.scanner = new Scanner(in, charset, scanEndToken);
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner

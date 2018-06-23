@@ -19,7 +19,7 @@ package org.apache.camel.util;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+import org.apache.camel.util.Scanner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -52,8 +52,7 @@ public class GroupTokenIteratorTest extends TestSupport {
 
     public void testGroupIterator() throws Exception {
         String s = "ABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
-        Scanner scanner = new Scanner(s);
-        scanner.useDelimiter("\n");
+        Scanner scanner = new Scanner(s, "\n");
 
         GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3, false);
 
@@ -68,8 +67,7 @@ public class GroupTokenIteratorTest extends TestSupport {
 
     public void testGroupIteratorSkipFirst() throws Exception {
         String s = "##comment\nABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
-        Scanner scanner = new Scanner(s);
-        scanner.useDelimiter("\n");
+        Scanner scanner = new Scanner(s, "\n");
 
         GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3, true);
 
@@ -92,8 +90,7 @@ public class GroupTokenIteratorTest extends TestSupport {
 
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
-        Scanner scanner = new Scanner(in, StandardCharsets.UTF_8.displayName());
-        scanner.useDelimiter("\n");
+        Scanner scanner = new Scanner(in, StandardCharsets.UTF_8.displayName(), "\n");
 
         exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.displayName());
         GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 1, false);
