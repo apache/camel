@@ -49,17 +49,11 @@ public class SolrCloudFixture {
     private static final Path TEMP_DIR;
 
     /**
-     * Create indexes in this directory, optimally use a subdir, named after the
-     * test
+     * Create a temp dir under the maven target folder
      */
     static {
         LOG = Logger.getLogger(SolrCloudFixture.class);
-
-        String s = System.getProperty("tempDir", System.getProperty("java.io.tmpdir"));
-        if (s == null) {
-            throw new RuntimeException("To run tests, you need to define system property 'tempDir' or 'java.io.tmpdir'.");
-        }
-        TEMP_DIR = Paths.get(s, "tmp");
+        TEMP_DIR = Paths.get("tmp");
         try {
             Files.createDirectories(TEMP_DIR);
             LOG.info("Created: " + TEMP_DIR);
