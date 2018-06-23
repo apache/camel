@@ -19,7 +19,7 @@ package org.apache.camel.util;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Scanner;
+import org.apache.camel.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -58,17 +58,7 @@ public final class SkipIterator implements Iterator<Object>, Closeable {
     @Override
     public void close() throws IOException {
         try {
-            if (it instanceof Scanner) {
-                // special for Scanner which implement the Closeable since JDK7 
-                Scanner scanner = (Scanner) it;
-                scanner.close();
-                IOException ioException = scanner.ioException();
-                if (ioException != null) {
-                    throw ioException;
-                }
-            } else if (it instanceof Closeable) {
-                IOHelper.closeWithException((Closeable) it);
-            }
+            IOHelper.closeIterator(it);
         } finally {
             // we are now closed
             closed = true;
