@@ -53,7 +53,7 @@ public class SolrCloudFixture {
      */
     static {
         LOG = Logger.getLogger(SolrCloudFixture.class);
-        TEMP_DIR = Paths.get("tmp");
+        TEMP_DIR = Paths.get("target", "tmp");
         try {
             Files.createDirectories(TEMP_DIR);
             LOG.info("Created: " + TEMP_DIR);
