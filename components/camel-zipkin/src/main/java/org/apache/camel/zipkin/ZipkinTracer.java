@@ -585,12 +585,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             String traceId = "" + context.traceIdString();
             String spanId = "" + context.spanId();
             String parentId = context.parentId() != null ? "" + context.parentId() : null;
-            if (LOG.isDebugEnabled()) {
-                if (parentId != null) {
-                    LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
-                } else {
-                    LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
-                }
+            if (parentId != null) {
+                LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+            } else {
+                LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
             }
         }
     }
@@ -613,12 +611,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 String traceId = "" + context.traceIdString();
                 String spanId = "" + context.spanId();
                 String parentId = context.parentId() != null ? "" + context.parentId() : null;
-                if (LOG.isDebugEnabled()) {
-                    if (parentId != null) {
-                        LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
-                    } else {
-                        LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
-                    }
+                if (parentId != null) {
+                    LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                } else {
+                    LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
                 }
             }
         }
@@ -673,12 +669,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 String traceId = "" + context.traceIdString();
                 String spanId = "" + context.spanId();
                 String parentId = context.parentId() != null ? "" + context.parentId() : null;
-                if (LOG.isDebugEnabled()) {
-                    if (parentId != null) {
-                        LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
-                    } else {
-                        LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
-                    }
+                if (parentId != null) {
+                    LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                } else {
+                    LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
                 }
             }
         }
