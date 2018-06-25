@@ -46,6 +46,8 @@ public class SedaComponent extends UriEndpointComponent {
     protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<>();
     @Metadata(label = "producer")
     private boolean defaultBlockWhenFull;
+    @Metadata(label = "producer")
+    private long defaultOfferTimeout;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
 
@@ -101,6 +103,20 @@ public class SedaComponent extends UriEndpointComponent {
      */
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
+    }
+    
+    
+    public long getDefaultOfferTimeout() {
+        return defaultOfferTimeout;
+    }
+    
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
+     * By default, an exception will be thrown stating that the queue is full.
+     * By enabling this option, where a configured timeout can be added to the block case.  Utilizing the .offer(timeout) method of the underlining java queue
+     */
+    public void setDefaultOfferTimeout(long defaultOfferTimeout) {
+        this.defaultOfferTimeout = defaultOfferTimeout;
     }
 
     /**
@@ -208,7 +224,10 @@ public class SedaComponent extends UriEndpointComponent {
 
         // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
         boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
-
+        // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
+        long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
+        
+        answer.setOfferTimeout(offerTimeout);
         answer.setBlockWhenFull(blockWhenFull);
         answer.configureProperties(parameters);
         answer.setConcurrentConsumers(consumers);
