@@ -308,6 +308,8 @@ public final class IntrospectionSupport {
         // especially about getter/setters
         List<MethodInfo> found = new ArrayList<>();
         Method[] methods = clazz.getMethods();
+        Map<String, MethodInfo> getters = new HashMap<>(methods.length);
+        Map<String, MethodInfo> setters = new HashMap<>(methods.length);
         for (Method method : methods) {
             if (EXCLUDED_METHODS.contains(method)) {
                 continue;
@@ -319,14 +321,15 @@ public final class IntrospectionSupport {
                 cache.isGetter = true;
                 cache.isSetter = false;
                 cache.getterOrSetterShorthandName = getGetterShorthandName(method);
+                getters.put(cache.getterOrSetterShorthandName, cache);
             } else if (isSetter(method)) {
                 cache.isGetter = false;
                 cache.isSetter = true;
                 cache.getterOrSetterShorthandName = getSetterShorthandName(method);
+                setters.put(cache.getterOrSetterShorthandName, cache);
             } else {
                 cache.isGetter = false;
                 cache.isSetter = false;
-                cache.hasGetterAndSetter = false;
             }
             found.add(cache);
         }
@@ -336,21 +339,9 @@ public final class IntrospectionSupport {
         for (MethodInfo info : found) {
             info.hasGetterAndSetter = false;
             if (info.isGetter) {
-                // loop and find the matching setter
-                for (MethodInfo info2 : found) {
-                    if (info2.isSetter && info.getterOrSetterShorthandName.equals(info2.getterOrSetterShorthandName)) {
-                        info.hasGetterAndSetter = true;
-                        break;
-                    }
-                }
+                info.hasGetterAndSetter = setters.containsKey(info.getterOrSetterShorthandName);
             } else if (info.isSetter) {
-                // loop and find the matching getter
-                for (MethodInfo info2 : found) {
-                    if (info2.isGetter && info.getterOrSetterShorthandName.equals(info2.getterOrSetterShorthandName)) {
-                        info.hasGetterAndSetter = true;
-                        break;
-                    }
-                }
+                info.hasGetterAndSetter = getters.containsKey(info.getterOrSetterShorthandName);
             }
         }
 
