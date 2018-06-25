@@ -42,7 +42,7 @@ public class ContainerAwareSpringTestSupportIT extends ContainerAwareSpringTestS
 
     @Override
     protected GenericContainer<?> createContainer() {
-        return new GenericContainer("consul:1.0.0")
+        return new GenericContainer("consul:1.0.7")
             .withNetworkAliases("myconsul")
             .withExposedPorts(8500)
             .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
