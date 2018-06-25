@@ -48,7 +48,7 @@ public class CamelCloudConsulServiceRegistryTest {
     private static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Rule
-    public GenericContainer container =  new GenericContainer("consul:1.0.0")
+    public GenericContainer container =  new GenericContainer("consul:1.0.7")
         .withExposedPorts(8500)
         .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
         .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("consul"))

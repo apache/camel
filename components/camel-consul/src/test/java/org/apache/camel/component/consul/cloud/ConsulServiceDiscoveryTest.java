@@ -28,6 +28,7 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulTestSupport;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.util.SocketUtils;
 
@@ -64,6 +65,7 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
                 .addTags("key1=value1")
                 .addTags("key2=value2")
                 .addTags("healthy=" + healty)
+                .putMeta("meta-key", "meta-val")
                 .port(port)
                 .check(c)
                 .build();
@@ -96,13 +98,14 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
         assertEquals(6, services.size());
 
         for (ServiceDefinition service : services) {
-            assertFalse(service.getMetadata().isEmpty());
-            assertTrue(service.getMetadata().containsKey("service_name"));
-            assertTrue(service.getMetadata().containsKey("service_id"));
-            assertTrue(service.getMetadata().containsKey("a-tag"));
-            assertTrue(service.getMetadata().containsKey("key1"));
-            assertTrue(service.getMetadata().containsKey("key2"));
-            assertEquals("" + service.getHealth().isHealthy(), service.getMetadata().get("healthy"));
+            Assertions.assertThat(service.getMetadata()).isNotEmpty();
+            Assertions.assertThat(service.getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, "my-service");
+            Assertions.assertThat(service.getMetadata()).containsKey(ServiceDefinition.SERVICE_META_ID);
+            Assertions.assertThat(service.getMetadata()).containsKey("a-tag");
+            Assertions.assertThat(service.getMetadata()).containsEntry("key1", "value1");
+            Assertions.assertThat(service.getMetadata()).containsEntry("key2", "value2");
+            Assertions.assertThat(service.getMetadata()).containsEntry("meta-key", "meta-val");
+            Assertions.assertThat("" + service.getHealth().isHealthy()).isEqualTo(service.getMetadata().get("healthy"));
         }
     }
 }
