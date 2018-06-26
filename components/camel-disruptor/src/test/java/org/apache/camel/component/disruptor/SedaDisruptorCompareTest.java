@@ -169,7 +169,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         addParameterPair(parameters, singleProducer(), multipleConsumers(), singleConcurrentConsumerThread());
         addParameterPair(parameters, singleProducer(), multipleConsumers(), multipleConcurrentConsumerThreads());
         addParameterPair(parameters, multipleProducers(), singleConsumer(), singleConcurrentConsumerThread());
-        addParameterPair(parameters, multipleProducers(), singleConsumer(),multipleConcurrentConsumerThreads());
+        addParameterPair(parameters, multipleProducers(), singleConsumer(), multipleConcurrentConsumerThreads());
         addParameterPair(parameters, multipleProducers(), multipleConsumers(), singleConcurrentConsumerThread());
         addParameterPair(parameters, multipleProducers(), multipleConsumers(), multipleConcurrentConsumerThreads());
 
