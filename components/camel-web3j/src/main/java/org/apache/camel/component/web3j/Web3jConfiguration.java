@@ -17,6 +17,7 @@
 package org.apache.camel.component.web3j;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
@@ -47,8 +48,8 @@ public class Web3jConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String address;
 
-    @UriParam(label = "common")
-    private List<String> topics; //TODO doesn't support list of lists
+    @UriParam(label = "common", javaType = "String")
+    private List<String> topics;
 
     @UriParam(label = "producer")
     private BigInteger position;
@@ -456,9 +457,15 @@ public class Web3jConfiguration implements Cloneable {
 
     /**
      * Topics are order-dependent. Each topic can also be a list of topics.
+     * Specify multiple topics separated by comma.
      */
     public void setTopics(List<String> topics) {
         this.topics = topics;
+    }
+
+    public void setTopics(String topics) {
+        String[] arr = topics.split(",");
+        this.topics = Arrays.asList(arr);
     }
 
     public String getAddress() {
