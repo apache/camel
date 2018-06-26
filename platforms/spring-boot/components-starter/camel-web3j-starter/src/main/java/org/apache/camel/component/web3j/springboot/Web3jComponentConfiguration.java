@@ -173,6 +173,7 @@ public class Web3jComponentConfiguration
         private List addresses;
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
+         * Specify multiple topics separated by comma.
          */
         private List topics;
         /**

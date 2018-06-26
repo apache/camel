@@ -48,7 +48,7 @@ The Web3j Ethereum Blockchain component supports 2 options, which are listed bel
 The Web3j Ethereum Blockchain endpoint is configured using URI syntax:
 
 ----
-web3j:host:port
+web3j:nodeAddress
 ----
 
 with the following path and query parameters:
@@ -76,7 +76,7 @@ with the following path and query parameters:
 | *gasLimit* (common) | The maximum gas allowed in this block. |  | BigInteger
 | *toAddress* (common) | The address the transaction is directed to. |  | String
 | *toBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
-| *topics* (common) | Topics are order-dependent. Each topic can also be a list of topics. |  | List
+| *topics* (common) | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | String
 | *web3j* (common) | The preconfigured Web3j object. |  | Web3j
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
