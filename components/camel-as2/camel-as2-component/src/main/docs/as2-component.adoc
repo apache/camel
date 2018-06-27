@@ -3,15 +3,17 @@
 
 *Available as of Camel version 2.22*
 
+NOTE: This component is currently work in progress.
+
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-as2</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 === URI Options
 
