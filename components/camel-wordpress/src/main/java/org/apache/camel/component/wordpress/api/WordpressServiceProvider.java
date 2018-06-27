@@ -71,6 +71,7 @@ public final class WordpressServiceProvider {
         this.services = new HashMap<>();
         this.services.put(WordpressServicePosts.class, servicePosts);
         this.services.put(WordpressServiceUsers.class, serviceUsers);
+        this.configuration = config;
 
         LOGGER.info("Wordpress Service Provider initialized using base URL: {}, API Version {}", config.getApiUrl(), config.getApiVersion());
     }

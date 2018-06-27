@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.wordpress.api.service.impl.ignored;
+package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthentication;
 import org.apache.camel.component.wordpress.api.model.User;
 import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
 import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupport;
+import org.apache.camel.component.wordpress.api.test.WordpressServerHttpRequestHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,6 +39,7 @@ public class WordpressServiceUsersAdapterTest extends WordpressMockServerTestSup
     @BeforeClass
     public static void before() {
         serviceUsers = serviceProvider.getService(WordpressServiceUsers.class);
+        serviceUsers.setWordpressAuthentication(new WordpressBasicAuthentication(WordpressServerHttpRequestHandler.USERNAME, WordpressServerHttpRequestHandler.PASSWORD));
     }
 
     @Test
