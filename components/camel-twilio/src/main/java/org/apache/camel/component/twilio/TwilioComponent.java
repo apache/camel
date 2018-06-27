@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.twilio.internal.TwilioApiCollection;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -34,6 +35,15 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
     @Metadata(label = "advanced")
     private TwilioRestClient restClient;
+    
+    @Metadata(label = "common,security", secret = true)
+    private String username;
+
+    @Metadata(label = "common,security", secret = true)
+    private String password;
+
+    @Metadata(label = "common,security", secret = true)
+    private String accountSid;
 
     public TwilioComponent() {
         super(TwilioEndpoint.class, TwilioApiName.class, TwilioApiCollection.getCollection());
@@ -61,11 +71,12 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
         super.doStart();
 
         if (restClient == null) {
-            if (configuration == null) {
+            if (ObjectHelper.isEmpty(username) && ObjectHelper.isEmpty(password)) {
                 throw new IllegalStateException("Unable to initialise Twilio, Twilio component configuration is missing");
             }
-            restClient = new TwilioRestClient.Builder(configuration.getUsername(), configuration.getPassword())
-                .accountSid(configuration.getAccountSid())
+
+            restClient = new TwilioRestClient.Builder(username, password)
+                .accountSid(accountSid)
                 .build();
         }
     }
@@ -96,5 +107,38 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
      */
     public void setRestClient(TwilioRestClient restClient) {
         this.restClient = restClient;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * The account to use.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Auth token for the account.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAccountSid() {
+        return accountSid == null ? username : accountSid;
+    }
+
+    /**
+     * The account SID to use.
+     */
+    public void setAccountSid(String accountSid) {
+        this.accountSid = accountSid;
     }
 }

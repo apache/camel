@@ -22,7 +22,7 @@ for this component:
 ### Twilio Options
 
 // component options: START
-The Twilio component supports 3 options, which are listed below.
+The Twilio component supports 6 options, which are listed below.
 
 
 
@@ -31,6 +31,9 @@ The Twilio component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared configuration |  | TwilioConfiguration
 | *restClient* (advanced) | To use the shared REST client |  | TwilioRestClient
+| *username* (security) | The account to use. |  | String
+| *password* (security) | Auth token for the account. |  | String
+| *accountSid* (security) | The account SID to use. |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -55,7 +58,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+==== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,9 +69,6 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *accountSid* (security) | The account SID to use. |  | String
-| *password* (security) | Auth token for the account. |  | String
-| *username* (security) | The account to use. |  | String
 |===
 // endpoint options: END
 
