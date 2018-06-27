@@ -434,7 +434,7 @@ public class CoreEipAnnotationProcessor {
         String deprecationNote = null;
         Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
         for (Metadata metadata : metadataArray) {
-        	if (metadata.displayName() != null) {
+            if (metadata.displayName() != null) {
                 displayName = metadata.displayName();
             }
             if (metadata.deprecationNode() != null) {
@@ -484,7 +484,7 @@ public class CoreEipAnnotationProcessor {
             Set<String> enums = new TreeSet<>();
             Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
             for (Metadata metadata : metadataArray) {
-            	if (metadata.displayName() != null) {
+                if (metadata.displayName() != null) {
                     displayName = metadata.displayName();
                 }
                 if (metadata.deprecationNode() != null) {
@@ -583,7 +583,7 @@ public class CoreEipAnnotationProcessor {
             String deprecationNote = null;
             Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
             for (Metadata metadata : metadataArray) {
-            	if (metadata.displayName() != null) {
+                if (metadata.displayName() != null) {
                     displayName = metadata.displayName();
                 }
                 if (metadata.deprecationNode() != null) {
@@ -825,7 +825,7 @@ public class CoreEipAnnotationProcessor {
             String deprecationNote = null;
             Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
             for (Metadata metadata : metadataArray) {
-            	if (metadata.displayName() != null) {
+                if (metadata.displayName() != null) {
                     displayName = metadata.displayName();
                 }
                 if (metadata.deprecationNode() != null) {
@@ -881,7 +881,7 @@ public class CoreEipAnnotationProcessor {
             String deprecationNote = null;
             Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
             for (Metadata metadata : metadataArray) {
-            	if (metadata.displayName() != null) {
+                if (metadata.displayName() != null) {
                     displayName = metadata.displayName();
                 }
                 if (metadata.deprecationNode() != null) {
@@ -947,7 +947,7 @@ public class CoreEipAnnotationProcessor {
             String deprecationNote = null;
             Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
             for (Metadata metadata : metadataArray) {
-            	if (metadata.displayName() != null) {
+                if (metadata.displayName() != null) {
                     displayName = metadata.displayName();
                 }
                 if (metadata.deprecationNode() != null) {
@@ -993,7 +993,7 @@ public class CoreEipAnnotationProcessor {
             String deprecationNote = null;
             Metadata[] metadataArray = fieldElement.getAnnotationsByType(Metadata.class);
             for (Metadata metadata : metadataArray) {
-            	if (metadata.displayName() != null) {
+                if (metadata.displayName() != null) {
                     displayName = metadata.displayName();
                 }
                 if (metadata.deprecationNode() != null) {
