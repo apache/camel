@@ -29,50 +29,51 @@ import org.apache.camel.component.ribbon.cloud.RibbonServiceLoadBalancer;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscovery;
 import org.apache.camel.spring.boot.cloud.CamelCloudServiceFilter;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@DirtiesContext
-@SpringBootApplication
-@SpringBootTest(
-    classes = {
-        RibbonLoadBalancerTest.TestConfiguration.class
-    },
-    properties = {
-        "debug=false",
-        "camel.cloud.service-discovery.services[myService]=localhost:9090,localhost:9091",
-        "camel.cloud.ribbon.load-balancer.enabled=true"
-})
+import static org.assertj.core.api.Assertions.assertThat;
+
+
 public class RibbonLoadBalancerTest {
-    @Autowired
-    private CamelContext context;
-    @Autowired
-    private ProducerTemplate template;
+    private static final int PORT1 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testLoadBalancer() throws Exception {
-        DefaultServiceCallProcessor processor = findServiceCallProcessor();
+        new ApplicationContextRunner()
+            .withUserConfiguration(TestConfiguration.class)
+            .withPropertyValues(
+                "spring.main.banner-mode=off",
+                "camel.cloud.consul.service-discovery.enabled=false",
+                "debug=false",
+                "camel.cloud.service-discovery.services[myService]=localhost:" + PORT1 + ",localhost:" + PORT2,
+                "camel.cloud.ribbon.load-balancer.enabled=true")
+            .run(
+                context -> {
+                    final CamelContext camelContext = context.getBean(CamelContext.class);
+                    final ProducerTemplate template = camelContext.createProducerTemplate();
 
-        Assert.assertNotNull(processor.getLoadBalancer());
-        Assert.assertTrue(processor.getLoadBalancer() instanceof RibbonServiceLoadBalancer);
+                    DefaultServiceCallProcessor processor = findServiceCallProcessor(camelContext);
+                    assertThat(processor.getLoadBalancer()).isNotNull();
+                    assertThat(processor.getLoadBalancer()).isInstanceOf(RibbonServiceLoadBalancer.class);
 
-        RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
-        Assert.assertTrue(loadBalancer.getServiceDiscovery() instanceof CamelCloudServiceDiscovery);
-        Assert.assertTrue(loadBalancer.getServiceFilter() instanceof CamelCloudServiceFilter);
+                    RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
+                    assertThat(loadBalancer.getServiceDiscovery()).isInstanceOf(CamelCloudServiceDiscovery.class);
+                    assertThat(loadBalancer.getServiceFilter()).isInstanceOf(CamelCloudServiceFilter.class);
 
-        Assert.assertEquals("9091", template.requestBody("direct:start", null, String.class));
-        Assert.assertEquals("9090", template.requestBody("direct:start", null, String.class));
+                    assertThat(template.requestBody("direct:start", null, String.class)).isEqualTo("" + PORT2);
+                    assertThat(template.requestBody("direct:start", null, String.class)).isEqualTo("" + PORT1);
+                }
+            );
     }
 
+    @EnableAutoConfiguration
     @Configuration
     public static class TestConfiguration {
         @Bean
@@ -86,10 +87,14 @@ public class RibbonLoadBalancerTest {
                             .name("myService")
                             .uri("jetty:http://myService")
                             .end();
-                    from("jetty:http://localhost:9090").routeId("9090")
-                        .transform().constant("9090");
-                    from("jetty:http://localhost:9091").routeId("9091")
-                        .transform().constant("9091");
+                    fromF("jetty:http://localhost:%d", PORT1)
+                        .routeId("" + PORT1)
+                        .transform()
+                        .constant("" + PORT1);
+                    fromF("jetty:http://localhost:%d", PORT2)
+                        .routeId("" + PORT2)
+                        .transform()
+                        .constant("" + PORT2);
                 }
             };
         }
@@ -99,7 +104,7 @@ public class RibbonLoadBalancerTest {
     // Helpers
     // ************************************
 
-    protected DefaultServiceCallProcessor findServiceCallProcessor() {
+    protected DefaultServiceCallProcessor findServiceCallProcessor(CamelContext context) {
         Route route = context.getRoute("scall");
 
         Assert.assertNotNull("ServiceCall Route should be present", route);
