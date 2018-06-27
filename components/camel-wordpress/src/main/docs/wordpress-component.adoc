@@ -77,7 +77,7 @@ The `WordpressConfiguration` class can be used to set initial properties configu
 ----
 public void configure() {
     final WordpressConfiguration configuration = new WordpressConfiguration();
-    final WordpressComponent component = new WordpressComponent();
+    final WordpressComponentConfiguration component = new WordpressComponentConfiguration();
     configuration.setApiVersion("2");
     configuration.setUrl("http://yoursite.com/wp-json/");
     component.setConfiguration(configuration);
