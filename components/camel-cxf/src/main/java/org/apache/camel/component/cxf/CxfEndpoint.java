@@ -88,12 +88,12 @@ import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.headers.Header;
-import org.apache.cxf.interceptor.AbstractLoggingInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
@@ -1177,85 +1177,18 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         CamelCxfClientImpl(Bus bus, Endpoint ep) {
             super(bus, ep);
         }
-
-        public Bus getBus() {
-            return bus;
-        }
-        
+  
         @Override
         protected Object[] processResult(Message message, org.apache.cxf.message.Exchange exchange,
                                          BindingOperationInfo oi, Map<String, Object> resContext)
                                              throws Exception {
-            Exception ex = null;
-            // Check to see if there is a Fault from the outgoing chain if it's an out Message
-            if (!message.get(Message.INBOUND_MESSAGE).equals(Boolean.TRUE)) {
-                ex = message.getContent(Exception.class);
+            try {
+                return super.processResult(message, exchange, oi, resContext);
+            } catch (IllegalEmptyResponseException ex) {
+                //Camel does not strickly enforce returning a value when a value is required from the WSDL/contract
+                //Thus, we'll capture the exception raised and return a null
+                return null;
             }
-            boolean mepCompleteCalled = false;
-            if (ex != null) {
-                completeExchange(exchange);
-                mepCompleteCalled = true;
-                if (message.getContent(Exception.class) != null) {
-                    throw ex;
-                }
-            }
-            ex = message.getExchange().get(Exception.class);
-            if (ex != null) {
-                if (!mepCompleteCalled) {
-                    completeExchange(exchange);
-                }
-                throw ex;
-            }
-
-            Integer responseCode = (Integer)exchange.get(Message.RESPONSE_CODE);
-            if (null != responseCode && 202 == responseCode) {
-                Endpoint ep = exchange.getEndpoint();
-                if (null != ep && null != ep.getEndpointInfo() && null == ep.getEndpointInfo()
-                    .getProperty("org.apache.cxf.ws.addressing.MAPAggregator.decoupledDestination")) {
-                    return null;
-                }
-            }
-
-            // Wait for a response if we need to
-            if (oi != null && !oi.getOperationInfo().isOneWay()) {
-                waitResponse(exchange);
-            }
-
-            // leave the input stream open for the caller
-            Boolean keepConduitAlive = (Boolean)exchange.get(Client.KEEP_CONDUIT_ALIVE);
-            if (keepConduitAlive == null || !keepConduitAlive) {
-                completeExchange(exchange);
-            }
-
-            // Grab the response objects if there are any
-            List<Object> resList = null;
-            Message inMsg = exchange.getInMessage();
-            if (inMsg != null) {
-                if (null != resContext) {
-                    resContext.putAll(inMsg);
-                    // remove the recursive reference if present
-                    resContext.remove(Message.INVOCATION_CONTEXT);
-                    responseContext.put(Thread.currentThread(), resContext);
-                }
-                resList = CastUtils.cast(inMsg.getContent(List.class));
-            }
-
-            // check for an incoming fault
-            ex = getException(exchange);
-
-            if (ex != null) {
-                throw ex;
-            }
-
-            if (resList != null) {
-                return resList.toArray();
-            }
-
-            return null;
-        }
-
-        private void completeExchange(org.apache.cxf.message.Exchange exchange) {
-            getConduitSelector().complete(exchange);
         }
         
         @SuppressWarnings("unchecked")
