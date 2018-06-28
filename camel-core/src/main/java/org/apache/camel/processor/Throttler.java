@@ -86,11 +86,10 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
     private boolean asyncDelayed;
     private boolean callerRunsWhenRejected = true;
     private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
-    // below 4 fields added for (throttling grouping)
+    // below 3 fields added for (throttling grouping)
     private Expression correlationExpression;
     private Map<Integer, DelayQueue<ThrottlePermit>> delayQueueCache;
-    private Map<Integer, Integer> throttleRatesMap = new HashMap<>();
-    private ExecutorService delayQueueCacheExecutorService;    
+    private Map<Integer, Integer> throttleRatesMap = new HashMap<>();    
 
     public Throttler(final CamelContext camelContext, final Processor processor, final Expression maxRequestsPerPeriodExpression, final long timePeriodMillis,
                      final ExecutorService asyncExecutor, final boolean shutdownAsyncExecutor, final boolean rejectExecution, Expression correlation) {
@@ -216,11 +215,24 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         }
     }
 
+    /**
+     * 
+     * Finds the right Delay Queue to put a permit into with the exchanges time arrival timestamp +  timePeriodInMillis 
+     * In case of asynchronous routing there may be cases where we create new group whose correlationExpression 
+     * might first hit after long series of exchanges with a different correlationExpression and are to be on hold in 
+     * their delayQueue so we need to find delay queue to add new ones while we create a new empty delay
+     * queue for the new group hit for the first time. that's why locating delay queues for those frequently
+     * hitting exchanges for the group during asynchronous routing would be better be asynchronous with asyncExecutor 
+     * 
+     * @param key is evaluated value of correlationExpression
+     * @param doneSync is a flag indicating if the exchange is routed asynchronously or not
+     * @return DelayQueue in which the exchange with permit expiry to be put into
+     */
     private DelayQueue<ThrottlePermit> locateDelayQueue(final Integer key, final boolean doneSync) throws InterruptedException, ExecutionException {        
         CompletableFuture<DelayQueue<ThrottlePermit>> futureDelayQueue = new CompletableFuture<>();
 
         if (!doneSync) {
-            delayQueueCacheExecutorService.submit(() -> {
+            asyncExecutor.submit(() -> {
                 futureDelayQueue.complete(findDelayQueue(key));
             });
         }
@@ -345,35 +357,22 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         if (isAsyncDelayed()) {
             ObjectHelper.notNull(asyncExecutor, "executorService", this);
         }
-        if (camelContext != null) {
-            int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(camelContext);
-            if (maxSize > 0) {
-                delayQueueCache = LRUCacheFactory.newLRUCache(16, maxSize, false);
-                log.debug("DelayQueues cache size: {}", maxSize);
-            } else {
-                delayQueueCache = LRUCacheFactory.newLRUCache(100);
-                log.debug("Defaulting DelayQueues cache size: {}", 100);
+        if (correlationExpression != null) {
+            if (camelContext != null) {
+                int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(camelContext);
+                if (maxSize > 0) {
+                    delayQueueCache = LRUCacheFactory.newLRUCache(16, maxSize, false);
+                    log.debug("DelayQueues cache size: {}", maxSize);
+                } else {
+                    delayQueueCache = LRUCacheFactory.newLRUCache(100);
+                    log.debug("Defaulting DelayQueues cache size: {}", 100);
+                }
+            }
+            if (delayQueueCache != null) {
+                ServiceHelper.startService(delayQueueCache);
             }
         }
-        if (delayQueueCache != null) {
-            ServiceHelper.startService(delayQueueCache);
-        }
-        if (delayQueueCacheExecutorService == null) {
-            String name = getClass().getSimpleName() + "-DelayQueueLocatorTask";
-            delayQueueCacheExecutorService = createDelayQueueCacheExecutorService(name);
-        }
         super.doStart();
-    }
-    
-    /**
-     * Strategy to create the thread pool for locating right DelayQueue from the case as a background task
-     *
-     * @param name  the suggested name for the background thread
-     * @return the thread pool
-     */
-    protected synchronized ExecutorService createDelayQueueCacheExecutorService(String name) {
-        // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
-        return camelContext.getExecutorServiceManager().newCachedThreadPool(this, name);
     }
 
     @SuppressWarnings("rawtypes")
@@ -382,21 +381,20 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         if (shutdownAsyncExecutor && asyncExecutor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(asyncExecutor);
         }
-        if (delayQueueCacheExecutorService != null) {
-            camelContext.getExecutorServiceManager().shutdownNow(delayQueueCacheExecutorService);
-        }
-        if (delayQueueCache != null) {
-            ServiceHelper.stopService(delayQueueCache);
-            if (log.isDebugEnabled()) {
-                if (delayQueueCache instanceof LRUCache) {
-                    log.debug("Clearing deleay queues cache[size={}, hits={}, misses={}, evicted={}]",
-                            delayQueueCache.size(), ((LRUCache) delayQueueCache).getHits(), ((LRUCache) delayQueueCache).getMisses(), ((LRUCache) delayQueueCache).getEvicted());
+        if (correlationExpression != null) {
+            if (delayQueueCache != null) {
+                ServiceHelper.stopService(delayQueueCache);
+                if (log.isDebugEnabled()) {
+                    if (delayQueueCache instanceof LRUCache) {
+                        log.debug("Clearing deleay queues cache[size={}, hits={}, misses={}, evicted={}]",
+                                delayQueueCache.size(), ((LRUCache) delayQueueCache).getHits(), ((LRUCache) delayQueueCache).getMisses(), ((LRUCache) delayQueueCache).getEvicted());
+                    }
                 }
+                delayQueueCache.clear();
             }
-            delayQueueCache.clear();
-        }
-        if (throttleRatesMap != null && throttleRatesMap.size() > 0) {
-            throttleRatesMap.clear();
+            if (throttleRatesMap != null && throttleRatesMap.size() > 0) {
+                throttleRatesMap.clear();
+            }
         }
         super.doShutdown();
     }
