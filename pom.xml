@@ -52,6 +52,7 @@
     <compiler.fork>false</compiler.fork>
 
     <maven-compiler-plugin-version>3.7.0</maven-compiler-plugin-version>
+    <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
     <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
     <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
     <surefire.version>${maven-surefire-plugin-version}</surefire.version>
@@ -193,7 +194,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${maven-javadoc-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -614,7 +615,7 @@
                   <goal>jar</goal>
                 </goals>
                 <configuration>
-                  <additionalparam>${javadoc.opts}</additionalparam>
+                  <additionalOptions>${javadoc.opts}</additionalOptions>
                 </configuration>
               </execution>
             </executions>
@@ -684,7 +685,7 @@
               </execution>
             </executions>
             <configuration>
-              <additionalparam>${javadoc.opts}</additionalparam>
+              <additionalOptions>${javadoc.opts}</additionalOptions>
             </configuration>
           </plugin>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->
