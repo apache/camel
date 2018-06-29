@@ -19,20 +19,17 @@ package org.apache.camel.builder;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
+ * @version
  */
 public class RouteBuilderAddRoutesTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                includeRoutes(new MyExtraRoute());
+        return new Routes() {{
+            includeRoutes(new MyExtraRoute());
 
-                from("direct:start").to("mock:result");
-            }
-        };
+            from("direct:start").to("mock:result");
+        }};
     }
 
     public void testAddRoutes() throws Exception {
