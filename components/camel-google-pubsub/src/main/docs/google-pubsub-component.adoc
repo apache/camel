@@ -24,7 +24,7 @@ for this component:
 
 === URI Format
 
-The GoogleMail Component uses the following URI format:
+The Google Pubsub Component uses the following URI format:
 
 ----
 google-pubsub://project-id:destinationName?[options]
