@@ -254,7 +254,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
         // then we need to use a different canSee algorithm that works outside real OSGi
-        if (bundle.getBundleId() > 0) {
+        if (bundle.getBundleId() >= 0) {
             Bundle root = bundle.getBundleContext().getBundle(0);
             if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
                 return checkCompat(bundle, clazz);
