@@ -31,6 +31,14 @@ public class SplitGroupSkipFirstTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testSplitSkipFirstOnlyHeader() throws Exception {
+        getMockEndpoint("mock:group").expectedBodiesReceived("");
+
+        template.sendBody("direct:start", "##comment\n");
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
