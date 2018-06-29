@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.22.0</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -116,7 +115,7 @@
       org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests/>
+    <platform.skip.tests />
   </properties>
 
   <dependencies>
@@ -248,7 +247,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -309,12 +308,11 @@
             <configuration>
               <target>
                 <echo>Including metadata properties files in camel-core.jar</echo>
-                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}.jar"
-                     update="true">
-                  <fileset dir="${basedir}/target/generated/camel/components/" includes="**/*"/>
-                  <fileset dir="${basedir}/target/generated/camel/dataformats/" includes="**/*"/>
-                  <fileset dir="${basedir}/target/generated/camel/languages/" includes="**/*"/>
-                  <fileset dir="${basedir}/target/generated/camel/models/" includes="**/*"/>
+                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}.jar" update="true">
+                  <fileset dir="${basedir}/target/generated/camel/components/" includes="**/*" />
+                  <fileset dir="${basedir}/target/generated/camel/dataformats/" includes="**/*" />
+                  <fileset dir="${basedir}/target/generated/camel/languages/" includes="**/*" />
+                  <fileset dir="${basedir}/target/generated/camel/models/" includes="**/*" />
                 </jar>
               </target>
             </configuration>
