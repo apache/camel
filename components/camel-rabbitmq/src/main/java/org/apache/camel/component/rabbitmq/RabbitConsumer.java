@@ -174,7 +174,7 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         if (channel == null) {
             throw new IOException("The RabbitMQ channel is not open");
         }
-        tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), this);
+        tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), "", false, consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
     /**
