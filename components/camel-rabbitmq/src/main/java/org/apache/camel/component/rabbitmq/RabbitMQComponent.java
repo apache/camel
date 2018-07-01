@@ -59,6 +59,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private boolean autoDelete = true;
     @Metadata(label = "common", defaultValue = "true")
     private boolean durable = true;
+    @Metadata(label = "consumer")
+    private boolean exclusiveConsumer;
     @Metadata(label = "common")
     private boolean exclusive;
     @Metadata(label = "common")
@@ -229,6 +231,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setAutoDelete(isAutoDelete());
         endpoint.setDurable(isDurable());
         endpoint.setExclusive(isExclusive());
+        endpoint.setExclusiveConsumer(isExclusiveConsumer());
         endpoint.setPassive(isPassive());
         endpoint.setSkipExchangeDeclare(isSkipExchangeDeclare());
         endpoint.setSkipQueueBind(isSkipQueueBind());
@@ -740,6 +743,18 @@ public class RabbitMQComponent extends UriEndpointComponent {
      */
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public boolean isExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    /**
+     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
+     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     */
+    public void setExclusiveConsumer(boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
     }
 
     public boolean isPassive() {

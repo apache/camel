@@ -345,6 +345,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     }
 
     @Test
+    public void createEndpointWithExclusiveConsumerEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusiveConsumer=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isExclusiveConsumer());
+    }
+
+    @Test
     public void createEndpointWithPassiveEnabled() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?passive=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isPassive());
