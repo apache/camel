@@ -97,10 +97,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     protected void afterConfigureProperties() {
         // create HTTP connection eagerly, a good way to validate configuration
         switch (apiName) {
-        case SEND:
+        case CLIENT:
             createAS2ClientConnection();
             break;
-        case LISTEN:
+        case SERVER:
             createAS2ServerConnection();
             break;
         default:
@@ -129,10 +129,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     private void createApiProxy(ApiMethod method, Map<String, Object> args) {
         switch (apiName) {
-        case SEND:
+        case CLIENT:
             apiProxy = new AS2ClientManager(getAS2ClientConnection());
             break;
-        case LISTEN:
+        case SERVER:
             apiProxy = new AS2ServerManager(getAS2ServerConnection());
             break;
         default:
