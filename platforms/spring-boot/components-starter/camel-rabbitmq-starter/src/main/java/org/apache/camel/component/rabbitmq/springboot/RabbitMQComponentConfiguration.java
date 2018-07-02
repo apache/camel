@@ -235,6 +235,12 @@ public class RabbitMQComponentConfiguration
      */
     private Boolean exclusive = false;
     /**
+     * Request exclusive access to the queue (meaning only this consumer can
+     * access the queue). This is useful when you want a long-lived shared queue
+     * to be temporarily accessible by just one consumer.
+     */
+    private Boolean exclusiveConsumer = false;
+    /**
      * Passive queues depend on the queue already to be available at RabbitMQ.
      */
     private Boolean passive = false;
@@ -585,6 +591,14 @@ public class RabbitMQComponentConfiguration
 
     public void setExclusive(Boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public Boolean getExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    public void setExclusiveConsumer(Boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
     }
 
     public Boolean getPassive() {
