@@ -90,6 +90,11 @@
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -147,17 +152,17 @@
             <configuration>
               <apis>
                 <api>
-                    <apiName>send</apiName>
+                    <apiName>client</apiName>
                     <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
                     <fromJavadoc>
                       <excludeMethods>createSigningGenerator</excludeMethods>
                     </fromJavadoc>
                 </api>
                 <api>
-                    <apiName>listen</apiName>
+                    <apiName>server</apiName>
                     <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
 	                <fromJavadoc>
-	                  <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
+                      <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
 	                </fromJavadoc>
                     <excludeConfigNames>handler</excludeConfigNames>
                 </api>

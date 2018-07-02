@@ -24,19 +24,20 @@ import java.net.SocketException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
+import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
 import org.apache.http.HttpInetConnection;
-import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpServerConnection;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.HttpProcessorBuilder;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.protocol.HttpService;
-import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseConnControl;
 import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
@@ -53,7 +54,7 @@ public class AS2ServerConnection {
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
 
-    static class RequestListenerThread extends Thread {
+    class RequestListenerThread extends Thread {
 
         private final ServerSocket serversocket;
         private final HttpService httpService;
@@ -64,20 +65,14 @@ public class AS2ServerConnection {
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
-            new ResponseContent(true),
-            new ResponseServer(originServer),
-            new ResponseDate(),
-            new ResponseConnControl(),
-            new ResponseMDN(as2Version, serverFqdn, signingCertificateChain, signingPrivateKey)
-            });
+            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn, port, signingCertificateChain, signingPrivateKey);
 
             reqistry = new UriHttpRequestHandlerMapper();
 
             // Set up the HTTP service
             httpService = new HttpService(inhttpproc, reqistry);
         }
-
+        
         @Override
         public void run() {
             LOG.info("Listening on port " + this.serversocket.getLocalPort());
@@ -116,7 +111,7 @@ public class AS2ServerConnection {
 
     }
 
-    static class RequestHandlerThread extends Thread {
+    class RequestHandlerThread extends Thread {
         private HttpService httpService;
         private HttpServerConnection serverConnection;
 
@@ -140,8 +135,19 @@ public class AS2ServerConnection {
                 while (!Thread.interrupted()) {
 
                     this.httpService.handleRequest(this.serverConnection, context);
-                    
+
                     // Send asynchronous MDN if any.
+                    HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+                    String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
+                            String.class);
+                    if (recipientAddress != null) {
+                        DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
+                                AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
+                                DispositionNotificationMultipartReportEntity.class);
+                        AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(as2Version,
+                                originServer, serverFqdn, signingCertificateChain, signingPrivateKey);
+                        asynchronousMDNManager.send(multipartReportEntity, recipientAddress);
+                    }
 
                 }
             } catch (final ConnectionClosedException ex) {
@@ -214,6 +220,17 @@ public class AS2ServerConnection {
         if (listenerThread != null) {
             listenerThread.unregisterHandler(requestUri);
         }
+    }
+
+    protected HttpProcessor initProtocolProcessor(String as2Version,
+                                                  String originServer,
+                                                  String serverFqdn,
+                                                  int port,
+                                                  Certificate[] signingCertificateChain,
+                                                  PrivateKey signingPrivateKey) {
+        return HttpProcessorBuilder.create().add(new ResponseContent(true)).add(new ResponseServer(originServer))
+                .add(new ResponseDate()).add(new ResponseConnControl())
+                .add(new ResponseMDN(as2Version, serverFqdn, signingCertificateChain, signingPrivateKey)).build();
     }
 
 }

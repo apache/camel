@@ -433,7 +433,7 @@ public class AS2MessageTest {
     }
 
     @Test
-    public void synchronousMdnMessageTest() throws Exception {
+    public void asynchronousMdnMessageTest() throws Exception {
 
         AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 certList.toArray(new X509Certificate[0]), signingKP.getPrivate());

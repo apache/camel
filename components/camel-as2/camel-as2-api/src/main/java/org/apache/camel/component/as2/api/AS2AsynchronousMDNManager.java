@@ -24,8 +24,6 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
-import org.apache.camel.component.as2.api.entity.EntityParser;
-import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAsynchronousMDN;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.HttpException;
@@ -82,7 +80,13 @@ public class AS2AsynchronousMDNManager {
      */
     public static final String RECIPIENT_ADDRESS = CAMEL_AS2_ASYNC_MDN_PREFIX + "recipient-address";
 
+    /**
+     * The HTTP Context Attribute containing an asynchronous MDN receipt.
+     */
+    public static final String ASYNCHRONOUS_MDN = CAMEL_AS2_ASYNC_MDN_PREFIX + "asynchronous-mdn";
+
     private HttpProcessor httpProcessor;
+    
     @SuppressWarnings("unused")
     private Certificate[] signingCertificateChain;
     @SuppressWarnings("unused")
@@ -120,7 +124,7 @@ public class AS2AsynchronousMDNManager {
         
         String requestUri = buildRequestURI(uri);
         
-        AS2BHttpClientConnection httpConnection = new AS2BHttpClientConnection(8 * 1024);
+        DefaultBHttpClientConnection httpConnection = new DefaultBHttpClientConnection(8 * 1024);
         
         try {
             
@@ -145,7 +149,6 @@ public class AS2AsynchronousMDNManager {
             try {
                 httpContext.setAttribute(AS2_CONNECTION, httpConnection);
                 response = send(httpConnection, request, httpContext);
-                EntityParser.parseAS2MessageEntity(response);
             } catch (IOException e) {
                 throw new HttpException("Failed to send http request message", e);
             }
@@ -159,7 +162,7 @@ public class AS2AsynchronousMDNManager {
                 httpConnection.flush();
                 httpConnection.close();
             } catch (IOException e) {
-                throw new HttpException("Failed to flush and close connection", e);
+                // Ignore.
             }
         }
     }
