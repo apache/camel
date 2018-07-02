@@ -23,6 +23,8 @@ def BUILD_JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
+def jdk9_result, jdk10_result, jdk11_result
+
 pipeline {
 
     agent {
@@ -56,7 +58,9 @@ pipeline {
                 jdk 'JDK 1.9 (latest)'
             }
             steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                script {
+                    jdk9_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                }
             }
             post {
                 always {
@@ -72,7 +76,9 @@ pipeline {
                 jdk 'JDK 10 (latest)'
             }
             steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                script {
+                    jdk10_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                }
             }
             post {
                 always {
@@ -88,7 +94,9 @@ pipeline {
                 jdk 'JDK 11 (latest)'
             }
             steps {
-                sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                script {
+                    jdk11_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                }
             }
             post {
                 always {
@@ -101,5 +109,12 @@ pipeline {
 
     }
 
+    post {
+        always {
+            script {
+                currentBuild.result = jdk9_result == 0 && jdk10_result == 0 && jdk11_result == 0 ? 'SUCCESS' : 'FAILURE'
+            }
+        }
+    }
 }
 
