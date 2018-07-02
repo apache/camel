@@ -85,7 +85,7 @@ pipeline {
 
         stage('Test JDK 11') {
             tools {
-                jdk 'JDK 11 b8 (early access build)'
+                jdk 'JDK 11 (latest)'
             }
             steps {
                 sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
