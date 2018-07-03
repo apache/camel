@@ -591,7 +591,7 @@
     <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
     <restlet-yaml-version>1.13</restlet-yaml-version>
     <revapi-java-version>0.18.0</revapi-java-version>
-    <revapi-maven-plugin-version>0.10.3</revapi-maven-plugin-version>
+    <revapi-maven-plugin-version>0.10.4</revapi-maven-plugin-version>
     <rhino-bundle-version>1.7.7.1_1</rhino-bundle-version>
     <rhino-version>1.7.7.1</rhino-version>
     <rhino-js-version>1.7R2</rhino-js-version>
