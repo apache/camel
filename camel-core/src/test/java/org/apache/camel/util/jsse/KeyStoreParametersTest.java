@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchProviderException;
 
 import org.apache.camel.CamelContext;
@@ -102,12 +103,22 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     }
     
     public void testExplicitInvalidType() throws Exception {
-        if (getJavaMajorVersion() == 9) {
+    	KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
+        ksp.setType("1234");
+        
+        try {
+            ksp.createKeyStore();
+            fail();
+        } catch (KeyStoreException e) {
+            // expected
+        }
+        
+        if (getJavaMajorVersion() >= 9) {
             //checkout http://openjdk.java.net/jeps/229
             return;
         }
         
-        KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
+        ksp = this.createMinimalKeyStoreParameters();
         ksp.setType("pkcs12");
         
         try {
