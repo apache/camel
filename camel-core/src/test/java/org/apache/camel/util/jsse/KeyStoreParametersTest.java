@@ -103,7 +103,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     }
     
     public void testExplicitInvalidType() throws Exception {
-    	KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
+        KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setType("1234");
         
         try {
