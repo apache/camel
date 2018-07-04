@@ -43,6 +43,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -76,6 +77,7 @@ public class CxfConsumer extends DefaultConsumer {
         if (cxfEndpoint.getCxfEndpointConfigurer() != null) {
             cxfEndpoint.getCxfEndpointConfigurer().configureServer(server);
         }
+        server.getEndpoint().getEndpointInfo().setProperty("serviceClass", cxfEndpoint.getServiceClass());
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
             server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
         }
