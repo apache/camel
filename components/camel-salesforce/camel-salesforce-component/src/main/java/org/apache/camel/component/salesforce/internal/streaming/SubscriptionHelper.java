@@ -40,6 +40,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
+import org.cometd.client.BayeuxClient.State;
 import org.cometd.client.transport.ClientTransport;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.api.Request;
@@ -320,9 +321,11 @@ public class SubscriptionHelper extends ServiceSupport {
         client.getChannel(META_CONNECT).removeListener(connectListener);
         client.getChannel(META_HANDSHAKE).removeListener(handshakeListener);
 
-        boolean disconnected = client.disconnect(timeout);
+        client.disconnect();
+        boolean disconnected = client.waitFor(timeout, State.DISCONNECTED);
         if (!disconnected) {
             LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), timeout);
+            client.abort();
         }
 
         client = null;
