@@ -2366,9 +2366,10 @@
   </feature>
   <feature name='camel-web3j' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.web3j/core/${web3j-version}</bundle>
-    <bundle dependency='true'>mvn:org.web3j/geth/${web3j-version}</bundle>
-    <bundle dependency='true'>mvn:org.web3j/parity/${web3j-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.web3j/core/${web3j-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.web3j/geth/${web3j-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.web3j/parity/${web3j-version}</bundle>
+    <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-web3j/${project.version}</bundle>
   </feature>
   <feature name='camel-wordpress' version='${project.version}' resolver='(obr)' start-level='50'>
