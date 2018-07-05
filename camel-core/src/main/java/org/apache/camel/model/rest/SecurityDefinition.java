@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
+/**
+ * Rest security definition
+ */
 @Metadata(label = "rest,security", title = "Security")
 @XmlRootElement(name = "security")
 @XmlAccessorType(XmlAccessType.FIELD)
