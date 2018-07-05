@@ -111,13 +111,13 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Properties")).append(sortMap(exchange.getProperties()));
+            sb.append(style("Properties")).append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
         }
         if (showAll || showHeaders) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Headers")).append(sortMap(in.getHeaders()));
+            sb.append(style("Headers")).append(sortMap(filterHeaderAndProperties(in.getHeaders())));
         }
         if (showAll || showBodyType) {
             if (multiline) {
@@ -173,7 +173,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     if (multiline) {
                         sb.append(SEPARATOR);
                     }
-                    sb.append(style("OutHeaders")).append(sortMap(out.getHeaders()));
+                    sb.append(style("OutHeaders")).append(sortMap(filterHeaderAndProperties(out.getHeaders())));
                 }
                 if (showAll || showBodyType) {
                     if (multiline) {
@@ -233,6 +233,16 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
             return sb.toString();
         }
+    }
+
+    /**
+     * Filters the headers or properties before formatting them. No default behavior, but can be overridden.
+     *
+     * @param map
+     * @return
+     */
+    protected Map<String, Object> filterHeaderAndProperties(Map<String, Object> map) {
+        return map;
     }
 
     public boolean isShowExchangeId() {
