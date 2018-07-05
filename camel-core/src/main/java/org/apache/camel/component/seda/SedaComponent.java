@@ -223,7 +223,7 @@ public class SedaComponent extends UriEndpointComponent {
         }
 
         // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
-        boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
+        boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", Boolean.class, defaultBlockWhenFull);
         // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
         long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
         
