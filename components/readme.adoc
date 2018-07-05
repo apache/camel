@@ -540,7 +540,7 @@ Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 `metrics:metricsType:metricsName` | 2.14 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
 
 | link:camel-micrometer/src/main/docs/micrometer-component.adoc[Micrometer] (camel-micrometer) +
-`micrometer:metricsType:meterName` | 2.22 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
+`micrometer:metricsType:meterName` | 2.22 | To collect various metrics directly from Camel routes using the Micrometer library.
 
 | link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
 `mina:protocol:host:port` | 1.0 | *deprecated* Socket level networking using TCP or UDP with the Apache Mina 1.x library.
