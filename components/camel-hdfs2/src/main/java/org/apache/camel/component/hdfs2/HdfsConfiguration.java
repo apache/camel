@@ -170,7 +170,7 @@ public class HdfsConfiguration {
     }
 
     private List<HdfsProducer.SplitStrategy> getSplitStrategies(Map<String, Object> hdfsSettings) {
-        List<HdfsProducer.SplitStrategy> strategies = new ArrayList<HdfsProducer.SplitStrategy>();
+        List<HdfsProducer.SplitStrategy> strategies = new ArrayList<>();
         for (Object obj : hdfsSettings.keySet()) {
             String key = (String) obj;
             if ("splitStrategy".equals(key)) {

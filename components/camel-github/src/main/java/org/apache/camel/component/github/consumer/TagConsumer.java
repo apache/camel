@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class TagConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(TagConsumer.class);
 
-    private List<String> tagNames = new ArrayList<String>();
+    private List<String> tagNames = new ArrayList<>();
     
     public TagConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -46,7 +46,7 @@ public class TagConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<RepositoryTag> tags = getRepositoryService().getTags(getRepository());
         // In the end, we want tags oldest to newest.
-        Stack<RepositoryTag> newTags = new Stack<RepositoryTag>();
+        Stack<RepositoryTag> newTags = new Stack<>();
         for (RepositoryTag tag : tags) {
             if (!tagNames.contains(tag.getName())) {
                 newTags.push(tag);

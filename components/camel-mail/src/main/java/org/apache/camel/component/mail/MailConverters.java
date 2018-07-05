@@ -218,7 +218,7 @@ public final class MailConverters {
      */
     @Converter
     public static SortTerm[] toSortTerm(String sortTerm) {
-        ArrayList<SortTerm> result = new ArrayList<SortTerm>();
+        ArrayList<SortTerm> result = new ArrayList<>();
         
         if (sortTerm == null) {
             return null;

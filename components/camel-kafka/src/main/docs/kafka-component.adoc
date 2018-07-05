@@ -33,7 +33,7 @@ kafka:topic[?options]
 
 
 // component options: START
-The Kafka component supports 8 options which are listed below.
+The Kafka component supports 8 options, which are listed below.
 
 
 
@@ -72,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (90 parameters):
+==== Query Parameters (91 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,6 +80,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *brokers* (common) | URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers. This option is known as bootstrap.servers in the Kafka documentation. |  | String
 | *clientId* (common) | The client id is a user-specified string sent in each request to help trace calls. It should logically identify the application making the request. |  | String
+| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *reconnectBackoffMaxMs* (common) | The maximum amount of time in milliseconds to wait when reconnecting to a broker that has repeatedly failed to connect. If provided, the backoff per host will increase exponentially for each consecutive connection failure, up to this maximum. After calculating the backoff increase, 20% random jitter is added to avoid connection storms. | 1000 | Integer
 | *allowManualCommit* (consumer) | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | boolean
 | *autoCommitEnable* (consumer) | If true, periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin. | true | Boolean
@@ -217,9 +218,22 @@ After the message is sent to Kafka, the following headers are available
 ==== Consuming messages from Kafka
 
 Here is the minimal route you need in order to read messages from Kafka.
+
 [source,java]
 ----
 from("kafka:test?brokers=localhost:9092")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+----
+
+If you need to consume messages from multiple topics you can use a comma separated list of topic names
+
+[source,java]
+----
+from("kafka:test,test1,test2?brokers=localhost:9092")
     .log("Message received from Kafka : ${body}")
     .log("    on the topic ${headers[kafka.TOPIC]}")
     .log("    on the partition ${headers[kafka.PARTITION]}")
@@ -247,9 +261,13 @@ camelContext.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
         from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-                     "&groupId=A" +                            //
-                     "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
-                     "&offsetRepository=#offsetRepo")          // Keep the offsets in the previously configured repository
+                     // Setup the topic and broker address
+                     "&groupId=A" +
+                     // The consumer processor group ID
+                     "&autoOffsetReset=earliest" +
+                     // Ask to start from the beginning if we have unknown offset
+                     "&offsetRepository=#offsetRepo")
+                     // Keep the offsets in the previously configured repository
                 .to("mock:result");
     }
 });
@@ -308,8 +326,11 @@ camelContext.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
         from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-                     "&groupId=A" +                            //
-                     "&sslContextParameters=#ssl")             // Reference the SSL configuration
+                     // Setup the topic and broker address
+                     "&groupId=A" +
+                     // The consumer processor group ID
+                     "&sslContextParameters=#ssl")
+                     // Reference the SSL configuration
                 .to("mock:result");
     }
 });
@@ -365,13 +386,15 @@ In XML:
 [source,xml]
 ----
 <!-- simple -->
-<bean id="insertDbIdemRepo" class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
+<bean id="insertDbIdemRepo"
+  class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
   <property name="topic" value="idempotent-db-inserts"/>
   <property name="bootstrapServers" value="localhost:9091"/>
 </bean>
 
 <!-- complex -->
-<bean id="insertDbIdemRepo" class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
+<bean id="insertDbIdemRepo"
+  class="org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository">
   <property name="topic" value="idempotent-db-inserts"/>
   <property name="maxCacheSize" value="10000"/>
   <property name="consumerConfig">
@@ -408,7 +431,8 @@ You can then use the `KafkaManualCommit` from Java code such as a Camel `Process
 [source,java]
 ----
 public void process(Exchange exchange) {
-    KafkaManualCommit manual = exchange.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+    KafkaManualCommit manual =
+        exchange.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
     manual.commitSync();
 }
 ----
@@ -417,3 +441,25 @@ This will force a synchronous commit which will block until the commit is acknow
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
+
+=== Kafka Headers propagation
+*Available as of Camel 2.22*
+
+When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
+Producing flow backed by same behaviour - camel headers of particular exchange will be propagated to kafka message headers.
+
+Since kafka headers allows only `byte[]` values, in order camel exchnage header to be propagated its value should be serialized to `bytes[]`,
+otherwise header will be skipped.
+Following header value types are supported: `String`, `Integer`, `Long`, `Double`, `byte[]`.
+Note: all headers propagated *from* kafka *to* camel exchange will contain `byte[]` value.
+
+By default all headers are being filtered by `KafkaHeaderFilterStrategy`.
+Strategy filters out headers which start with `Camel` or `org.apache.camel` prefixes.
+Default strategy can be overridden by using `headerFilterStrategy` uri parameter in both `to` and `from` routes:
+```
+from("kafka:my_topic?headerFilterStrategy=#myStrategy")
+...
+.to("kafka:my_topic?headerFilterStrategy=#myStrategy")
+```
+
+`myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.

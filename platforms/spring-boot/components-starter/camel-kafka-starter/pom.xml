@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components-starter</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
   <artifactId>camel-kafka-starter</artifactId>
   <packaging>jar</packaging>
@@ -38,6 +38,17 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-kafka</artifactId>
       <version>${project.version}</version>
+      <!-- managed by spring boot BOM -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.kafka</groupId>
+          <artifactId>kafka_2.11</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.kafka</groupId>
+          <artifactId>kafka-clients</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>

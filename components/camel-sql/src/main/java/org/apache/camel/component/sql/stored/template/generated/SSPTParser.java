@@ -211,7 +211,6 @@ public class SSPTParser implements SSPTParserConstants {
 
   final public Token ParameterSqlType() throws ParseException {
     Token t;
-    Token scaleToken;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
       t = jj_consume_token(NUMBER);
@@ -379,7 +378,7 @@ public class SSPTParser implements SSPTParserConstants {
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<>();
   private int[] jj_expentry;
   private int jj_kind = -1;
 

@@ -76,7 +76,7 @@ public class WordpressComponent extends DefaultComponent {
     }
 
     private WordpressComponentConfiguration copyComponentProperties() throws Exception {
-        Map<String, Object> componentProperties = new HashMap<String, Object>();
+        Map<String, Object> componentProperties = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
 
         // create endpoint configuration with component properties

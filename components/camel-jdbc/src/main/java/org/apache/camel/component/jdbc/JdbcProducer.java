@@ -195,7 +195,7 @@ public class JdbcProducer extends DefaultProducer {
             stmt = conn.createStatement();
 
             if (parameters != null && !parameters.isEmpty()) {
-                Map<String, Object> copy = new HashMap<String, Object>(parameters);
+                Map<String, Object> copy = new HashMap<>(parameters);
                 IntrospectionSupport.setProperties(stmt, copy);
             }
 
@@ -377,7 +377,7 @@ public class JdbcProducer extends DefaultProducer {
         Class<?> outputClass = getEndpoint().getCamelContext().getClassResolver().resolveClass(getEndpoint().getOutputClass());
         Object answer = getEndpoint().getCamelContext().getInjector().newInstance(outputClass);
 
-        Map<String, Object> properties = new LinkedHashMap<String, Object>();
+        Map<String, Object> properties = new LinkedHashMap<>();
 
         // map row names using the bean row mapper
         for (Map.Entry<String, Object> entry : row.entrySet()) {

@@ -327,7 +327,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(output);
         return answer;
     }
@@ -1217,6 +1217,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (!newException && shouldRedeliver && !data.currentRedeliveryPolicy.isLogRetryAttempted()) {
                 // do not log retry attempts
                 return;
+            }
+
+            if (!newException && shouldRedeliver) {
+                if (data.currentRedeliveryPolicy.isLogRetryAttempted()) {
+                    if ((data.currentRedeliveryPolicy.getRetryAttemptedLogInterval() > 1) && (data.redeliveryCounter % data.currentRedeliveryPolicy.getRetryAttemptedLogInterval()) != 0) {
+                        // do not log retry attempt because it is excluded by the retryAttemptedLogInterval
+                        return;
+                    }
+                } else {
+                    // do not log retry attempts
+                    return;
+                }
             }
 
             if (!newException && !shouldRedeliver && !data.currentRedeliveryPolicy.isLogExhausted()) {

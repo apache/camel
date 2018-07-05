@@ -68,7 +68,7 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         private Map<Object, Object> property;
 
         public MyObjectMessage() {
-            this.property = new HashMap<Object, Object>();
+            this.property = new HashMap<>();
         }
 
         public Map<Object, Object> getProperty() {

@@ -118,7 +118,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     public void testDefaultNamespaceContextAnotherCtr() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "http://acme/cheese");
         DefaultNamespaceContext context = new DefaultNamespaceContext(null, map);
 

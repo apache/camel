@@ -42,7 +42,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JOLT component supports 2 options which are listed below.
+The JOLT component supports 2 options, which are listed below.
 
 
 

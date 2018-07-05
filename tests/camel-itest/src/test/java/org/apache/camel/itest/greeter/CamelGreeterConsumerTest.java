@@ -54,7 +54,7 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
         assertNotNull(camelContext);
 
         ProducerTemplate template = camelContext.createProducerTemplate();
-        List<String> params = new ArrayList<String>();
+        List<String> params = new ArrayList<>();
         params.add("Willem");
         Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                                                    params, CxfConstants.OPERATION_NAME, "greetMe");

@@ -39,7 +39,7 @@ accessible from the registry.
 
 
 // component options: START
-The Infinispan component supports 3 options which are listed below.
+The Infinispan component supports 3 options, which are listed below.
 
 
 
@@ -92,7 +92,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *operation* (producer) | The operation to perform. | PUT | InfinispanOperation
 | *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
-| *cacheContainerConfiguration* (advanced) | The CacheContainer configuration |  | Object
+| *cacheContainerConfiguration* (advanced) | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
 | *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
 | *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
 | *flags* (advanced) | A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote caches. |  | String
@@ -156,6 +156,24 @@ from("direct:start")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L)
     .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT.constant(TimeUnit.MILLISECONDS.toString())
     .to("infinispan:myCacheName");
+----
+
+* Retrieve a specific key from the remote cache using a cache container configuration with additional parameters (host, port and protocol version):
++
+[source,java]
+----
+org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder()
+    .addServer()
+        .host("localhost")
+        .port(9999)
+        .version(org.infinispan.client.hotrod.ProtocolVersion.PROTOCOL_VERSION_25)
+    .build();
+...
+
+from("direct:start")
+    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
+    .setHeader(InfinispanConstants.KEY).constant("123")
+    .to("infinispan?cacheContainerConfiguration=#cacheContainerConfiguration");
 ----
 
 ### Using the Infinispan based idempotent repository

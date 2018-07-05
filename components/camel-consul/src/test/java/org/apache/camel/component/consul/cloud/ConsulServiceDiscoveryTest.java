@@ -18,33 +18,45 @@ package org.apache.camel.component.consul.cloud;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.agent.ImmutableRegCheck;
 import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.ConsulConfiguration;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.component.consul.ConsulTestSupport;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.springframework.util.SocketUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class ConsulServiceDiscoveryTest {
+public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
     private AgentClient client;
     private List<Registration> registrations;
 
-    @Before
-    public void setUp() throws Exception {
-        client = Consul.builder().build().agentClient();
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
+    protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+
+        client = getConsul().agentClient();
         registrations = new ArrayList<>(3);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 6; i++) {
+            final boolean healty = ThreadLocalRandom.current().nextBoolean();
+            final int port = SocketUtils.findAvailableTcpPort();
+
+            Registration.RegCheck c = ImmutableRegCheck.builder()
+                .ttl("1m")
+                .status(healty ? "passing" : "critical")
+                .build();
+
             Registration r = ImmutableRegistration.builder()
                 .id("service-" + i)
                 .name("my-service")
@@ -52,7 +64,10 @@ public class ConsulServiceDiscoveryTest {
                 .addTags("a-tag")
                 .addTags("key1=value1")
                 .addTags("key2=value2")
-                .port(9000 + i)
+                .addTags("healthy=" + healty)
+                .putMeta("meta-key", "meta-val")
+                .port(port)
+                .check(c)
                 .build();
 
             client.register(r);
@@ -60,8 +75,10 @@ public class ConsulServiceDiscoveryTest {
         }
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @Override
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
         registrations.forEach(r -> client.deregister(r.getId()));
     }
 
@@ -72,19 +89,23 @@ public class ConsulServiceDiscoveryTest {
     @Test
     public void testServiceDiscovery() throws Exception {
         ConsulConfiguration configuration = new ConsulConfiguration();
+        configuration.setUrl(consulUrl());
+
         ServiceDiscovery discovery = new ConsulServiceDiscovery(configuration);
 
         List<ServiceDefinition> services = discovery.getServices("my-service");
         assertNotNull(services);
-        assertEquals(3, services.size());
+        assertEquals(6, services.size());
 
         for (ServiceDefinition service : services) {
-            assertFalse(service.getMetadata().isEmpty());
-            assertTrue(service.getMetadata().containsKey("service_name"));
-            assertTrue(service.getMetadata().containsKey("service_id"));
-            assertTrue(service.getMetadata().containsKey("a-tag"));
-            assertTrue(service.getMetadata().containsKey("key1"));
-            assertTrue(service.getMetadata().containsKey("key2"));
+            Assertions.assertThat(service.getMetadata()).isNotEmpty();
+            Assertions.assertThat(service.getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, "my-service");
+            Assertions.assertThat(service.getMetadata()).containsKey(ServiceDefinition.SERVICE_META_ID);
+            Assertions.assertThat(service.getMetadata()).containsKey("a-tag");
+            Assertions.assertThat(service.getMetadata()).containsEntry("key1", "value1");
+            Assertions.assertThat(service.getMetadata()).containsEntry("key2", "value2");
+            Assertions.assertThat(service.getMetadata()).containsEntry("meta-key", "meta-val");
+            Assertions.assertThat("" + service.getHealth().isHealthy()).isEqualTo(service.getMetadata().get("healthy"));
         }
     }
 }

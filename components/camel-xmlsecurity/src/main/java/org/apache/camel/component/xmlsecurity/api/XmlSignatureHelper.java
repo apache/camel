@@ -244,7 +244,7 @@ public final class XmlSignatureHelper {
         XPathAndFilter xpathAndFilter = new XPathAndFilter();
         xpathAndFilter.setXpath(xpath);
         xpathAndFilter.setFilter(filter);
-        List<XPathAndFilter> list = new ArrayList<XmlSignatureHelper.XPathAndFilter>(1);
+        List<XPathAndFilter> list = new ArrayList<>(1);
         list.add(xpathAndFilter);
         return getXPath2Transform(list, namespaceMap);
     }
@@ -278,7 +278,7 @@ public final class XmlSignatureHelper {
     }
 
     private static List<XPathType> getXPathTypeList(List<XPathAndFilter> xpathAndFilterList, Map<String, String> namespaceMap) {
-        List<XPathType> list = new ArrayList<XPathType>(xpathAndFilterList.size());
+        List<XPathType> list = new ArrayList<>(xpathAndFilterList.size());
         for (XPathAndFilter xpathAndFilter : xpathAndFilterList) {
             XPathType.Filter xpathFilter;
             if (XPathType.Filter.INTERSECT.toString().equals(xpathAndFilter.getFilter())) {
@@ -380,7 +380,7 @@ public final class XmlSignatureHelper {
     }
 
     public static List<Node> getTextAndElementChildren(Node node) {
-        List<Node> result = new LinkedList<Node>();
+        List<Node> result = new LinkedList<>();
         NodeList children = node.getChildNodes();
         if (children == null) {
             return result;

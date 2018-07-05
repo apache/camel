@@ -115,7 +115,7 @@ from("direct:start")
 
 
 // component options: START
-The HTTP component supports 8 options which are listed below.
+The HTTP component supports 8 options, which are listed below.
 
 
 
@@ -318,7 +318,7 @@ HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class
 === Using client timeout - SO_TIMEOUT
 
 See the unit test in
-http://svn.apache.org/viewvc?view=rev&revision=781775[this link]
+https://github.com/apache/camel/blob/master/components/camel-jetty9/src/test/java/org/apache/camel/component/jetty/HttpProducerSOTimeoutTest.java[this link]
 
 === More Examples
 

@@ -301,7 +301,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Set<String> getKeys() {
         List<Row> rows = selectKeyIds();
-        Set<String> keys = new HashSet<String>(rows.size());
+        Set<String> keys = new HashSet<>(rows.size());
         String keyColumnName = getKeyColumn();
         for (Row row : rows) {
             keys.add(row.getString(keyColumnName));
@@ -318,7 +318,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Set<String> scan(CamelContext camelContext) {
         List<Row> rows = selectKeyIds();
-        Set<String> exchangeIds = new HashSet<String>(rows.size());
+        Set<String> exchangeIds = new HashSet<>(rows.size());
         for (Row row : rows) {
             exchangeIds.add(row.getString(exchangeIdColumn));
         }

@@ -182,7 +182,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
-        return new HashSet<Class>(Arrays.asList(BlueprintCamelContext.class));
+        return new HashSet<>(Arrays.asList(BlueprintCamelContext.class));
     }
 
     public Metadata parse(Element element, ParserContext context) {
@@ -257,7 +257,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
         factory.setId(".camelBlueprint.passThrough." + contextId);
-        factory.setObject(new PassThroughCallable<Object>(value));
+        factory.setObject(new PassThroughCallable<>(value));
 
         MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
         factory2.setId(".camelBlueprint.factory." + contextId);

@@ -48,7 +48,7 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testSearchFolder() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", "0");
         // parameter type is String

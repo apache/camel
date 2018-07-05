@@ -273,7 +273,7 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        nsmap = new HashMap<String, String>();
+        nsmap = new HashMap<>();
         nsmap.put("G", "urn:g");
         nsmap.put("C", "urn:c");
     }
@@ -429,7 +429,7 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         xtei.setNamespaces(nsmap);
         
         Iterator<?> it = xtei.createIterator(in, "utf-8");
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         while (it.hasNext()) {
             results.add((String)it.next());
         }

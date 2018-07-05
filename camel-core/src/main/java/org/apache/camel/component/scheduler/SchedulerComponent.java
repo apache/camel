@@ -28,8 +28,8 @@ import org.apache.camel.spi.Metadata;
 
 public class SchedulerComponent extends UriEndpointComponent {
 
-    private final Map<String, ScheduledExecutorService> executors = new HashMap<String, ScheduledExecutorService>();
-    private final Map<String, AtomicInteger> refCounts = new HashMap<String, AtomicInteger>();
+    private final Map<String, ScheduledExecutorService> executors = new HashMap<>();
+    private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
     @Metadata(defaultValue = "1", label = "scheduler")
     private int concurrentTasks = 1;

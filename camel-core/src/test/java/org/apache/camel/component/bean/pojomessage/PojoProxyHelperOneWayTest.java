@@ -57,7 +57,7 @@ public class PojoProxyHelperOneWayTest extends ContextTestSupport {
     }
     
     public final class PersonReceiver implements PersonHandler {
-        public List<Person> receivedPersons = new ArrayList<Person>();
+        public List<Person> receivedPersons = new ArrayList<>();
 
         @Override
         public void onPerson(Person person) {

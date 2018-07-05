@@ -86,7 +86,7 @@ public class ResequencerEngineTest extends TestSupport {
         }
         int input = 1000;
         initResequencer(1000, 1000);
-        List<Integer> list = new LinkedList<Integer>();
+        List<Integer> list = new LinkedList<>();
         for (int i = 0; i < input; i++) {
             list.add(i);
         }
@@ -143,13 +143,13 @@ public class ResequencerEngineTest extends TestSupport {
     
     private void initResequencer(long timeout, int capacity) {
         ResequencerEngine<Integer> engine;
-        buffer = new SequenceBuffer<Integer>();
-        engine = new ResequencerEngine<Integer>(new IntegerComparator());
+        buffer = new SequenceBuffer<>();
+        engine = new ResequencerEngine<>(new IntegerComparator());
         engine.setSequenceSender(buffer);
         engine.setTimeout(timeout);
         engine.start();
-        resequencer = new ResequencerEngineSync<Integer>(engine);
-        runner = new ResequencerRunner<Integer>(resequencer, 50);
+        resequencer = new ResequencerEngineSync<>(engine);
+        runner = new ResequencerRunner<>(resequencer, 50);
         runner.start();
 
         // wait for runner to run

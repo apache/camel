@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 public class SharedCamelInternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedCamelInternalProcessor.class);
-    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<CamelInternalProcessorAdvice>();
+    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<>();
 
     public SharedCamelInternalProcessor(CamelInternalProcessorAdvice... advices) {
         if (advices != null) {

@@ -84,7 +84,7 @@ public final class MessagePublisherClient {
         ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
         camelContext.start();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
 
         headers.put(KafkaConstants.PARTITION_KEY, 0);
         headers.put(KafkaConstants.KEY, "1");
@@ -99,7 +99,7 @@ public final class MessagePublisherClient {
         producerTemplate.sendBodyAndHeaders("direct:kafkaStartNoTopic", testKafkaMessage, headers);
 
         testKafkaMessage = "PART 0 :  " + testKafkaMessage;
-        Map<String, Object> newHeader = new HashMap<String, Object>();
+        Map<String, Object> newHeader = new HashMap<>();
         newHeader.put(KafkaConstants.KEY, "AB"); // This should go to partition 0
 
         producerTemplate.sendBodyAndHeaders("direct:kafkaStartWithPartitioner", testKafkaMessage, newHeader);

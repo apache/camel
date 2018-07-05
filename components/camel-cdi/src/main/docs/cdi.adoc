@@ -608,7 +608,7 @@ void onRouteStarted(@Observes @ContextName("foo") RouteStartedEvent event) {
 }
  
 void onContextStarted(@Observes @Manual CamelContextStartedEvent event) {
-    // Called after the the Camel context qualified with '@Manual' has started
+    // Called after the Camel context qualified with '@Manual' has started
 }
 ----
 

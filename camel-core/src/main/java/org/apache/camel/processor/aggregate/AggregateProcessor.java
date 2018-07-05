@@ -111,9 +111,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private ExceptionHandler exceptionHandler;
     private AggregationRepository aggregationRepository;
     private Map<String, String> closedCorrelationKeys;
-    private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<String>();
+    private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<>();
     private final Set<String> inProgressCompleteExchanges = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-    private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
+    private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
     private final AtomicLong totalIn = new AtomicLong();
@@ -245,7 +245,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
     }
@@ -285,6 +285,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         //check for the special header to force completion of all groups (and ignore the exchange otherwise)
         boolean completeAllGroups = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
         if (completeAllGroups) {
+            // remove the header so we do not complete again
+            exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
             forceCompletionOfAllGroups();
             return;
         }
@@ -316,6 +318,12 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 // copy exchange, and do not share the unit of work
                 // the aggregated output runs in another unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
+                // remove the complete all groups headers as it should not be on the copy
+                copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
+                copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+                copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+
                 try {
                     aggregated = doAggregation(key, copy);
                     exhaustedRetries = false;
@@ -341,10 +349,15 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             // the aggregated output runs in another unit of work
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
+            // remove the complete all groups headers as it should not be on the copy
+            copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
+            copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+            copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+
             // when memory based then its fast using synchronized, but if the aggregation repository is IO
             // bound such as JPA etc then concurrent aggregation per correlation key could
             // improve performance as we can run aggregation repository get/add in parallel
-            List<Exchange> aggregated = null;
+            List<Exchange> aggregated;
             lock.lock();
             try {
                 aggregated = doAggregation(key, copy);
@@ -362,6 +375,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // check for the special header to force completion of all groups (inclusive of the message)
         boolean completeAllGroupsInclusive = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, false, boolean.class);
         if (completeAllGroupsInclusive) {
+            // remove the header so we do not complete again
+            exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
             forceCompletionOfAllGroups();
         }
     }
@@ -383,7 +398,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
-        List<Exchange> list = new ArrayList<Exchange>();
+        List<Exchange> list = new ArrayList<>();
         String complete = null;
 
         Exchange answer;
@@ -1233,7 +1248,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             LOG.trace("Starting recover check");
 
             // copy the current in progress before doing scan
-            final Set<String> copyOfInProgress = new LinkedHashSet<String>(inProgressCompleteExchanges);
+            final Set<String> copyOfInProgress = new LinkedHashSet<>(inProgressCompleteExchanges);
 
             Set<String> exchangeIds = recoverable.scan(camelContext);
             for (String exchangeId : exchangeIds) {
@@ -1350,7 +1365,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 closedCorrelationKeys = LRUCacheFactory.newLRUCache(getCloseCorrelationKeyOnCompletion());
             } else {
                 LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
-                closedCorrelationKeys = new ConcurrentHashMap<String, String>();
+                closedCorrelationKeys = new ConcurrentHashMap<>();
             }
         }
 
@@ -1448,6 +1463,13 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (recoverService != null) {
             camelContext.getExecutorServiceManager().shutdown(recoverService);
         }
+
+        if (shutdownTimeoutCheckerExecutorService && timeoutCheckerExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdown(timeoutCheckerExecutorService);
+            timeoutCheckerExecutorService = null;
+            shutdownTimeoutCheckerExecutorService = false;
+        }
+
         ServiceHelper.stopServices(timeoutMap, processor, deadLetterProducerTemplate);
 
         if (closedCorrelationKeys != null) {

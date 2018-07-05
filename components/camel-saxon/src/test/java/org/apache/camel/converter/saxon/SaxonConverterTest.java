@@ -106,7 +106,7 @@ public class SaxonConverterTest extends CamelTestSupport {
 
     @Test
     public void convertToNodeList() throws XPathException {
-        List<NodeInfo> nil = new LinkedList<NodeInfo>();
+        List<NodeInfo> nil = new LinkedList<>();
         nil.add(doc);
         NodeList nodeList = context.getTypeConverter().convertTo(NodeList.class, exchange, nil);
         assertNotNull(nodeList);

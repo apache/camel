@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
-    List<Filter> filters = new LinkedList<Filter>();
+    List<Filter> filters = new LinkedList<>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

@@ -17,7 +17,9 @@
 package org.apache.camel.model.rest;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,6 +49,15 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @XmlTransient
     private Map<String, String> defaultValues;
 
+    @XmlTransient
+    private Boolean requiredBody;
+
+    @XmlTransient
+    private Set<String> requiredHeaders;
+
+    @XmlTransient
+    private Set<String> requiredQueryParameters;
+
     @XmlAttribute
     private String consumes;
 
@@ -65,6 +76,9 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
+
+    @XmlAttribute
+    private Boolean clientRequestValidation;
 
     @XmlAttribute
     private Boolean enableCORS;
@@ -98,13 +112,18 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         if (skipBindingOnErrorCode != null) {
             skip = skipBindingOnErrorCode;
         }
+        boolean validation = config.isClientRequestValidation();
+        if (clientRequestValidation != null) {
+            validation = clientRequestValidation;
+        }
 
         // cors headers
         Map<String, String> corsHeaders = config.getCorsHeaders();
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingAdvice(context, null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
+            return new RestBindingAdvice(context, null, null, null, null, consumes, produces, mode, skip, validation,
+                cors, corsHeaders, defaultValues, requiredBody != null ? requiredBody : false, requiredQueryParameters, requiredHeaders);
         }
 
         // setup json data format
@@ -202,14 +221,15 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
             }
         }
 
-        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
+        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, validation,
+            cors, corsHeaders, defaultValues, requiredBody != null ? requiredBody : false, requiredQueryParameters, requiredHeaders);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
                                             DataFormat dataFormat, String prefix) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
-            Map<String, Object> copy = new HashMap<String, Object>();
+            Map<String, Object> copy = new HashMap<>();
 
             // filter keys on prefix
             // - either its a known prefix and must match the prefix parameter
@@ -252,9 +272,41 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public void addDefaultValue(String paramName, String defaultValue) {
         if (defaultValues == null) {
-            defaultValues = new HashMap<String, String>();
+            defaultValues = new HashMap<>();
         }
         defaultValues.put(paramName, defaultValue);
+    }
+
+    /**
+     * Adds a required query parameter
+     *
+     * @param paramName   query parameter name
+     */
+    public void addRequiredQueryParameter(String paramName) {
+        if (requiredQueryParameters == null) {
+            requiredQueryParameters = new HashSet<>();
+        }
+        requiredQueryParameters.add(paramName);
+    }
+
+    /**
+     * Adds a required HTTP header
+     *
+     * @param headerName   HTTP header name
+     */
+    public void addRequiredHeader(String headerName) {
+        if (requiredHeaders == null) {
+            requiredHeaders = new HashSet<>();
+        }
+        requiredHeaders.add(headerName);
+    }
+
+    public Boolean getRequiredBody() {
+        return requiredBody;
+    }
+
+    public void setRequiredBody(Boolean requiredBody) {
+        this.requiredBody = requiredBody;
     }
 
     /**
@@ -344,6 +396,22 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCORS() {

@@ -19,8 +19,6 @@ package org.apache.camel.spring.boot.actuate.endpoint;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.ReadAction;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteDetailsEndpointInfo;
@@ -60,6 +58,9 @@ public class CamelRoutesEndpointTest extends Assert {
         assertFalse(routes.isEmpty());
         assertEquals(routes.size(), camelContext.getRoutes().size());
         assertTrue(routes.stream().anyMatch(r -> "foo-route".equals(r.getId())));
+        assertTrue(routes.stream().anyMatch(r -> "foo-route-group".equals(r.getGroup())));
+        assertTrue(routes.stream().anyMatch(r -> r.getProperties().containsKey("key1") &&  "val1".equals(r.getProperties().get("key1"))));
+        assertTrue(routes.stream().anyMatch(r -> r.getProperties().containsKey("key2") &&  "val2".equals(r.getProperties().get("key2"))));
     }
 
     @Test(expected = IllegalArgumentException.class)

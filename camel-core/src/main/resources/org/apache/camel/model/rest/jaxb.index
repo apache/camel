@@ -33,4 +33,9 @@ RestOperationResponseHeaderDefinition
 RestParamType
 RestPropertyDefinition
 RestsDefinition
+RestSecurityApiKey
+RestSecurityBasicAuth
+RestSecuritiesDefinition
+RestSecurityOAuth2
+SecurityDefinition
 VerbDefinition

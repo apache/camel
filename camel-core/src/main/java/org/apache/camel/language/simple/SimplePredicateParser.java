@@ -449,7 +449,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * @return the created {@link Predicate}s, is never <tt>null</tt>.
      */
     private List<Predicate> createPredicates() {
-        List<Predicate> answer = new ArrayList<Predicate>();
+        List<Predicate> answer = new ArrayList<>();
         for (SimpleNode node : nodes) {
             Expression exp = node.createExpression(expression);
             if (exp != null) {

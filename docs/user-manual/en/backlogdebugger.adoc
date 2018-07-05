@@ -102,6 +102,6 @@ See Also
 ^^^^^^^^
 
 * BacklogTracer
-* Debugger
+* link:debugger.adoc[Debugger]
 * <<log-component,Log>>
 

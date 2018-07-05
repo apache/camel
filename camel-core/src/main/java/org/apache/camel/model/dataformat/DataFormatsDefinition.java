@@ -102,7 +102,7 @@ public class DataFormatsDefinition {
      * @return A Map of the contained DataFormatType's indexed by id.
      */
     public Map<String, DataFormatDefinition> asMap() {
-        Map<String, DataFormatDefinition> dataFormatsAsMap = new HashMap<String, DataFormatDefinition>();
+        Map<String, DataFormatDefinition> dataFormatsAsMap = new HashMap<>();
         for (DataFormatDefinition dataFormatType : getDataFormats()) {
             dataFormatsAsMap.put(dataFormatType.getId(), dataFormatType);
         }

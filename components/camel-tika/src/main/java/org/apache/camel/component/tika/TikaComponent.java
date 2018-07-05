@@ -20,16 +20,12 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.tika.config.TikaConfig;
 
-public class TikaComponent extends UriEndpointComponent {
+public class TikaComponent extends DefaultComponent {
 
     private static final String TIKA_CONFIG = "tikaConfig";
-
-    public TikaComponent() {
-        super(TikaEndpoint.class);
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

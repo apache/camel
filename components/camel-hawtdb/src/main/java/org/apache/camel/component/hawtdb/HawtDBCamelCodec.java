@@ -36,7 +36,7 @@ import org.fusesource.hawtbuf.codec.StringCodec;
 public final class HawtDBCamelCodec {
 
     private Codec<String> keyCodec = new StringCodec();
-    private Codec<DefaultExchangeHolder> exchangeCodec = new ObjectCodec<DefaultExchangeHolder>();
+    private Codec<DefaultExchangeHolder> exchangeCodec = new ObjectCodec<>();
 
     public Buffer marshallKey(String key) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();

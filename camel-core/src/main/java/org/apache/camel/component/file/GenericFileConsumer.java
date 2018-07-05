@@ -118,7 +118,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // gather list of files to process
-        List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
+        List<GenericFile<T>> files = new ArrayList<>();
         String name = endpoint.getConfiguration().getDirectory();
 
         // time how long it takes to poll
@@ -151,7 +151,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // sort using build in sorters so we can use expressions
         // use a linked list so we can dequeue the exchanges
-        LinkedList<Exchange> exchanges = new LinkedList<Exchange>();
+        LinkedList<Exchange> exchanges = new LinkedList<>();
         for (GenericFile<T> file : files) {
             Exchange exchange = endpoint.createExchange(file);
             endpoint.configureExchange(exchange);
@@ -440,7 +440,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
-            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, processStrategy, target, absoluteFileName));
+            exchange.addOnCompletion(new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
 
             log.debug("About to process file: {} using exchange: {}", target, exchange);
 

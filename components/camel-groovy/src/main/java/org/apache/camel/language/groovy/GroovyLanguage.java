@@ -28,7 +28,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 public class GroovyLanguage extends LanguageSupport {
 
     // Cache used to stores the compiled scripts (aka their classes)
-    private final LRUSoftCache<String, GroovyClassService> scriptCache = new LRUSoftCache<String, GroovyClassService>(16, 1000, true);
+    private final LRUSoftCache<String, GroovyClassService> scriptCache = new LRUSoftCache<>(16, 1000, true);
 
     private static final class GroovyClassService implements Service {
 

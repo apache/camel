@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-consul</artifactId>
@@ -56,12 +56,7 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
+      <artifactId>camel-testcontainers-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -71,7 +66,23 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-undertow</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-master</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-service</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -97,9 +108,7 @@
   </dependencies>
 
 
-
   <profiles>
-
     <profile>
       <id>consul-skip-tests</id>
       <activation>
@@ -116,10 +125,14 @@
         </plugins>
       </build>
     </profile>
+
+    <!-- activate test if the docker socket file is accessible -->
     <profile>
-      <id>consul-tests</id>
+      <id>consul-tests-docker-file</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
+        <file>
+          <exists>/var/run/docker.sock</exists>
+        </file>
       </activation>
       <build>
         <plugins>
@@ -127,100 +140,37 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>false</skipTests>
+              <systemPropertyVariables>
+                <visibleassertions.silence>true</visibleassertions.silence>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
 
+    <!-- activate test if the DOCKER_HOST env var is set -->
     <profile>
-      <id>docker</id>
+      <id>consul-tests-docker-env</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>env.DOCKER_HOST</name>
+        </property>
       </activation>
       <build>
         <plugins>
           <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-            <version>${docker-maven-plugin-version}</version>
-            <executions>
-              <execution>
-                <id>start</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-                <configuration>
-                  <showLogs>false</showLogs>
-                  <images>
-                    <image>
-                      <name>consul:1.0.0</name>
-                      <alias>consul</alias>
-                      <run>
-                        <ports>
-                          <port>consul.port:8500</port>
-                        </ports>
-                        <wait>
-                          <log>agent: Synced node info</log>
-                          <time>20000</time>
-                        </wait>
-                        <cmd>
-                          <exec>
-                            <arg>agent</arg>
-                            <arg>-dev</arg>
-                            <arg>-server</arg>
-                            <arg>-bootstrap</arg>
-                            <arg>-client</arg>
-                            <arg>0.0.0.0</arg>
-                            <arg>-log-level</arg>
-                            <arg>trace</arg>
-                          </exec>
-                        </cmd>
-                      </run>
-                    </image>
-                  </images>
-                </configuration>
-              </execution>
-              <execution>
-                <id>stop</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <systemProperties>
-                <camel.consul.port>${consul.port}</camel.consul.port>
-                <camel.consul.host>127.0.0.1</camel.consul.host>
-              </systemProperties>
+              <skipTests>false</skipTests>
+              <systemPropertyVariables>
+                <visibleassertions.silence>true</visibleassertions.silence>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
-
   </profiles>
 
 </project>

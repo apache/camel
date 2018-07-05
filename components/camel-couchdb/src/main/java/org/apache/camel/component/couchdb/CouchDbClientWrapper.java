@@ -48,6 +48,10 @@ public class CouchDbClientWrapper {
     public Changes changes() {
         return client.changes();
     }
+    
+    public Object get(String id) {
+        return client.find(id);
+    }
 
     public CouchDbContext context() {
         return client.context();

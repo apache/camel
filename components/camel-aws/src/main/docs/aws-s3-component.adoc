@@ -36,7 +36,7 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 
 
 // component options: START
-The AWS S3 Storage Service component supports 5 options which are listed below.
+The AWS S3 Storage Service component supports 5 options, which are listed below.
 
 
 
@@ -191,7 +191,7 @@ aggregate this number of messages.
 
 |`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
 
-|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform. Permitted values are copyObject, listBuckets, deleteBucket, downloadLink
+|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, downloadLink, listObjects
 
 |`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
 
@@ -271,6 +271,17 @@ specify caching behavior along the HTTP request/reply chain.
 |`CamelAwsS3ServerSideEncryption` |String |*Camel 2.16:* The server-side encryption algorithm when encrypting the
 object using AWS-managed keys.
 |=======================================================================
+
+#### S3 Producer operations
+
+Camel-AWS s3 component provides the following operation on the producer side:
+
+- copyObject
+- deleteObject
+- listBuckets
+- deleteBucket
+- downloadLink
+- listObjects
 
 #### Advanced AmazonS3 configuration
 

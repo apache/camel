@@ -52,7 +52,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     }
 
     public void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply) {
-        // create holder object with the the reply
+        // create holder object with the reply
         log.debug("onReply with correlationId: {}", correlationId);
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, properties, reply);
         // process the reply

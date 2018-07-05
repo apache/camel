@@ -111,7 +111,7 @@ stop the route instead.
 See Also
 ^^^^^^^^
 
-* CamelContext
-* Architecture
+* link:camelcontext.adoc[CamelContext]
+* link:architecture.adoc[Architecture]
 * JMX
 

@@ -82,7 +82,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
             LOG.info("Sending late reply");
             // use some dummy queue as we override this with the property: JmsConstants.JMS_DESTINATION
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             headers.put(JmsConstants.JMS_DESTINATION, replyDestination);
             headers.put("JMSCorrelationID", cid);
             template.sendBodyAndHeaders("activemq:dummy", expectedBody, headers);

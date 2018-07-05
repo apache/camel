@@ -37,7 +37,7 @@ public class HazelcastSedaFIFOTest extends CamelTestSupport {
     public void fifoTesting() throws Exception {
         final int bodyCount = 5;
 
-        List<String> bodies = new ArrayList<String>();
+        List<String> bodies = new ArrayList<>();
         for (int i = 0; i < bodyCount; i++) {
             bodies.add("test" + i);
         }

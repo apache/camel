@@ -128,17 +128,17 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
 
         @Bean
         protected ItemReader<Object> reader() throws Exception {
-            return new CamelItemReader<Object>(consumerTemplate, "seda:inputQueue");
+            return new CamelItemReader<>(consumerTemplate, "seda:inputQueue");
         }
 
         @Bean
         protected ItemWriter<Object> writer() throws Exception {
-            return new CamelItemWriter<Object>(producerTemplate, "mock:output");
+            return new CamelItemWriter<>(producerTemplate, "mock:output");
         }
 
         @Bean
         protected ItemProcessor<Object, Object> processor() throws Exception {
-            return new CamelItemProcessor<Object, Object>(producerTemplate, "direct:processor");
+            return new CamelItemProcessor<>(producerTemplate, "direct:processor");
         }
 
         @Bean

@@ -59,7 +59,7 @@ public class NettyComponentConfiguration
      */
     private NettyConfigurationNestedConfiguration configuration;
     /**
-     * To use the given EventExecutorGroup
+     * To use the given EventExecutorGroup.
      */
     @NestedConfigurationProperty
     private EventExecutorGroup executorService;
@@ -313,7 +313,7 @@ public class NettyComponentConfiguration
          * the same Netty {@link Channel} for the lifecycle of processing the
          * {@link Exchange} . This is useful if you need to call a server
          * multiple times in a Camel route and want to use the same network
-         * connection. When using this the channel is not returned to the
+         * connection. When using this, the channel is not returned to the
          * connection pool until the {@link Exchange} is done; or disconnected
          * if the disconnect option is set to true.
          * <p/>
@@ -349,7 +349,7 @@ public class NettyComponentConfiguration
         /**
          * The hostname.
          * <p/>
-         * For the consumer the hostname is localhost or 0.0.0.0 For the
+         * For the consumer the hostname is localhost or 0.0.0.0. For the
          * producer the hostname is the remote host to connect to
          */
         private String host;
@@ -378,8 +378,8 @@ public class NettyComponentConfiguration
         private Integer receiveBufferSizePredictor;
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads*2. User can use this operation
-         * to override the default workerCount from Netty
+         * from Netty, which is cpu_core_threads x 2. User can use this
+         * operation to override the default workerCount from Netty.
          */
         private Integer workerCount;
         /**
@@ -402,7 +402,7 @@ public class NettyComponentConfiguration
         private Boolean reuseAddress = true;
         /**
          * Time to wait for a socket connection to be available. Value is in
-         * millis.
+         * milliseconds.
          */
         private Integer connectTimeout = 10000;
         /**

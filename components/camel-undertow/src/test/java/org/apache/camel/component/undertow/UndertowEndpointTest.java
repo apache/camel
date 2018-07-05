@@ -19,7 +19,6 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

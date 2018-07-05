@@ -55,7 +55,7 @@ public class Tracer implements InterceptStrategy, Service {
     private boolean useJpa;
     private CamelLogProcessor logger;
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
-    private final List<TraceEventHandler> traceHandlers = new CopyOnWriteArrayList<TraceEventHandler>();
+    private final List<TraceEventHandler> traceHandlers = new CopyOnWriteArrayList<>();
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
     private boolean jmxTraceNotifications;
     private int traceBodySize = 10000;

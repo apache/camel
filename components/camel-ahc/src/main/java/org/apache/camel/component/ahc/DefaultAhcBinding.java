@@ -231,7 +231,7 @@ public class DefaultAhcBinding implements AhcBinding {
 
     @Override
     public void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpHeaders headers) throws Exception {
-        Map<String, List<String>> m = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, List<String>> m = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         for (String name:headers.names()) {
             List<String> values = headers.getAll(name);
             if (values.size() == 1) {
@@ -332,7 +332,7 @@ public class DefaultAhcBinding implements AhcBinding {
     }
 
     private Map<String, String> extractResponseHeaders(Exchange exchange) {
-        Map<String, String> answer = new LinkedHashMap<String, String>();
+        Map<String, String> answer = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : exchange.getOut().getHeaders().entrySet()) {
             String key = entry.getKey();
             String value = exchange.getContext().getTypeConverter().convertTo(String.class, entry.getValue());

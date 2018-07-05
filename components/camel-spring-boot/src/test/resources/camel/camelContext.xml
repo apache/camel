@@ -19,6 +19,9 @@
 -->
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="xmlAutoLoading">
+        <routeProperty key="key1" value="val1"/>
+        <routeProperty key="key2" value="val2"/>
+
         <from uri="direct:xmlAutoLoading"/>
         <to uri="mock:xmlAutoLoading"/>
     </route>

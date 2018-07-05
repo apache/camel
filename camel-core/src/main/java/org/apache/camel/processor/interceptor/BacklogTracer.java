@@ -52,7 +52,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     // use a queue with a upper limit to avoid storing too many messages
-    private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<BacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
+    private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 1000;
     private boolean removeOnDump = true;
@@ -262,7 +262,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
     }
 
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
-        List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
+        List<BacklogTracerEventMessage> answer = new ArrayList<>();
         if (nodeId != null) {
             for (BacklogTracerEventMessage message : queue) {
                 if (nodeId.equals(message.getToNode()) || nodeId.equals(message.getRouteId())) {
@@ -291,7 +291,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
     }
 
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
-        List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
+        List<BacklogTracerEventMessage> answer = new ArrayList<>();
         answer.addAll(queue);
         if (isRemoveOnDump()) {
             queue.clear();

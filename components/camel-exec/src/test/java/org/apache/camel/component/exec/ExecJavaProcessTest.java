@@ -450,7 +450,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     List<String> buildArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-cp");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);
@@ -463,7 +463,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
      */
     List<String> buildFailArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-failArg");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);

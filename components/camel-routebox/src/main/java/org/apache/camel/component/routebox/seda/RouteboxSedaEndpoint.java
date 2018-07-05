@@ -41,8 +41,8 @@ import org.apache.camel.spi.BrowsableEndpoint;
 public class RouteboxSedaEndpoint extends RouteboxEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private volatile BlockingQueue<Exchange> queue;
-    private volatile Set<RouteboxProducer> producers = new CopyOnWriteArraySet<RouteboxProducer>();
-    private volatile Set<RouteboxConsumer> consumers = new CopyOnWriteArraySet<RouteboxConsumer>();
+    private volatile Set<RouteboxProducer> producers = new CopyOnWriteArraySet<>();
+    private volatile Set<RouteboxConsumer> consumers = new CopyOnWriteArraySet<>();
 
     public RouteboxSedaEndpoint(String endpointUri, RouteboxComponent component, RouteboxConfiguration config) throws Exception {
         super(endpointUri, component, config);
@@ -84,11 +84,11 @@ public class RouteboxSedaEndpoint extends RouteboxEndpoint implements AsyncEndpo
     }
 
     public Set<RouteboxConsumer> getConsumers() {
-        return new HashSet<RouteboxConsumer>(consumers);
+        return new HashSet<>(consumers);
     }
 
     public Set<RouteboxProducer> getProducers() {
-        return new HashSet<RouteboxProducer>(producers);
+        return new HashSet<>(producers);
     }
 
     public void setQueue(BlockingQueue<Exchange> queue) {
@@ -106,9 +106,9 @@ public class RouteboxSedaEndpoint extends RouteboxEndpoint implements AsyncEndpo
     public BlockingQueue<Exchange> getQueue() {
         if (queue == null) {
             if (getConfig().getQueueSize() > 0) {
-                queue = new LinkedBlockingQueue<Exchange>(getConfig().getQueueSize());
+                queue = new LinkedBlockingQueue<>(getConfig().getQueueSize());
             } else {
-                queue = new LinkedBlockingQueue<Exchange>();
+                queue = new LinkedBlockingQueue<>();
             }
         }
         return queue;
@@ -119,7 +119,7 @@ public class RouteboxSedaEndpoint extends RouteboxEndpoint implements AsyncEndpo
     }
 
     public List<Exchange> getExchanges() {
-        return new ArrayList<Exchange>(getQueue());
+        return new ArrayList<>(getQueue());
     }
 
 }

@@ -22,11 +22,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,7 +40,7 @@ public class ConsulRegistryTest implements Serializable {
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRegistryTest.class);
+    private static GenericContainer container;
 
     public class ConsulTestClass implements Serializable {
         private static final long serialVersionUID = -4815945688487114891L;
@@ -51,7 +52,15 @@ public class ConsulRegistryTest implements Serializable {
 
     @BeforeClass
     public static void setUp() {
-        registry = new ConsulRegistry.Builder("localhost").build();
+        container = ConsulTestSupport.consulContainer();
+        container.start();
+
+        registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        container.stop();
     }
 
     @Test
@@ -119,7 +128,7 @@ public class ConsulRegistryTest implements Serializable {
                 .findByTypeWithName(consulTestClassOne.getClass());
         registry.remove("testClassOne");
         registry.remove("testClassTwo");
-        HashMap<String, ConsulTestClass> emptyHashMap = new HashMap<String, ConsulTestClass>();
+        HashMap<String, ConsulTestClass> emptyHashMap = new HashMap<>();
         assertNotNull(consulTestClassMap);
         assertEquals(consulTestClassMap.getClass(), emptyHashMap.getClass());
         assertEquals(2, consulTestClassMap.size());
@@ -146,7 +155,7 @@ public class ConsulRegistryTest implements Serializable {
         registry.put("classTwo", classTwo);
         Set<? extends ConsulTestClass> results = registry.findByType(classOne.getClass());
         assertNotNull(results);
-        HashSet<ConsulTestClass> hashSet = new HashSet<ConsulTestClass>();
+        HashSet<ConsulTestClass> hashSet = new HashSet<>();
         registry.remove("classOne");
         registry.remove("classTwo");
         assertEquals(results.getClass(), hashSet.getClass());

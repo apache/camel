@@ -44,6 +44,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -107,6 +108,9 @@ public class S3Producer extends DefaultProducer {
             case downloadLink:
                 createDownloadLink(getEndpoint().getS3Client(), exchange);
                 break;
+            case listObjects:
+                listObjects(getEndpoint().getS3Client(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
             }
@@ -167,7 +171,7 @@ public class S3Producer extends DefaultProducer {
 
         final InitiateMultipartUploadResult initResponse = getEndpoint().getS3Client().initiateMultipartUpload(initRequest);
         final long contentLength = objectMetadata.getContentLength();
-        final List<PartETag> partETags = new ArrayList<PartETag>();
+        final List<PartETag> partETags = new ArrayList<>();
         long partSize = getConfiguration().getPartSize();
         CompleteMultipartUploadResult uploadResult = null;
 
@@ -229,7 +233,7 @@ public class S3Producer extends DefaultProducer {
         }
 
         String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
-        if (bucketName == null){
+        if (bucketName == null) {
             LOG.trace("Bucket name is not in header, using default one  [{}]...", getConfiguration().getBucketName());
             bucketName = getConfiguration().getBucketName();
         }
@@ -276,10 +280,11 @@ public class S3Producer extends DefaultProducer {
             message.setHeader(S3Constants.VERSION_ID, putObjectResult.getVersionId());
         }
 
+        // close streams
+        IOHelper.close(putObjectRequest.getInputStream());
+        IOHelper.close(is);
+
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
-            // close streams
-            IOHelper.close(putObjectRequest.getInputStream());
-            IOHelper.close(is);
             FileUtil.deleteFile(filePayload);
         }
     }
@@ -379,6 +384,20 @@ public class S3Producer extends DefaultProducer {
 
         DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketName);
         s3Client.deleteBucket(deleteBucketRequest);
+    }
+    
+    private void listObjects(AmazonS3 s3Client, Exchange exchange) {
+        String bucketName;
+
+        bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            bucketName = getConfiguration().getBucketName();
+        }
+        
+        ObjectListing objectList = s3Client.listObjects(bucketName);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(objectList);
     }
 
     private S3Operations determineOperation(Exchange exchange) {

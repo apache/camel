@@ -34,7 +34,7 @@ public class GsonMarshalListTest extends CamelTestSupport {
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
         
-        List<TestPojo> inList = new ArrayList<TestPojo>();
+        List<TestPojo> inList = new ArrayList<>();
         
         TestPojo in1 = new TestPojo();
         in1.setName("Camel1");

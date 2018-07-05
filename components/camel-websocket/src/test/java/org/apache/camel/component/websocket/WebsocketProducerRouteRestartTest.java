@@ -37,7 +37,7 @@ import org.junit.Test;
 public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
 
     private static final String ROUTE_ID = WebsocketProducerRouteRestartTest.class.getSimpleName();
-    private static List<Object> received = new ArrayList<Object>();
+    private static List<Object> received = new ArrayList<>();
     private static CountDownLatch latch;
     protected int port;
 

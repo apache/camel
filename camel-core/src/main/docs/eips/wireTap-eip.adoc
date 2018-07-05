@@ -18,7 +18,7 @@ at link:stream-caching.html[Stream caching].
 === Options
 
 // eip options: START
-The Wire Tap EIP supports 10 options which are listed below:
+The Wire Tap EIP supports 11 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -33,6 +33,7 @@ The Wire Tap EIP supports 10 options which are listed below:
 | *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
 | *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse producers. |  | Integer
 | *ignoreInvalidEndpoint* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+| *allowOptimisedComponents* | Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware. | true | Boolean
 |===
 // eip options: END
 

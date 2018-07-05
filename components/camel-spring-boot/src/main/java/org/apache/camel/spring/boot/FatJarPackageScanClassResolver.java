@@ -49,7 +49,7 @@ public class FatJarPackageScanClassResolver extends DefaultPackageScanClassResol
     }
 
     protected List<String> doLoadJarClassEntries(InputStream stream, String urlPath, boolean inspectNestedJars, boolean closeStream) {
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
 
         JarInputStream jarStream = null;
         try {

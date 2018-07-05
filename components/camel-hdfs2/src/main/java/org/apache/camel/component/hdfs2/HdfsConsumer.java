@@ -148,8 +148,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             }
 
             try {
-                Holder<Object> key = new Holder<Object>();
-                Holder<Object> value = new Holder<Object>();
+                Holder<Object> key = new Holder<>();
+                Holder<Object> value = new Holder<>();
                 while (this.istream.next(key, value) >= 0) {
                     Exchange exchange = this.getEndpoint().createExchange();
                     Message message = new DefaultMessage(this.getEndpoint().getCamelContext());

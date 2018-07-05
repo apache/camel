@@ -233,7 +233,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     @Override
     public List<Exchange> getExchanges() {
-        final List<Exchange> answer = new ArrayList<Exchange>();
+        final List<Exchange> answer = new ArrayList<>();
 
         GenericFileConsumer<?> consumer = null;
         try {
@@ -1319,7 +1319,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     protected Map<String, Object> getParamsAsMap() {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
 
         if (isNoop()) {
             params.put("noop", Boolean.toString(true));

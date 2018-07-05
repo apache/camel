@@ -49,10 +49,10 @@ import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
 
 public class AmazonSQSClientMock extends AmazonSQSClient {
 
-    List<Message> messages = new ArrayList<Message>();
-    Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
-    List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<ChangeMessageVisibilityRequest>();
-    private Map<String, CreateQueueRequest> queues = new LinkedHashMap<String, CreateQueueRequest>();
+    List<Message> messages = new ArrayList<>();
+    Map<String, Map<String, String>> queueAttributes = new HashMap<>();
+    List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<>();
+    private Map<String, CreateQueueRequest> queues = new LinkedHashMap<>();
     private Map<String, ScheduledFuture<?>> inFlight = new LinkedHashMap<>();
     private ScheduledExecutorService scheduler;
 
@@ -98,7 +98,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     public ReceiveMessageResult receiveMessage(ReceiveMessageRequest receiveMessageRequest) throws AmazonServiceException, AmazonClientException {
         Integer maxNumberOfMessages = receiveMessageRequest.getMaxNumberOfMessages() != null ? receiveMessageRequest.getMaxNumberOfMessages() : Integer.MAX_VALUE;
         ReceiveMessageResult result = new ReceiveMessageResult();
-        Collection<Message> resultMessages = new ArrayList<Message>();
+        Collection<Message> resultMessages = new ArrayList<>();
         
         synchronized (messages) {
             int fetchSize = 0;

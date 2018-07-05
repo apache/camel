@@ -70,7 +70,7 @@ public class BatchInfoList {
      */
     public List<BatchInfo> getBatchInfo() {
         if (batchInfo == null) {
-            batchInfo = new ArrayList<BatchInfo>();
+            batchInfo = new ArrayList<>();
         }
         return this.batchInfo;
     }

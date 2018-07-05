@@ -38,13 +38,13 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     protected static final Collection<Class<?>> REMOVING_FAULT_IN_INTERCEPTORS;
     
     static {
-        REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class<?>>();
+        REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<>();
         REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
     }
 
     // The interceptors which need to be keeped
-    protected Set<String> inInterceptorNames = new HashSet<String>();
-    protected Set<String> outInterceptorNames = new HashSet<String>();
+    protected Set<String> inInterceptorNames = new HashSet<>();
+    protected Set<String> outInterceptorNames = new HashSet<>();
     protected abstract Logger getLogger();
     
 

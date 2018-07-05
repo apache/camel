@@ -149,7 +149,7 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
             clientConfig = new XmlRpcClientConfigImpl();
         }
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         // do not include null values
         IntrospectionSupport.getProperties(configuration, params, null, false);
         setProperties(clientConfig, params);

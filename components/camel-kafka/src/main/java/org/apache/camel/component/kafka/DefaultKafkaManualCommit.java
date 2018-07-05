@@ -34,30 +34,30 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     private final String threadId;
     private final StateRepository<String, String> offsetRepository;
     private final TopicPartition partition;
-    private final long partitionLastOffset;
+    private final long recordOffset;
 
     public DefaultKafkaManualCommit(KafkaConsumer consumer, String topicName, String threadId,
-                                    StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
+                                    StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
         this.consumer = consumer;
         this.topicName = topicName;
         this.threadId = threadId;
         this.offsetRepository = offsetRepository;
         this.partition = partition;
-        this.partitionLastOffset = partitionLastOffset;
+        this.recordOffset = recordOffset;
     }
 
     @Override
     public void commitSync() {
-        commitOffset(offsetRepository, partition, partitionLastOffset);
+        commitOffset(offsetRepository, partition, recordOffset);
     }
 
-    protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
-        if (partitionLastOffset != -1) {
+    protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
+        if (recordOffset != -1) {
             if (offsetRepository != null) {
-                offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+                offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
-                LOG.debug("CommitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
-                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
+                LOG.debug("CommitSync {} from topic {} with offset: {}", threadId, topicName, recordOffset);
+                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)));
             }
         }
     }
@@ -90,8 +90,8 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
         return partition;
     }
 
-    public long getPartitionLastOffset() {
-        return partitionLastOffset;
+    public long getRecordOffset() {
+        return recordOffset;
     }
 
 }

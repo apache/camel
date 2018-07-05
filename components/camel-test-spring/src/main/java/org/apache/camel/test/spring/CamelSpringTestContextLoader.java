@@ -228,7 +228,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 
                 ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
                 List<Class<?>> excluded = Arrays.asList(excludedClasses);
-                excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+                excludingResolver.setExcludedClasses(new HashSet<>(excluded));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Not enabling package scanning excluded classes as ExcludeRoutes "
@@ -310,7 +310,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     protected void handleProvidesBreakpoint(GenericApplicationContext context, Class<?> testClass) throws Exception {
         Collection<Method> methods = getAllMethods(testClass);
-        final List<Breakpoint> breakpoints = new LinkedList<Breakpoint>();
+        final List<Breakpoint> breakpoints = new LinkedList<>();
         
         for (Method method : methods) {
             if (AnnotationUtils.findAnnotation(method, ProvidesBreakpoint.class) != null) {
@@ -442,7 +442,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     protected void handleUseOverridePropertiesWithPropertiesComponent(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         Collection<Method> methods = getAllMethods(testClass);
-        final List<Properties> properties = new LinkedList<Properties>();
+        final List<Properties> properties = new LinkedList<>();
 
         for (Method method : methods) {
             if (AnnotationUtils.findAnnotation(method, UseOverridePropertiesWithPropertiesComponent.class) != null) {

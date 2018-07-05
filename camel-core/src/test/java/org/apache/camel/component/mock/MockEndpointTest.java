@@ -765,7 +765,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "beer");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", "beer");
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
@@ -779,7 +779,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "beer");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", "beer");
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
@@ -794,7 +794,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", null);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
 
@@ -809,7 +809,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "Test");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", is);
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
@@ -823,7 +823,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "beer");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 456);
         map.put("bar", "beer");
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
@@ -837,7 +837,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "beer");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", "wine");
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
@@ -851,12 +851,12 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "beer");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", "beer");
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
 
-        map = new HashMap<String, Object>();
+        map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", "wine");
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
@@ -1171,7 +1171,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     protected Object[] listOfMessages(int... counters) {
-        List<String> list = new ArrayList<String>(counters.length);
+        List<String> list = new ArrayList<>(counters.length);
         for (int counter : counters) {
             list.add(createTestMessage(counter));
         }

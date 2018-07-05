@@ -382,7 +382,7 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         context.startRoute("batchConsumer");
 
         assertMockEndpointsSatisfied();
-        long time = stopWatch.stop();
+        stopWatch.stop();
 
     }
 

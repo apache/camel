@@ -51,7 +51,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     private boolean failIfNoConsumers = true;
 
     public DirectEndpoint() {
-        this.consumers = new HashMap<String, DirectConsumer>();
+        this.consumers = new HashMap<>();
     }
 
     public DirectEndpoint(String endpointUri, Component component) {

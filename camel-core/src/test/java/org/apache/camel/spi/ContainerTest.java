@@ -27,7 +27,7 @@ public class ContainerTest extends TestCase {
 
     private final class MyContainer implements Container {
 
-        private List<String> names = new ArrayList<String>();
+        private List<String> names = new ArrayList<>();
 
         @Override
         public void manage(CamelContext camelContext) {

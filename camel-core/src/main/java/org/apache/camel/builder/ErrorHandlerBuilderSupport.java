@@ -36,14 +36,14 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<RouteContext, List<OnExceptionDefinition>>();
+    private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<>();
     private ExceptionPolicyStrategy exceptionPolicyStrategy;
 
     public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
         // only add if we not already have it
         List<OnExceptionDefinition> list = onExceptions.get(routeContext);
         if (list == null) {
-            list = new ArrayList<OnExceptionDefinition>();
+            list = new ArrayList<>();
             onExceptions.put(routeContext, list);
         }
         if (!list.contains(exception)) {
@@ -53,7 +53,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
 
     protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
         if (!onExceptions.isEmpty()) {
-            Map<RouteContext, List<OnExceptionDefinition>> copy = new HashMap<RouteContext, List<OnExceptionDefinition>>(onExceptions);
+            Map<RouteContext, List<OnExceptionDefinition>> copy = new HashMap<>(onExceptions);
             other.onExceptions = copy;
         }
         other.exceptionPolicyStrategy = exceptionPolicyStrategy;

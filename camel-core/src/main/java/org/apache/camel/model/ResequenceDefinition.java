@@ -63,7 +63,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     @XmlElementRef @Metadata(required = "true")
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ResequenceDefinition() {
     }

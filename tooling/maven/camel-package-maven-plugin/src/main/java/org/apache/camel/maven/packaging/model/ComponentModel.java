@@ -42,9 +42,9 @@ public class ComponentModel {
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
-    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<EndpointOptionModel>();
-    private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
+    private final List<ComponentOptionModel> componentOptions = new ArrayList<>();
+    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<>();
+    private final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
 
     public ComponentModel(boolean coreOnly) {
         this.coreOnly = coreOnly;
@@ -228,7 +228,9 @@ public class ComponentModel {
 
     public String getDocLink() {
         // special for these components
-        if ("camel-box".equals(artifactId)) {
+        if ("camel-as2".equals(artifactId)) {
+            return "camel-as2/camel-as2-component/src/main/docs";
+        } else if ("camel-box".equals(artifactId)) {
             return "camel-box/camel-box-component/src/main/docs";
         } else if ("camel-linkedin".equals(artifactId)) {
             return "camel-linkedin/camel-linkedin-component/src/main/docs";

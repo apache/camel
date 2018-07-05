@@ -25,7 +25,6 @@ import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Twitter Direct Message Component consumes/produces user's direct messages.

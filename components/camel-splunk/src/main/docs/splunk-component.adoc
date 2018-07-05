@@ -87,7 +87,7 @@ SplunkEvent in the body.
 
 
 // component options: START
-The Splunk component supports 2 options which are listed below.
+The Splunk component supports 2 options, which are listed below.
 
 
 

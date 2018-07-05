@@ -415,7 +415,7 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         // lets create the command line arguments to pass in...
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         if (trace) {
             args.add("-t");
         }
@@ -644,7 +644,7 @@ public class RunMojo extends AbstractExecMojo {
     @SuppressWarnings("deprecation")
     private void terminateThreads(ThreadGroup threadGroup) {
         long startTime = System.currentTimeMillis();
-        Set<Thread> uncooperativeThreads = new HashSet<Thread>(); // these were not responsive
+        Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive
         // to interruption
         for (Collection<Thread> threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads
             .removeAll(uncooperativeThreads)) {
@@ -708,7 +708,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Thread> getActiveThreads(ThreadGroup threadGroup) {
         Thread[] threads = new Thread[threadGroup.activeCount()];
         int numThreads = threadGroup.enumerate(threads);
-        Collection<Thread> result = new ArrayList<Thread>(numThreads);
+        Collection<Thread> result = new ArrayList<>(numThreads);
         for (int i = 0; i < threads.length && threads[i] != null; i++) {
             result.add(threads[i]);
         }
@@ -771,7 +771,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
-        Set<URL> classpathURLs = new LinkedHashSet<URL>();
+        Set<URL> classpathURLs = new LinkedHashSet<>();
         // project classpath must be first
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
         // and extra plugin classpath
@@ -837,7 +837,7 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         try {
-            Set<Artifact> artifacts = new HashSet<Artifact>(this.pluginDependencies);
+            Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
             for (Artifact artifact : artifacts) {
                 // must
                 if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
@@ -905,7 +905,7 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
-        List<Artifact> answer = new ArrayList<Artifact>();
+        List<Artifact> answer = new ArrayList<>();
 
         for (Artifact artifact : getAllDependencies()) {
 
@@ -919,7 +919,7 @@ public class RunMojo extends AbstractExecMojo {
 
     // generic method to retrieve all the transitive dependencies
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency)dependencies.next();
@@ -952,7 +952,7 @@ public class RunMojo extends AbstractExecMojo {
                 art.setFile(new File(dependency.getSystemPath()));
             }
 
-            List<String> exclusions = new ArrayList<String>();
+            List<String> exclusions = new ArrayList<>();
             for (Exclusion exclusion : dependency.getExclusions()) {
                 exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
             }
@@ -980,7 +980,7 @@ public class RunMojo extends AbstractExecMojo {
         if (this.includePluginDependencies) {
             if (this.executableDependency == null) {
                 getLog().debug("All Plugin Dependencies will be included.");
-                relevantDependencies = new HashSet<Artifact>(this.pluginDependencies);
+                relevantDependencies = new HashSet<>(this.pluginDependencies);
             } else {
                 getLog().debug("Selected plugin Dependencies will be included.");
                 Artifact executableArtifact = this.findExecutableArtifact();

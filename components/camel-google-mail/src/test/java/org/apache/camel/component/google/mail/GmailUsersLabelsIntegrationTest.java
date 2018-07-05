@@ -44,7 +44,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
         String labelId = null;
         if (getTestLabel(labels) == null) {
-            Map<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelGoogleMail.userId", CURRENT_USERID);
             Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show").setLabelListVisibility("labelShow");
@@ -63,7 +63,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
         labels = requestBody("direct://LIST", CURRENT_USERID);
         assertTrue(getTestLabel(labels) != null);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is String

@@ -72,7 +72,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class XsltBuilder implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new HashMap<>();
     private XmlConverter converter = new XmlConverter();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
@@ -267,7 +267,7 @@ public class XsltBuilder implements Processor {
      */
     public XsltBuilder transformerCacheSize(int numberToCache) {
         if (numberToCache > 0) {
-            transformers = new ArrayBlockingQueue<Transformer>(numberToCache);
+            transformers = new ArrayBlockingQueue<>(numberToCache);
         } else {
             transformers = null;
         }

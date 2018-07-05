@@ -28,7 +28,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 public class ErrorHandlerSupportTest extends TestCase {
 
     public void testOnePolicyChildFirst() {
-        List<Class<? extends Throwable>> exceptions = new ArrayList<Class<? extends Throwable>>();
+        List<Class<? extends Throwable>> exceptions = new ArrayList<>();
         exceptions.add(ChildException.class);
         exceptions.add(ParentException.class);
 
@@ -40,7 +40,7 @@ public class ErrorHandlerSupportTest extends TestCase {
     }
 
     public void testOnePolicyChildLast() {
-        List<Class<? extends Throwable>> exceptions = new ArrayList<Class<? extends Throwable>>();
+        List<Class<? extends Throwable>> exceptions = new ArrayList<>();
         exceptions.add(ParentException.class);
         exceptions.add(ChildException.class);
 

@@ -61,7 +61,7 @@ public class RestletPostFormTest extends RestletTestSupport {
     public void testPostBody() throws Exception {
         HttpUriRequest method = new HttpPost("http://localhost:" + portNum + "/users");
 
-        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("foo", "bar"));
 
         ((HttpEntityEnclosingRequestBase)method).setEntity(new UrlEncodedFormEntity(urlParameters));

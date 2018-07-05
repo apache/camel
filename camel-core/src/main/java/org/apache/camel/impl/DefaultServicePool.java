@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public abstract class DefaultServicePool<Key, Service> extends ServiceSupport implements ServicePool<Key, Service> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final ConcurrentMap<Key, BlockingQueue<Service>> pool = new ConcurrentHashMap<Key, BlockingQueue<Service>>();
+    protected final ConcurrentMap<Key, BlockingQueue<Service>> pool = new ConcurrentHashMap<>();
     protected int capacity = 100;
 
     protected DefaultServicePool() {
@@ -66,7 +66,7 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
     public synchronized Service addAndAcquire(Key key, Service service) {
         BlockingQueue<Service> entry = pool.get(key);
         if (entry == null) {
-            entry = new ArrayBlockingQueue<Service>(capacity);
+            entry = new ArrayBlockingQueue<>(capacity);
             pool.put(key, entry);
         }
         log.trace("AddAndAcquire key: {} service: {}", key, service);
@@ -109,7 +109,7 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
     protected void doStop() throws Exception {
         log.debug("Stopping service pool: {}", this);
         for (BlockingQueue<Service> entry : pool.values()) {
-            Collection<Service> values = new ArrayList<Service>();
+            Collection<Service> values = new ArrayList<>();
             entry.drainTo(values);
             ServiceHelper.stopServices(values);
             entry.clear();

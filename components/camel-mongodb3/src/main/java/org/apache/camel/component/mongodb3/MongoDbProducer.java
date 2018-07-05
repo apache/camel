@@ -520,7 +520,7 @@ public class MongoDbProducer extends DefaultProducer {
                 // @see http://docs.mongodb.org/manual/core/aggregation/
                 List<Bson> queryList;
                 if (query != null) {
-                    queryList = query.stream().map(o -> (Bson)o).collect(Collectors.toList());
+                    queryList = query.stream().collect(Collectors.toList());
                 } else {
                     queryList = Arrays.asList(Bson.class.cast(exchange.getIn().getMandatoryBody(Bson.class)));
                 }
@@ -625,7 +625,7 @@ public class MongoDbProducer extends DefaultProducer {
                 BulkWriteOptions options = new BulkWriteOptions().ordered(ordered);
 
                 @SuppressWarnings("unchecked")
-                List<WriteModel<Document>> requests = (List<WriteModel<Document>>) exchange.getIn().getMandatoryBody((Class<List<WriteModel<Document>>>)Class.class.cast(List.class));
+                List<WriteModel<Document>> requests = exchange.getIn().getMandatoryBody((Class<List<WriteModel<Document>>>)Class.class.cast(List.class));
 
                 BulkWriteResult result = dbCol.bulkWrite(requests, options);
                 return result;

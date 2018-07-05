@@ -109,7 +109,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
         String value = prefix + "value";
         log.info("Creating indexed data using the key/value pair {} => {}", key, value);
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(key, value);
         return map;
     }

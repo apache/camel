@@ -41,7 +41,7 @@ for this component:
 
 
 // component options: START
-The MLLP component supports 5 options which are listed below.
+The MLLP component supports 5 options, which are listed below.
 
 
 
@@ -172,7 +172,7 @@ by these properties on the Camel exchange:
 |*Key* |*Type* |*Description*
 |CamelMllpAcknowledgement | byte[] | If present, this property will we sent to client as the MLLP Acknowledgement
 |CamelMllpAcknowledgementString | String | If present and CamelMllpAcknowledgement is not present, this property will we sent to client as the MLLP Acknowledgement
-|CamelMllpAcknowledgementMsaText | String | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the the contents of MSA-3 in the generated HL7 acknowledgement
+|CamelMllpAcknowledgementMsaText | String | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the contents of MSA-3 in the generated HL7 acknowledgement
 |CamelMllpAcknowledgementType | String  | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the HL7 acknowledgement type (i.e. AA, AE, AR)
 |CamelMllpAutoAcknowledge | Boolean | Overrides the autoAck query parameter
 

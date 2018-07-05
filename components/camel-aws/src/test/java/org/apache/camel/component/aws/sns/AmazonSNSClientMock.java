@@ -160,7 +160,7 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
         ListTopicsResult res = new ListTopicsResult();
         Topic topic = new Topic();
         topic.setTopicArn(DEFAULT_TOPIC_ARN);
-        List<Topic> list = new ArrayList<Topic>();
+        List<Topic> list = new ArrayList<>();
         list.add(topic);
         res.setTopics(list);
         return res;

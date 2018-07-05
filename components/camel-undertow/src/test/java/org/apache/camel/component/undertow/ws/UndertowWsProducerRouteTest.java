@@ -44,7 +44,7 @@ public class UndertowWsProducerRouteTest extends BaseUndertowTest {
 
         final CountDownLatch latch = new CountDownLatch(1);
         AsyncHttpClient c = new DefaultAsyncHttpClient();
-        final List<Object> received = Collections.synchronizedList(new ArrayList<Object>());
+        final List<Object> received = Collections.synchronizedList(new ArrayList<>());
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/shop")
                 .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {

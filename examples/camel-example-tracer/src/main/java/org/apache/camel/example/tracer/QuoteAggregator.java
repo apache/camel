@@ -31,7 +31,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class QuoteAggregator implements AggregationStrategy {
 
-    private List<String> coolWords = new ArrayList<String>();
+    private List<String> coolWords = new ArrayList<>();
 
     public void setCoolWords(List<String> coolWords) {
         for (String s : coolWords) {

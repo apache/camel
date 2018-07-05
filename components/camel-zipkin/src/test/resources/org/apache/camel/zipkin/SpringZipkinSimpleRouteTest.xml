@@ -24,13 +24,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- to use a logger as the collector (for testing) -->
-  <bean id="logSpanCollector" class="org.apache.camel.zipkin.ZipkinLoggingSpanCollector"/>
+  <!-- to use a logger as the span reporter (for testing) -->
+  <bean id="logSpanReporter" class="org.apache.camel.zipkin.LogSpanReporterTest"/>
 
   <!-- setup zipkin tracer -->
   <bean id="zipkinTracer" class="org.apache.camel.zipkin.ZipkinTracer">
     <property name="serviceName" value="dude"/>
-    <property name="spanCollector" ref="logSpanCollector"/>
+    <property name="spanReporter" ref="logSpanReporter"/>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">

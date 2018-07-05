@@ -63,14 +63,14 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
     private Boolean routeScoped;
     // TODO: in Camel 3.0 the OnCompletionDefinition should not contain state and OnCompletion processors
     @XmlTransient
-    private final Map<String, Processor> onCompletions = new HashMap<String, Processor>();
+    private final Map<String, Processor> onCompletions = new HashMap<>();
 
     public OnCompletionDefinition() {
     }

@@ -92,7 +92,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/reports/locked/?initialDelay=0&delay=10&noop=true").process(new MyNoopProcessor()).
+                from("file://target/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile").process(new MyNoopProcessor()).
                     to("mock:report");
 
                 // for no locks

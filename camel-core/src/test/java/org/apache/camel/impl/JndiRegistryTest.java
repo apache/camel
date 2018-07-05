@@ -65,7 +65,7 @@ public class JndiRegistryTest extends TestCase {
     }
 
     public void testCamelContextFactory() throws Exception {
-        Map<Object, Object> env = new HashMap<Object, Object>();
+        Map<Object, Object> env = new HashMap<>();
         env.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
 
         JndiRegistry jndi = new JndiRegistry(env);

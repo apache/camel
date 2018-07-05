@@ -131,7 +131,7 @@ public class HttpProducer extends DefaultProducer {
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the value to add as request header
-                final List<String> values = new ArrayList<String>();
+                final List<String> values = new ArrayList<>();
 
                 // if its a multi value then check each value if we can add it and for multi values they
                 // should be combined into a single value
@@ -250,7 +250,7 @@ public class HttpProducer extends DefaultProducer {
 
         // propagate HTTP response headers
         Header[] headers = httpResponse.getAllHeaders();
-        Map<String, List<String>> m = new HashMap<String, List<String>>();
+        Map<String, List<String>> m = new HashMap<>();
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
@@ -285,7 +285,7 @@ public class HttpProducer extends DefaultProducer {
         Map<String, String> headers = extractResponseHeaders(httpResponse.getAllHeaders());
         // handle cookies
         if (getEndpoint().getCookieHandler() != null) {
-            Map<String, List<String>> m = new HashMap<String, List<String>>();
+            Map<String, List<String>> m = new HashMap<>();
             for (Entry<String, String> e : headers.entrySet()) {
                 m.put(e.getKey(), Collections.singletonList(e.getValue()));
             }
@@ -293,7 +293,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        if (transferException && responseBody != null && responseBody instanceof Exception) {
+        if (transferException && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
         }
@@ -344,7 +344,7 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         for (Header header : responseHeaders) {
             answer.put(header.getName(), header.getValue());
         }

@@ -57,7 +57,7 @@ public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext contextLocal = super.createCamelContext();
 
-        tracedMessages = new LinkedList<StringBuilder>();
+        tracedMessages = new LinkedList<>();
 
         Tracer tracer = (Tracer) contextLocal.getDefaultTracer();
         tracer.setEnabled(true);

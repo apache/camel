@@ -168,8 +168,6 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Create a specific Service Account require specify a Service Account bean");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         sa = getEndpoint().getKubernetesClient().serviceAccounts()
                 .inNamespace(namespaceName).create(saToCreate);
         

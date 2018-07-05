@@ -77,7 +77,7 @@ public class EndpointEventListener implements EventListener {
     private Exchange createExchange(EventIterator events) {
         Exchange exchange = endpoint.createExchange();
 
-        List<Event> eventList = new LinkedList<Event>();
+        List<Event> eventList = new LinkedList<>();
         if (events != null) {
             while (events.hasNext()) {
                 eventList.add(events.nextEvent());

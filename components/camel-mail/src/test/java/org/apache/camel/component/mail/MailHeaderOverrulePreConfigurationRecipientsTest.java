@@ -41,7 +41,7 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
         mock.expectedHeaderReceived("cc", "willem@localhost");
         mock.expectedHeaderReceived("bcc", "hadrian@localhost");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("to", "claus@localhost");
         headers.put("cc", "willem@localhost");
         headers.put("bcc", "hadrian@localhost");

@@ -149,7 +149,7 @@ public class NagiosTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Nagios");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(NagiosConstants.LEVEL, "CRITICAL");
         headers.put(NagiosConstants.HOST_NAME, "myHost");
         headers.put(NagiosConstants.SERVICE_NAME, "myService");

@@ -83,7 +83,7 @@ public class CwProducer extends DefaultProducer {
         } else {
             Map<String, String> dimensions = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSIONS, Map.class);
             if (dimensions != null) {
-                Collection<Dimension> dimensionCollection = new ArrayList<Dimension>();
+                Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
                     Dimension dimension = new Dimension().withName(dimensionEntry.getKey()).withValue(dimensionEntry.getValue());
                     dimensionCollection.add(dimension);

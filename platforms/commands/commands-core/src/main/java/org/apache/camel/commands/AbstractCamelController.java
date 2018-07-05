@@ -34,7 +34,7 @@ public abstract class AbstractCamelController implements CamelController {
 
     @Override
     public List<Map<String, String>> getCamelContexts(String filter) throws Exception {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> answer = new ArrayList<>();
 
         List<Map<String, String>> context = getCamelContexts();
         if (filter != null) {

@@ -109,14 +109,14 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     protected List<String> getKeyUserIds() {
-        List<String> userids = new ArrayList<String>(2);
+        List<String> userids = new ArrayList<>(2);
         userids.add("second");
         userids.add(getKeyUserId());
         return userids;
     }
 
     protected List<String> getSignatureKeyUserIds() {
-        List<String> userids = new ArrayList<String>(2);
+        List<String> userids = new ArrayList<>(2);
         userids.add("second");
         userids.add(getKeyUserId());
         return userids;
@@ -206,7 +206,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint exception = setupExpectations(context, 1, "mock:exception");
 
         String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // add signature user id which does not have a passphrase
         headers.put(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID, "userIDWithNoPassphrase");
         // the following entry is necessary for the dynamic test
@@ -614,12 +614,12 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncryptSeveralSignerKeys.setEncryptionKeyRing(getPublicKeyRing());
                 pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyRing(getSecKeyRing());
 
-                List<String> signerUserIds = new ArrayList<String>();
+                List<String> signerUserIds = new ArrayList<>();
                 signerUserIds.add("Third (comment third) <email@third.com>");
                 signerUserIds.add("Second <email@second.com>");
                 pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
 
-                Map<String, String> userId2Passphrase = new HashMap<String, String>();
+                Map<String, String> userId2Passphrase = new HashMap<>();
                 userId2Passphrase.put("Third (comment third) <email@third.com>", "sdude");
                 userId2Passphrase.put("Second <email@second.com>", "sdude");
                 PGPPassphraseAccessor passphraseAccessorSeveralKeys = new DefaultPGPPassphraseAccessor(userId2Passphrase);
@@ -631,7 +631,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpVerifyAndDecryptSeveralSignerKeys.setSignatureKeyRing(getPublicKeyRing());
                 pgpVerifyAndDecryptSeveralSignerKeys.setProvider(getProvider());
                 // only specify one expected signature
-                List<String> expectedSigUserIds = new ArrayList<String>();
+                List<String> expectedSigUserIds = new ArrayList<>();
                 expectedSigUserIds.add("Second <email@second.com>");
                 pgpVerifyAndDecryptSeveralSignerKeys.setSignatureKeyUserids(expectedSigUserIds);
                 from("direct:several-signer-keys").streamCaching().marshal(pgpSignAndEncryptSeveralSignerKeys).to("mock:encrypted")

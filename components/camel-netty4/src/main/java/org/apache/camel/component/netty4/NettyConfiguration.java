@@ -62,12 +62,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @Deprecated
     private ChannelHandler encoder;
     @UriParam(label = "codec", javaType = "java.lang.String")
-    private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+    private List<ChannelHandler> encoders = new ArrayList<>();
     @UriParam(label = "codec", description = "To use a single decoder. This options is deprecated use encoders instead.")
     @Deprecated
     private ChannelHandler decoder;
     @UriParam(label = "codec", javaType = "java.lang.String")
-    private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+    private List<ChannelHandler> decoders = new ArrayList<>();
     @UriParam
     private boolean disconnect;
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -120,9 +120,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(encoders);
+            List<ChannelHandler> encodersCopy = new ArrayList<>(encoders);
             answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<ChannelHandler>(decoders);
+            List<ChannelHandler> decodersCopy = new ArrayList<>(decoders);
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {
@@ -654,10 +654,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     /**
      * This option allows producers and consumers (in client mode) to reuse the same Netty {@link Channel} for the lifecycle of processing the {@link Exchange}.
      * This is useful if you need to call a server multiple times in a Camel route and want to use the same network connection.
-     * When using this the channel is not returned to the connection pool until the {@link Exchange} is done; or disconnected
+     * When using this, the channel is not returned to the connection pool until the {@link Exchange} is done; or disconnected
      * if the disconnect option is set to true.
      * <p/>
-     * The reused {@link Channel} is stored on the {@link Exchange} as an exchange property with the key {@link NettyConstants#NETTY_CHANNEL}
+     * The reused {@link Channel} is stored on the {@link Exchange} as an exchange property with the key {@link NettyConstants#NETTY_CHANNEL} 
      * which allows you to obtain the channel during routing and use it as well.
      */
     public void setReuseChannel(boolean reuseChannel) {

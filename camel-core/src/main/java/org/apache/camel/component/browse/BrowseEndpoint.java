@@ -89,7 +89,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     }
 
     protected List<Exchange> createExchangeList() {
-        return new CopyOnWriteArrayList<Exchange>();
+        return new CopyOnWriteArrayList<>();
     }
 
     /**

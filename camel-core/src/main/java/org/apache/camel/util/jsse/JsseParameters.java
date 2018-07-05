@@ -95,7 +95,7 @@ public class JsseParameters implements CamelContextAware {
         if (this.getCamelContext() == null) {
             return values;
         } else {
-            List<String> parsedValues = new ArrayList<String>(values.size());
+            List<String> parsedValues = new ArrayList<>(values.size());
             for (String value : values) {
                 parsedValues.add(this.parsePropertyValue(value));
             }

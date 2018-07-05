@@ -33,15 +33,15 @@ public class DummyCamelController extends AbstractLocalCamelController {
 
     @Override
     public List<CamelContext> getLocalCamelContexts() {
-        List<CamelContext> answer = new ArrayList<CamelContext>(1);
+        List<CamelContext> answer = new ArrayList<>(1);
         answer.add(camelContext);
         return answer;
     }
 
     @Override
     public List<Map<String, String>> getCamelContexts() throws Exception {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>(1);
-        Map<String, String> row = new LinkedHashMap<String, String>();
+        List<Map<String, String>> answer = new ArrayList<>(1);
+        Map<String, String> row = new LinkedHashMap<>();
         row.put("name", camelContext.getName());
         row.put("state", camelContext.getStatus().name());
         row.put("uptime", camelContext.getUptime());

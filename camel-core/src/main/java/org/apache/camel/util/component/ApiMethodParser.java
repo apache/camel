@@ -45,7 +45,7 @@ public abstract class ApiMethodParser<T> {
     private static final Map<String, Class<?>> PRIMITIVE_TYPES;
 
     static {
-        PRIMITIVE_TYPES = new HashMap<String, Class<?>>();
+        PRIMITIVE_TYPES = new HashMap<>();
         PRIMITIVE_TYPES.put("int", Integer.TYPE);
         PRIMITIVE_TYPES.put("long", Long.TYPE);
         PRIMITIVE_TYPES.put("double", Double.TYPE);
@@ -77,7 +77,7 @@ public abstract class ApiMethodParser<T> {
     }
 
     public final void setSignatures(List<String> signatures) {
-        this.signatures = new ArrayList<String>();
+        this.signatures = new ArrayList<>();
         this.signatures.addAll(signatures);
     }
 
@@ -95,7 +95,7 @@ public abstract class ApiMethodParser<T> {
      */
     public final List<ApiMethodModel> parse() {
         // parse sorted signatures and generate descriptions
-        List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
+        List<ApiMethodModel> result = new ArrayList<>();
         for (String signature : signatures) {
 
             // skip comment or empty lines
@@ -122,8 +122,8 @@ public abstract class ApiMethodParser<T> {
             final String name = methodMatcher.group(3);
             final String argSignature = methodMatcher.group(4);
 
-            final List<ApiMethodArg> arguments = new ArrayList<ApiMethodArg>();
-            final List<Class<?>> argTypes = new ArrayList<Class<?>>();
+            final List<ApiMethodArg> arguments = new ArrayList<>();
+            final List<Class<?>> argTypes = new ArrayList<>();
 
             final Matcher argsMatcher = ARGS_PATTERN.matcher(argSignature);
             while (argsMatcher.find()) {
@@ -150,7 +150,7 @@ public abstract class ApiMethodParser<T> {
         result = processResults(result);
 
         // check that argument names have the same type across methods
-        Map<String, Class<?>> allArguments = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> allArguments = new HashMap<>();
         for (ApiMethodModel model : result) {
             for (ApiMethodArg argument : model.getArguments()) {
                 String name = argument.getName();
@@ -198,7 +198,7 @@ public abstract class ApiMethodParser<T> {
         });
 
         // assign unique names to every method model
-        final Map<String, Integer> dups = new HashMap<String, Integer>();
+        final Map<String, Integer> dups = new HashMap<>();
         for (ApiMethodModel model : result) {
             // locale independent upper case conversion
             final String name = model.getName();

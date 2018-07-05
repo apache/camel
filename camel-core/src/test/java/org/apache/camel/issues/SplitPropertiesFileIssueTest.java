@@ -78,15 +78,15 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
             // now we use our own expressions to split the file as we like it
             // what we return is just the list of the two Camel Message objects
             // which contains the splitted data (our way)
-            List<Message> answer = new ArrayList<Message>();
+            List<Message> answer = new ArrayList<>();
             answer.add(msg1);
             answer.add(msg2);
 
             // split the original body into two data lists
             // can be done a bit prettier than this code
             // but its just for show and tell how to use Expressions
-            List<String> data1 = new ArrayList<String>();
-            List<String> data2 = new ArrayList<String>();
+            List<String> data1 = new ArrayList<>();
+            List<String> data2 = new ArrayList<>();
 
             String body = exchange.getIn().getBody(String.class);
             String[] lines = body.split(LS);

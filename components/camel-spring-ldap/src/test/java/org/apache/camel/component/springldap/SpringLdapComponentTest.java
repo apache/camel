@@ -153,7 +153,7 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
 
         producer = context.createProducerTemplate();
 
-        body = new HashMap<String, Object>();
+        body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
     }
 }

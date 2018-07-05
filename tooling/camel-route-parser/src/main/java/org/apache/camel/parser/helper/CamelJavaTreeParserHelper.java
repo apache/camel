@@ -36,7 +36,6 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ITypeBinding;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.InfixExpression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -118,10 +117,21 @@ public final class CamelJavaTreeParserHelper {
             } else if ("routeId".equals(name)) {
                 // should be set on the parent
                 parent.setRouteId(node.getRouteId());
-            } else if ("end".equals(name) || "endChoice".equals(name) || "endParent".equals(name) || "endRest".equals(name)
+            } else if ("end".equals(name) || "endParent".equals(name) || "endRest".equals(name)
                     || "endDoTry".equals(name) || "endHystrix".equals(name)) {
                 // parent should be grand parent
-                parent = parent.getParent();
+                if (parent.getParent() != null) {
+                    parent = parent.getParent();
+                }
+            } else if ("endChoice".equals(name)) {
+                // we are in a choice block so parent should be the first choice up the parent tree
+                while (!"from".equals(parent.getName()) && !"choice".equals(parent.getName())) {
+                    if (parent.getParent() != null) {
+                        parent = parent.getParent();
+                    } else {
+                        break;
+                    }
+                }
             } else if ("choice".equals(name)) {
                 // special for some EIPs
                 CamelNodeDetails output = nodeFactory.copyNode(parent, name, node);
@@ -129,8 +139,12 @@ public final class CamelJavaTreeParserHelper {
                 parent = output;
             } else if ("when".equals(name) || "otherwise".equals(name)) {
                 // we are in a choice block so parent should be the first choice up the parent tree
-                while (!parent.getName().equals("from") && !"choice".equals(parent.getName())) {
-                    parent = parent.getParent();
+                while (!"from".equals(parent.getName()) && !"choice".equals(parent.getName())) {
+                    if (parent.getParent() != null) {
+                        parent = parent.getParent();
+                    } else {
+                        break;
+                    }
                 }
             } else {
                 boolean hasOutput = hasOutput(name);

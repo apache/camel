@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Jetty specific exchange which keeps track of the the request and response.
+ * Jetty specific exchange which keeps track of the request and response.
  */
 public class JettyContentExchange9 implements JettyContentExchange {
 

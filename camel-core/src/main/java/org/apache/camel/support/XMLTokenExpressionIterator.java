@@ -222,18 +222,18 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 throw new XMLStreamException("reader not supporting Location");
             }
 
-            this.path = new ArrayList<QName>();
+            this.path = new ArrayList<>();
             
             // wrapped mode needs the segments and the injected mode needs the namespaces
             if (this.mode == 'w') {
-                this.segments = new ArrayList<String>();
-                this.segmentlog = new ArrayList<QName>();
+                this.segments = new ArrayList<>();
+                this.segmentlog = new ArrayList<>();
             } else if (this.mode == 'i') {
-                this.namespaces = new ArrayList<Map<String, String>>();
+                this.namespaces = new ArrayList<>();
             }
             // when grouping the tokens, allocate the storage to temporarily store tokens. 
             if (this.group > 1) {
-                this.tokens = new ArrayList<String>();
+                this.tokens = new ArrayList<>();
             }       
             this.nextToken = getNextToken();
         }
@@ -314,7 +314,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         }
 
         private void pushNamespaces(XMLStreamReader reader) {
-            Map<String, String> m = new HashMap<String, String>();
+            Map<String, String> m = new HashMap<>();
             if (namespaces.size() > 0) {
                 m.putAll(namespaces.get(namespaces.size() - 1));
             }
@@ -380,7 +380,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
             } else if (mode == 'i') {
                 final String stag = token.substring(0, token.indexOf('>') + 1);
-                Set<String> skip = new HashSet<String>();
+                Set<String> skip = new HashSet<>();
                 Matcher matcher = NAMESPACE_PATTERN.matcher(stag);
                 char quote = 0;
                 while (matcher.find()) {

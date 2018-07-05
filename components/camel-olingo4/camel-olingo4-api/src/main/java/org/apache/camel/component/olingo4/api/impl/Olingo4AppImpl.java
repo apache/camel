@@ -651,7 +651,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                 OutputStream os = new ByteArrayOutputStream();
                 ODataBatchUtilities.readBatchPart(batchController, os, false);
                 Object content = null;
-                final Olingo4BatchRequest batchPartRequest = (Olingo4BatchRequest)batchRequest.get(batchRequestIndex);
+                final Olingo4BatchRequest batchPartRequest = batchRequest.get(batchRequestIndex);
                 final HttpResponse batchPartHttpResponse = constructBatchPartHttpResponse(new ByteArrayInputStream(((ByteArrayOutputStream)os).toByteArray()));
                 final StatusLine batchPartStatusLine = batchPartHttpResponse.getStatusLine();
                 final int batchPartLineStatusCode = batchPartStatusLine.getStatusCode();

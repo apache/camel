@@ -49,13 +49,13 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private final VersionHelper version = new VersionHelper();
 
     // 3rd party components/data-formats
-    private final Map<String, String> extraComponents = new HashMap<String, String>();
-    private final Map<String, String> extraComponentsJSonSchema = new HashMap<String, String>();
-    private final Map<String, String> extraDataFormats = new HashMap<String, String>();
-    private final Map<String, String> extraDataFormatsJSonSchema = new HashMap<String, String>();
+    private final Map<String, String> extraComponents = new HashMap<>();
+    private final Map<String, String> extraComponentsJSonSchema = new HashMap<>();
+    private final Map<String, String> extraDataFormats = new HashMap<>();
+    private final Map<String, String> extraDataFormatsJSonSchema = new HashMap<>();
 
     // cache of operation -> result
-    private final Map<String, Object> cache = new HashMap<String, Object>();
+    private final Map<String, Object> cache = new HashMap<>();
 
     private boolean caching;
     private VersionManager versionManager = new DefaultVersionManager(this);
@@ -260,7 +260,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
 
         if (names == null) {
-            names = new ArrayList<String>();
+            names = new ArrayList<>();
             InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG);
             if (is != null) {
                 try {
@@ -297,7 +297,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public List<String> findModelNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
 
         List<String> names = findModelNames();
         for (String name : names) {
@@ -328,7 +328,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public List<String> findComponentNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
 
         List<String> names = findComponentNames();
         for (String name : names) {
@@ -359,7 +359,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public List<String> findDataFormatNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
 
         List<String> names = findDataFormatNames();
         for (String name : names) {
@@ -390,7 +390,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public List<String> findLanguageNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
 
         List<String> names = findLanguageNames();
         for (String name : names) {
@@ -421,7 +421,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public List<String> findOtherNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
 
         List<String> names = findOtherNames();
         for (String name : names) {
@@ -925,7 +925,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
 
         if (answer == null) {
-            answer = new TreeSet<String>();
+            answer = new TreeSet<>();
             List<String> names = findModelNames();
             for (String name : names) {
                 String json = modelJSonSchema(name);
@@ -959,7 +959,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
 
         if (answer == null) {
-            answer = new TreeSet<String>();
+            answer = new TreeSet<>();
             List<String> names = findComponentNames();
             for (String name : names) {
                 String json = componentJSonSchema(name);
@@ -993,7 +993,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
 
         if (answer == null) {
-            answer = new TreeSet<String>();
+            answer = new TreeSet<>();
             List<String> names = findDataFormatNames();
             for (String name : names) {
                 String json = dataFormatJSonSchema(name);
@@ -1027,7 +1027,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
 
         if (answer == null) {
-            answer = new TreeSet<String>();
+            answer = new TreeSet<>();
             List<String> names = findLanguageNames();
             for (String name : names) {
                 String json = languageJSonSchema(name);
@@ -1061,7 +1061,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
 
         if (answer == null) {
-            answer = new TreeSet<String>();
+            answer = new TreeSet<>();
             List<String> names = findOtherNames();
             for (String name : names) {
                 String json = otherJSonSchema(name);
@@ -1171,7 +1171,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         if ("log".equals(scheme)) {
             String showAll = options.get("showAll");
             if ("true".equals(showAll)) {
-                Map<String, String> filtered = new LinkedHashMap<String, String>();
+                Map<String, String> filtered = new LinkedHashMap<>();
                 // remove all the other showXXX options when showAll=true
                 for (Map.Entry<String, String> entry : options.entrySet()) {
                     String key = entry.getKey();

@@ -36,7 +36,7 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
     // setup a wrong userids
     @Override
     protected List<String> getKeyUserIds() {
-        List<String> userids = new ArrayList<String>(2);
+        List<String> userids = new ArrayList<>(2);
         userids.add("wrong1");
         userids.add(getKeyUserId());
         return userids;
@@ -45,7 +45,7 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
     // setup a wrong signature userids
     @Override
     protected List<String> getSignatureKeyUserIds() {
-        List<String> userids = new ArrayList<String>(2);
+        List<String> userids = new ArrayList<>(2);
         userids.add("wrong1");
         userids.add(getKeyUserId());
         return userids;
@@ -77,7 +77,7 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
 
     // override wrong userid and password with correct userid and password in the headers
     protected Map<String, Object> getHeaders() {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(PGPKeyAccessDataFormat.KEY_USERID, "sdude@nowhere.net");
         headers.put(PGPKeyAccessDataFormat.KEY_USERIDS, Collections.singletonList("second"));
         headers.put(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID, "sdude@nowhere.net");

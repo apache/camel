@@ -155,8 +155,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     @Override
     protected void configurePollingConsumer(PollingConsumer consumer) throws Exception {
-        Map<String, Object> copy = new HashMap<String, Object>(getConsumerProperties());
-        Map<String, Object> throwaway = new HashMap<String, Object>();
+        Map<String, Object> copy = new HashMap<>(getConsumerProperties());
+        Map<String, Object> throwaway = new HashMap<>();
 
         // filter out unwanted options which is intended for the scheduled poll consumer
         // as these options are not supported on the polling consumer

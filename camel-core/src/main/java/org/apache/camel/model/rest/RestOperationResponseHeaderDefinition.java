@@ -157,7 +157,7 @@ public class RestOperationResponseHeaderDefinition {
             return allowableValues;
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public String getExample() {

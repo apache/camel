@@ -212,7 +212,7 @@ public class DefaultExchangeHolder implements Serializable {
             return;
         }
         if (payload.properties == null) {
-            payload.properties = new LinkedHashMap<String, Object>();
+            payload.properties = new LinkedHashMap<>();
         }
         payload.properties.put(key, property);
     }
@@ -229,7 +229,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (exchange.getIn().hasHeaders()) {
             Map<String, Object> map = checkValidHeaderObjects("in headers", exchange, exchange.getIn().getHeaders(), allowSerializedHeaders);
             if (map != null && !map.isEmpty()) {
-                inHeaders = new LinkedHashMap<String, Object>(map);
+                inHeaders = new LinkedHashMap<>(map);
             }
         }
         return null;
@@ -239,7 +239,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
             Map<String, Object> map = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders(), allowSerializedHeaders);
             if (map != null && !map.isEmpty()) {
-                outHeaders = new LinkedHashMap<String, Object>(map);
+                outHeaders = new LinkedHashMap<>(map);
             }
         }
         return null;
@@ -249,7 +249,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (exchange.hasProperties()) {
             Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getProperties(), allowSerializedHeaders);
             if (map != null && !map.isEmpty()) {
-                properties = new LinkedHashMap<String, Object>(map);
+                properties = new LinkedHashMap<>(map);
             }
         }
         return null;
@@ -274,7 +274,7 @@ public class DefaultExchangeHolder implements Serializable {
             return null;
         }
 
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        Map<String, Object> result = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
 
             // silently skip any values which is null
@@ -303,7 +303,7 @@ public class DefaultExchangeHolder implements Serializable {
             return null;
         }
 
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        Map<String, Object> result = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
 
             // silently skip any values which is null

@@ -54,7 +54,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
 
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
-    private final ConcurrentMap<ContextPathMatcher, HttpServerChannelHandler> consumers = new ConcurrentHashMap<ContextPathMatcher, HttpServerChannelHandler>();
+    private final ConcurrentMap<ContextPathMatcher, HttpServerChannelHandler> consumers = new ConcurrentHashMap<>();
     private int port;
     private String token;
     private int len;
@@ -173,7 +173,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         path = pathAsKey(path);
 
 
-        List<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> candidates = new ArrayList<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>>();
+        List<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> candidates = new ArrayList<>();
 
         // first match by http method
         for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
@@ -185,7 +185,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         }
 
         // then see if we got a direct match
-        List<HttpServerChannelHandler> directMatches = new LinkedList<HttpServerChannelHandler>();
+        List<HttpServerChannelHandler> directMatches = new LinkedList<>();
         for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : candidates) {
             if (entry.getKey().matchesRest(path, false)) {
                 directMatches.add(entry.getValue());
@@ -303,7 +303,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
     }
 
     private static List<HttpServerChannelHandler> handlersWithExplicitOptionsMethod(Iterable<HttpServerChannelHandler> handlers) {
-        List<HttpServerChannelHandler> handlersWithOptions = new LinkedList<HttpServerChannelHandler>();
+        List<HttpServerChannelHandler> handlersWithOptions = new LinkedList<>();
         for (HttpServerChannelHandler handler : handlers) {
             String consumerMethod = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
             if (consumerMethod != null && consumerMethod.contains("OPTIONS")) {

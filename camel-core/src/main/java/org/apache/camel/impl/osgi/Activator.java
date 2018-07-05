@@ -86,11 +86,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
-    private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
+    private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<>();
     private long bundleId;
     
     // Map from package name to the capability we export for this package
-    private final Map<String, BundleCapability> packageCapabilities = new HashMap<String, BundleCapability>();
+    private final Map<String, BundleCapability> packageCapabilities = new HashMap<>();
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
@@ -124,7 +124,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public Object addingBundle(Bundle bundle, BundleEvent event) {
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
         if (extenderCapabilityWired(bundle)) {
-            List<BaseService> r = new ArrayList<BaseService>();
+            List<BaseService> r = new ArrayList<>();
             registerComponents(bundle, r);
             registerLanguages(bundle, r);
             registerDataFormats(bundle, r);
@@ -173,7 +173,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerComponents(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, Component.class)) {
-            Map<String, String> components = new HashMap<String, String>();
+            Map<String, String> components = new HashMap<>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
@@ -188,7 +188,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerLanguages(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, Language.class)) {
-            Map<String, String> languages = new HashMap<String, String>();
+            Map<String, String> languages = new HashMap<>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
@@ -209,7 +209,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerDataFormats(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, DataFormat.class)) {
-            Map<String, String> dataformats = new HashMap<String, String>();
+            Map<String, String> dataformats = new HashMap<>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
@@ -254,7 +254,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
         // then we need to use a different canSee algorithm that works outside real OSGi
-        if (bundle.getBundleId() > 0) {
+        if (bundle.getBundleId() >= 0) {
             Bundle root = bundle.getBundleContext().getBundle(0);
             if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
                 return checkCompat(bundle, clazz);
@@ -411,7 +411,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
             public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
-                Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+                Set<Class<?>> classes = new LinkedHashSet<>();
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
 
                 if (LOG.isTraceEnabled()) {
@@ -565,7 +565,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
 
         protected void doRegister(Class<?> type, String key, Object value) {
-            Dictionary<String, Object> props = new Hashtable<String, Object>();
+            Dictionary<String, Object> props = new Hashtable<>();
             props.put(key, value);
             doRegister(type, props);
         }
@@ -598,7 +598,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
     
     protected static Set<String> getConverterPackages(URL resource) {
-        Set<String> packages = new LinkedHashSet<String>();
+        Set<String> packages = new LinkedHashSet<>();
         if (resource != null) {
             BufferedReader reader = null;
             try {

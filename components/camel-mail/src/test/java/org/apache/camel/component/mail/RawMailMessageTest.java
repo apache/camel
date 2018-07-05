@@ -51,7 +51,7 @@ public class RawMailMessageTest extends CamelTestSupport {
     public void testGetRawJavaMailMessage() throws Exception {
         Mailbox.clearAll();
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("To", "davsclaus@apache.org");
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");

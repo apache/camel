@@ -45,7 +45,7 @@ public class CollectionHelperTest extends TestCase {
     }
 
     public void testSize() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
         map.put("bar", 456);
 
@@ -56,7 +56,7 @@ public class CollectionHelperTest extends TestCase {
     }
 
     public void testAppendValue() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         CollectionHelper.appendValue(map, "foo", 123);
         assertEquals(1, map.size());
 

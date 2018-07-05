@@ -211,8 +211,8 @@ public class ValidateMojo extends AbstractExecMojo {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
         List<CamelSimpleExpressionDetails> simpleExpressions = new ArrayList<>();
         List<CamelRouteDetails> routeIds = new ArrayList<>();
-        Set<File> javaFiles = new LinkedHashSet<File>();
-        Set<File> xmlFiles = new LinkedHashSet<File>();
+        Set<File> javaFiles = new LinkedHashSet<>();
+        Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
         if (includeJava) {

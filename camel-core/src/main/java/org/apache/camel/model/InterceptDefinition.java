@@ -44,7 +44,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @XmlTransient
     protected Processor output;
     @XmlTransient
-    protected final List<Processor> intercepted = new ArrayList<Processor>();
+    protected final List<Processor> intercepted = new ArrayList<>();
 
     public InterceptDefinition() {
     }

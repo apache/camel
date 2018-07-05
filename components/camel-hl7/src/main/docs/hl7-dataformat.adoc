@@ -213,7 +213,7 @@ The <<hl7-dataformat,HL7>> component ships with a HL7 data format that can
 be used to marshal or unmarshal HL7 model objects.
 
 // dataformat options: START
-The HL7 dataformat supports 2 options which are listed below.
+The HL7 dataformat supports 2 options, which are listed below.
 
 
 

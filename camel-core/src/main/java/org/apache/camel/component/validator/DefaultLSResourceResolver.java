@@ -39,7 +39,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     private final String resourceUri;
     private final String resourcePath;
     private String relatedURI;
-    private Map<String, String> relatedURIMap = new HashMap<String, String>();
+    private Map<String, String> relatedURIMap = new HashMap<>();
 
     public DefaultLSResourceResolver(CamelContext camelContext, String resourceUri) {
         this.camelContext = camelContext;

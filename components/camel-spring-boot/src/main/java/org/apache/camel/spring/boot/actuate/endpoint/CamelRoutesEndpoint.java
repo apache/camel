@@ -16,8 +16,11 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -38,20 +41,21 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.lang.Nullable;
+
 
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */
 @Endpoint(id = "camelroutes", enableByDefault = true)
-@ConfigurationProperties("management.endpoint.camelroutes")
 public class CamelRoutesEndpoint {
 
     private CamelContext camelContext;
-    private boolean readOnly = true;
+    private CamelRoutesEndpointProperties properties;
 
-    public CamelRoutesEndpoint(CamelContext camelContext) {
+    public CamelRoutesEndpoint(CamelContext camelContext, CamelRoutesEndpointProperties properties) {
         this.camelContext = camelContext;
+        this.properties = properties;
     }
 
     @ReadOperation
@@ -72,8 +76,8 @@ public class CamelRoutesEndpoint {
     }
 
     @WriteOperation
-    public void doWriteAction(@Selector String id, @Selector WriteAction action, TimeInfo timeInfo) {
-        if (this.isReadOnly()) {
+    public void doWriteAction(@Selector String id, @Selector WriteAction action, @Nullable TimeInfo timeInfo) {
+        if (this.properties.isReadOnly()) {
             throw new IllegalArgumentException(String.format("Read only: write action %s is not allowed", action));
         }
 
@@ -106,7 +110,7 @@ public class CamelRoutesEndpoint {
 
     @WriteOperation
     public String getRouteDump(@Selector String id) {
-        if (this.isReadOnly()) {
+        if (this.properties.isReadOnly()) {
             throw new IllegalArgumentException("Read only: route dump is not permitted in read-only mode");
         }
 
@@ -119,14 +123,6 @@ public class CamelRoutesEndpoint {
             }
         }
         return null;
-    }
-
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
     }
 
     private RouteEndpointInfo getRouteInfo(String id) {
@@ -207,11 +203,15 @@ public class CamelRoutesEndpoint {
     /**
      * Container for exposing {@link org.apache.camel.Route} information as JSON.
      */
-    @JsonPropertyOrder({"id", "description", "uptime", "uptimeMillis"})
+    @JsonPropertyOrder({"id", "group", "description", "uptime", "uptimeMillis"})
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class RouteEndpointInfo {
 
         private final String id;
+        
+        private final String group;
+
+        private final Map<String, Object> properties;
 
         private final String description;
 
@@ -223,9 +223,16 @@ public class CamelRoutesEndpoint {
 
         public RouteEndpointInfo(Route route) {
             this.id = route.getId();
+            this.group = route.getGroup();
             this.description = route.getDescription();
             this.uptime = route.getUptime();
             this.uptimeMillis = route.getUptimeMillis();
+
+            if (route.getProperties() != null) {
+                this.properties = new HashMap<>(route.getProperties());
+            } else {
+                this.properties = Collections.emptyMap();
+            }
 
             if (route instanceof StatefulService) {
                 this.status = ((StatefulService) route).getStatus().name();
@@ -236,6 +243,14 @@ public class CamelRoutesEndpoint {
 
         public String getId() {
             return id;
+        }
+        
+        public String getGroup() {
+            return group;
+        }
+
+        public Map<String, Object> getProperties() {
+            return properties;
         }
 
         public String getDescription() {

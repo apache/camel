@@ -186,7 +186,7 @@ public class ResequencerEngine<E> {
      * @param o an element.
      */
     void setLastDelivered(E o) {
-        lastDelivered = new Element<E>(o);
+        lastDelivered = new Element<>(o);
     }
 
     /**
@@ -199,7 +199,7 @@ public class ResequencerEngine<E> {
      */
     public synchronized void insert(E o) {
         // wrap object into internal element
-        Element<E> element = new Element<E>(o);
+        Element<E> element = new Element<>(o);
 
         // validate the exchange has no problem
         if (!sequence.comparator().isValid(element)) {
@@ -327,7 +327,7 @@ public class ResequencerEngine<E> {
     }
 
     private static <E> Sequence<Element<E>> createSequence(SequenceElementComparator<E> comparator) {
-        return new Sequence<Element<E>>(new ElementComparator<E>(comparator));
+        return new Sequence<>(new ElementComparator<>(comparator));
     }
 
 }

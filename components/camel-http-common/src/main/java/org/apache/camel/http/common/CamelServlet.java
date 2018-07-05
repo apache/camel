@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelServlet extends HttpServlet {
     public static final String ASYNC_PARAM = "async";
+    public static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private static final long serialVersionUID = -7061982839117697829L;
-    private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -56,7 +56,7 @@ public class CamelServlet extends HttpServlet {
     private boolean async;
 
     private ServletResolveConsumerStrategy servletResolveConsumerStrategy = new HttpServletResolveConsumerStrategy();
-    private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
+    private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<>();
 
     @Override
     public void init(ServletConfig config) throws ServletException {

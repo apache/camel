@@ -38,7 +38,7 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailAttachmentRedeliveryTest extends CamelTestSupport {
 
-    private final List<String> names = new ArrayList<String>();
+    private final List<String> names = new ArrayList<>();
 
     @Test
     public void testSendAndReceiveMailWithAttachmentsRedelivery() throws Exception {

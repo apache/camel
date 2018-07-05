@@ -148,7 +148,7 @@ public class DozerEndpoint extends DefaultEndpoint {
     }
 
     private Map<String, CustomConverter> getCustomConvertersWithId() {
-        Map<String, CustomConverter> customConvertersWithId = new HashMap<String, CustomConverter>();
+        Map<String, CustomConverter> customConvertersWithId = new HashMap<>();
         customConvertersWithId.put(CUSTOM_MAPPING_ID, customMapper);
         customConvertersWithId.put(VARIABLE_MAPPING_ID, variableMapper);
         customConvertersWithId.put(EXPRESSION_MAPPING_ID, expressionMapper);

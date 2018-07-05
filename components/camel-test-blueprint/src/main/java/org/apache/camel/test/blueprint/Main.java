@@ -17,11 +17,8 @@
 package org.apache.camel.test.blueprint;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
@@ -105,7 +102,6 @@ public class Main extends MainSupport {
             } else {
                 bundleContext = createBundleContext(bundleName);
             }
-            Set<Long> eventHistory = new HashSet<>();
 
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
@@ -152,7 +148,7 @@ public class Main extends MainSupport {
 
     @Override
     protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> map = new HashMap<String, CamelContext>(1);
+        Map<String, CamelContext> map = new HashMap<>(1);
         if (camelContext != null) {
             map.put(camelContext.getName(), camelContext);
         }

@@ -31,7 +31,7 @@ public class CamelItemReaderTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        camelItemReader = new CamelItemReader<String>(consumer(), "seda:start");
+        camelItemReader = new CamelItemReader<>(consumer(), "seda:start");
         sendBody("seda:start", message);
     }
 

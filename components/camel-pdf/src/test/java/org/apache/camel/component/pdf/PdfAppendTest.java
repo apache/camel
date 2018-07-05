@@ -124,7 +124,7 @@ public class PdfAppendTest extends CamelTestSupport {
         // Encryption happens after saving.
         PDDocument encryptedDocument = PDDocument.load(new ByteArrayInputStream(output.toByteArray()), userPass);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, encryptedDocument);
         headers.put(PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME, new StandardDecryptionMaterial(userPass));
 

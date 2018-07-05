@@ -59,7 +59,7 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
                         exchange.getIn().setHeader(
                                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                                 "test");
-                        Map<String, String> labels = new HashMap<String, String>();
+                        Map<String, String> labels = new HashMap<>();
                         labels.put("this", "rocks");
                         exchange.getIn()
                                 .setHeader(
@@ -76,7 +76,7 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<String, String>();
+                Map<String, String> labels = new HashMap<>();
                 labels.put("this", "rocks");
                 exchange.getIn()
                         .setHeader(

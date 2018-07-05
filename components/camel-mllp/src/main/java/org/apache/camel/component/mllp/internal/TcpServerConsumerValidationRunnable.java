@@ -18,10 +18,8 @@
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.apache.camel.Route;

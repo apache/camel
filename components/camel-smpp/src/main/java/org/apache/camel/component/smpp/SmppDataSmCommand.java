@@ -87,7 +87,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
             return null;
         }
 
-        Map<String, String> optParams = new HashMap<String, String>();
+        Map<String, String> optParams = new HashMap<>();
         for (OptionalParameter optionalParameter : optionalParameters) {
 
             String value = null;
@@ -115,7 +115,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
             return null;
         }
 
-        Map<java.lang.Short, Object> optParams = new HashMap<java.lang.Short, Object>();
+        Map<java.lang.Short, Object> optParams = new HashMap<>();
         for (OptionalParameter optPara : optionalParameters) {
             if (COctetString.class.isInstance(optPara)) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag), ((COctetString) optPara).getValueAsString());

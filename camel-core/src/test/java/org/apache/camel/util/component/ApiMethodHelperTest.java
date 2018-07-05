@@ -37,9 +37,9 @@ public class ApiMethodHelperTest {
     private static ApiMethodHelper<TestMethod> apiMethodHelper;
 
     static {
-        final HashMap<String, String> aliases = new HashMap<String, String>();
+        final HashMap<String, String> aliases = new HashMap<>();
         aliases.put("say(.*)", "$1");
-        apiMethodHelper = new ApiMethodHelper<TestMethod>(TestMethod.class, aliases, Arrays.asList("names"));
+        apiMethodHelper = new ApiMethodHelper<>(TestMethod.class, aliases, Arrays.asList("names"));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ApiMethodHelperTest {
         assertEquals("Missing properties for hi", 1,
                 apiMethodHelper.getMissingProperties("hi", new HashSet<String>()).size());
 
-        final HashSet<String> argNames = new HashSet<String>();
+        final HashSet<String> argNames = new HashSet<>();
         argNames.add("name");
         assertEquals("Missing properties for greetMe", 0,
                 apiMethodHelper.getMissingProperties("greetMe", argNames).size());
@@ -143,7 +143,7 @@ public class ApiMethodHelperTest {
         TestProxy proxy = new TestProxy();
         assertEquals("sayHi()", "Hello!", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI, Collections.<String, Object>emptyMap()));
 
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         properties.put("name", "Dave");
 
         assertEquals("sayHi(name)", "Hello Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
@@ -159,7 +159,7 @@ public class ApiMethodHelperTest {
         assertEquals("greetAll(names)", "Greetings Dave, Frank", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL, properties));
 
         properties.clear();
-        Map<String, String> nameMap = new HashMap<String, String>();
+        Map<String, String> nameMap = new HashMap<>();
         nameMap.put("Dave", "Hello");
         nameMap.put("Frank", "Goodbye");
         properties.put("nameMap", nameMap);

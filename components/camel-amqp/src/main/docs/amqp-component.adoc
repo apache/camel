@@ -39,7 +39,7 @@ link:../../../../camel-jms/src/main/docs/readme.html[JMS] component after the de
 
 
 // component options: START
-The AMQP component supports 80 options which are listed below.
+The AMQP component supports 80 options, which are listed below.
 
 
 

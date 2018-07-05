@@ -59,7 +59,7 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
     public void consumeWebServiceWithPojoRequestWhichIsWithBreadcrumb() throws Exception {
         QuoteRequest request = new QuoteRequest();
         request.setSymbol("GOOG");
-        Object result = template.request("direct:webservice-marshall-asin", new Processor() {
+        template.request("direct:webservice-marshall-asin", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 assertNotNull(exchange.getIn().getHeader("breadcrumbId"));

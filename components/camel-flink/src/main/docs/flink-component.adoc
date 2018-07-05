@@ -81,7 +81,7 @@ with the following path and query parameters:
 
 
 // component options: START
-The Apache Flink component supports 5 options which are listed below.
+The Apache Flink component supports 5 options, which are listed below.
 
 
 

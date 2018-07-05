@@ -130,6 +130,38 @@ public class ServiceNowTest extends ServiceNowTestSupport {
     }
 
     @Test
+    public void testRequestResponseAsString() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:servicenow");
+
+        mock.reset();
+        mock.expectedMessageCount(1);
+
+        Incident incident = new Incident();
+        incident.setDescription("my incident");
+        incident.setShortDescription("An incident");
+        incident.setSeverity(1);
+        incident.setImpact(1);
+
+        template().sendBodyAndHeaders(
+            "direct:servicenow",
+            incident,
+            kvBuilder()
+                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
+                .put(ServiceNowConstants.RESPONSE_MODEL, String.class)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                .build()
+        );
+
+        mock.assertIsSatisfied();
+
+        Object body = mock.getExchanges().get(0).getIn().getBody();
+        assertNotNull(body);
+        assertTrue(body instanceof String);
+    }
+
+    @Test
     public void testVersionedApiRequest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:servicenow");
 

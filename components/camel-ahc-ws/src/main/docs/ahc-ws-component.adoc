@@ -42,7 +42,7 @@ various configuration options of the AHC component.
 
 
 // component options: START
-The AHC Websocket component supports 8 options which are listed below.
+The AHC Websocket component supports 8 options, which are listed below.
 
 
 

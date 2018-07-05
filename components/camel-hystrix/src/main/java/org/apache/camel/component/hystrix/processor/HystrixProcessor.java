@@ -174,7 +174,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>();
+        List<Processor> answer = new ArrayList<>();
         answer.add(processor);
         if (fallback != null) {
             answer.add(fallback);

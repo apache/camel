@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
 
   <name>Camel :: Spring Boot</name>
@@ -128,9 +128,9 @@
 
   <profiles>
     <profile>
-      <id>jdk9-build</id>
+      <id>jdk9+-build</id>
       <activation>
-        <jdk>9</jdk>
+        <jdk>[9,)</jdk>
       </activation>
       <build>
         <plugins>
@@ -138,7 +138,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+              <argLine>--add-modules java.xml.bind</argLine>
             </configuration>
           </plugin>
         </plugins>

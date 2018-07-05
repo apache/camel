@@ -19,50 +19,52 @@ package org.apache.camel.spring.boot.security;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Testing the ssl configuration
  */
-@RunWith(SpringRunner.class)
-@SpringBootApplication
-@DirtiesContext
-@ContextConfiguration(classes = {CamelSSLAutoConfiguration.class, CamelAutoConfiguration.class})
-@SpringBootTest(properties = {
-        "camel.ssl.config.cert-alias=web",
-        "camel.ssl.config.key-managers.key-password=changeit",
-        "camel.ssl.config.key-managers.key-store.password=changeit",
-        "camel.ssl.config.key-managers.key-store.type=PKCS12",
-        "camel.ssl.config.trust-managers.key-store.password=changeit",
-        "camel.ssl.config.trust-managers.key-store.type=jks"
-})
+
 public class CamelSSLAutoConfigurationTest {
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @Test
     public void checkSSLPropertiesPresent() {
-        GlobalSSLContextParametersSupplier supplier = applicationContext.getBean(GlobalSSLContextParametersSupplier.class);
-        assertNotNull(supplier);
-        assertNotNull(supplier.get());
-        assertEquals("web", supplier.get().getCertAlias());
-        assertNotNull(supplier.get().getKeyManagers());
-        assertEquals("changeit", supplier.get().getKeyManagers().getKeyPassword());
-        assertNotNull(supplier.get().getTrustManagers());
-        assertNotNull(supplier.get().getTrustManagers().getKeyStore());
-        assertEquals("jks", supplier.get().getTrustManagers().getKeyStore().getType());
+        new ApplicationContextRunner()
+            .withConfiguration(
+                AutoConfigurations.of(
+                        CamelSSLAutoConfiguration.class,
+                        CamelAutoConfiguration.class
+                )
+            )
+            .withPropertyValues(
+                    "camel.ssl.config.cert-alias=web",
+                    "camel.ssl.config.key-managers.key-password=changeit",
+                    "camel.ssl.config.key-managers.key-store.password=changeit",
+                    "camel.ssl.config.key-managers.key-store.type=PKCS12",
+                    "camel.ssl.config.trust-managers.key-store.password=changeit",
+                    "camel.ssl.config.trust-managers.key-store.type=jks"
+            )
+            .run((context) -> {
+                    GlobalSSLContextParametersSupplier supplier = context.getBean(GlobalSSLContextParametersSupplier.class);
+                    assertThat(context).hasSingleBean(CamelSSLAutoConfiguration.class);
+                    assertNotNull(supplier);
+                    assertNotNull(supplier.get());
+                    assertEquals("web", supplier.get().getCertAlias());
+                    assertNotNull(supplier.get().getKeyManagers());
+                    assertEquals("changeit", supplier.get().getKeyManagers().getKeyPassword());
+                    assertNotNull(supplier.get().getTrustManagers());
+                    assertNotNull(supplier.get().getTrustManagers().getKeyStore());
+                    assertEquals("jks", supplier.get().getTrustManagers().getKeyStore().getType());
+                                       
+                }
+            );
     }
 
 }
 
+
+   

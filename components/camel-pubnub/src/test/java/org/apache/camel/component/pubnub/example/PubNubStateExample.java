@@ -40,7 +40,7 @@ public class PubNubStateExample extends CamelTestSupport {
         Map<String, Object> myState = new HashMap<>();
         myState.put("state", "online");
         myState.put("name", "preben");
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(PubNubConstants.OPERATION, "SETSTATE");
         PNSetStateResult response = template.requestBodyAndHeaders("direct:publish", myState, headers, PNSetStateResult.class);
         assertNotNull(response);

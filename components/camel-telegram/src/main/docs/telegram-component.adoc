@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 ### Options
 
 // component options: START
-The Telegram component supports 2 options which are listed below.
+The Telegram component supports 2 options, which are listed below.
 
 
 
@@ -310,3 +310,60 @@ to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq
 ---------------------------------------------------------
 
 Note that the corresponding URI parameter is simply `chatId`.
+
+### Customizing keyboard
+
+You can customize the user keyboard instead of asking him to write an option. `OutgoingTextMessage` has the property `ReplyKeyboardMarkup` which can be used for such thing.
+
+[source,java]
+---------------------------------------------------------
+from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+    .process(exchange -> {
+
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setText("Choose one option!");
+        
+        InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
+                .text("Option One - I").build();
+        
+        InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
+                .text("Option One - II").build();
+        
+        InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
+                .text("Option Two - I").build();
+        
+        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
+                .keyboard()
+                    .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
+                    .addRow(Arrays.asList(buttonOptionTwoI))
+                    .close()
+                .oneTimeKeyboard(true)
+                .build();
+        
+        msg.setReplyKeyboardMarkup(replyMarkup);
+
+        exchange.getIn().setBody(msg);
+    })
+    .to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+---------------------------------------------------------
+
+If you want to disable it the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
+
+[source,java]
+---------------------------------------------------------
+from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+    .process(exchange -> {
+
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setText("Your answer was accepted!");
+        
+        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
+                .removeKeyboard(true)
+                .build();
+        
+        msg.setReplyKeyboardMarkup(replyMarkup);
+
+        exchange.getIn().setBody(msg);
+    })
+    .to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+---------------------------------------------------------

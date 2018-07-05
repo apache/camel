@@ -68,8 +68,8 @@ public final class Suppliers {
     public static <T> Optional<T> firstNotNull(ThrowingSupplier<T, Exception>... suppliers) throws Exception {
         T answer = null;
 
-        for (int i = 0; i < suppliers.length; i++) {
-            answer = suppliers[i].get();
+        for (ThrowingSupplier<T, Exception> supplier : suppliers) {
+            answer = supplier.get();
             if (answer != null) {
                 break;
             }
@@ -81,8 +81,8 @@ public final class Suppliers {
     public static <T> Optional<T> firstMatching(Predicate<T> predicate, ThrowingSupplier<T, Exception>... suppliers) throws Exception {
         T answer = null;
 
-        for (int i = 0; i < suppliers.length; i++) {
-            answer = suppliers[i].get();
+        for (ThrowingSupplier<T, Exception> supplier : suppliers) {
+            answer = supplier.get();
             if (predicate.test(answer)) {
                 break;
             }

@@ -91,7 +91,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         } else {
             bundles = new Bundle[]{bundle};
         }
-        Set<String> urls = new LinkedHashSet<String>();
+        Set<String> urls = new LinkedHashSet<>();
         for (Bundle bd : bundles) {
             log.trace("Searching in bundle: {}", bd);
             try {

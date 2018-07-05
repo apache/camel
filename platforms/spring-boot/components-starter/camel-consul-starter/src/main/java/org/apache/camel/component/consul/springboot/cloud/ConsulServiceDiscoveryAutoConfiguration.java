@@ -23,7 +23,6 @@ import javax.annotation.PostConstruct;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.cloud.ConsulServiceDiscoveryFactory;
-import org.apache.camel.component.consul.springboot.ConsulComponentConfiguration;
 import org.apache.camel.model.cloud.springboot.ConsulServiceCallServiceDiscoveryConfigurationCommon;
 import org.apache.camel.model.cloud.springboot.ConsulServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;

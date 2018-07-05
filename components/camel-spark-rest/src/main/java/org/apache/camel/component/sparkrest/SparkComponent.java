@@ -299,7 +299,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             config = camelContext.getRestConfiguration("spark-rest", true);
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         if (consumes != null) {
             map.put("accept", consumes);
         }

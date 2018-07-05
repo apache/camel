@@ -122,7 +122,7 @@ public class RouteboxDispatcher {
     }
 
     protected List<URI> getInnerContextConsumerList(CamelContext context) throws URISyntaxException {
-        List<URI> consumerList = new ArrayList<URI>();
+        List<URI> consumerList = new ArrayList<>();
         List<RouteDefinition> routeDefinitions = context.getRouteDefinitions();
         for (RouteDefinition routeDefinition : routeDefinitions) {
             List<FromDefinition> inputs = routeDefinition.getInputs();

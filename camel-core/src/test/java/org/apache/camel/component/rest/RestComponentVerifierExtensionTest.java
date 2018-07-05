@@ -118,6 +118,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
                 String queryParameters,
                 String consumes,
                 String produces,
+                RestConfiguration configuration,
                 Map<String, Object> parameters)
                     throws Exception {
             throw new UnsupportedOperationException();

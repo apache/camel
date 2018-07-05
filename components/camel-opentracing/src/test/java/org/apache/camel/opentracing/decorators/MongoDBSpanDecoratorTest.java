@@ -48,7 +48,7 @@ public class MongoDBSpanDecoratorTest {
 
     @Test
     public void testToQueryParameters() {
-        Map<String, String> params = MongoDBSpanDecorator.toQueryParameters(MONGODB_STATEMENT);
+        Map<String, String> params = AbstractSpanDecorator.toQueryParameters(MONGODB_STATEMENT);
         assertEquals(3, params.size());
         assertEquals("flights", params.get("database"));
         assertEquals("tickets", params.get("collection"));
@@ -64,7 +64,7 @@ public class MongoDBSpanDecoratorTest {
         SpanDecorator decorator = new MongoDBSpanDecorator();
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, null, endpoint);
 

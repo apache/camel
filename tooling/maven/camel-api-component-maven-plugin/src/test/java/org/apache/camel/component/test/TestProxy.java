@@ -59,7 +59,7 @@ public class TestProxy {
     }
 
     public final String[] greetTimes(String name, int times) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (int i = 0; i < times; i++) {
             result.add("Greetings " + name);
         }

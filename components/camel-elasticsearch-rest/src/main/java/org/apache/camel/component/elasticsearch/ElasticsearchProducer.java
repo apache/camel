@@ -87,9 +87,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (request instanceof BulkRequest) {
             // do we want bulk or bulk_index?
             if (configuration.getOperation() == ElasticsearchOperation.BulkIndex) {
-                return configuration.getOperation().BulkIndex;
+                return ElasticsearchOperation.BulkIndex;
             } else {
-                return configuration.getOperation().Bulk;
+                return ElasticsearchOperation.Bulk;
             }
         } else if (request instanceof DeleteRequest) {
             return ElasticsearchOperation.Delete;

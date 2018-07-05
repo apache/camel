@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultRestRegistry extends ServiceSupport implements StaticService, RestRegistry, CamelContextAware {
 
     private CamelContext camelContext;
-    private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
+    private final Map<Consumer, RestService> registry = new LinkedHashMap<>();
     private transient Producer apiProducer;
 
     public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
@@ -58,7 +58,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
     @Override
     public List<RestRegistry.RestService> listAllRestServices() {
-        return new ArrayList<RestService>(registry.values());
+        return new ArrayList<>(registry.values());
     }
 
     @Override

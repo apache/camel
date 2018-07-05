@@ -64,7 +64,7 @@ public class CometBindingTest {
     public void before() {
         testObj = new CometdBinding(bayeux);
 
-        Set<String> attributeNames = new HashSet<String>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
+        Set<String> attributeNames = new HashSet<>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
                                                                        LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
                                                                        FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
         when(remote.getAttributeNames()).thenReturn(attributeNames);

@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class RestEndpointTest {
         @Override
         public Producer createProducer(final CamelContext camelContext, final String host, final String verb,
             final String basePath, final String uriTemplate, final String queryParameters, final String consumes,
-            final String produces, final Map<String, Object> parameters) throws Exception {
+            final String produces, RestConfiguration configuration, final Map<String, Object> parameters) throws Exception {
             return null;
         }
 

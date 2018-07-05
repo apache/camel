@@ -53,7 +53,7 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:admin");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("username", "donald");
         headers.put("admin", "true");
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
@@ -65,7 +65,7 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:god");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("username", "pluto");
         headers.put("admin", "true");
         headers.put("type", "god");
@@ -78,7 +78,7 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:god");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("username", "Camel");
         headers.put("admin", "true");
         template.sendBodyAndHeaders("direct:start", "Hello Camel Rider", headers);

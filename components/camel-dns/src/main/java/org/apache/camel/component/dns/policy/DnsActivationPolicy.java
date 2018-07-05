@@ -37,8 +37,9 @@ public class DnsActivationPolicy extends RoutePolicySupport {
     private ExceptionHandler exceptionHandler;
     private DnsActivation dnsActivation;
     private long ttl;
+    private boolean stopRoutesOnException;
 
-    private Map<String, Route> routes = new ConcurrentHashMap<String, Route>();
+    private Map<String, Route> routes = new ConcurrentHashMap<>();
     private Timer timer;
 
     public DnsActivationPolicy() {
@@ -128,8 +129,12 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         dnsActivation.setResolvesTo(resolvesTo);
     }
 
-    public void setTtl(String ttl) {
+    public void setTtl(String ttl) throws Exception {
         this.ttl = Long.parseLong(ttl);
+    }
+
+    public void setStopRoutesOnException(String stopRoutesOnException) throws Exception {
+        this.stopRoutesOnException = Boolean.parseBoolean(stopRoutesOnException);
     }
 
     private void startRouteImpl(Route route) throws Exception {
@@ -189,6 +194,9 @@ public class DnsActivationPolicy extends RoutePolicySupport {
                 }
             } catch (Exception e) {
                 LOG.warn("DnsActivation TimerTask failed", e);
+                if (stopRoutesOnException) {
+                    stopRoutes();
+                }
             }
         }
     }

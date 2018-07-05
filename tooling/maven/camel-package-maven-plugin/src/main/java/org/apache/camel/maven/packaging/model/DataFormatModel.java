@@ -38,7 +38,7 @@ public class DataFormatModel {
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<DataFormatOptionModel>();
+    private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<>();
 
     public DataFormatModel() {
         this(false);

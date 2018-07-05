@@ -16,7 +16,7 @@ from("atmos:foo/get?remotePath=/path").to("mock:test");
 
 
 // component options: START
-The Atmos component supports 5 options which are listed below.
+The Atmos component supports 5 options, which are listed below.
 
 
 

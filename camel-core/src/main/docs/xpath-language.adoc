@@ -39,7 +39,7 @@ from("queue:foo").
 === XPath Language options
 
 // language options: START
-The XPath language supports 9 options which are listed below.
+The XPath language supports 9 options, which are listed below.
 
 
 
@@ -222,14 +222,14 @@ shown:
 === Examples
 
 Here is a simple
-http://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/org/apache/camel/processor/XPathFilterTest.java[example]
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/XPathFilterTest.java[example]
 using an XPath expression as a predicate in a
 Message Filter
 
 If you have a standard set of namespaces you wish to work with and wish
 to share them across many different XPath expressions you can use the
 NamespaceBuilder as shown
-http://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/org/apache/camel/processor/XPathWithNamespaceBuilderFilterTest.java[in
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/XPathWithNamespaceBuilderFilterTest.java[in
 this example]
 
 In this sample we have a choice construct. The first choice evaulates if

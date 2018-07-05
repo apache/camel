@@ -91,6 +91,21 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Test
+    public void sentMessageIsDeliveryModeSet() throws InterruptedException, IOException, TimeoutException {
+
+        to.expectedMessageCount(1);
+        to.expectedHeaderReceived(RabbitMQConstants.DELIVERY_MODE, 1);
+
+        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        properties.deliveryMode(1);
+
+        Channel channel = connection().createChannel();
+        channel.basicPublish(EXCHANGE, "", properties.build(), MSG.getBytes());
+
+        to.assertIsSatisfied();
+    }
+
+    @Test
     public void sentMessageWithTimestampIsReceived() throws InterruptedException, IOException, TimeoutException {
         Date timestamp = currentTimestampWithoutMillis();
 

@@ -51,7 +51,7 @@ public class CouchDbProducer extends DefaultProducer {
             exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
             exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
         } else {
-            if (operation.equalsIgnoreCase("DELETE")) {
+            if (operation.equalsIgnoreCase(CouchDbOperations.DELETE.toString())) {
                 Response delete = deleteJsonElement(json);
                 if (delete == null) {
                     throw new CouchDbException("Could not delete document [unknown reason]", exchange);
@@ -62,6 +62,19 @@ public class CouchDbProducer extends DefaultProducer {
                 }
                 exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getRev());
                 exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getId());
+            }
+            if (operation.equalsIgnoreCase(CouchDbOperations.GET.toString())) {
+                String docId = exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
+                if (docId == null) {
+                    throw new CouchDbException("Could not get document, document id is missing", exchange);
+                }
+                Object response = getElement(docId);
+
+                if (log.isTraceEnabled()) {
+                    log.trace("Document retrieved [_id={}]", docId);
+                }
+                
+                exchange.getIn().setBody(response);
             }
         }
     }
@@ -106,4 +119,10 @@ public class CouchDbProducer extends DefaultProducer {
         }
         return delete;
     }
+    
+    private Object getElement(String id) {
+        Object response;
+        response = couchClient.get(id);
+        return response;
+    }   
 }

@@ -24,7 +24,7 @@ import org.apache.commons.httpclient.HttpClient;
 
 public class CompositeHttpConfigurer implements HttpClientConfigurer {
     
-    private final List<HttpClientConfigurer> configurers = new ArrayList<HttpClientConfigurer>();
+    private final List<HttpClientConfigurer> configurers = new ArrayList<>();
     
     public void addConfigurer(HttpClientConfigurer configurer) {
         if (configurer != null) {

@@ -48,7 +48,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     private ExchangePattern pattern;
     @XmlElementRef
     @Metadata(description = "To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint beans.")
-    private List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+    private List<PropertyDefinition> properties = new ArrayList<>();
     @XmlTransient
     private Endpoint endpoint;
 
@@ -122,7 +122,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         if (properties == null || properties.isEmpty()) {
             return uri;
         } else {
-            Map<String, Object> map = new LinkedHashMap<String, Object>();
+            Map<String, Object> map = new LinkedHashMap<>();
             for (PropertyDefinition property : properties) {
                 // resolve placeholders for each value
                 String value = getCamelContext().resolvePropertyPlaceholders(property.getValue());

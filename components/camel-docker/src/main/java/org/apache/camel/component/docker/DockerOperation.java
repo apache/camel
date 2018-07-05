@@ -219,7 +219,7 @@ public enum DockerOperation {
         this.canProduce = canProduce;
         this.async = async;
 
-        parameters = new HashMap<String, Class<?>>();
+        parameters = new HashMap<>();
 
         if (params.length > 0) {
 

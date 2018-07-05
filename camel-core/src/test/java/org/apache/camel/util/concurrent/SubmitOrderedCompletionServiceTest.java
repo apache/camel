@@ -35,7 +35,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         executor = Executors.newFixedThreadPool(5);
-        service = new SubmitOrderedCompletionService<Object>(executor);
+        service = new SubmitOrderedCompletionService<>(executor);
     }
 
     @Override

@@ -87,7 +87,7 @@ public class HipchatProducer extends DefaultProducer {
     private Map<String, String> getCommonHttpPostParam(Exchange exchange) throws InvalidPayloadException {
         String format = exchange.getIn().getHeader(HipchatConstants.MESSAGE_FORMAT, "text", String.class);
         String notify = exchange.getIn().getHeader(HipchatConstants.TRIGGER_NOTIFY, String.class);
-        Map<String, String> jsonMap = new HashMap<String, String>(4);
+        Map<String, String> jsonMap = new HashMap<>(4);
         jsonMap.put(HipchatApiConstants.API_MESSAGE, exchange.getIn().getMandatoryBody(String.class));
         if (notify != null) {
             jsonMap.put(HipchatApiConstants.API_MESSAGE_NOTIFY, notify);

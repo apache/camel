@@ -44,7 +44,7 @@ public class BeanExpressionConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be 1000 messages
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             String body = mock.getReceivedExchanges().get(i).getIn().getBody(String.class);
             list.add(body);

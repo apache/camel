@@ -163,7 +163,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(123, map.get("BaR"));
 
         // key case should be preserved
-        Map<String, Object> keys = new HashMap<String, Object>();
+        Map<String, Object> keys = new HashMap<>();
         keys.putAll(map);
 
         assertEquals("cheese", keys.get("Foo"));
@@ -179,7 +179,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
 
-        Map<String, Object> other = new HashMap<String, Object>();
+        Map<String, Object> other = new HashMap<>();
         other.put("Foo", "cheese");
         other.put("bar", 123);
 
@@ -198,7 +198,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "cheese");
 
-        Map<String, Object> other = new HashMap<String, Object>();
+        Map<String, Object> other = new HashMap<>();
         map.putAll(other);
 
         assertEquals("cheese", map.get("FOO"));
@@ -209,7 +209,7 @@ public class CaseInsensitiveMapTest extends TestCase {
     }
 
     public void testConstructFromOther() {
-        Map<String, Object> other = new HashMap<String, Object>();
+        Map<String, Object> other = new HashMap<>();
         other.put("Foo", "cheese");
         other.put("bar", 123);
 
@@ -253,7 +253,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         map.put("BAR", 123);
         map.put("baZ", "beer");
 
-        Map<String, Object> other = new HashMap<String, Object>(map);
+        Map<String, Object> other = new HashMap<>(map);
 
         // we should retain the cases of the original keys
         // when its copied to another map
@@ -315,7 +315,7 @@ public class CaseInsensitiveMapTest extends TestCase {
     }
 
     public void testRomeksUsingRegularHashMap() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", "cheese");
 
         assertEquals(1, map.size());
@@ -343,7 +343,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, map.containsKey("foo"));
         assertEquals(true, map.containsKey("FOO"));
 
-        Map<String, Object> other = new HashMap<String, Object>(map);
+        Map<String, Object> other = new HashMap<>(map);
         assertEquals(false, other.containsKey("foo"));
         assertEquals(false, other.containsKey("FOO"));
         // CaseInsensitiveMap preserves the original keys, which would be the 1st key we put
@@ -375,7 +375,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, map.containsKey("foo"));
         assertEquals(true, map.containsKey("bar"));
 
-        Map<String, Object> other = new HashMap<String, Object>();
+        Map<String, Object> other = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -397,7 +397,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, map.containsKey("foo"));
         assertEquals(true, map.containsKey("bar"));
 
-        Map<String, Object> other = new HashMap<String, Object>();
+        Map<String, Object> other = new HashMap<>();
         other.putAll(map);
 
         assertEquals(false, other.containsKey("foo"));
@@ -415,7 +415,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, map.containsKey("foo"));
         assertEquals(true, map.containsKey("bar"));
 
-        Map<String, Object> other = new HashMap<String, Object>(map);
+        Map<String, Object> other = new HashMap<>(map);
 
         assertEquals(false, other.containsKey("foo"));
         assertEquals(true, other.containsKey("Foo"));
@@ -432,7 +432,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, map.containsKey("foo"));
         assertEquals(true, map.containsKey("bar"));
 
-        Map<String, Object> other = new HashMap<String, Object>();
+        Map<String, Object> other = new HashMap<>();
 
         for (String key : map.keySet()) {
             Object value = map.get(key);
@@ -496,7 +496,7 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         // retain maps so we can profile that the map doesn't duplicate
         // camel keys as they are intern
-        List<Map<?, ?>> maps = new ArrayList<Map<?, ?>>();
+        List<Map<?, ?>> maps = new ArrayList<>();
 
         for (int i = 0; i < 10000; i++) {
             Map<String, Object> copy = new CaseInsensitiveMap(map);

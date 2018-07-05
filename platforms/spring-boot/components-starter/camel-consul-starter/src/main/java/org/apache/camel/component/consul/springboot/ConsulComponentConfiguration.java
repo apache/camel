@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Generated;
+import com.orbitz.consul.Consul;
 import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -173,6 +174,11 @@ public class ConsulComponentConfiguration
          */
         private String key;
         /**
+         * Reference to a `com.orbitz.consul.Consul` in the registry.
+         */
+        @NestedConfigurationProperty
+        private Consul consulClient;
+        /**
          * The Consul agent URL
          */
         private String url;
@@ -273,6 +279,14 @@ public class ConsulComponentConfiguration
 
         public void setKey(String key) {
             this.key = key;
+        }
+
+        public Consul getConsulClient() {
+            return consulClient;
+        }
+
+        public void setConsulClient(Consul consulClient) {
+            this.consulClient = consulClient;
         }
 
         public String getUrl() {

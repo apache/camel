@@ -29,7 +29,7 @@ public class PrepareRequest implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(PrepareRequest.class);
 
     public void process(Exchange exchange) throws Exception {
-        List<String> params = new ArrayList<String>();
+        List<String> params = new ArrayList<>();
         params.add(exchange.getIn().getBody(String.class));
         exchange.getOut().setBody(params);
         String operation = (String)exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);

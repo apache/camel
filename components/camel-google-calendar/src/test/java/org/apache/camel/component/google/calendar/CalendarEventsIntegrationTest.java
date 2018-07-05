@@ -49,7 +49,7 @@ public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSup
         event.setSummary("Feed the Camel");
         event.setLocation("Somewhere");
 
-        ArrayList<EventAttendee> attendees = new ArrayList<EventAttendee>();
+        ArrayList<EventAttendee> attendees = new ArrayList<>();
         attendees.add(new EventAttendee().setEmail("camel-google-calendar.janstey@gmail.com"));
         event.setAttendees(attendees);
 
@@ -60,7 +60,7 @@ public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSup
         DateTime end = new DateTime(endDate, TimeZone.getTimeZone("UTC"));
         event.setEnd(new EventDateTime().setDateTime(end));
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleCalendar.calendarId", getCalendar().getId());
         // parameter type is com.google.api.services.calendar.model.Event
@@ -75,7 +75,7 @@ public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSup
     @Test
     public void testManipulatingAnEvent() throws Exception {
         // Add an event
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleCalendar.calendarId", getCalendar().getId());
         // parameter type is String
@@ -90,7 +90,7 @@ public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSup
         assertEquals("Feed the Camel", item.getSummary());
 
         // Get the event metadata
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleCalendar.calendarId", getCalendar().getId());
         // parameter type is String
@@ -106,7 +106,7 @@ public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSup
         assertEquals("Feed the Camel later", newResult.getSummary());
 
         // Delete the event
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleCalendar.calendarId", getCalendar().getId());
         // parameter type is String

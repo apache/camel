@@ -71,7 +71,7 @@ public class BeanIOSplitterTest extends CamelTestSupport {
     }
 
     private List<Employee> getEmployees() throws ParseException {
-        List<Employee> employees = new ArrayList<Employee>();
+        List<Employee> employees = new ArrayList<>();
         Employee one = new Employee();
         one.setFirstName("Joe");
         one.setLastName("Smith");

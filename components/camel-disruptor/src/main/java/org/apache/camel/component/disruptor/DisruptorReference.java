@@ -64,7 +64,7 @@ public class DisruptorReference {
     //(null,  true) : in process of reconfiguring
     //( x  , false) : normally functioning Disruptor
     //( x  ,  true) : never set
-    private final AtomicMarkableReference<Disruptor<ExchangeEvent>> disruptor = new AtomicMarkableReference<Disruptor<ExchangeEvent>>(null, false);
+    private final AtomicMarkableReference<Disruptor<ExchangeEvent>> disruptor = new AtomicMarkableReference<>(null, false);
 
     private final DelayedExecutor delayedExecutor = new DelayedExecutor();
 
@@ -91,7 +91,7 @@ public class DisruptorReference {
         this.size = size;
         this.producerType = producerType;
         this.waitStrategy = waitStrategy;
-        temporaryExchangeBuffer = new ArrayBlockingQueue<Exchange>(size);
+        temporaryExchangeBuffer = new ArrayBlockingQueue<>(size);
         reconfigure();
     }
 
@@ -190,12 +190,12 @@ public class DisruptorReference {
 
     private Disruptor<ExchangeEvent> createDisruptor() throws Exception {
         //create a new Disruptor
-        final Disruptor<ExchangeEvent> newDisruptor = new Disruptor<ExchangeEvent>(
+        final Disruptor<ExchangeEvent> newDisruptor = new Disruptor<>(
                 ExchangeEventFactory.INSTANCE, size, delayedExecutor, producerType.getProducerType(),
                 waitStrategy.createWaitStrategyInstance());
 
         //determine the list of eventhandlers to be associated to the Disruptor
-        final ArrayList<LifecycleAwareExchangeEventHandler> eventHandlers = new ArrayList<LifecycleAwareExchangeEventHandler>();
+        final ArrayList<LifecycleAwareExchangeEventHandler> eventHandlers = new ArrayList<>();
 
         uniqueConsumerCount = 0;
 
@@ -234,7 +234,7 @@ public class DisruptorReference {
 
     private void publishBufferedExchanges(Disruptor<ExchangeEvent> newDisruptor) {
         //now empty out all buffered Exchange if we had any
-        final List<Exchange> exchanges = new ArrayList<Exchange>(temporaryExchangeBuffer.size());
+        final List<Exchange> exchanges = new ArrayList<>(temporaryExchangeBuffer.size());
         while (!temporaryExchangeBuffer.isEmpty()) {
             exchanges.add(temporaryExchangeBuffer.remove());
         }
@@ -428,7 +428,7 @@ public class DisruptorReference {
      */
     private static class DelayedExecutor implements Executor {
 
-        private final Queue<Runnable> delayedCommands = new LinkedList<Runnable>();
+        private final Queue<Runnable> delayedCommands = new LinkedList<>();
 
         @Override
         public void execute(final Runnable command) {

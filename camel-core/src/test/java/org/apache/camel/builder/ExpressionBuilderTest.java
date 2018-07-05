@@ -43,7 +43,7 @@ public class ExpressionBuilderTest extends TestSupport {
     
     public void testRegexTokenize() throws Exception {
         Expression expression = regexTokenizeExpression(headerExpression("location"), ",");
-        List<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
+        List<String> expected = new ArrayList<>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
         Predicate predicate = contains(regexTokenizeExpression(headerExpression("location"), ","),
@@ -67,7 +67,7 @@ public class ExpressionBuilderTest extends TestSupport {
     public void testTokenize() throws Exception {
         Expression expression = tokenizeExpression(headerExpression("location"), ",");
 
-        List<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
+        List<String> expected = new ArrayList<>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
         Predicate predicate = contains(tokenizeExpression(headerExpression("location"), ","),
@@ -83,7 +83,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = regexTokenizeExpression(bodyExpression(), "[\r|\n]");
         exchange.getIn().setBody("Hello World\nBye World\rSee you again");
 
-        List<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Hello World", "Bye World", "See you again"}));
+        List<String> expected = new ArrayList<>(Arrays.asList(new String[] {"Hello World", "Bye World", "See you again"}));
         assertExpression(expression, exchange, expected);
     }
 
@@ -91,7 +91,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = sortExpression(body().tokenize(",").getExpression(), new SortByName());
         exchange.getIn().setBody("Jonathan,Claus,James,Hadrian");
 
-        List<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Claus", "Hadrian", "James", "Jonathan"}));
+        List<String> expected = new ArrayList<>(Arrays.asList(new String[] {"Claus", "Hadrian", "James", "Jonathan"}));
         assertExpression(expression, exchange, expected);
     }
     

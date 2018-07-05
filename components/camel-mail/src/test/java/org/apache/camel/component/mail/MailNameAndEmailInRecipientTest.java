@@ -32,7 +32,7 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("to", "Claus Ibsen <davsclaus@localhost>");
         headers.put("cc", "James Strachan <jstrachan@localhost>");
 

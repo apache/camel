@@ -39,7 +39,7 @@ public class CustomListAggregationStrategyEmptySplitTest extends
         result.expectedMessageCount(1);
         result.message(0).body().isInstanceOf(List.class);
 
-        List<String> body = new ArrayList<String>();
+        List<String> body = new ArrayList<>();
 
         template.sendBody("direct:start", body);
 

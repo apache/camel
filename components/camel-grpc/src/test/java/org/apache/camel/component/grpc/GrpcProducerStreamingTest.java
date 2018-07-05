@@ -132,8 +132,6 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
         @Override
         public StreamObserver<PingRequest> pingAsyncAsync(StreamObserver<PongResponse> responseObserver) {
-
-            @SuppressWarnings({"unchecked", "rawtypes"})
             StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
 
                 private List<PingRequest> streamRequests = new LinkedList<>();

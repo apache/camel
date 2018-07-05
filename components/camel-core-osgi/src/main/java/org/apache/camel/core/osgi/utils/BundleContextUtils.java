@@ -80,7 +80,7 @@ public final class BundleContextUtils {
     public static Map<String, Properties> findComponents(BundleContext bundleContext, CamelContext camelContext)
         throws IOException, LoadPropertiesException {
 
-        SortedMap<String, Properties> answer = new TreeMap<String, Properties>();
+        SortedMap<String, Properties> answer = new TreeMap<>();
         Bundle[] bundles = bundleContext.getBundles();
         for (Bundle bundle : bundles) {
             Enumeration<URL> iter = bundle.getResources(CamelContextHelper.COMPONENT_DESCRIPTOR);

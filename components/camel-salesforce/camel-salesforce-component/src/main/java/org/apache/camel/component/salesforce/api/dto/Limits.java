@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public final class Limits implements Serializable {
         public Object deserialize(final JsonParser parser, final DeserializationContext context)
                 throws IOException, JsonProcessingException {
 
-            final Map<Operation, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
+            final Map<String, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
 
             return new Limits(usages);
         }
@@ -81,6 +82,7 @@ public final class Limits implements Serializable {
         HourlySyncReportRuns,
         HourlyTimeBasedWorkflow,
         MassEmail,
+        PermissionSets,
         SingleEmail,
         StreamingApiConcurrentClients
     }
@@ -156,139 +158,154 @@ public final class Limits implements Serializable {
 
     private static final Usage UNDEFINED = new Usage(Usage.UNKNOWN_VAL, Usage.UNKNOWN_VAL);
 
-    private final Map<Operation, Usage> usages;
+    private final Map<String, Usage> usages;
 
-    public Limits(final Map<Operation, Usage> usages) {
-        this.usages = usages;
+    public Limits(final Map<?, Usage> usages) {
+        if (usages == null) {
+            this.usages = new HashMap<>();
+        } else {
+            this.usages = usages.entrySet().stream().collect(Collectors.toMap(e -> String.valueOf(e.getKey()), Entry::getValue));
+        }
     }
 
     public Usage forOperation(final Operation operation) {
         return usages.getOrDefault(operation, UNDEFINED);
     }
 
+    public Usage forOperation(final String name) {
+        return usages.getOrDefault(name, UNDEFINED);
+    }
+
     /** Concurrent REST API requests for results of asynchronous report runs */
     public Usage getConcurrentAsyncGetReportInstances() {
-        return forOperation(Operation.ConcurrentAsyncGetReportInstances);
+        return forOperation(Operation.ConcurrentAsyncGetReportInstances.name());
     }
 
     /** Concurrent synchronous report runs via REST API */
     public Usage getConcurrentSyncReportRuns() {
-        return forOperation(Operation.ConcurrentSyncReportRuns);
+        return forOperation(Operation.ConcurrentSyncReportRuns.name());
     }
 
     /** Daily API calls */
     public Usage getDailyApiRequests() {
-        return forOperation(Operation.DailyApiRequests);
+        return forOperation(Operation.DailyApiRequests.name());
     }
 
     /** Daily Batch Apex and future method executions */
     public Usage getDailyAsyncApexExecutions() {
-        return forOperation(Operation.DailyAsyncApexExecutions);
+        return forOperation(Operation.DailyAsyncApexExecutions.name());
     }
 
     /** Daily Bulk API calls */
     public Usage getDailyBulkApiRequests() {
-        return forOperation(Operation.DailyBulkApiRequests);
+        return forOperation(Operation.DailyBulkApiRequests.name());
     }
 
     /**
      * Daily durable generic streaming events (if generic streaming is enabled for your organization)
      */
     public Usage getDailyDurableGenericStreamingApiEvents() {
-        return forOperation(Operation.DailyDurableGenericStreamingApiEvents);
+        return forOperation(Operation.DailyDurableGenericStreamingApiEvents.name());
     }
 
     /**
      * Daily durable streaming events (if generic streaming is enabled for your organization)
      */
     public Usage getDailyDurableStreamingApiEvents() {
-        return forOperation(Operation.DailyDurableStreamingApiEvents);
+        return forOperation(Operation.DailyDurableStreamingApiEvents.name());
     }
 
     /**
      * Daily generic streaming events (if generic streaming is enabled for your organization)
      */
     public Usage getDailyGenericStreamingApiEvents() {
-        return forOperation(Operation.DailyGenericStreamingApiEvents);
+        return forOperation(Operation.DailyGenericStreamingApiEvents.name());
     }
 
     /** Daily Streaming API events */
     public Usage getDailyStreamingApiEvents() {
-        return forOperation(Operation.DailyStreamingApiEvents);
+        return forOperation(Operation.DailyStreamingApiEvents.name());
     }
 
     /** Daily workflow emails */
     public Usage getDailyWorkflowEmails() {
-        return forOperation(Operation.DailyWorkflowEmails);
+        return forOperation(Operation.DailyWorkflowEmails.name());
     }
 
     /** Data storage (MB) */
     public Usage getDataStorageMB() {
-        return forOperation(Operation.DataStorageMB);
+        return forOperation(Operation.DataStorageMB.name());
     }
 
     /** Streaming API concurrent clients */
     public Usage getDurableStreamingApiConcurrentClients() {
-        return forOperation(Operation.DurableStreamingApiConcurrentClients);
+        return forOperation(Operation.DurableStreamingApiConcurrentClients.name());
     }
 
     /** File storage (MB) */
     public Usage getFileStorageMB() {
-        return forOperation(Operation.FileStorageMB);
+        return forOperation(Operation.FileStorageMB.name());
     }
 
     /** Hourly asynchronous report runs via REST API */
     public Usage getHourlyAsyncReportRuns() {
-        return forOperation(Operation.HourlyAsyncReportRuns);
+        return forOperation(Operation.HourlyAsyncReportRuns.name());
     }
 
     /** Hourly dashboard refreshes via REST API */
     public Usage getHourlyDashboardRefreshes() {
-        return forOperation(Operation.HourlyDashboardRefreshes);
+        return forOperation(Operation.HourlyDashboardRefreshes.name());
     }
 
     /** Hourly REST API requests for dashboard results */
     public Usage getHourlyDashboardResults() {
-        return forOperation(Operation.HourlyDashboardResults);
+        return forOperation(Operation.HourlyDashboardResults.name());
     }
 
     /** Hourly dashboard status requests via REST API */
     public Usage getHourlyDashboardStatuses() {
-        return forOperation(Operation.HourlyDashboardStatuses);
+        return forOperation(Operation.HourlyDashboardStatuses.name());
     }
 
     /** Hourly OData callouts */
     public Usage getHourlyODataCallout() {
-        return forOperation(Operation.HourlyODataCallout);
+        return forOperation(Operation.HourlyODataCallout.name());
     }
 
     /** Hourly synchronous report runs via REST API */
     public Usage getHourlySyncReportRuns() {
-        return forOperation(Operation.HourlySyncReportRuns);
+        return forOperation(Operation.HourlySyncReportRuns.name());
     }
 
     /** Hourly workflow time triggers */
     public Usage getHourlyTimeBasedWorkflow() {
-        return forOperation(Operation.HourlyTimeBasedWorkflow);
+        return forOperation(Operation.HourlyTimeBasedWorkflow.name());
     }
 
     /**
      * Daily number of mass emails that are sent to external email addresses by using Apex or Force.com APIs
      */
     public Usage getMassEmail() {
-        return forOperation(Operation.MassEmail);
+        return forOperation(Operation.MassEmail.name());
+    }
+
+    /**
+     * Usage of permission sets.
+     */
+    public Usage getPermissionSets() {
+        return forOperation(Operation.PermissionSets.name());
     }
 
     /**
      * Daily number of single emails that are sent to external email addresses by using Apex or Force.com APIs
      */
     public Usage getSingleEmail() {
-        return forOperation(Operation.SingleEmail);
+        return forOperation(Operation.SingleEmail.name());
     }
 
     /** Durable streaming API concurrent clients */
     public Usage getStreamingApiConcurrentClients() {
-        return forOperation(Operation.StreamingApiConcurrentClients);
+        return forOperation(Operation.StreamingApiConcurrentClients.name());
     }
 
     /** {@inheritDoc} */

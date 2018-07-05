@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.box.api;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -143,7 +143,7 @@ public class BoxFoldersManager {
             if (offset != null && limit != null) {
                 return folder.getChildrenRange(offset, limit, fields);
             } else {
-                Collection<BoxItem.Info> folderItems = new ArrayList<BoxItem.Info>();
+                Collection<BoxItem.Info> folderItems = new ArrayList<>();
                 Iterable<BoxItem.Info> iterable;
                 if (fields.length > 0) {
                     iterable = folder.getChildren(fields);
@@ -423,7 +423,7 @@ public class BoxFoldersManager {
         try {
             LOG.debug("Creating shared link for folder(id=" + folderId + ") with access=" + access
                     + (unshareDate == null ? ""
-                            : " unsharedDate=" + SimpleDateFormat.getDateTimeInstance().format(unshareDate)
+                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
                                     + " permissions=" + permissions));
 
             if (folderId == null) {

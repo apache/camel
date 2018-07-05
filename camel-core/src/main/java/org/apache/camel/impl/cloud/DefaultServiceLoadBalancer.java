@@ -136,7 +136,7 @@ public class DefaultServiceLoadBalancer
             // filter services
             services = serviceFilter.apply(services);
             // let the client service chooser find which server to use
-            service = services.size() > 1 ? serviceChooser.choose(services) : services.get(0);
+            service = services.isEmpty() ? null : services.size() > 1 ? serviceChooser.choose(services) : services.get(0);
             if (service == null) {
                 throw new RejectedExecutionException("No active services with name " + serviceName);
             }

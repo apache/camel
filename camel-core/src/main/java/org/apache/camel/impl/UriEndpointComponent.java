@@ -73,7 +73,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
      */
     public static SortedMap<String, ParameterConfiguration> createParameterConfigurationMap(
             Class<? extends Endpoint> endpointClass) {
-        SortedMap<String, ParameterConfiguration> answer = new TreeMap<String, ParameterConfiguration>();
+        SortedMap<String, ParameterConfiguration> answer = new TreeMap<>();
         populateParameterConfigurationMap(answer, endpointClass, "");
         return answer;
     }
@@ -126,7 +126,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
         if (parameterConfigurationMap == null) {
             parameterConfigurationMap = createParameterConfigurationMap(getEndpointClass());
         }
-        return new TreeMap<String, ParameterConfiguration>(parameterConfigurationMap);
+        return new TreeMap<>(parameterConfigurationMap);
     }
 
 }

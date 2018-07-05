@@ -18,13 +18,13 @@ package org.apache.camel.component.ganglia;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.junit.Before;
 
 public class CamelGangliaTestSupport extends CamelTestSupport {
-    private static int testPort;
+    private int testPort;
 
-    @BeforeClass
-    public static void setup() {
+    @Before
+    public void setup() {
         testPort = AvailablePortFinder.getNextAvailable();
     }
 

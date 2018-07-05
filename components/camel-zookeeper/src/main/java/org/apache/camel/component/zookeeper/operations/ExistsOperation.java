@@ -44,9 +44,9 @@ public class ExistsOperation extends ZooKeeperOperation<String> {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(ok ? "node exists" : "node does not exist");
             }
-            return new OperationResult<String>(node, statistics, ok);
+            return new OperationResult<>(node, statistics, ok);
         } catch (Exception e) {
-            return new OperationResult<String>(e);
+            return new OperationResult<>(e);
         }
     }
 

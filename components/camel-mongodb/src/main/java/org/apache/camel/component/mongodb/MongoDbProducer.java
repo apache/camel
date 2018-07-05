@@ -214,7 +214,7 @@ public class MongoDbProducer extends DefaultProducer {
 
     @SuppressWarnings("rawtypes")
     private List<DBObject> attemptConvertToList(List insertList, Exchange exchange) throws CamelMongoDbException {
-        List<DBObject> dbObjectList = new ArrayList<DBObject>(insertList.size());
+        List<DBObject> dbObjectList = new ArrayList<>(insertList.size());
         TypeConverter converter = exchange.getContext().getTypeConverter();
         for (Object item : insertList) {
             try {

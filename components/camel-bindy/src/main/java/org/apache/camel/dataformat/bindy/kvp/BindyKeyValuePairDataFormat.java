@@ -91,13 +91,13 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory)getFactory();
 
         // List of Pojos
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
         // Pojos of the model
         Map<String, Object> model;
         
         // Map to hold the model @OneToMany classes while binding
-        Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
+        Map<String, List<Object>> lists = new HashMap<>();
 
         InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
 

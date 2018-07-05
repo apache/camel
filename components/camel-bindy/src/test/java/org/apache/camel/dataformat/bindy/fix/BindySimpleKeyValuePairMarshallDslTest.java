@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4SpringContextTests {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "1=BE.CHM.00111=CHM0001-0122=448=BE0001245678"
         + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
 
@@ -56,7 +56,7 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         Order order = new Order();
         order.setAccount("BE.CHM.001");

@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
@@ -38,6 +39,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.component.extension.metadata.AbstractMetaDataExtension;
@@ -59,118 +61,266 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private final ConcurrentMap<String, String> properties;
 
     ServiceNowMetaDataExtension() {
+        this(null);
+    }
+
+    ServiceNowMetaDataExtension(CamelContext context) {
+        super(context);
+
         this.properties = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Optional<MetaDataExtension.MetaData> meta(Map<String, Object> parameters) {
-        try {
+    public Optional<MetaData> meta(Map<String, Object> parameters) {
+        final String objectType = (String)parameters.get("objectType");
+        final String metaType = (String)parameters.getOrDefault("metaType", "definition");
+
+        // Retrieve the table definition as json-scheme
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE) && ObjectHelper.equalIgnoreCase(metaType, "definition")) {
             final MetaContext context = new MetaContext(parameters);
 
-            if (!ObjectHelper.equalIgnoreCase(context.getObjectType(), "table")) {
-                throw new UnsupportedOperationException("Unsupported object type <" + context.getObjectType() + ">");
+            // validate meta parameters
+            ObjectHelper.notNull(context.getObjectType(), "objectType");
+            ObjectHelper.notNull(context.getObjectName(), "objectName");
+
+            try {
+                return tableDefinition(context);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
             }
-
-            return tableMeta(context);
-
-        } catch (UnsupportedOperationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
+
+        // retrieve the list of tables excluding those used for import sets
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE) && ObjectHelper.equalIgnoreCase(metaType, "list")) {
+            final MetaContext context = new MetaContext(parameters);
+
+            // validate meta parameters
+            ObjectHelper.notNull(context.getObjectType(), "objectType");
+
+            try {
+                return tableList(context);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        // retrieve the list of import set tables
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_IMPORT) && ObjectHelper.equalIgnoreCase(metaType, "list")) {
+            final MetaContext context = new MetaContext(parameters);
+
+            // validate mate parameters
+            ObjectHelper.notNull(context.getObjectType(), "objectType");
+
+            try {
+                return importSetList(context);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        throw new UnsupportedOperationException("Unsupported object type <" + objectType + ">");
     }
 
-    private Optional<MetaDataExtension.MetaData> tableMeta(MetaContext context) {
-        try {
-            final List<String> names = getObjectHierarchy(context);
-            final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
-            final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
+    private Optional<MetaData> tableDefinition(MetaContext context) throws Exception {
+        final List<String> names = getObjectHierarchy(context);
+        final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
+        final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
 
-            if (names.isEmpty()) {
-                return Optional.empty();
-            }
+        // Schema
+        root.put("$schema", "http://json-schema.org/schema#");
+        root.put("id", String.format("urn:jsonschema:%s:%s)", baseUrn, context.getObjectName()));
+        root.put("type", "object");
+        root.put("additionalProperties", false);
 
-            // Schema
-            root.put("$schema", "http://json-schema.org/schema#");
-            root.put("id", String.format("urn:jsonschema:%s:%s)", baseUrn, context.getObjectName()));
-            root.put("type", "object");
-            root.put("additionalProperties", false);
+        // Schema sections
+        root.putObject("properties");
+        root.putArray("required");
 
-            // Schema sections
-            root.putObject("properties");
-            root.putArray("required");
+        loadProperties(context);
 
-            loadProperties(context);
+        for (String name : names) {
+            context.getStack().push(name);
 
-            for (String name : names) {
-                context.getStack().push(name);
-
-                LOGGER.debug("Load dictionary <{}>", context.getStack());
-                loadDictionary(context, name, root);
-                context.getStack().pop();
-            }
-
-            final String dateFormat = properties.getOrDefault("glide.sys.date_format", "yyyy-MM-dd");
-            final String timeFormat = properties.getOrDefault("glide.sys.time_format", "HH:mm:ss");
-
-            return Optional.of(
-                MetaDataBuilder.on(getCamelContext())
-                    .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
-                    .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                    .withAttribute("date.format", dateFormat)
-                    .withAttribute("time.format", timeFormat)
-                    .withAttribute("date-time.format", dateFormat + " " + timeFormat)
-                    .withPayload(root)
-                    .build()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            LOGGER.debug("Load dictionary <{}>", context.getStack());
+            loadDictionary(context, name, root);
+            context.getStack().pop();
         }
+
+        final String dateFormat = properties.getOrDefault("glide.sys.date_format", "yyyy-MM-dd");
+        final String timeFormat = properties.getOrDefault("glide.sys.time_format", "HH:mm:ss");
+
+        return Optional.of(
+            MetaDataBuilder.on(getCamelContext())
+                .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
+                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                .withAttribute("date.format", dateFormat)
+                .withAttribute("time.format", timeFormat)
+                .withAttribute("date-time.format", dateFormat + " " + timeFormat)
+                .withPayload(root)
+                .build()
+        );
+    }
+
+    private Optional<MetaData> importSetList(MetaContext context) throws Exception {
+        Optional<JsonNode> response = context.getClient().reset()
+            .types(MediaType.APPLICATION_JSON_TYPE)
+            .path("now")
+            .path(context.getConfiguration().getApiVersion())
+            .path("table")
+            .path("sys_db_object")
+            .query("sysparm_exclude_reference_link", "true")
+            .query("sysparm_fields", "name%2Csys_id")
+            .query("sysparm_query", "name=sys_import_set_row")
+            .trasform(HttpMethod.GET, this::findResultNode);
+
+        if (response.isPresent()) {
+            final JsonNode node = response.get();
+            final JsonNode sysId = node.findValue("sys_id");
+
+            if (sysId == null) {
+                throw new IllegalStateException("Unable to determine sys_id of sys_import_set_row");
+            }
+
+            response = context.getClient().reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(context.getConfiguration().getApiVersion())
+                .path("table")
+                .path("sys_db_object")
+                .query("sysparm_exclude_reference_link", "true")
+                .query("sysparm_fields", "name%2Csys_name")
+                .queryF("sysparm_query", "super_class=%s", sysId.textValue())
+                .trasform(HttpMethod.GET, this::findResultNode);
+
+            if (response.isPresent()) {
+                final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
+
+                processResult(response.get(), n -> {
+                    final JsonNode name = n.findValue("name");
+                    final JsonNode label = n.findValue("sys_name");
+
+                    if (name != null && label != null) {
+                        root.put(name.textValue(), label.textValue());
+                    }
+                });
+
+                return Optional.of(
+                    MetaDataBuilder.on(getCamelContext())
+                        .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                        .withPayload(root)
+                        .build()
+                );
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<MetaData> tableList(MetaContext context) throws Exception {
+        Optional<JsonNode> response = context.getClient().reset()
+            .types(MediaType.APPLICATION_JSON_TYPE)
+            .path("now")
+            .path(context.getConfiguration().getApiVersion())
+            .path("table")
+            .path("sys_db_object")
+            .query("sysparm_exclude_reference_link", "true")
+            .query("sysparm_fields", "name%2Csys_id")
+            .query("sysparm_query", "name=sys_import_set_row")
+            .trasform(HttpMethod.GET, this::findResultNode);
+
+        if (response.isPresent()) {
+            final JsonNode node = response.get();
+            final JsonNode sysId = node.findValue("sys_id");
+
+            if (sysId == null) {
+                response = context.getClient().reset()
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_db_object")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Csys_name")
+                    .trasform(HttpMethod.GET, this::findResultNode);
+            } else {
+                response = context.getClient().reset()
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_db_object")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Csys_name")
+                    .queryF("sysparm_query", "super_class!=%s", sysId.textValue())
+                    .trasform(HttpMethod.GET, this::findResultNode);
+            }
+
+            if (response.isPresent()) {
+                final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
+
+                processResult(response.get(), n -> {
+                    final JsonNode name = n.findValue("name");
+                    final JsonNode label = n.findValue("sys_name");
+
+                    if (name != null && label != null) {
+                        root.put(name.textValue(), label.textValue());
+                    }
+                });
+
+                return Optional.of(
+                    MetaDataBuilder.on(getCamelContext())
+                        .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                        .withAttribute("Meta-Context", ServiceNowConstants.RESOURCE_IMPORT)
+                        .withPayload(root)
+                        .build()
+                );
+            }
+        }
+
+        return Optional.empty();
     }
 
     // ********************************
     // Properties
     // ********************************
 
-    private synchronized void loadProperties(MetaContext context) {
+    private void loadProperties(MetaContext context) throws Exception {
         if (!properties.isEmpty()) {
             return;
         }
 
-        try {
-            String offset = "0";
+        String offset = "0";
 
-            while (true) {
-                Response response = context.getClient().reset()
-                    .types(MediaType.APPLICATION_JSON_TYPE)
-                    .path("now")
-                    .path(context.getConfiguration().getApiVersion())
-                    .path("table")
-                    .path("sys_properties")
-                    .query("sysparm_exclude_reference_link", "true")
-                    .query("sysparm_fields", "name%2Cvalue")
-                    .query("sysparm_offset", offset)
-                    .query("sysparm_query", "name=glide.sys.date_format^ORname=glide.sys.time_format")
-                    .invoke(HttpMethod.GET);
+        while (true) {
+            Response response = context.getClient().reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(context.getConfiguration().getApiVersion())
+                .path("table")
+                .path("sys_properties")
+                .query("sysparm_exclude_reference_link", "true")
+                .query("sysparm_fields", "name%2Cvalue")
+                .query("sysparm_offset", offset)
+                .query("sysparm_query", "name=glide.sys.date_format^ORname=glide.sys.time_format")
+                .invoke(HttpMethod.GET);
 
-                findResultNode(response).ifPresent(node -> processResult(node, n -> {
-                    if (n.hasNonNull("name") && n.hasNonNull("value")) {
-                        properties.put(
-                            n.findValue("name").asText(),
-                            n.findValue("value").asText()
-                        );
-                    }
-                }));
-
-                Optional<String> next = ServiceNowHelper.findOffset(response, ServiceNowConstants.LINK_NEXT);
-                if (next.isPresent()) {
-                    offset = next.get();
-                } else {
-                    break;
+            findResultNode(response).ifPresent(node -> processResult(node, n -> {
+                if (n.hasNonNull("name") && n.hasNonNull("value")) {
+                    properties.putIfAbsent(
+                        n.findValue("name").asText(),
+                        n.findValue("value").asText()
+                    );
                 }
+            }));
+
+            Optional<String> next = ServiceNowHelper.findOffset(response, ServiceNowConstants.LINK_NEXT);
+            if (next.isPresent()) {
+                offset = next.get();
+            } else {
+                break;
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -311,7 +461,6 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 } catch (JsonProcessingException e) {
                     throw new RuntimeCamelException(e);
                 } finally {
-
                     context.getStack().pop();
                 }
             }
@@ -322,6 +471,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     // Helpers
     // *************************************
 
+    /**
+     * Determine the hierarchy of a table by inspecting the super_class attribute.
+     */
     private List<String> getObjectHierarchy(MetaContext context) throws Exception {
         List<String> hierarchy = new ArrayList<>();
         String query = String.format("name=%s", context.getObjectName());
@@ -339,9 +491,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
-                JsonNode node = response.get();
-                JsonNode nameNode = node.findValue("name");
-                JsonNode classNode = node.findValue("super_class");
+                final JsonNode node = response.get();
+                final JsonNode nameNode = node.findValue("name");
+                final JsonNode classNode = node.findValue("super_class");
 
                 if (nameNode != null && classNode != null) {
                     query = String.format("sys_id=%s", classNode.textValue());
@@ -399,22 +551,24 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         private final String instanceName;
         private final String objectName;
         private final String objectType;
-        private final Stack<String> stack;
+        private final Deque<String> stack;
 
-        MetaContext(Map<String, Object> parameters) throws Exception {
+        MetaContext(Map<String, Object> parameters) {
             this.parameters = parameters;
-            this.configuration = getComponent(ServiceNowComponent.class).getConfiguration().copy();
-            this.stack = new Stack<>();
+            this.configuration = new ServiceNowConfiguration();
+            this.stack = new ArrayDeque<>();
 
-            IntrospectionSupport.setProperties(configuration, new HashMap<>(parameters));
+            try {
+                IntrospectionSupport.setProperties(configuration, new HashMap<>(parameters));
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
 
-            this.instanceName = (String)parameters.getOrDefault("instanceName", getComponent(ServiceNowComponent.class).getInstanceName());
-            this.objectType = (String)parameters.getOrDefault("objectType", "table");
+            this.instanceName = (String)parameters.get("instanceName");
+            this.objectType = (String)parameters.getOrDefault("objectType", ServiceNowConstants.RESOURCE_TABLE);
             this.objectName = (String)parameters.getOrDefault("objectName", configuration.getTable());
 
             ObjectHelper.notNull(instanceName, "instanceName");
-            ObjectHelper.notNull(objectName, "objectName");
-            ObjectHelper.notNull(objectType, "objectType");
 
             // Configure Api and OAuthToken ULRs using instanceName
             if (!configuration.hasApiUrl()) {
@@ -451,7 +605,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             return objectName;
         }
 
-        public Stack<String> getStack() {
+        public Deque<String> getStack() {
             return stack;
         }
     }

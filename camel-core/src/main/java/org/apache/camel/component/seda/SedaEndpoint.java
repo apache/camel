@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
-    private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
-    private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
+    private final Set<SedaProducer> producers = new CopyOnWriteArraySet<>();
+    private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<>();
     private volatile MulticastProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
@@ -84,6 +84,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000;
     @UriParam(label = "producer")
+    private long offerTimeout;
+    @UriParam(label = "producer")
     private boolean blockWhenFull;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers;
@@ -93,7 +95,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private BlockingQueueFactory<Exchange> queueFactory;
 
     public SedaEndpoint() {
-        queueFactory = new LinkedBlockingQueueFactory<Exchange>();
+        queueFactory = new LinkedBlockingQueueFactory<>();
     }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -106,7 +108,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (queue != null) {
             this.size = queue.remainingCapacity();
         }
-        queueFactory = new LinkedBlockingQueueFactory<Exchange>();
+        queueFactory = new LinkedBlockingQueueFactory<>();
         getComponent().registerQueue(this, queue);
     }
 
@@ -126,7 +128,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull());
+        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), getOfferTimeout());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -228,7 +230,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
             }
             // create list of consumers to multicast to
-            List<Processor> processors = new ArrayList<Processor>(size);
+            List<Processor> processors = new ArrayList<>(size);
             for (SedaConsumer consumer : getConsumers()) {
                 processors.add(consumer.getProcessor());
             }
@@ -333,6 +335,19 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+    
+    @ManagedAttribute
+    public long getOfferTimeout() {
+        return offerTimeout;
+    }
+    
+    /**
+     * offerTimeout (in milliseconds)  can be added to the block case when queue is full.
+     * You can disable timeout by using 0 or a negative value.
+     */
+    public void setOfferTimeout(long offerTimeout) {
+        this.offerTimeout = offerTimeout;
+    }
 
     @ManagedAttribute
     public boolean isFailIfNoConsumers() {
@@ -410,7 +425,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      * Returns the current pending exchanges
      */
     public List<Exchange> getExchanges() {
-        return new ArrayList<Exchange>(getQueue());
+        return new ArrayList<>(getQueue());
     }
 
     @ManagedAttribute
@@ -438,7 +453,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      * Returns the current active producers on this endpoint
      */
     public Set<SedaProducer> getProducers() {
-        return new HashSet<SedaProducer>(producers);
+        return new HashSet<>(producers);
     }
 
     void onStarted(SedaProducer producer) {

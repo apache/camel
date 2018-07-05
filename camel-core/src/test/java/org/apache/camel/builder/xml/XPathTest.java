@@ -365,7 +365,7 @@ public class XPathTest extends ContextTestSupport {
         // convert the node concurrently to test that XML Parser is not thread safe when
         // importing nodes to a new Document, so try a test for that
 
-        final List<Document> result = new ArrayList<Document>();
+        final List<Document> result = new ArrayList<>();
         ExecutorService executor = Executors.newFixedThreadPool(size);
         final CountDownLatch latch = new CountDownLatch(size);
         for (int i = 0; i < size; i++) {

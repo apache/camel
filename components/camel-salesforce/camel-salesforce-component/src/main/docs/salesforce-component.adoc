@@ -532,6 +532,16 @@ final Map<String, ?> accountUpdateBody = accountUpdateResult.getBody();
 final SObjectCompositeResult contactCreationResult = results.stream().filter(r -> "JunctionRecord".equals(r.getReferenceId())).findFirst().get()
 ----
 
+=== Generating SOQL query strings
+
+`org.apache.camel.component.salesforce.api.utils.QueryHelper` contains helper
+methods to generate SOQL queries. For instance to fetch all custom fields from
+_Account_ SObject you can simply generate the SOQL SELECT by invoking:
+
+[source,java]
+----
+String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom);
+----
 
 === Camel Salesforce Maven Plugin
 
@@ -566,7 +576,7 @@ for details on how to generated the DTO.
 
 
 // component options: START
-The Salesforce component supports 29 options which are listed below.
+The Salesforce component supports 29 options, which are listed below.
 
 
 

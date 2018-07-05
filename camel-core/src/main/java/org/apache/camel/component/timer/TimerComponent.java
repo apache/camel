@@ -36,8 +36,8 @@ import org.apache.camel.impl.UriEndpointComponent;
  * @version 
  */
 public class TimerComponent extends UriEndpointComponent {
-    private final Map<String, Timer> timers = new HashMap<String, Timer>();
-    private final Map<String, AtomicInteger> refCounts = new HashMap<String, AtomicInteger>();
+    private final Map<String, Timer> timers = new HashMap<>();
+    private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
     public TimerComponent() {
         super(TimerEndpoint.class);

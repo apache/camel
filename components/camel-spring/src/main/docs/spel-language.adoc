@@ -44,7 +44,7 @@ The following variables are available in expressions and predicates written in S
 === Options
 
 // language options: START
-The SpEL language supports 1 options which are listed below.
+The SpEL language supports 1 options, which are listed below.
 
 
 

@@ -73,7 +73,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations,
                            CamelConfigurationProperties configurationProperties) {
         this.applicationContext = applicationContext;
-        this.camelContextConfigurations = new ArrayList<CamelContextConfiguration>(camelContextConfigurations);
+        this.camelContextConfigurations = new ArrayList<>(camelContextConfigurations);
         this.configurationProperties = configurationProperties;
     }
 

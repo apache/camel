@@ -141,7 +141,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
 
         ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool, policy);
 
-        List<Processor> pipe = new ArrayList<Processor>(2);
+        List<Processor> pipe = new ArrayList<>(2);
         pipe.add(thread);
         pipe.add(createChildProcessor(routeContext, true));
         // wrap in nested pipeline so this appears as one processor

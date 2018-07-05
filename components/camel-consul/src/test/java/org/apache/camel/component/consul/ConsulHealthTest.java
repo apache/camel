@@ -41,6 +41,8 @@ public class ConsulHealthTest extends ConsulTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         Random random = new Random();
 
         this.service = UUID.randomUUID().toString();
@@ -61,12 +63,12 @@ public class ConsulHealthTest extends ConsulTestSupport {
         );
 
         this.registrations.forEach(client::register);
-        super.doPreSetup();
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
         registrations.forEach(r -> client.deregister(r.getId()));
     }
 

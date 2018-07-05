@@ -55,7 +55,7 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
 
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            final List<Object> params = new ArrayList<Object>();
+                            final List<Object> params = new ArrayList<>();
                             params.add("foo");
                             params.add(10);
                             params.add("bar");

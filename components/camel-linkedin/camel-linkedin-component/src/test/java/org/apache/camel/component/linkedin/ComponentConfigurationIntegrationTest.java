@@ -48,7 +48,7 @@ public class ComponentConfigurationIntegrationTest extends AbstractLinkedInTestS
 
     @Test
     public void testGetComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.comment_id", "123");
         // parameter type is String

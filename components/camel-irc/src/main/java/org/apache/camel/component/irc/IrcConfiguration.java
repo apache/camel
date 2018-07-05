@@ -44,7 +44,7 @@ public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
     private boolean usingSSL;
-    private List<IrcChannel> channels = new ArrayList<IrcChannel>();
+    private List<IrcChannel> channels = new ArrayList<>();
 
     @UriPath @Metadata(required = "true")
     private String hostname;
@@ -539,7 +539,7 @@ public class IrcConfiguration implements Cloneable {
             
             // Remove unneeded '#' channel prefixes per convention
             // and replace ',' separators and merge channel and key using convention "channel!key"
-            List<String> cl = new ArrayList<String>();
+            List<String> cl = new ArrayList<>();
             String channels = (String)parameters.get("channels");
             String keys =  (String)parameters.get("keys");
             keys = keys == null ? keys : keys + " ";    // if @keys ends with a ',' it will miss the last empty key after split(",")

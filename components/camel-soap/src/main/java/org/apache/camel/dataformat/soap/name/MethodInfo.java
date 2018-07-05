@@ -48,7 +48,7 @@ public final class MethodInfo {
         this.in = in;
         this.out = out;
         
-        this.inTypeMap = new HashMap<String, TypeInfo>();
+        this.inTypeMap = new HashMap<>();
         for (TypeInfo typeInfo : in) {
             if (inTypeMap.containsKey(typeInfo.getTypeName())
                 && (!(typeInfo.getTypeName().equals("javax.xml.ws.Holder")))

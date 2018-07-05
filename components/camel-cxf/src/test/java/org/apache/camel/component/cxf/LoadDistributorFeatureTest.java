@@ -109,7 +109,7 @@ public class LoadDistributorFeatureTest {
         ctx.addRoutes(new RouteBuilder() {
             public void configure() {
                 
-                List<String> serviceList = new ArrayList<String>();
+                List<String> serviceList = new ArrayList<>();
                 serviceList.add(SERVICE_ADDRESS_1);
                 serviceList.add(SERVICE_ADDRESS_2);
 

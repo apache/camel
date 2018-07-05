@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
     private RouteDefinition originalRoute;
-    private final List<AdviceWithTask> adviceWithTasks = new ArrayList<AdviceWithTask>();
+    private final List<AdviceWithTask> adviceWithTasks = new ArrayList<>();
 
     /**
      * Sets the original route to be adviced.
@@ -133,7 +133,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, pattern, null, null, null);
+        return new AdviceWithBuilder<>(this, pattern, null, null, null);
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, null, pattern, null, null);
+        return new AdviceWithBuilder<>(this, null, pattern, null, null);
     }
 
     /**
@@ -161,7 +161,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, null, null, pattern, null);
+        return new AdviceWithBuilder<>(this, null, null, pattern, null);
     }
 
     /**
@@ -172,7 +172,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByType(Class<T> type) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, null, null, null, type);
+        return new AdviceWithBuilder<>(this, null, null, null, type);
     }
 
     /**

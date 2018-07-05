@@ -110,7 +110,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
@@ -123,7 +122,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
@@ -204,8 +202,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         Update.Where updateFirstName = update("camel_user")
                 .with(set("first_name", bindMarker()))
                 .where(eq("login", bindMarker()));
-        @SuppressWarnings("unused")
-        Object response1 = producerTemplateNoEndpointCql.requestBodyAndHeader(new Object[]{"Claus 2", "c_ibsen"},
+        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[]{"Claus 2", "c_ibsen"},
                 CassandraConstants.CQL_QUERY, updateFirstName);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
@@ -219,8 +216,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         Update.Where updateLastName = update("camel_user")
                 .with(set("last_name", bindMarker()))
                 .where(eq("login", bindMarker()));
-        @SuppressWarnings("unused")
-        Object response2 = producerTemplateNoEndpointCql.requestBodyAndHeader(new Object[]{"Ibsen 2", "c_ibsen"},
+        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[]{"Ibsen 2", "c_ibsen"},
                 CassandraConstants.CQL_QUERY, updateLastName);
 
         ResultSet resultSet2 = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");

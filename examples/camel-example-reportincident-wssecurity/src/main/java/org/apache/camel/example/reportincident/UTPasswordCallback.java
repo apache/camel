@@ -31,7 +31,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
  */
 public class UTPasswordCallback implements CallbackHandler {
 
-    private Map<String, String> passwords = new HashMap<String, String>();
+    private Map<String, String> passwords = new HashMap<>();
 
     public UTPasswordCallback() {
         passwords.put("claus", "sualc");

@@ -64,7 +64,7 @@ public final class PubNubSensor2Example {
 
     static class PubsubRoute extends RouteBuilder {
         private static String masterEP = "pubnub:iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY + "&publishKey=" + PUBNUB_PUBLISH_KEY;
-        private static Map<String, String> devices = new ConcurrentHashMap<String, String>();
+        private static Map<String, String> devices = new ConcurrentHashMap<>();
 
         @Override
         public void configure() throws Exception {
@@ -93,7 +93,7 @@ public final class PubNubSensor2Example {
                 String deviceUUID;
                 deviceUUID = message.getPublisher();
                 if (devices.get(deviceUUID) == null) {
-                    Map<String, Object> headers = new HashMap<String, Object>();
+                    Map<String, Object> headers = new HashMap<>();
                     headers.put(OPERATION, "WHERENOW");
                     headers.put(UUID, deviceUUID);
                     @SuppressWarnings("unchecked")

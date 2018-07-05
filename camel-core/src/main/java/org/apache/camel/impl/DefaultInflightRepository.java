@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
-    private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<String, Exchange>();
-    private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
 
     public void add(Exchange exchange) {
         inflight.put(exchange.getExchangeId(), exchange);

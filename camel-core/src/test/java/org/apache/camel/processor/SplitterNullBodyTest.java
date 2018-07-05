@@ -49,7 +49,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        List<?> list = new ArrayList<Object>();
+        List<?> list = new ArrayList<>();
         template.sendBody("direct:start", list);
 
         assertMockEndpointsSatisfied();
@@ -59,7 +59,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        List<?> list = new ArrayList<Object>();
+        List<?> list = new ArrayList<>();
         template.sendBody("direct:streaming", list);
 
         assertMockEndpointsSatisfied();

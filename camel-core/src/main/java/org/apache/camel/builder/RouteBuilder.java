@@ -99,7 +99,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public RestConfigurationDefinition restConfiguration(String component) {
         if (restConfigurations == null) {
-            restConfigurations = new HashMap<String, RestConfigurationDefinition>();
+            restConfigurations = new HashMap<>();
         }
         RestConfigurationDefinition restConfiguration = restConfigurations.get(component);
         if (restConfiguration == null) {
@@ -498,7 +498,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         camelContext.addRestDefinitions(getRestCollection().getRests());
 
         // convert rests into routes so we they are routes for runtime
-        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> routes = new ArrayList<>();
         for (RestDefinition rest : getRestCollection().getRests()) {
             List<RouteDefinition> list = rest.asRouteDefinition(getContext());
             routes.addAll(list);

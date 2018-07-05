@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -30,12 +29,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
-
 
 public final class CxfUtils {
     
@@ -52,7 +53,7 @@ public final class CxfUtils {
     }
     
     public static String elementToString(Element element) throws Exception {
-        Map<String, String> namespaces = new HashMap<String, String>();
+        Map<String, String> namespaces = new HashMap<>();
         visitNodesForNameSpace(element, namespaces);
         W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
         writeElement(element, writer, namespaces);
@@ -170,6 +171,15 @@ public final class CxfUtils {
             }
         }
     }
-    
 
+
+    public static void closeCamelUnitOfWork(Message message) {
+        Exchange cxfExchange = null;
+        if ((cxfExchange = message.getExchange()) != null) {
+            org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+            if (exchange != null) {
+                UnitOfWorkHelper.doneUow(exchange.getUnitOfWork(), exchange);
+            }
+        }
+    }
 }

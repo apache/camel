@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
     private static int invoked;
-    private static List<String> bodies = new ArrayList<String>();    
+    private static List<String> bodies = new ArrayList<>();    
     
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");

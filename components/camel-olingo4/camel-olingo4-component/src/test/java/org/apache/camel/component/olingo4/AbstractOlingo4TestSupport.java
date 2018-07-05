@@ -51,7 +51,7 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
 
         final CamelContext context = super.createCamelContext();
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         options.put("serviceUri", getRealServiceUrl(TEST_SERVICE_BASE_URL));
         options.put("contentType", "application/json;charset=utf-8");
 

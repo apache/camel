@@ -38,7 +38,7 @@ public class MockExpectedBodiesAsListTest extends ContextTestSupport {
     }
 
     public void testUsingListString() throws Exception {
-        List<String> data = new ArrayList<String>();
+        List<String> data = new ArrayList<>();
         data.add("Hello World");
         data.add("Bye World");
 
@@ -52,7 +52,7 @@ public class MockExpectedBodiesAsListTest extends ContextTestSupport {
     }
 
     public void testUsingList() throws Exception {
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("Hello World");
         data.add(123);
 

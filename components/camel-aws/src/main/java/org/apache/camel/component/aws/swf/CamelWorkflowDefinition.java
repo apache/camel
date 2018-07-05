@@ -52,8 +52,8 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
     @Override
     public Promise<String> execute(final String input) throws WorkflowException {
-        final Settable<String> result = new Settable<String>();
-        final AtomicReference<Promise<?>> methodResult = new AtomicReference<Promise<?>>();
+        final Settable<String> result = new Settable<>();
+        final AtomicReference<Promise<?>> methodResult = new AtomicReference<>();
         new TryCatchFinally() {
 
             @Override
@@ -67,7 +67,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
                 if (r instanceof Promise) {
                     methodResult.set((Promise<?>) r);
                 } else if (r != null) {
-                    methodResult.set(new Settable<Object>(r));
+                    methodResult.set(new Settable<>(r));
                 }
             }
 

@@ -30,7 +30,7 @@ import org.apache.camel.spi.MaskingFormatter;
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
-    private static final Set<String> DEFAULT_KEYWORDS = new HashSet<String>(Arrays.asList("passphrase", "password", "secretKey"));
+    private static final Set<String> DEFAULT_KEYWORDS = new HashSet<>(Arrays.asList("passphrase", "password", "secretKey"));
     private Set<String> keywords;
     private boolean maskKeyValue;
     private boolean maskXmlElement;

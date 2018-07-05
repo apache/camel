@@ -62,7 +62,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 
@@ -75,7 +75,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
@@ -87,7 +87,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.UPDATED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.UPDATED.getType(), "4711", "my-foo");
         argument.getValue().entryUpdated(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -101,7 +101,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -115,7 +115,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);

@@ -192,7 +192,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     public List<RouteBuilder> routes() {
         if (this.applicationContext != null) {
             Map<String, RouteBuilder> routeBuildersMap = applicationContext.getBeansOfType(RouteBuilder.class);
-            List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>(routeBuildersMap.size());
+            List<RouteBuilder> routeBuilders = new ArrayList<>(routeBuildersMap.size());
             for (RouteBuilder routeBuilder : routeBuildersMap.values()) {
                 routeBuilders.add(routeBuilder);
             }

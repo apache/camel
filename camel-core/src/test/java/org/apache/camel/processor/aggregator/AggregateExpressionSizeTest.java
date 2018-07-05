@@ -31,7 +31,7 @@ public class AggregateExpressionSizeTest extends ContextTestSupport {
     public void testAggregateExpressionSize() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("mySize", 3);
 

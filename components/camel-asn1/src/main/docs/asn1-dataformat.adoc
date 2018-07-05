@@ -8,7 +8,7 @@ The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/
 ### ASN.1 Data Format Options
 
 // dataformat options: START
-The ASN.1 File dataformat supports 3 options which are listed below.
+The ASN.1 File dataformat supports 3 options, which are listed below.
 
 
 

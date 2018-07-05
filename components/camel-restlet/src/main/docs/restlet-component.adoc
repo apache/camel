@@ -63,7 +63,7 @@ option.
 
 
 // component options: START
-The Restlet component supports 22 options which are listed below.
+The Restlet component supports 22 options, which are listed below.
 
 
 
@@ -383,7 +383,7 @@ well:
 <repository>  
    <id>maven-restlet</id>  
    <name>Public online Restlet repository</name>  
-   <url>http://maven.restlet.org</url>  
+   <url>https://maven.restlet.com</url>
 </repository>
 ----
 

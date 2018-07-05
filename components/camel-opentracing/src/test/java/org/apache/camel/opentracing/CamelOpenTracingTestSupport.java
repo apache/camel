@@ -69,7 +69,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected Set<String> getExcludePatterns() {
-        return new HashSet<String>();
+        return new HashSet<>();
     }
 
     protected void verify() {
@@ -107,7 +107,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         String component = (String) span.tags().get(Tags.COMPONENT.getKey());
         assertNotNull(component);
         assertEquals(td.getLabel(),
-            SpanDecorator.CAMEL_COMPONENT + URI.create((String) td.getUri()).getScheme(),
+            SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(),
             component);
         assertEquals(td.getLabel(), td.getUri(), span.tags().get("camel.uri"));
 
@@ -141,13 +141,13 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected void verifyTraceSpanNumbers(int numOfTraces, int numSpansPerTrace) {
-        Map<Long, List<Span>> traces = new HashMap<Long, List<Span>>();
+        Map<Long, List<Span>> traces = new HashMap<>();
 
         // Sort spans into separate traces
         for (int i = 0; i < getTracer().finishedSpans().size(); i++) {
             List<Span> spans = traces.get(getTracer().finishedSpans().get(i).context().traceId());
             if (spans == null) {
-                spans = new ArrayList<Span>();
+                spans = new ArrayList<>();
                 traces.put(getTracer().finishedSpans().get(i).context().traceId(), spans);
             }
             spans.add(getTracer().finishedSpans().get(i));

@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
 public class CorePackageScanClassResolver implements PackageScanClassResolver {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
-    private final Set<Class<?>> converters = new LinkedHashSet<Class<?>>();
+    private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
+    private final Set<Class<?>> converters = new LinkedHashSet<>();
 
     public CorePackageScanClassResolver() {
         converters.add(ObjectConverter.class);
@@ -89,7 +89,7 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
     @Override
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
-        return Collections.unmodifiableSet(new LinkedHashSet<ClassLoader>(classLoaders));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
     }
 
     @Override

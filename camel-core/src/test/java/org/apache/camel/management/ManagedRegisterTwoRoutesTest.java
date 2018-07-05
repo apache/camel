@@ -39,7 +39,7 @@ public class ManagedRegisterTwoRoutesTest extends ManagementTestSupport {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(2, set.size());
 
-        Set<String> uris = new HashSet<String>();
+        Set<String> uris = new HashSet<>();
         for (ObjectName on : set) {
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
             uris.add(uri);

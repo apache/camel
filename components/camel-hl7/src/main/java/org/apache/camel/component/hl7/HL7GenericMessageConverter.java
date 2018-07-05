@@ -27,7 +27,6 @@ import ca.uhn.hl7v2.parser.GenericModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum;
-import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 import org.apache.camel.Converter;
@@ -49,7 +48,7 @@ public final class HL7GenericMessageConverter {
         parserConfiguration.setInvalidObx2Type("ST");
         parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
 
-        GENERIC_MESSAGE_CONTEXT = new DefaultHapiContext(parserConfiguration, (ValidationContext)ValidationContextFactory.noValidation(), new GenericModelClassFactory());
+        GENERIC_MESSAGE_CONTEXT = new DefaultHapiContext(parserConfiguration, ValidationContextFactory.noValidation(), new GenericModelClassFactory());
     }
 
     private HL7GenericMessageConverter() {

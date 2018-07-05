@@ -37,7 +37,7 @@ public class CamelActivityImplementationFactory extends ActivityImplementationFa
 
     @Override
     public Iterable<ActivityType> getActivityTypesToRegister() {
-        ArrayList<ActivityType> activityTypes = new ArrayList<ActivityType>(1);
+        ArrayList<ActivityType> activityTypes = new ArrayList<>(1);
         ActivityType activityType = new ActivityType();
         activityType.setName(configuration.getEventName());
         activityType.setVersion(configuration.getVersion());

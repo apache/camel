@@ -169,7 +169,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        thriftClient.alltypes(true, (byte)THRIFT_TEST_NUM1, (short)THRIFT_TEST_NUM1, (int)THRIFT_TEST_NUM1, (long)THRIFT_TEST_NUM1, (double)THRIFT_TEST_NUM1, "empty",
+        thriftClient.alltypes(true, (byte)THRIFT_TEST_NUM1, (short)THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, "empty",
                               ByteBuffer.allocate(10), new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY), new ArrayList<Integer>(), new HashSet<String>(),
                               new HashMap<String, Long>(), new AsyncMethodCallback<Integer>() {
 
@@ -225,8 +225,8 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
 
         assertNotNull(echoResult);
         assertTrue(echoResult instanceof Work);
-        assertEquals(THRIFT_TEST_NUM1, ((Work)echoResult).num1);
-        assertEquals(Operation.MULTIPLY, ((Work)echoResult).op);
+        assertEquals(THRIFT_TEST_NUM1, echoResult.num1);
+        assertEquals(Operation.MULTIPLY, echoResult.op);
     }
 
     @Override

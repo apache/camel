@@ -98,7 +98,7 @@ public final class ThriftUtils {
             if (asyncClientGetter == null) {
                 throw new IllegalArgumentException("Thrift async client getter not found: " + clientClassName + "." + ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME);
             }
-            asynClientInstance = ObjectHelper.invokeMethod(asyncClientGetter, factoryInstance, (TNonblockingTransport)transport);
+            asynClientInstance = ObjectHelper.invokeMethod(asyncClientGetter, factoryInstance, transport);
 
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Thrift sync client class not found: " + clientClassName);

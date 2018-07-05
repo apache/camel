@@ -75,7 +75,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testAddUpdateComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
         // parameter type is org.apache.camel.component.linkedin.api.model.UpdateComment
@@ -94,7 +94,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     @Test
     public void testGetConnections() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // use defaults
 /*
         // parameter type is String
@@ -113,7 +113,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetConnectionsById() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.person_id", null);
         // parameter type is String
@@ -131,7 +131,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetConnectionsByUrl() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.public_profile_url", null);
         // parameter type is String
@@ -158,7 +158,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetGroupMembershipSettings() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is String
         headers.put("CamelLinkedIn.fields", null);
@@ -175,7 +175,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     @Test
     public void testGetGroupMemberships() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // use defaults
 /*
         // parameter type is org.apache.camel.component.linkedin.api.model.MembershipState
@@ -212,7 +212,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     @Test
     public void testGetNetworkUpdates() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // use defaults
 /*
         // parameter type is String
@@ -245,7 +245,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetNetworkUpdatesById() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.scope", null);
         // parameter type is org.apache.camel.component.linkedin.api.Type
@@ -275,7 +275,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     @Test
     public void testGetPerson() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.fields", "");
         // parameter type is Boolean
@@ -291,7 +291,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetPersonById() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.person_id", null);
         // parameter type is String
@@ -309,7 +309,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetPersonByUrl() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.public_profile_url", null);
         // parameter type is String
@@ -327,7 +327,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetPosts() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is Long
         headers.put("CamelLinkedIn.start", null);
@@ -363,7 +363,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetSuggestedGroupPosts() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is Long
         headers.put("CamelLinkedIn.start", null);
@@ -408,7 +408,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetUpdateComments() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
         // parameter type is String
@@ -426,7 +426,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetUpdateLikes() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
         // parameter type is String
@@ -444,7 +444,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testLikeUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
         // parameter type is org.apache.camel.component.linkedin.api.model.IsLiked
@@ -500,7 +500,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testUpdateGroupMembership() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.GroupMembership
         headers.put("CamelLinkedIn.groupmembership", null);

@@ -56,7 +56,7 @@ public class OsgiEventAdminNotifier extends EventNotifierSupport {
 
     public OsgiEventAdminNotifier(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        this.tracker = new ServiceTracker<EventAdmin, EventAdmin>(bundleContext, EventAdmin.class.getName(), null);
+        this.tracker = new ServiceTracker<>(bundleContext, EventAdmin.class.getName(), null);
         setIgnoreExchangeEvents(true);
     }
 
@@ -66,7 +66,7 @@ public class OsgiEventAdminNotifier extends EventNotifierSupport {
             return;
         }
 
-        Dictionary<String, Object> props = new Hashtable<String, Object>();
+        Dictionary<String, Object> props = new Hashtable<>();
         props.put(TYPE, getType(event));
         props.put(EVENT, event);
         props.put(TIMESTAMP, System.currentTimeMillis());

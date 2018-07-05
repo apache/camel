@@ -109,7 +109,7 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         assertEquals(true, result);
         List blobsToRemove = new ArrayList<>();
         blobsToRemove.add("testName");
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOBS);
         headers.put(JcloudsConstants.CONTAINER_NAME, "foo");
         headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);

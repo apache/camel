@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class QuoteService {
 
-    private List<String> quotes = new ArrayList<String>();
+    private List<String> quotes = new ArrayList<>();
 
     public void setQuotes(List<String> quotes) {
         this.quotes = quotes;

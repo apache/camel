@@ -30,7 +30,7 @@ import org.apache.camel.TestSupport;
 public class LRUSoftCacheTest extends TestSupport {
 
     public void testLRUSoftCacheGetAndPut() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -42,7 +42,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCacheHitsAndMisses() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -64,7 +64,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCachePutOverride() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         Object old = cache.put(1, "foo");
         assertNull(old);
@@ -81,9 +81,9 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCachePutAll() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
-        Map<Integer, Object> map = new HashMap<Integer, Object>();
+        Map<Integer, Object> map = new HashMap<>();
         map.put(1, "foo");
         map.put(2, "bar");
 
@@ -96,9 +96,9 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCachePutAllAnotherLRUSoftCache() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
-        LRUSoftCache<Integer, Object> cache2 = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache2 = new LRUSoftCache<>(1000);
         cache2.put(1, "foo");
         cache2.put(2, "bar");
 
@@ -111,7 +111,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCacheRemove() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -122,7 +122,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCacheValues() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -136,7 +136,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCacheEmpty() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         assertTrue(cache.isEmpty());
 
@@ -154,7 +154,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCacheContainsKey() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         assertFalse(cache.containsKey(1));
         cache.put(1, "foo");
@@ -170,7 +170,7 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     public void testLRUSoftCacheKeySet() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
         cache.put(1, "foo");
         cache.put(2, "foo");

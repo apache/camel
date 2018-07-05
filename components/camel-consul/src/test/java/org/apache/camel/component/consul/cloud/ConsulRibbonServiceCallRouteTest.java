@@ -43,6 +43,8 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         client = getConsul().agentClient();
 
         registrations = new ArrayList<>(SERVICE_COUNT);
@@ -64,10 +66,9 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+        
         registrations.forEach(r -> client.deregister(r.getId()));
     }
 
@@ -99,6 +100,7 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
                         .name(SERVICE_NAME)
                         .component("jetty")
                         .consulServiceDiscovery()
+                            .url(consulUrl())
                         .endParent()
                     .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");

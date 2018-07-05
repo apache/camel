@@ -43,7 +43,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.expectedMinimumMessageCount(2);
         mock.setResultWaitTime(3000);
 
-        List<Exchange> sentExchanges = new ArrayList<Exchange>();
+        List<Exchange> sentExchanges = new ArrayList<>();
         sendExchangesThroughDroppingThrottler(sentExchanges, 15);
 
         notify.matchesMockWaitTime();
@@ -59,7 +59,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.expectedMinimumMessageCount(2);
         mock.setResultWaitTime(3000);
 
-        List<Exchange> sentExchanges = new ArrayList<Exchange>();
+        List<Exchange> sentExchanges = new ArrayList<>();
 
         // send a burst of 5 exchanges, expecting only one to get through
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);

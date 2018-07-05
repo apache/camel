@@ -17,10 +17,8 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -74,6 +72,8 @@ public class TwitterConfiguration {
     private Double radius;
     @UriParam(label = "consumer,advanced", defaultValue = "km", enums = "km,mi")
     private String distanceMetric;
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
+    private boolean extendedMode = true;
 
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -109,14 +109,15 @@ public class TwitterConfiguration {
         confBuilder.setOAuthConsumerSecret(consumerSecret);
         confBuilder.setOAuthAccessToken(accessToken);
         confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
+        confBuilder.setTweetModeExtended(isExtendedMode());
         if (getHttpProxyHost() != null) {
             confBuilder.setHttpProxyHost(getHttpProxyHost());
         }
         if (getHttpProxyUser() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyUser());
+            confBuilder.setHttpProxyUser(getHttpProxyUser());
         }
         if (getHttpProxyPassword() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyPassword());
+            confBuilder.setHttpProxyPassword(getHttpProxyPassword());
         }
         if (httpProxyPort != null) {
             confBuilder.setHttpProxyPort(httpProxyPort);
@@ -394,6 +395,17 @@ public class TwitterConfiguration {
      */
     public void setDistanceMetric(String distanceMetric) {
         this.distanceMetric = distanceMetric;
+    }
+    
+    /**
+     * Used for enabling full text from twitter (eg receive tweets that contains more than 140 characters).
+     */
+    public void setExtendedMode(Boolean extendedMode) {
+        this.extendedMode = extendedMode;
+    }
+
+    public boolean isExtendedMode() {
+        return extendedMode;
     }
 
 }

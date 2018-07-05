@@ -80,7 +80,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             outputStream.write(bytesCRLF);
         }
 
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
         // the body is not a prepared list of map that bindy expects so help a bit here and create one for us
         Iterator<Object> it = ObjectHelper.createIterator(body);
@@ -90,7 +90,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 models.add((Map<String, Object>) model);
             } else {
                 String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<String, Object>(1);
+                Map<String, Object> row = new HashMap<>(1);
                 row.put(name, model);
                 row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
@@ -136,7 +136,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
         // Pojos of the model
         Map<String, Object> model;
@@ -188,7 +188,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 // annotated class @CSVRecord
                 Pattern pattern = Pattern.compile(separator);
                 Matcher matcher = pattern.matcher(line);
-                List<String> separators = new ArrayList<String>();
+                List<String> separators = new ArrayList<>();
                 
                 // Retrieve separators for each match
                 while (matcher.find()) {
@@ -256,7 +256,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // to fix this afterwards
         StringBuilder current = new StringBuilder();
         boolean inProgress = false;
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         int idxSeparator = 0;
 
         //parsing assumes matching close and end quotes

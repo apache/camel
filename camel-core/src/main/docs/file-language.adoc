@@ -18,7 +18,7 @@ dynamic file patterns for both consumer and producer.
 === File Language options
 
 // language options: START
-The File language supports 2 options which are listed below.
+The File language supports 2 options, which are listed below.
 
 
 

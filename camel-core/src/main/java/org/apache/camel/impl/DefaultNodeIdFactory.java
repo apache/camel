@@ -30,7 +30,7 @@ import org.apache.camel.spi.NodeIdFactory;
  */
 public class DefaultNodeIdFactory implements NodeIdFactory {
 
-    protected static Map<String, AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
+    protected static Map<String, AtomicInteger> nodeCounters = new HashMap<>();
 
     public String createId(NamedNode definition) {
         String key = definition.getShortName();

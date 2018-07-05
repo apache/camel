@@ -397,7 +397,7 @@ from("direct:start")
 ----
 
 As a result we have one outgoing `Exchange` being
-routed the the `"mock:result"` endpoint. The exchange is a holder
+routed the `"mock:result"` endpoint. The exchange is a holder
 containing all the incoming Exchanges.
 To get access to these exchanges you need to access them from a
 property on the outgoing exchange as shown:

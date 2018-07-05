@@ -44,7 +44,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
 
     public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange, XmlConverter xml) {
-        super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
         while (li.hasNext()) {
             Source source = li.next();
@@ -95,7 +95,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     }
 
     private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
-        super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
         while (li.hasNext()) {
             Source source = li.next();
@@ -150,6 +150,6 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
 
     @Override
     public StreamCache copy(Exchange exchange) throws IOException {
-        return new CachedCxfPayload<T>(this, exchange);
+        return new CachedCxfPayload<>(this, exchange);
     }
 }

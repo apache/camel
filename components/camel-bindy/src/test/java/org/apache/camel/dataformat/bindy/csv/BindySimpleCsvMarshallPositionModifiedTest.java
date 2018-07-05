@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String expected;
 
     @Test
@@ -51,7 +51,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
 
         Order order = new Order();
         order.setOrderNr(1);

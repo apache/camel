@@ -15,7 +15,7 @@ XML] file where you define the mapping from the flat format to Objects
 ### Options
 
 // dataformat options: START
-The BeanIO dataformat supports 9 options which are listed below.
+The BeanIO dataformat supports 9 options, which are listed below.
 
 
 

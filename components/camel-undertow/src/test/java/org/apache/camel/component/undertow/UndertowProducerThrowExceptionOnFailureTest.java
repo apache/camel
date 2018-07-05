@@ -35,7 +35,7 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
     @Test
     public void testFailWithException() throws Exception {
         try {
-            String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
+            template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
@@ -46,7 +46,7 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
     @Test
     public void testFailWithException2() throws Exception {
         try {
-            String out = fluentTemplate().to("undertow:http://localhost:{{port2}}/test/fail?throwExceptionOnFailure=true")
+            fluentTemplate().to("undertow:http://localhost:{{port2}}/test/fail?throwExceptionOnFailure=true")
                     .withHeader(Exchange.HTTP_METHOD, "PUT")
                     .withBody("This is not JSON format")
                     .request(String.class);

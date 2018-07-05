@@ -34,7 +34,7 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
     @Test
     public void testBulkIndex() throws Exception {
-        List<Map<String, String>> documents = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> documents = new ArrayList<>();
         Map<String, String> document1 = createIndexedData("1");
         Map<String, String> document2 = createIndexedData("2");
 

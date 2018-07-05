@@ -111,7 +111,7 @@ public class RouteListCommand extends AbstractCamelCommand {
                 maxUptimeLen = java.lang.Math.max(maxUptimeLen, uptime == null ? 0 : uptime.length());
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>(3);
+            final Map<String, Integer> retval = new Hashtable<>(3);
             retval.put(CONTEXT_COLUMN_LABEL, maxContextLen);
             retval.put(ROUTE_COLUMN_LABEL, maxRouteLen);
             retval.put(STATUS_COLUMN_LABEL, maxStatusLen);

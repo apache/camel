@@ -48,7 +48,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
         List requestBody = new ArrayList();
         final CountDownLatch latch = new CountDownLatch(1);
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY));
 
         template.asyncCallbackSendBody("direct:thrift-calculate", requestBody, new SynchronizationAdapter() {
@@ -81,8 +81,8 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
         List requestBody = new ArrayList();
         responseBody = null;
 
-        requestBody.add((int)THRIFT_TEST_NUM1);
-        requestBody.add((int)THRIFT_TEST_NUM2);
+        requestBody.add(THRIFT_TEST_NUM1);
+        requestBody.add(THRIFT_TEST_NUM2);
 
         template.asyncCallbackSendBody("direct:thrift-add", requestBody, new SynchronizationAdapter() {
 
@@ -113,7 +113,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
         final CountDownLatch latch = new CountDownLatch(1);
         List requestBody = new ArrayList();
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, 0, Operation.DIVIDE));
 
         template.asyncCallbackSendBody("direct:thrift-calculate", requestBody, new SynchronizationAdapter() {
@@ -197,10 +197,10 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
         final CountDownLatch latch = new CountDownLatch(1);
         List requestBody = new ArrayList();
 
-        requestBody.add((boolean)true);
+        requestBody.add(true);
         requestBody.add((byte)THRIFT_TEST_NUM1);
         requestBody.add((short)THRIFT_TEST_NUM1);
-        requestBody.add((int)THRIFT_TEST_NUM1);
+        requestBody.add(THRIFT_TEST_NUM1);
         requestBody.add((long)THRIFT_TEST_NUM1);
         requestBody.add((double)THRIFT_TEST_NUM1);
         requestBody.add("empty");

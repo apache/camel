@@ -41,7 +41,7 @@ public class DirectShouldUseSameThreadTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                final ThreadLocal<String> local = new ThreadLocal<String>();
+                final ThreadLocal<String> local = new ThreadLocal<>();
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

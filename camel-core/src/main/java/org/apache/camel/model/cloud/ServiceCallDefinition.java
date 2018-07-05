@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -99,6 +98,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -111,6 +111,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlElements({
         @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "chainedServiceFilter", type = ChainedServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)}
@@ -638,8 +639,19 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
+    /**
+     * @deprecated As of version 2.22.0, replaced by  {@link #combinedServiceDiscovery()}
+     */
+    @Deprecated
     public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
         AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public CombinedServiceCallServiceDiscoveryConfiguration combinedServiceDiscovery() {
+        CombinedServiceCallServiceDiscoveryConfiguration conf = new CombinedServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -687,8 +699,19 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
+    /**
+     * @deprecated As of version 2.22.0, replaced by {@link #combinedFilter()}
+     */
+    @Deprecated
     public ChainedServiceCallServiceFilterConfiguration multiFilter() {
         ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration(this);
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
+    public CombinedServiceCallServiceFilterConfiguration combinedFilter() {
+        CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration(this);
         setServiceFilterConfiguration(conf);
 
         return conf;
@@ -758,9 +781,11 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
         final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
 
-        if (loadBalancer instanceof CamelContextAware) {
-            ((CamelContextAware) loadBalancer).setCamelContext(camelContext);
-        }
+        ObjectHelper.trySetCamelContext(serviceDiscovery, camelContext);
+        ObjectHelper.trySetCamelContext(serviceFilter, camelContext);
+        ObjectHelper.trySetCamelContext(serviceChooser, camelContext);
+        ObjectHelper.trySetCamelContext(loadBalancer, camelContext);
+
         if (loadBalancer instanceof ServiceDiscoveryAware) {
             ((ServiceDiscoveryAware) loadBalancer).setServiceDiscovery(serviceDiscovery);
         }

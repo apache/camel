@@ -280,7 +280,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         Set<String> actual = new HashSet<>();
         actual.add(exchanges.get(0).getIn().getBody(String.class));
         actual.add(exchanges.get(1).getIn().getBody(String.class));
-        Assert.assertEquals(new HashSet<String>(Arrays.asList("Test1", "Test2")), actual);
+        Assert.assertEquals(new HashSet<>(Arrays.asList("Test1", "Test2")), actual);
 
         websocket1.sendCloseFrame();
         websocket2.sendCloseFrame();
@@ -378,7 +378,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             Assert.assertNotNull(key);
             List<String> messages = connections.get(key);
             if (messages == null) {
-                messages = new ArrayList<String>();
+                messages = new ArrayList<>();
                 connections.put(key, messages);
             }
             String body = in.getBody(String.class);

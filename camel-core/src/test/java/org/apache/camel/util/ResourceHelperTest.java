@@ -278,7 +278,7 @@ public class ResourceHelperTest extends TestSupport {
         context.start();
 
         try {
-            URL url = ResourceHelper.resolveResourceAsUrl(context.getClassResolver(), "custom://hello");
+            ResourceHelper.resolveResourceAsUrl(context.getClassResolver(), "custom://hello");
         } catch (Exception e) {
             assertEquals("unknown protocol: custom", e.getMessage());
         }
@@ -304,7 +304,7 @@ public class ResourceHelperTest extends TestSupport {
     }
 
     public void testAppendParameters() throws Exception {
-        Map<String, Object> params = new LinkedHashMap<String, Object>();
+        Map<String, Object> params = new LinkedHashMap<>();
         params.put("foo", 123);
         params.put("bar", "yes");
 

@@ -104,21 +104,21 @@ public class SecurityConstraintMapping implements SecurityConstraint {
 
     public void addInclusion(String constraint) {
         if (inclusions == null) {
-            inclusions = new java.util.LinkedHashMap<String, String>();
+            inclusions = new java.util.LinkedHashMap<>();
         }
         inclusions.put(constraint, null);
     }
 
     public void addInclusion(String constraint, String roles) {
         if (inclusions == null) {
-            inclusions = new java.util.LinkedHashMap<String, String>();
+            inclusions = new java.util.LinkedHashMap<>();
         }
         inclusions.put(constraint, roles);
     }
 
     public void addExclusion(String constraint) {
         if (exclusions == null) {
-            exclusions = new LinkedHashSet<String>();
+            exclusions = new LinkedHashSet<>();
         }
         exclusions.add(constraint);
     }

@@ -74,8 +74,9 @@ public class BasicValidationHandler implements HttpRequestHandler {
         }
 
         response.setStatusCode(HttpStatus.SC_OK);
-        if (responseContent != null) {
-            response.setEntity(new StringEntity(responseContent, "ASCII"));
+        String content = buildResponse(request);
+        if (content != null) {
+            response.setEntity(new StringEntity(content, "ASCII"));
         }
     }
 
@@ -90,4 +91,9 @@ public class BasicValidationHandler implements HttpRequestHandler {
         }
         return true;
     }
+
+    protected String buildResponse(HttpRequest request) {
+        return responseContent;
+    }
+
 }

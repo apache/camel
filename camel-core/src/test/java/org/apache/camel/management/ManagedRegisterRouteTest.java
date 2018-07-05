@@ -48,6 +48,15 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         // the route has this starting endpoint uri
         assertEquals("direct://start", uri);
 
+        String id = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", id);
+
+        String group = (String) mbeanServer.getAttribute(on, "RouteGroup");
+        assertEquals("myGroup", group);
+
+        String desc = (String) mbeanServer.getAttribute(on, "Description");
+        assertEquals("my cool route", desc);
+
         Integer val = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
         // the route has no inflight exchanges
         assertEquals(0, val.intValue());
@@ -72,7 +81,8 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("mock:result");
+                from("direct:start").routeId("myRoute").routeGroup("myGroup").description("my cool route")
+                    .to("log:foo").to("mock:result");
             }
         };
     }

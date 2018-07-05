@@ -70,7 +70,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
         // signatures as map from signature with no arg names to arg names from JavadocParser
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
 
         final Pattern packagePatterns = Pattern.compile(excludePackages);
         final Pattern classPatterns = (excludeClasses != null) ? Pattern.compile(excludeClasses) : null;
@@ -121,7 +121,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                             types = new String[0];
                         } else {
                             // get raw types from args
-                            final List<String> rawTypes = new ArrayList<String>();
+                            final List<String> rawTypes = new ArrayList<>();
                             final Matcher argTypesMatcher = RAW_ARGTYPES_PATTERN.matcher(args);
                             while (argTypesMatcher.find()) {
                                 rawTypes.add(argTypesMatcher.group(1));
@@ -145,7 +145,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             throw new MojoExecutionException("No public non-static methods found, "
                     + "make sure Javadoc is available as project test dependency");
         }
-        return new ArrayList<String>(result.values());
+        return new ArrayList<>(result.values());
     }
 
     private String getResultType(Class<?> aClass, String name, String[] types) throws MojoExecutionException {

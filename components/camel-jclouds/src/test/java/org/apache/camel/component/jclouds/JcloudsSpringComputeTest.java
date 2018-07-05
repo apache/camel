@@ -221,7 +221,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     @Ignore("For now not possible to combine stub provider with ssh module, required for runScript")
     @Test
     public void testRunScript() throws InterruptedException {
-        Map<String, Object> runScriptHeaders = new HashMap<String, Object>();
+        Map<String, Object> runScriptHeaders = new HashMap<>();
         runScriptHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RUN_SCRIPT);
 
         Set<? extends NodeMetadata> nodeMetadatas = (Set<? extends NodeMetadata>) template.requestBodyAndHeaders("direct:in-out", null, createHeaders("1", "default"));
@@ -241,7 +241,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      * @param group   The group to be assigned to the node.
      */
     protected Map<String, Object> createHeaders(String imageId, String group) {
-        Map<String, Object> createHeaders = new HashMap<String, Object>();
+        Map<String, Object> createHeaders = new HashMap<>();
         createHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.CREATE_NODE);
         createHeaders.put(JcloudsConstants.IMAGE_ID, imageId);
         createHeaders.put(JcloudsConstants.GROUP, group);
@@ -256,7 +256,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      * @param group  The group of the node to destroy.
      */
     protected Map<String, Object> destroyHeaders(String nodeId, String group) {
-        Map<String, Object> destroyHeaders = new HashMap<String, Object>();
+        Map<String, Object> destroyHeaders = new HashMap<>();
         destroyHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.DESTROY_NODE);
         if (nodeId != null) {
             destroyHeaders.put(JcloudsConstants.NODE_ID, nodeId);
@@ -274,7 +274,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      * @param group  The group of the node to destroy.
      */
     protected Map<String, Object> listNodeHeaders(String nodeId, String group, Object state) {
-        Map<String, Object> listHeaders = new HashMap<String, Object>();
+        Map<String, Object> listHeaders = new HashMap<>();
         listHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
         if (nodeId != null) {
             listHeaders.put(JcloudsConstants.NODE_ID, nodeId);
@@ -298,7 +298,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      * @param group  The group of the node to reboot.
      */
     protected Map<String, Object> rebootHeaders(String nodeId, String group) {
-        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        Map<String, Object> rebootHeaders = new HashMap<>();
         rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.REBOOT_NODE);
         if (nodeId != null) {
             rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);
@@ -316,7 +316,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      * @param group  The group of the node to suspend.
      */
     protected Map<String, Object> suspendHeaders(String nodeId, String group) {
-        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        Map<String, Object> rebootHeaders = new HashMap<>();
         rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.SUSPEND_NODE);
         if (nodeId != null) {
             rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);
@@ -334,7 +334,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      * @param group  The group of the node to resume.
      */
     protected Map<String, Object> resumeHeaders(String nodeId, String group) {
-        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        Map<String, Object> rebootHeaders = new HashMap<>();
         rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RESUME_NODE);
         if (nodeId != null) {
             rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);

@@ -433,7 +433,7 @@ public abstract class AbstractFeatureTest {
      * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        return references == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
+        return references == null ? new ArrayList<>(0) : Arrays.asList(references);
     }
 
 }

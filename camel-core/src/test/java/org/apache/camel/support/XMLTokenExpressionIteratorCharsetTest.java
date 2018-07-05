@@ -85,7 +85,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
     }
 
     private void invokeAndVerify(Iterator<?> tokenizer) throws IOException, XMLStreamException {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         while (tokenizer.hasNext()) {
             String token = (String)tokenizer.next();
             results.add(token);

@@ -16,14 +16,27 @@
  */
 package org.apache.camel.component.solr;
 
-import org.junit.Ignore;
+import org.apache.camel.CamelExecutionException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.isA;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+
 public class SolrTransactionsTest extends SolrComponentTestSupport {
 
-    public SolrTransactionsTest(SolrFixtures.TestServerType serverToTest) {
-        super(serverToTest);
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    private SolrFixtures.TestServerType solrServerType;
+
+    public SolrTransactionsTest(SolrFixtures.TestServerType solrServerType) {
+        super(solrServerType);
+        this.solrServerType = solrServerType;
     }
 
     @Test
@@ -42,6 +55,14 @@ public class SolrTransactionsTest extends SolrComponentTestSupport {
 
     @Test
     public void testRollback() throws Exception {
+
+        if (SolrFixtures.TestServerType.USE_CLOUD == this.solrServerType) {
+            // Twisting expectations in this case as rollback is currently no
+            // more supported in SolrCloud mode. See SOLR-4895
+            thrown.expect(CamelExecutionException.class);
+            final String expectedMessagePart = "Rollback is currently not supported in SolrCloud mode. (SOLR-4895)";
+            thrown.expectCause(allOf(isA(HttpSolrClient.RemoteSolrException.class), hasMessage(containsString(expectedMessagePart))));
+        }
 
         //insert and verify
         solrInsertTestEntry();

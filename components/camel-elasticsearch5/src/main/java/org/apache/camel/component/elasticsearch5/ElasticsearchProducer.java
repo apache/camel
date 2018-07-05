@@ -160,7 +160,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setBody(client.bulk(bulkRequest).actionGet());
         } else if (operation == ElasticsearchOperation.BULK_INDEX) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            List<String> indexedIds = new ArrayList<String>();
+            List<String> indexedIds = new ArrayList<>();
             for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
                 indexedIds.add(response.getId());
             }
@@ -222,7 +222,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             if (configuration.getIp() != null) {
                 client = createClient().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
             } else if (configuration.getTransportAddressesList() != null && !configuration.getTransportAddressesList().isEmpty()) {
-                List<TransportAddress> addresses = new ArrayList<TransportAddress>(configuration.getTransportAddressesList().size());
+                List<TransportAddress> addresses = new ArrayList<>(configuration.getTransportAddressesList().size());
                 addresses.addAll(configuration.getTransportAddressesList());
                 client = createClient().addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
             } else {

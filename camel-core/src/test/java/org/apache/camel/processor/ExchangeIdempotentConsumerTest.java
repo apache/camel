@@ -99,7 +99,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     private final class MyIdempotentRepo implements ExchangeIdempotentRepository<String> {
 
         private IdempotentRepository<String> delegate;
-        private Set<String> exchanges = new LinkedHashSet<String>();
+        private Set<String> exchanges = new LinkedHashSet<>();
 
         private MyIdempotentRepo() {
             delegate = MemoryIdempotentRepository.memoryIdempotentRepository(200);

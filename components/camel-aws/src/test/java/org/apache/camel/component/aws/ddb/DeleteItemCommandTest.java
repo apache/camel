@@ -47,12 +47,12 @@ public class DeleteItemCommandTest {
 
     @Test
     public void execute() {
-        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> key = new HashMap<>();
         key.put("1", new AttributeValue("Key_1"));
         exchange.getIn().setHeader(DdbConstants.KEY, key);
 
 
-        Map<String, ExpectedAttributeValue> updateCondition = new HashMap<String, ExpectedAttributeValue>();
+        Map<String, ExpectedAttributeValue> updateCondition = new HashMap<>();
         updateCondition
                 .put("name", new ExpectedAttributeValue(new AttributeValue("expected value")));
         exchange.getIn().setHeader(DdbConstants.UPDATE_CONDITION, updateCondition);

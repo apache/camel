@@ -24,7 +24,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class DefaultNettyCamelStateCorrelationManager implements NettyCamelStateCorrelationManager {
 
-    private final Map<Channel, NettyCamelState> cache = new ConcurrentHashMap<Channel, NettyCamelState>();
+    private final Map<Channel, NettyCamelState> cache = new ConcurrentHashMap<>();
 
     @Override
     public void putState(Channel channel, NettyCamelState state) {

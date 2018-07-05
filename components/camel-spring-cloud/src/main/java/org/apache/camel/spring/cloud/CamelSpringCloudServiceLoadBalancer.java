@@ -16,27 +16,28 @@
  */
 package org.apache.camel.spring.cloud;
 
+import java.util.Optional;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceLoadBalancerFunction;
-import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
 public class CamelSpringCloudServiceLoadBalancer extends ServiceSupport implements CamelContextAware, ServiceLoadBalancer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamelSpringCloudServiceLoadBalancer.class);
 
     private final LoadBalancerClient loadBalancerClient;
+    private final ServiceLoadBalancer loadBalancer;
     private CamelContext camelContext;
 
-    public CamelSpringCloudServiceLoadBalancer(LoadBalancerClient loadBalancerClient) {
+    public CamelSpringCloudServiceLoadBalancer(LoadBalancerClient loadBalancerClient, Optional<LoadBalancerClientAdapter> clientAdapter) {
         this.loadBalancerClient = loadBalancerClient;
+        this.loadBalancer = clientAdapter.orElseGet(DefaultLoadBalancerClientAdapter::new).adapt(loadBalancerClient);
     }
 
     @Override
@@ -63,19 +64,15 @@ public class CamelSpringCloudServiceLoadBalancer extends ServiceSupport implemen
 
     @Override
     public <T> T process(String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception {
-        return loadBalancerClient.execute(serviceName,  i -> function.apply(instanceToDefinition(i)));
+        return loadBalancer.process(serviceName, function);
     }
 
     // *******************************
-    // Helpers
+    //
     // *******************************
 
-    private ServiceDefinition instanceToDefinition(ServiceInstance instance) {
-        return new DefaultServiceDefinition(
-            instance.getServiceId(),
-            instance.getHost(),
-            instance.getPort(),
-            instance.getMetadata()
-        );
+    @FunctionalInterface
+    public interface LoadBalancerClientAdapter {
+        ServiceLoadBalancer adapt(LoadBalancerClient client);
     }
 }

@@ -37,7 +37,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
-import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -75,7 +74,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
         sslParams.setKeyStore(KEY_STORE_PATH, SECURITY_STORE_PASSWORD);
         serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, InetAddress.getByName("localhost"), sslParams);
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-        args.processor((TProcessor)processor);
+        args.processor(processor);
         server = new TThreadPoolServer(args);
         
         Runnable simple = new Runnable() {
@@ -121,7 +120,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
 
         List requestBody = new ArrayList();
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY));
 
         Object responseBody = template.requestBody("direct:thrift-secured-calculate", requestBody);
@@ -138,7 +137,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
 
         List requestBody = new ArrayList();
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, 0, Operation.DIVIDE));
 
         try {
@@ -175,10 +174,10 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
         
         List requestBody = new ArrayList();
 
-        requestBody.add((boolean)true);
+        requestBody.add(true);
         requestBody.add((byte)THRIFT_TEST_NUM1);
         requestBody.add((short)THRIFT_TEST_NUM1);
-        requestBody.add((int)THRIFT_TEST_NUM1);
+        requestBody.add(THRIFT_TEST_NUM1);
         requestBody.add((long)THRIFT_TEST_NUM1);
         requestBody.add((double)THRIFT_TEST_NUM1);
         requestBody.add("empty");

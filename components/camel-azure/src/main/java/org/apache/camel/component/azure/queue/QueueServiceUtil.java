@@ -42,7 +42,7 @@ public final class QueueServiceUtil {
     
     public static CloudQueue createQueueClient(QueueServiceConfiguration cfg)
         throws Exception {
-        CloudQueue client = (CloudQueue) getConfiguredClient(cfg);
+        CloudQueue client = getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageQueueUri(cfg);
             StorageCredentials creds = getAccountCredentials(cfg);

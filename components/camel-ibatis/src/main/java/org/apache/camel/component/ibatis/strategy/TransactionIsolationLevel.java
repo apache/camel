@@ -28,7 +28,7 @@ public enum TransactionIsolationLevel {
     TRANSACTION_REPEATABLE_READ(4),
     TRANSACTION_SERIALIZABLE(8);
 
-    protected static final Map<Integer, TransactionIsolationLevel> MAP = new HashMap<Integer, TransactionIsolationLevel>();
+    protected static final Map<Integer, TransactionIsolationLevel> MAP = new HashMap<>();
 
     static {
         for (TransactionIsolationLevel transactionIsolationLevel : values()) {

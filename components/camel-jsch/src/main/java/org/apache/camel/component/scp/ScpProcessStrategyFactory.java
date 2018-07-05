@@ -42,7 +42,7 @@ public final class ScpProcessStrategyFactory {
         */
 
         // default strategy will do nothing
-        GenericFileNoOpProcessStrategy<LsEntry> strategy = new GenericFileNoOpProcessStrategy<LsEntry>();
+        GenericFileNoOpProcessStrategy<LsEntry> strategy = new GenericFileNoOpProcessStrategy<>();
         strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<LsEntry>) getExclusiveReadLockStrategy(params));
         return strategy;
     }

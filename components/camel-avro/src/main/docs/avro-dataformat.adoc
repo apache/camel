@@ -130,7 +130,7 @@ In the same manner you can umarshal using the avro data format.
 ### Avro Dataformat Options
 
 // dataformat options: START
-The Avro dataformat supports 2 options which are listed below.
+The Avro dataformat supports 2 options, which are listed below.
 
 
 

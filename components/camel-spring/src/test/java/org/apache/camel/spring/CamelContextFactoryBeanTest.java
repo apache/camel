@@ -68,7 +68,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
     public void testSetEndpoints() throws Exception {
         // Create a new Camel context and add an endpoint
         CamelContextFactoryBean camelContext = new CamelContextFactoryBean();
-        List<CamelEndpointFactoryBean> endpoints = new LinkedList<CamelEndpointFactoryBean>();
+        List<CamelEndpointFactoryBean> endpoints = new LinkedList<>();
         CamelEndpointFactoryBean endpoint = new CamelEndpointFactoryBean();
         endpoint.setId("endpoint1");
         endpoint.setUri("mock:end");

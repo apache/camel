@@ -15,7 +15,7 @@ aggregate multiple messages into a single Tar File.
 
 
 // dataformat options: START
-The Tar File dataformat supports 4 options which are listed below.
+The Tar File dataformat supports 4 options, which are listed below.
 
 
 

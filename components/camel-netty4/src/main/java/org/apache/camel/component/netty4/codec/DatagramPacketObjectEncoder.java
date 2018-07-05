@@ -42,7 +42,7 @@ public class DatagramPacketObjectEncoder extends
             ByteBuf buf = ctx.alloc().buffer();
             delegateObjectEncoder.encode(ctx, payload, buf);
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf, msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(buf, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
         

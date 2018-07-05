@@ -39,7 +39,7 @@ public class FileSorterRefTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySorter", new MyFileSorter<Object>());
+        jndi.bind("mySorter", new MyFileSorter<>());
         return jndi;
     }
 

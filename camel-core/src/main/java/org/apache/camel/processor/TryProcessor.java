@@ -171,7 +171,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>();
+        List<Processor> answer = new ArrayList<>();
         if (tryProcessor != null) {
             answer.add(tryProcessor);
         }

@@ -82,7 +82,7 @@ public class CookieHandlerTest extends CamelTestSupport {
     public void setReceiveAndTestCookie() throws IOException, URISyntaxException {
         URI uri = new URI(uriStr);
         cookieHandler.setCookiePolicy(cookiePolicy);
-        Map<String, List<String>> headerMap = new HashMap<String, List<String>>();
+        Map<String, List<String>> headerMap = new HashMap<>();
         headerMap.put("Set-Cookie", Collections.singletonList("Customer=\"WILE_E_COYOTE\";Version=1;Path=\"/acme\";Domain=\".example.com\""));
         cookieHandler.storeCookies(exchange, uri, headerMap);
 

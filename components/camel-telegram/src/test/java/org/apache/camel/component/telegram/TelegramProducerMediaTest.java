@@ -170,6 +170,30 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertEquals("Hello", captor.getValue().getText());
         assertNull(captor.getValue().getParseMode());
     }
+    
+    @Test
+    public void testRouteWithTextAndCustomKeyBoard() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+
+        OutgoingTextMessage msg = new OutgoingTextMessage.Builder().text("Hello").build();
+        withInlineKeyboardContainingTwoRows(msg);
+        
+        ex.getIn().setBody(msg);
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertEquals(2, captor.getValue().getReplyKeyboardMarkup().getKeyboard().size());
+        assertEquals(true, captor.getValue().getReplyKeyboardMarkup().getOneTimeKeyboard());
+        assertNull(captor.getValue().getParseMode());
+    }    
 
     @Test
     public void testRouteWithTextHtml() throws Exception {

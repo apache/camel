@@ -43,7 +43,7 @@ public class CacheConsumerTest extends BaseCacheTest {
 
         resultEndpoint.expectedMessageCount(3);
 
-        List<String> operations = new ArrayList<String>();
+        List<String> operations = new ArrayList<>();
         operations.add(CacheConstants.CACHE_OPERATION_ADD);
         operations.add(CacheConstants.CACHE_OPERATION_UPDATE);
         operations.add(CacheConstants.CACHE_OPERATION_DELETE);
@@ -69,7 +69,7 @@ public class CacheConsumerTest extends BaseCacheTest {
 
         resultEndpoint.expectedMessageCount(3);
 
-        List<String> operations = new ArrayList<String>();
+        List<String> operations = new ArrayList<>();
         operations.add(CacheConstants.CACHE_OPERATION_ADD);
         operations.add(CacheConstants.CACHE_OPERATION_UPDATE);
         operations.add(CacheConstants.CACHE_OPERATION_DELETE);

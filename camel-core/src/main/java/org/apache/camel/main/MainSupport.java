@@ -51,8 +51,8 @@ public abstract class MainSupport extends ServiceSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
     protected static final int UNINITIALIZED_EXIT_CODE = Integer.MIN_VALUE;
     protected static final int DEFAULT_EXIT_CODE = 0;
-    protected final List<MainListener> listeners = new ArrayList<MainListener>();
-    protected final List<Option> options = new ArrayList<Option>();
+    protected final List<MainListener> listeners = new ArrayList<>();
+    protected final List<Option> options = new ArrayList<>();
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
@@ -61,11 +61,11 @@ public abstract class MainSupport extends ServiceSupport {
     protected int durationMaxMessages;
     protected TimeUnit timeUnit = TimeUnit.SECONDS;
     protected boolean trace;
-    protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    protected List<RouteBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
-    protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
+    protected final List<CamelContext> camelContexts = new ArrayList<>();
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
@@ -307,7 +307,7 @@ public abstract class MainSupport extends ServiceSupport {
      * Parses the command line arguments.
      */
     public void parseArguments(String[] arguments) {
-        LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
+        LinkedList<String> args = new LinkedList<>(Arrays.asList(arguments));
 
         boolean valid = true;
         while (!args.isEmpty()) {
@@ -523,7 +523,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     public List<RouteDefinition> getRouteDefinitions() {
-        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> answer = new ArrayList<>();
         for (CamelContext camelContext : camelContexts) {
             answer.addAll(camelContext.getRouteDefinitions());
         }

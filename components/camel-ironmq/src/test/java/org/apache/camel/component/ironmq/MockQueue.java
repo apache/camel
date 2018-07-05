@@ -38,7 +38,7 @@ import io.iron.ironmq.Messages;
 import io.iron.ironmq.Queue;
 
 public class MockQueue extends Queue {
-    private Map<String, Message> messages = new LinkedHashMap<String, Message>();
+    private Map<String, Message> messages = new LinkedHashMap<>();
 
     public MockQueue(Client client, String name) {
         super(client, name);
@@ -71,7 +71,7 @@ public class MockQueue extends Queue {
         try {
             Constructor<Ids> constructor = Ids.class.getDeclaredConstructor(Messages.class);
             constructor.setAccessible(true);
-            Messages messageList = new Messages(new ArrayList<Message>(messages.values()));
+            Messages messageList = new Messages(new ArrayList<>(messages.values()));
             ids = constructor.newInstance(messageList);
         } catch (Exception e) {
         }
@@ -123,7 +123,7 @@ public class MockQueue extends Queue {
 
             Iterator<Entry<String, Message>> iterator = messages.entrySet().iterator();
             int i = 0;
-            List<Message> list = new ArrayList<Message>();
+            List<Message> list = new ArrayList<>();
             while (iterator.hasNext() && i < numberOfMessages) {
                 Entry<String, Message> next = iterator.next();
                 list.add(next.getValue());

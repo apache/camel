@@ -31,7 +31,7 @@ public interface TraceEventHandler {
      * <p/>
      * This event is only called if trace out has been disabled (which it is by default).
      * <p/>
-     * This method is for coarse grained tracing, where as the the other two methods is for fine grained
+     * This method is for coarse grained tracing, where as the other two methods is for fine grained
      * with in and event events.
      *
      * @param node             the current node

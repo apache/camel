@@ -37,7 +37,7 @@ public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "C", "id", 789);
 
         // will use 0.5 sec timeout
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("timeout", 500);
         template.sendBodyAndHeaders("direct:start", "D", headers);
@@ -45,7 +45,7 @@ public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
         template.sendBodyAndHeaders("direct:start", "F", headers);
 
         // will use 0.1 sec timeout
-        Map<String, Object> headers2 = new HashMap<String, Object>();
+        Map<String, Object> headers2 = new HashMap<>();
         headers2.put("id", 456);
         headers2.put("timeout", 100);
         template.sendBodyAndHeaders("direct:start", "G", headers2);

@@ -55,7 +55,7 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
     public OperationResult<byte[]> getResult() {
         OperationResult<byte[]> answer;
         if (EventType.NodeDeleted.equals(getWatchedEvent().getType()) && sendEmptyMessageOnDelete) {
-            answer = new OperationResult<byte[]>((byte[])null, null);
+            answer = new OperationResult<>((byte[])null, null);
         } else if (getChangedData) {
             answer = new GetDataOperation(connection, getNode()).getResult();
         } else {

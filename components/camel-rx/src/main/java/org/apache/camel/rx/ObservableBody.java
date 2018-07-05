@@ -28,7 +28,7 @@ public abstract class ObservableBody<T> extends ObservableProcessor<T> {
     private final Class<T> bodyType;
 
     public ObservableBody(Class<T> bodyType) {
-        super(new ExchangeToBodyFunc1<T>(bodyType));
+        super(new ExchangeToBodyFunc1<>(bodyType));
         this.bodyType = bodyType;
     }
 

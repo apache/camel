@@ -67,7 +67,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private boolean skipLockedEntity;
 
     static {
-        NOWAIT = new HashMap<String, Object>();
+        NOWAIT = new HashMap<>();
         NOWAIT.put("javax.persistence.lock.timeout", 0L);
     }
 
@@ -109,7 +109,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                         entityManager.joinTransaction();
                     }
 
-                    Queue<DataHolder> answer = new LinkedList<DataHolder>();
+                    Queue<DataHolder> answer = new LinkedList<>();
 
                     Query query = getQueryFactory().createQuery(entityManager);
                     configureParameters(query);

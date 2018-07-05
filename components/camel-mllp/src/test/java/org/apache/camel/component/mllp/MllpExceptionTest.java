@@ -17,10 +17,6 @@
 
 package org.apache.camel.component.mllp;
 
-import java.lang.ref.WeakReference;
-
-import org.apache.camel.component.mllp.internal.Hl7Util;
-
 import org.junit.Before;
 import org.junit.Test;
 

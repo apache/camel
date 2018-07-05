@@ -117,7 +117,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return;
         }
 
-        Map<String, String> javaTypes = new HashMap<String, String>();
+        Map<String, String> javaTypes = new HashMap<>();
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;
@@ -147,7 +147,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
         // is this from Apache Camel then the data format is out of the box and we should enrich the json schema with more details
         boolean apacheCamel = "org.apache.camel".equals(project.getGroupId());
 
-        // find camel-core and grab the data format model from there, and enrich this model with information from this artifact
+        // find camel-core and grab the data format model from there, and enrich
+        // this model with information from this artifact
         // and create json schema model file for this data format
         try {
             if (apacheCamel && count > 0) {
@@ -156,42 +157,45 @@ public class PackageDataFormatMojo extends AbstractMojo {
                     File core = camelCore.getFile();
                     if (core != null) {
                         URL url = new URL("file", null, core.getAbsolutePath());
-                        URLClassLoader loader = new URLClassLoader(new URL[]{url});
-                        for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
-                            String name = entry.getKey();
-                            String javaType = entry.getValue();
-                            String modelName = asModelName(name);
+                        try (URLClassLoader loader = new URLClassLoader(new URL[] {url})) {
+                            for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
+                                String name = entry.getKey();
+                                String javaType = entry.getValue();
+                                String modelName = asModelName(name);
 
-                            InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
-                            if (is == null) {
-                                // use file input stream if we build camel-core itself, and thus do not have a JAR which can be loaded by URLClassLoader
-                                is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
-                            }
-                            String json = loadText(is);
+                                InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
+                                if (is == null) {
+                                    // use file input stream if we build
+                                    // camel-core itself, and thus do not have a
+                                    // JAR which can be loaded by URLClassLoader
+                                    is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
+                                }
+                                String json = loadText(is);
 
-                            DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
-                            log.debug("Model " + dataFormatModel);
+                                DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
+                                log.debug("Model " + dataFormatModel);
 
-                            // build json schema for the data format
-                            String properties = after(json, "  \"properties\": {");
+                                // build json schema for the data format
+                                String properties = after(json, "  \"properties\": {");
 
-                            // special prepare for bindy/json properties
-                            properties = prepareBindyProperties(name, properties);
-                            properties = prepareJsonProperties(name, properties);
+                                // special prepare for bindy/json properties
+                                properties = prepareBindyProperties(name, properties);
+                                properties = prepareJsonProperties(name, properties);
 
-                            String schema = createParameterJsonSchema(dataFormatModel, properties);
-                            log.debug("JSon schema\n" + schema);
+                                String schema = createParameterJsonSchema(dataFormatModel, properties);
+                                log.debug("JSon schema\n" + schema);
 
-                            // write this to the directory
-                            File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
-                            dir.mkdirs();
+                                // write this to the directory
+                                File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
+                                dir.mkdirs();
 
-                            File out = new File(dir, name + ".json");
-                            OutputStream fos = buildContext.newFileOutputStream(out);
-                            fos.write(schema.getBytes());
-                            fos.close();
-                            if (log.isDebugEnabled()) {
-                                log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
+                                File out = new File(dir, name + ".json");
+                                OutputStream fos = buildContext.newFileOutputStream(out);
+                                fos.write(schema.getBytes());
+                                fos.close();
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
+                                }
                             }
                         }
                     }
@@ -433,7 +437,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         }
 
         // or its a component which has a dependency to camel-core
-        Iterator it = project.getDependencyArtifacts().iterator();
+        Iterator<?> it = project.getDependencyArtifacts().iterator();
         while (it.hasNext()) {
             artifact = (Artifact) it.next();
             if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {

@@ -62,7 +62,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
-    private final Set<SpoolRule> spoolRules = new LinkedHashSet<SpoolRule>();
+    private final Set<SpoolRule> spoolRules = new LinkedHashSet<>();
     private boolean anySpoolRules;
 
     public CamelContext getCamelContext() {

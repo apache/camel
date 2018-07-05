@@ -41,7 +41,7 @@ public final class RestletConverter {
     @Converter
     public static Method[] toMethods(String name) {
         String[] strings = name.split(",");
-        List<Method> methods = new ArrayList<Method>();
+        List<Method> methods = new ArrayList<>();
         for (String string : strings) {
             methods.add(toMethod(string));
         }
@@ -58,8 +58,8 @@ public final class RestletConverter {
     public static MediaType[] toMediaTypes(final String name) {
         final String[] strings = name.split(",");
         final List<MediaType> answer = new ArrayList<>(strings.length);
-        for (int i = 0; i < strings.length; i++) {
-            final MediaType mediaType = toMediaType(strings[i]);
+        for (String string : strings) {
+            final MediaType mediaType = toMediaType(string);
             if (mediaType != null) {
                 answer.add(mediaType);
             }

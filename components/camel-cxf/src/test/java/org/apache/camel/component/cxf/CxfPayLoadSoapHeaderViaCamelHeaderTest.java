@@ -49,7 +49,7 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
                         callerId.setPhoneNumber("108");
                         SoapHeader soapHeader = new SoapHeader(new QName("http://camel.apache.org/pizza/types", "CallerIDHeader"),
                                 callerId, new JAXBDataBinding(CallerIDHeaderType.class));
-                        List<SoapHeader> soapHeaders = new ArrayList<SoapHeader>(1);
+                        List<SoapHeader> soapHeaders = new ArrayList<>(1);
                         soapHeaders.add(soapHeader);
                         // sets the SOAP header via a camel header
                         exchange.getIn().setHeader(Header.HEADER_LIST, soapHeaders);

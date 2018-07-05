@@ -437,7 +437,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     @Ignore
     @Test
     public void testSubmitForPartialSettlement() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.id", null);
         // parameter type is java.math.BigDecimal

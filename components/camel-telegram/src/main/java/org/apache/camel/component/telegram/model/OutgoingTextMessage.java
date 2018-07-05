@@ -32,8 +32,20 @@ public class OutgoingTextMessage extends OutgoingMessage {
 
     @JsonProperty("disable_web_page_preview")
     private Boolean disableWebPagePreview;
+    
+    @JsonProperty("reply_markup")
+    private ReplyKeyboardMarkup replyKeyboardMarkup;
 
     public OutgoingTextMessage() {
+        
+    }
+
+    public OutgoingTextMessage(String text, String parseMode, Boolean disableWebPagePreview, ReplyKeyboardMarkup replyKeyboardMarkup) {
+        
+        this.text = text;
+        this.parseMode = parseMode;
+        this.disableWebPagePreview = disableWebPagePreview;
+        this.replyKeyboardMarkup = replyKeyboardMarkup;
     }
 
     public String getText() {
@@ -60,12 +72,63 @@ public class OutgoingTextMessage extends OutgoingMessage {
         this.disableWebPagePreview = disableWebPagePreview;
     }
 
+    public ReplyKeyboardMarkup getReplyKeyboardMarkup() {
+        return replyKeyboardMarkup;
+    }
+
+    public void setReplyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
+        this.replyKeyboardMarkup = replyKeyboardMarkup;
+    }
+    
+    public static Builder builder() {
+
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private String text;
+        private String parseMode;
+        private Boolean disableWebPagePreview;
+        private ReplyKeyboardMarkup replyKeyboardMarkup;
+
+        public Builder text(String text) {
+
+            this.text = text;
+            return this;
+        }
+        
+        public Builder parseMode(String parseMode) {
+
+            this.parseMode = parseMode;
+            return this;
+        }
+        
+        public Builder disableWebPagePreview(Boolean disableWebPagePreview) {
+
+            this.disableWebPagePreview = disableWebPagePreview;
+            return this;
+        }
+        
+        public Builder replyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
+
+            this.replyKeyboardMarkup = replyKeyboardMarkup;
+            return this;
+        }        
+
+        public OutgoingTextMessage build() {
+            
+            return new OutgoingTextMessage(text, parseMode, disableWebPagePreview, replyKeyboardMarkup);
+        }
+    }    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OutgoingTextMessage{");
         sb.append("text='").append(text).append('\'');
         sb.append(", parseMode='").append(parseMode).append('\'');
-        sb.append(", disableWebPagePreview=").append(disableWebPagePreview);
+        sb.append(", disableWebPagePreview=").append(disableWebPagePreview).append('\'');
+        sb.append(", replyKeyboardMarkup=").append(replyKeyboardMarkup);
         sb.append('}');
         sb.append(' ');
         sb.append(super.toString());

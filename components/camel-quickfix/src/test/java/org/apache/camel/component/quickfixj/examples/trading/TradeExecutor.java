@@ -65,10 +65,10 @@ public class TradeExecutor {
     private static final Logger LOG = LoggerFactory.getLogger(TradeExecutor.class);
     
     private boolean alwaysFillLimitOrders;
-    private Set<String> validOrderTypes = new HashSet<String>();
+    private Set<String> validOrderTypes = new HashSet<>();
     private  MarketQuoteProvider marketQuoteProvider;
 
-    private List<QuickfixjMessageListener> listeners = new CopyOnWriteArrayList<QuickfixjMessageListener>();
+    private List<QuickfixjMessageListener> listeners = new CopyOnWriteArrayList<>();
     
     private int orderID;
     private int execID;
@@ -76,7 +76,7 @@ public class TradeExecutor {
     public TradeExecutor() throws ConfigError, FieldConvertError {
         setAlwaysFillLimitOrders(true);
 
-        Set<String> validOrderTypes = new HashSet<String>();
+        Set<String> validOrderTypes = new HashSet<>();
         validOrderTypes.add(OrdType.LIMIT + "");
         validOrderTypes.add(OrdType.MARKET + "");
         setValidOrderTypes(validOrderTypes);
@@ -93,7 +93,7 @@ public class TradeExecutor {
     }
     
     public void setValidOrderTypes(String validOrderTypes) {
-        setValidOrderTypes(new HashSet<String>(Arrays.asList(validOrderTypes.split("\\s*,\\s*"))));
+        setValidOrderTypes(new HashSet<>(Arrays.asList(validOrderTypes.split("\\s*,\\s*"))));
     }
     
     public void setValidOrderTypes(Set<String> validOrderTypes) {

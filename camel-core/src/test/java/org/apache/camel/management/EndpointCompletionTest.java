@@ -45,7 +45,7 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         String componentName = "file";
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         assertCompletion(mbeanServer, on, componentName, properties, "");
         assertCompletion(mbeanServer, on, componentName, properties, "po");
         assertCompletion(mbeanServer, on, componentName, properties, "/");

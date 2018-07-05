@@ -16,16 +16,11 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import io.grpc.CallCredentials;
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
@@ -162,7 +157,7 @@ public final class GrpcUtils {
         }
         if (method.getReturnType().equals(Iterator.class)) {
             Iterator<Object> responseObjects = (Iterator<Object>)ObjectHelper.invokeMethod(method, blockingStubClass, request);
-            List<Object> objectList = new ArrayList<Object>();
+            List<Object> objectList = new ArrayList<>();
             while (responseObjects.hasNext()) {
                 objectList.add(responseObjects.next());
             }

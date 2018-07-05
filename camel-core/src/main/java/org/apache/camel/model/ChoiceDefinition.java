@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.AsPredicate;
@@ -46,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     @XmlElementRef @AsPredicate
-    private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
+    private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
     private OtherwiseDefinition otherwise;
 
@@ -131,8 +132,19 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
+        List<FilterProcessor> filters = new ArrayList<>();
         for (WhenDefinition whenClause : whenClauses) {
+            // also resolve properties and constant fields on embedded expressions in the when clauses
+            ExpressionNode exp = whenClause;
+            ExpressionDefinition expressionDefinition = exp.getExpression();
+            if (expressionDefinition != null) {
+                // resolve properties before we create the processor
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
+
+                // resolve constant fields (eg Exchange.FILE_NAME)
+                ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
+            }
+
             FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);
             filters.add(filter);
         }
@@ -192,7 +204,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      */
     @AsPredicate
     public ExpressionClause<ChoiceDefinition> when() {
-        ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<ChoiceDefinition>(this);
+        ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<>(this);
         addClause(new WhenDefinition(clause));
         return clause;
     }

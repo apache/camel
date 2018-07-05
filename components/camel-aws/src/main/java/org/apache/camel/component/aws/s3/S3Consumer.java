@@ -105,7 +105,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     }
     
     protected Queue<Exchange> createExchanges(S3Object s3Object) {
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Queue<Exchange> answer = new LinkedList<>();
         Exchange exchange = getEndpoint().createExchange(s3Object);
         answer.add(exchange);
         return answer;
@@ -117,7 +117,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         }
 
         Collection<S3Object> s3Objects = new ArrayList<>();
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Queue<Exchange> answer = new LinkedList<>();
         try {
             for (S3ObjectSummary s3ObjectSummary : s3ObjectSummaries) {
                 S3Object s3Object = getAmazonS3Client().getObject(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey());

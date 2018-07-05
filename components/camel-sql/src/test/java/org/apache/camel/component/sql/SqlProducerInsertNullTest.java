@@ -54,7 +54,7 @@ public class SqlProducerInsertNullTest extends CamelTestSupport {
 
     @Test
     public void testInsertNull() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("id", 4);
         map.put("project", "Foo");
         map.put("lic", "ASF");

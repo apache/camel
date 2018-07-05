@@ -40,7 +40,7 @@ public final class AggregationStrategies {
      * @param type The type the {@link FlexibleAggregationStrategy} deals with.
      */
     public static <T> FlexibleAggregationStrategy<T> flexible(Class<T> type) {
-        return new FlexibleAggregationStrategy<T>(type);
+        return new FlexibleAggregationStrategy<>(type);
     }
     
     /**
@@ -48,7 +48,7 @@ public final class AggregationStrategies {
      * <tt>pick expression</tt> results.
      */
     public static FlexibleAggregationStrategy<Object> flexible() {
-        return new FlexibleAggregationStrategy<Object>();
+        return new FlexibleAggregationStrategy<>();
     }
 
     /**
@@ -67,6 +67,17 @@ public final class AggregationStrategies {
      */
     public static AggregationStrategy useOriginal() {
         return new UseOriginalAggregationStrategy();
+    }
+
+    /**
+     * Use the original exchange.
+     *
+     * @param propagateException whether to propgate exception if errors was thrown during processing splitted messages.
+     *
+     * @see org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
+     */
+    public static AggregationStrategy useOriginal(boolean propagateException) {
+        return new UseOriginalAggregationStrategy(propagateException);
     }
 
     /**

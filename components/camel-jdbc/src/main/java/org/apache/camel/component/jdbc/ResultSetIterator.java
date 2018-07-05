@@ -78,7 +78,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
 
         try {
-            Map<String, Object> row = new LinkedHashMap<String, Object>();
+            Map<String, Object> row = new LinkedHashMap<>();
             for (Column column : columns) {
                 if (useGetBytes && column instanceof BlobColumn) {
                     row.put(column.getName(), ((BlobColumn) column).getBytes(resultSet));
@@ -101,7 +101,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
     public Set<String> getColumnNames() {
         // New copy each time in order to ensure immutability
-        Set<String> columnNames = new LinkedHashSet<String>(columns.length);
+        Set<String> columnNames = new LinkedHashSet<>(columns.length);
         for (Column column : columns) {
             columnNames.add(column.getName());
         }

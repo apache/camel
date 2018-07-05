@@ -94,11 +94,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @XmlAttribute
     protected Boolean inheritErrorHandler;
     @XmlTransient
-    private final LinkedList<Block> blocks = new LinkedList<Block>();
+    private final LinkedList<Block> blocks = new LinkedList<>();
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlTransient
-    private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
     private Map<QName, Object> otherAttributes;
@@ -445,7 +445,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     protected Processor createOutputsProcessorImpl(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
-        List<Processor> list = new ArrayList<Processor>();
+        List<Processor> list = new ArrayList<>();
         for (ProcessorDefinition<?> output : outputs) {
 
             // allow any custom logic before we create the processor
@@ -618,7 +618,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type attribute(QName name, Object value) {
         if (otherAttributes == null) {
-            otherAttributes = new HashMap<QName, Object>();
+            otherAttributes = new HashMap<>();
         }
         otherAttributes.put(name, value);
         return (Type) this;
@@ -654,6 +654,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the exchange to the given dynamic endpoint
      *
      * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @param cacheSize sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used to cache and reuse producers.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toD(@AsEndpointUri String uri, int cacheSize) {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        answer.setUri(uri);
+        answer.setCacheSize(cacheSize);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @param ignoreInvalidEndpoint ignore the invalidate endpoint exception when try to create a producer with that endpoint
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -1089,6 +1107,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
         if (route != null) {
             route.setId(id);
+        }
+
+        return (Type) this;
+    }
+
+    /**
+     * Set the route group for this route.
+     *
+     * @param group  the route group
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type routeGroup(String group) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.setGroup(group);
         }
 
         return (Type) this;
@@ -1753,7 +1789,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients) {
-        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<>(recipients);
         addOutput(answer);
         return answer;
     }
@@ -1767,7 +1803,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients, String delimiter) {
-        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<>(recipients);
         answer.setDelimiter(delimiter);
         addOutput(answer);
         return answer;
@@ -1782,7 +1818,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @AsEndpointUri
     public ExpressionClause<RecipientListDefinition<Type>> recipientList(String delimiter) {
-        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>();
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<>();
         answer.setDelimiter(delimiter);
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
@@ -1796,7 +1832,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @AsEndpointUri
     public ExpressionClause<RecipientListDefinition<Type>> recipientList() {
-        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>();
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
@@ -1817,7 +1853,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header, uriDelimiter);
         addOutput(answer);
         return (Type) this;
     }
@@ -1838,7 +1874,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public Type routingSlip(String header) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header);
         addOutput(answer);
         return (Type) this;
     }
@@ -1861,7 +1897,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header, uriDelimiter);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;
@@ -1885,7 +1921,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;
@@ -1904,7 +1940,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression, String uriDelimiter) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(expression, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(expression, uriDelimiter);
         addOutput(answer);
         return answer;
     }
@@ -1922,7 +1958,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(expression);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(expression);
         addOutput(answer);
         return answer;
     }
@@ -1939,7 +1975,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the expression clause to configure the expression to decide the destinations
      */
     public ExpressionClause<RoutingSlipDefinition<Type>> routingSlip() {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>();
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
@@ -1957,7 +1993,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public DynamicRouterDefinition<Type> dynamicRouter(@AsEndpointUri Expression expression) {
-        DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<Type>(expression);
+        DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<>(expression);
         addOutput(answer);
         return answer;
     }
@@ -1975,7 +2011,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @AsEndpointUri
     public ExpressionClause<DynamicRouterDefinition<Type>> dynamicRouter() {
-        DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<Type>();
+        DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
@@ -2086,7 +2122,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<ResequenceDefinition> resequence() {
         ResequenceDefinition answer = new ResequenceDefinition();
-        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(answer);
+        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<>(answer);
         answer.setExpression(clause);
         addOutput(answer);
         return clause;
@@ -2113,7 +2149,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<AggregateDefinition> aggregate() {
         AggregateDefinition answer = new AggregateDefinition();
-        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(answer);
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<>(answer);
         answer.setExpression(clause);
         addOutput(answer);
         return clause;
@@ -2245,6 +2281,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ThrottleDefinition throttle(Expression maximumRequestCount) {
         ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * Here another parameter correlationExpressionKey is introduced for the functionality which
+     * will throttle based on the key expression to group exchanges. This will make key-based throttling
+     * instead of overall throttling.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second.
+     *
+     * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @param correlationExpressionKey  is a correlation key that can throttle by the given key instead of overall throttling
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(Expression maximumRequestCount, long correlationExpressionKey) {
+        ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount, ExpressionBuilder.constantExpression(correlationExpressionKey));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * Here another parameter correlationExpressionKey is introduced for the functionality which
+     * will throttle based on the key expression to group exchanges. This will make key-based throttling
+     * instead of overall throttling.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second.
+     *
+     * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @param correlationExpressionKey  is a correlation key as an expression that can throttle by the given key instead of overall throttling
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(Expression maximumRequestCount, Expression correlationExpressionKey) {
+        ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount, correlationExpressionKey);
         addOutput(answer);
         return answer;
     }
@@ -3055,7 +3133,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorDefinition<Type>> setBody() {
-        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<ProcessorDefinition<Type>>(this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         SetBodyDefinition answer = new SetBodyDefinition(clause);
         addOutput(answer);
         return clause;
@@ -3132,8 +3210,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorDefinition<Type>> transform() {
-        ExpressionClause<ProcessorDefinition<Type>> clause =
-            new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         TransformDefinition answer = new TransformDefinition(clause);
         addOutput(answer);
         return clause;
@@ -3158,8 +3235,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to use as script.
      */
     public ExpressionClause<ProcessorDefinition<Type>> script() {
-        ExpressionClause<ProcessorDefinition<Type>> clause =
-                new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         ScriptDefinition answer = new ScriptDefinition(clause);
         addOutput(answer);
         return clause;
@@ -3182,7 +3258,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the header
      */
     public ExpressionClause<ProcessorDefinition<Type>> setHeader(String name) {
-        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<ProcessorDefinition<Type>>(this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         SetHeaderDefinition answer = new SetHeaderDefinition(name, clause);
         addOutput(answer);
         return clause;
@@ -3231,7 +3307,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public ExpressionClause<ProcessorDefinition<Type>> setOutHeader(String name) {
-        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<ProcessorDefinition<Type>>(this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         SetOutHeaderDefinition answer = new SetOutHeaderDefinition(name, clause);
         addOutput(answer);
         return clause;
@@ -3287,7 +3363,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the property
      */
     public ExpressionClause<ProcessorDefinition<Type>> setProperty(String name) {
-        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<ProcessorDefinition<Type>>(this);
+        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
         SetPropertyDefinition answer = new SetPropertyDefinition(name, clause);
         addOutput(answer);
         return clause;
@@ -3429,7 +3505,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public <T> Type sort(Expression expression, Comparator<T> comparator) {
-        addOutput(new SortDefinition<T>(expression, comparator));
+        addOutput(new SortDefinition<>(expression, comparator));
         return (Type) this;
     }
 
@@ -3439,7 +3515,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public <T> ExpressionClause<SortDefinition<T>> sort() {
-        SortDefinition<T> answer = new SortDefinition<T>();
+        SortDefinition<T> answer = new SortDefinition<>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
@@ -4047,7 +4123,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the expression to create the {@link DataFormat}
      */
     public DataFormatClause<ProcessorDefinition<Type>> unmarshal() {
-        return new DataFormatClause<ProcessorDefinition<Type>>(this, DataFormatClause.Operation.Unmarshal);
+        return new DataFormatClause<>(this, DataFormatClause.Operation.Unmarshal);
     }
 
     /**
@@ -4099,7 +4175,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the expression to create the {@link DataFormat}
      */
     public DataFormatClause<ProcessorDefinition<Type>> marshal() {
-        return new DataFormatClause<ProcessorDefinition<Type>>(this, DataFormatClause.Operation.Marshal);
+        return new DataFormatClause<>(this, DataFormatClause.Operation.Marshal);
     }
 
     /**

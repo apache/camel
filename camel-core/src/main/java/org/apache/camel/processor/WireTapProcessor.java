@@ -58,6 +58,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicProcessor;
     private final String uri;
+    private final boolean dynamicUri;
     private final Processor processor;
     private final ExchangePattern exchangePattern;
     private final ExecutorService executorService;
@@ -72,7 +73,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     private Processor onPrepare;
 
     public WireTapProcessor(SendDynamicProcessor dynamicProcessor, Processor processor, ExchangePattern exchangePattern,
-                            ExecutorService executorService, boolean shutdownExecutorService) {
+                            ExecutorService executorService, boolean shutdownExecutorService, boolean dynamicUri) {
         this.dynamicProcessor = dynamicProcessor;
         this.uri = dynamicProcessor.getUri();
         this.processor = processor;
@@ -80,6 +81,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
+        this.dynamicUri = dynamicUri;
     }
 
     @Override
@@ -255,7 +257,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void addNewExchangeProcessor(Processor processor) {
         if (newExchangeProcessors == null) {
-            newExchangeProcessors = new ArrayList<Processor>();
+            newExchangeProcessors = new ArrayList<>();
         }
         newExchangeProcessors.add(processor);
     }
@@ -286,6 +288,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public boolean isIgnoreInvalidEndpoint() {
         return dynamicProcessor.isIgnoreInvalidEndpoint();
+    }
+
+    public boolean isDynamicUri() {
+        return dynamicUri;
     }
 
     @Override

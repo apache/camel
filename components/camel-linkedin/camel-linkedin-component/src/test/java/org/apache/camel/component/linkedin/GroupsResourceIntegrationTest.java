@@ -42,7 +42,7 @@ public class GroupsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testAddPost() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.Post
         headers.put("CamelLinkedIn.post", null);

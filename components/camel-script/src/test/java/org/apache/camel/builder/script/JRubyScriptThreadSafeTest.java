@@ -132,7 +132,7 @@ public class JRubyScriptThreadSafeTest extends CamelTestSupport {
     }
 
     private void checkResult() {
-        Set<String> bodies = new HashSet<String>();
+        Set<String> bodies = new HashSet<>();
         for (Exchange exchange : resultEndpoint.getReceivedExchanges()) {
             bodies.add(exchange.getIn().getBody(String.class));
         }

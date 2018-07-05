@@ -479,7 +479,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         // any additional transformer parameters then make a copy to avoid side-effects
         if (parameters != null) {
-            Map<String, Object> copy = new HashMap<String, Object>(parameters);
+            Map<String, Object> copy = new HashMap<>(parameters);
             xslt.setParameters(copy);
         }
 

@@ -17,7 +17,6 @@
 package org.apache.camel.component.dns.policy;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;

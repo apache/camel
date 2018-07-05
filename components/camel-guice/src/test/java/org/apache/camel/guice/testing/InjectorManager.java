@@ -41,7 +41,7 @@ import org.apache.camel.guice.util.CloseableScope;
 public class InjectorManager {
     private static final String NESTED_MODULE_CLASS = "TestModule";
 
-    private Map<Object, Injector> injectors = new ConcurrentHashMap<Object, Injector>();
+    private Map<Object, Injector> injectors = new ConcurrentHashMap<>();
     private AtomicInteger initializeCounter = new AtomicInteger(0);
     private CloseableScope testScope = new CloseableScope(TestScoped.class);
     private CloseableScope classScope = new CloseableScope(ClassScoped.class);

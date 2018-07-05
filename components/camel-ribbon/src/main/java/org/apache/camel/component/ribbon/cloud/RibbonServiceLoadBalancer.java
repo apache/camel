@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.RejectedExecutionException;
 
+import com.netflix.client.config.CommonClientConfigKey;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.client.config.IClientConfigKey;
 import com.netflix.loadbalancer.DummyPing;
@@ -174,7 +175,7 @@ public class RibbonServiceLoadBalancer
 
         if (configuration.getProperties() != null) {
             for (Map.Entry<String, String> entry : configuration.getProperties().entrySet()) {
-                IClientConfigKey key = IClientConfigKey.Keys.valueOf(entry.getKey());
+                IClientConfigKey key = CommonClientConfigKey.valueOf(entry.getKey());
                 String value = entry.getValue();
 
                 LOGGER.debug("RibbonClientConfig: {}={}", key.key(), value);

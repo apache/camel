@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -52,6 +53,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
 /**
  * A processor which validates the XML version of the inbound message body
@@ -100,6 +103,16 @@ public class ValidatingProcessor implements AsyncProcessor {
         }
 
         Validator validator = schema.newValidator();
+        // turn off access to external schema by default
+        if (!Boolean.parseBoolean(exchange.getContext().getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
+            try {
+                LOG.debug("Configuring Validator to not allow access to external DTD/Schema");
+                validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            } catch (SAXException e) {
+                LOG.warn(e.getMessage(), e);
+            }
+        }
 
         // the underlying input stream, which we need to close to avoid locking files or other resources
         Source source = null;

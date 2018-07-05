@@ -118,7 +118,7 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
         result.expectedBodiesReceived(expected);
         error.expectedMessageCount(0);
 
-        List<Order> list = new ArrayList<Order>();
+        List<Order> list = new ArrayList<>();
         list.add(generateModel("Pauline"));
         list.add(generateModel("Marcool"));
         template.sendBody(list);

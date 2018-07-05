@@ -20,9 +20,12 @@ import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import org.apache.camel.component.telegram.TelegramService;
@@ -46,7 +49,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private RestBotAPI api;
 
     public TelegramServiceRestBotAPIAdapter() {
-        this.api = JAXRSClientFactory.create(RestBotAPI.BOT_API_DEFAULT_URL, RestBotAPI.class, Collections.singletonList(new JacksonJsonProvider()));
+        this.api = JAXRSClientFactory.create(RestBotAPI.BOT_API_DEFAULT_URL, RestBotAPI.class, Collections.singletonList(providerByCustomObjectMapper()));
         WebClient.getConfig(this.api).getHttpConduit().getClient().setAllowChunking(false);
     }
 
@@ -74,8 +77,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
 
     private void sendMessage(String authorizationToken, OutgoingTextMessage message) {
-        api.sendMessage(authorizationToken, message.getChatId(), message.getText(), message.getParseMode(), message.getDisableWebPagePreview(), message.getDisableNotification(), message
-                .getReplyToMessageId());
+        api.sendMessage(authorizationToken, message);
     }
 
 
@@ -175,4 +177,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private String escapeMimeName(String name) {
         return name.replace("\"", "");
     }
+    
+    private JacksonJsonProvider providerByCustomObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        return new JacksonJsonProvider(mapper);
+    }    
 }

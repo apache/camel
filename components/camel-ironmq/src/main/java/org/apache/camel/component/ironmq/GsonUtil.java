@@ -30,7 +30,7 @@ public final class GsonUtil {
     }
 
     static class IronMqMessage {
-        private Map<String, Object> headers = new HashMap<String, Object>();
+        private Map<String, Object> headers = new HashMap<>();
         private String body;
 
         IronMqMessage(String body, Map<String, Object> headers) {

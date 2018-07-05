@@ -58,7 +58,7 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
     @Ignore
     @Test
     public void testDelete() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.customerId", null);
         // parameter type is String
@@ -96,7 +96,7 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
     @Ignore
     @Test
     public void testRetryChargeWithAmount() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.subscriptionId", null);
         // parameter type is java.math.BigDecimal
@@ -123,7 +123,7 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
     @Ignore
     @Test
     public void testUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.id", null);
         // parameter type is com.braintreegateway.SubscriptionRequest

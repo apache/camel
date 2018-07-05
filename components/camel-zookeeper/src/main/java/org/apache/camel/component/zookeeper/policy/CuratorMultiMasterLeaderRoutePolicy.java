@@ -57,7 +57,7 @@ public class CuratorMultiMasterLeaderRoutePolicy extends RoutePolicySupport impl
     private static final Logger LOG = LoggerFactory.getLogger(CuratorMultiMasterLeaderRoutePolicy.class);
     private final String uri;
     private final Lock lock = new ReentrantLock();
-    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<Route>();
+    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<>();
     private final AtomicBoolean shouldProcessExchanges = new AtomicBoolean();
     private volatile boolean shouldStopRoute = true;
     private final int enabledCount;

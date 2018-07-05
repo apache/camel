@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSupport {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -63,7 +63,7 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         Order order = new Order();
         order.setOrderNr(10);

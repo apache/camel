@@ -30,7 +30,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("duck", "Donald");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dudeCool", "cool");
         headers.put("dudeWicket", "wicket");
         headers.put("duck", "Donald");
@@ -50,7 +50,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
         mock.expectedHeaderReceived("duck", "Donald");
         mock.expectedHeaderReceived("BeerHeineken", "Good");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dudeCool", "cool");
         headers.put("dudeWicket", "wicket");
         headers.put("duck", "Donald");

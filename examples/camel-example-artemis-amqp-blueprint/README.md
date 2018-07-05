@@ -20,7 +20,7 @@ You download and unzip Apache ActiveMQ Artemis from: http://activemq.apache.org/
 
 After unzipping the download, you can then create a new broker with the name `mybroker`:
 
-    $ cd apache-artemis-2.4.0 
+    $ cd apache-artemis-2.6.0 
     $ bin/artemis create mybroker
 
 ### Run ActiveMQ Artemis

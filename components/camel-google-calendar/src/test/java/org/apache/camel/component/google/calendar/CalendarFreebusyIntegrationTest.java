@@ -43,7 +43,7 @@ public class CalendarFreebusyIntegrationTest extends AbstractGoogleCalendarTestS
         // using com.google.api.services.calendar.model.FreeBusyRequest message
         // body for single parameter "content"
         com.google.api.services.calendar.model.FreeBusyRequest request = new FreeBusyRequest();
-        List<FreeBusyRequestItem> items = new ArrayList<FreeBusyRequestItem>();
+        List<FreeBusyRequestItem> items = new ArrayList<>();
         items.add(new FreeBusyRequestItem().setId(getCalendar().getId()));
         request.setItems(items);
 

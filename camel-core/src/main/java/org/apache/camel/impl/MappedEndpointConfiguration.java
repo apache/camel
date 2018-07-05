@@ -35,7 +35,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 @Deprecated
 public final class MappedEndpointConfiguration extends DefaultEndpointConfiguration {
     // TODO: need 2 sets to differentiate between user keys and fixed keys
-    private Map<String, Object> params = new LinkedHashMap<String, Object>();
+    private Map<String, Object> params = new LinkedHashMap<>();
 
     MappedEndpointConfiguration(CamelContext camelContext) {
         super(camelContext);
@@ -85,7 +85,7 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
     @Override
     public String toUriString(UriFormat format) {
         Set<Map.Entry<String, Object>> entries = params.entrySet();
-        List<String> queryParams = new ArrayList<String>();
+        List<String> queryParams = new ArrayList<>();
         
         String scheme = null;
         String schemeSpecificPart = null;

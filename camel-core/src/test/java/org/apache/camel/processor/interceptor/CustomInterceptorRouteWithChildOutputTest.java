@@ -74,7 +74,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
     @SuppressWarnings("rawtypes")
     private static class MyInterceptor implements InterceptStrategy {
 
-        private final List<ProcessorDefinition> defs = new ArrayList<ProcessorDefinition>();
+        private final List<ProcessorDefinition> defs = new ArrayList<>();
 
         @Override
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,

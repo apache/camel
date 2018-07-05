@@ -159,7 +159,7 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     public Predicate in(Object... values) {
-        List<Predicate> predicates = new ArrayList<Predicate>();
+        List<Predicate> predicates = new ArrayList<>();
         for (Object value : values) {
             Expression right = asExpression(value);
             right = ExpressionBuilder.convertToExpression(right, expression);

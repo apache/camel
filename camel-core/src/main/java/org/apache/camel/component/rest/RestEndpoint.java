@@ -363,16 +363,18 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
+            
+            RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
 
             Producer producer;
             if (apiDocFactory != null) {
                 // wrap the factory using the api doc factory which will use the factory
                 parameters.put("restProducerFactory", factory);
-                producer = apiDocFactory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
+                producer = apiDocFactory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, config, parameters);
             } else {
-                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
+                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, config, parameters);
             }
-            RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
+            
             RestProducer answer = new RestProducer(this, producer, config);
             answer.setOutType(outType);
             answer.setType(inType);

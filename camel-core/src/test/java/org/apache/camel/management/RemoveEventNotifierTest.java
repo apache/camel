@@ -32,7 +32,7 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class RemoveEventNotifierTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
+    private static List<EventObject> events = new ArrayList<>();
     private EventNotifier notifier;
 
     @Override

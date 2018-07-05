@@ -11,7 +11,7 @@ XML parser to parse to/from XML format to/from a HAPI-FHIR's `IBaseResource`.
 ### FHIR XML Format Options
 
 // dataformat options: START
-The FHIR XML dataformat supports 2 options which are listed below.
+The FHIR XML dataformat supports 2 options, which are listed below.
 
 
 

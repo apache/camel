@@ -16,11 +16,8 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.spring.boot.model.RouteInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

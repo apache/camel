@@ -18,8 +18,6 @@ package org.apache.camel.tools.apt.model;
 
 import java.util.Set;
 
-import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
-
 public final class EndpointPath {
 
     private String name;

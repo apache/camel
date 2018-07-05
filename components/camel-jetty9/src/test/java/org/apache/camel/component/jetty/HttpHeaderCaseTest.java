@@ -53,7 +53,7 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
 
                         // headers received should be in case as well
-                        Map<String, Object> map = new LinkedHashMap<String, Object>();
+                        Map<String, Object> map = new LinkedHashMap<>();
                         map.putAll(exchange.getIn().getHeaders());
 
                         assertEquals("123", map.get("OTHER"));

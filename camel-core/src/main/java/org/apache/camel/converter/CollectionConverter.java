@@ -67,7 +67,7 @@ public final class CollectionConverter {
      */
     @Converter
     public static <T> List<T> toList(Collection<T> collection) {
-        return new ArrayList<T>(collection);
+        return new ArrayList<>(collection);
     }
     
     /**
@@ -75,7 +75,7 @@ public final class CollectionConverter {
      */
     @Converter
     public static <T> ArrayList<T> toArrayList(Iterator<T> it) {
-        ArrayList<T> list = new ArrayList<T>();
+        ArrayList<T> list = new ArrayList<>();
         while (it.hasNext()) {
             list.add(it.next());
         }
@@ -84,14 +84,14 @@ public final class CollectionConverter {
 
     @Converter
     public static Set<Object> toSet(Object[] array) {
-        Set<Object> answer = new HashSet<Object>();
+        Set<Object> answer = new HashSet<>();
         answer.addAll(Arrays.asList(array));
         return answer;
     }
 
     @Converter
     public static <T> Set<T> toSet(Collection<T> collection) {
-        return new HashSet<T>(collection);
+        return new HashSet<>(collection);
     }
 
     @Converter
@@ -108,12 +108,12 @@ public final class CollectionConverter {
 
     @Converter
     public static <K, V> Hashtable<K, V> toHashtable(Map<? extends K, ? extends V> map) {
-        return new Hashtable<K, V>(map);
+        return new Hashtable<>(map);
     }
 
     @Converter
     public static <K, V> HashMap<K, V>  toHashMap(Map<? extends K, ? extends V> map) {
-        return new HashMap<K, V>(map);
+        return new HashMap<>(map);
     }
 
     /**
@@ -124,7 +124,7 @@ public final class CollectionConverter {
         if (iterable instanceof List) {
             return (List<T>) iterable;
         }
-        List<T> result = new LinkedList<T>();
+        List<T> result = new LinkedList<>();
         for (T value : iterable) {
             result.add(value);
         }

@@ -70,7 +70,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private ManagementMBeanAssembler assembler;
 
     // need a name -> actual name mapping as some servers changes the names (such as WebSphere)
-    private final ConcurrentMap<ObjectName, ObjectName> mbeansRegistered = new ConcurrentHashMap<ObjectName, ObjectName>();
+    private final ConcurrentMap<ObjectName, ObjectName> mbeansRegistered = new ConcurrentHashMap<>();
     private JMXConnectorServer cs;
     private Registry registry;
 
@@ -101,7 +101,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     protected void finalizeSettings() throws Exception {
         // JVM system properties take precedence over any configuration
-        Map<String, Object> values = new LinkedHashMap<String, Object>();
+        Map<String, Object> values = new LinkedHashMap<>();
 
         if (System.getProperty(JmxSystemPropertyKeys.REGISTRY_PORT) != null) {
             registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT);

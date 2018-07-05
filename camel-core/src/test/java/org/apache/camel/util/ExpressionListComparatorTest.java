@@ -46,7 +46,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
     }
 
     public void testExpressionListComparator() {
-        List<Expression> list = new ArrayList<Expression>();
+        List<Expression> list = new ArrayList<>();
         list.add(new MyFooExpression());
         list.add(new MyBarExpression());
 

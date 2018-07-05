@@ -61,7 +61,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         )
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public LoadBalanceDefinition() {
     }

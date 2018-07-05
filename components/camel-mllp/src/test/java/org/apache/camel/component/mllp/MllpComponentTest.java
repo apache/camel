@@ -17,9 +17,6 @@
 
 package org.apache.camel.component.mllp;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,13 +76,13 @@ public class MllpComponentTest {
     @Test
     public void testSetLogPhi() throws Exception {
         MllpComponent.setLogPhi(null);
-        assertNull(instance.logPhi);
+        assertNull(MllpComponent.logPhi);
 
         MllpComponent.setLogPhi(true);
-        assertEquals(Boolean.TRUE, instance.logPhi);
+        assertEquals(Boolean.TRUE, MllpComponent.logPhi);
 
         MllpComponent.setLogPhi(false);
-        assertEquals(Boolean.FALSE, instance.logPhi);
+        assertEquals(Boolean.FALSE, MllpComponent.logPhi);
     }
 
 
@@ -119,14 +116,14 @@ public class MllpComponentTest {
     public void testSetLogPhiMaxBytes() throws Exception {
         Integer expected = null;
         MllpComponent.setLogPhiMaxBytes(expected);
-        assertEquals(expected, instance.logPhiMaxBytes);
+        assertEquals(expected, MllpComponent.logPhiMaxBytes);
 
         expected = -1;
         MllpComponent.setLogPhiMaxBytes(expected);
-        assertEquals(expected, instance.logPhiMaxBytes);
+        assertEquals(expected, MllpComponent.logPhiMaxBytes);
 
         expected = 1024;
         MllpComponent.setLogPhiMaxBytes(expected);
-        assertEquals(expected, instance.logPhiMaxBytes);
+        assertEquals(expected, MllpComponent.logPhiMaxBytes);
     }
 }

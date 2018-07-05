@@ -32,7 +32,6 @@ import static org.apache.camel.component.aws.xray.TestDataBuilder.createTrace;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
 
 /**
  * This test uses a custom component that will trigger a long-running backing task for certain

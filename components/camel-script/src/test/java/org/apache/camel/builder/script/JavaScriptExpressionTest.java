@@ -38,7 +38,7 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         sendBody("direct:start", "hello", headers);
 
@@ -51,7 +51,7 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "foo");
         sendBody("direct:start", "hello", headers);
 
@@ -65,7 +65,7 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
         // additional arguments to ScriptEngine
-        Map<String, Object> arguments = new HashMap<String, Object>();
+        Map<String, Object> arguments = new HashMap<>();
         arguments.put("foo", "bar");
         arguments.put("baz", 7);
 
@@ -81,8 +81,8 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
-        Map<String, Object> arguments = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
+        Map<String, Object> arguments = new HashMap<>();
         arguments.put("foo", "bar");
         arguments.put("baz", 7);
         arguments.put("", "foo");
@@ -99,8 +99,8 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
-        Map<Integer, Object> arguments = new HashMap<Integer, Object>();
+        Map<String, Object> headers = new HashMap<>();
+        Map<Integer, Object> arguments = new HashMap<>();
         arguments.put(0, "bar");
         arguments.put(1, 7);
         headers.put(ScriptBuilder.ARGUMENTS, arguments);
@@ -115,7 +115,7 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         String arguments = "foo";
         headers.put(ScriptBuilder.ARGUMENTS, arguments);
 
@@ -135,7 +135,7 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    Map<String, Object> headers = new HashMap<String, Object>();
+                    Map<String, Object> headers = new HashMap<>();
                     String arguments = "foo";
                     headers.put(ScriptBuilder.ARGUMENTS, arguments);
     

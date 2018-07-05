@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -65,13 +66,13 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs"})
+@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
-    private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<FromDefinition> inputs = new ArrayList<>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     private String group;
     private String streamCache;
     private String trace;
@@ -95,6 +96,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
     private OutputTypeDefinition outputType;
+    private List<PropertyDefinition> routeProperties;
 
     public RouteDefinition() {
     }
@@ -190,7 +192,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
-        List<RouteContext> answer = new ArrayList<RouteContext>();
+        List<RouteContext> answer = new ArrayList<>();
 
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerBuilder();
@@ -372,6 +374,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition group(String name) {
         setGroup(name);
+        return this;
+    }
+
+    /**
+     * Set the route group for this route
+     *
+     * @param group the route group
+     * @return the builder
+     */
+    public RouteDefinition routeGroup(String group) {
+        setGroup(group);
         return this;
     }
 
@@ -621,7 +634,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition routePolicy(RoutePolicy... policies) {
         if (routePolicies == null) {
-            routePolicies = new ArrayList<RoutePolicy>();
+            routePolicies = new ArrayList<>();
         }
         for (RoutePolicy policy : policies) {
             routePolicies.add(policy);
@@ -805,6 +818,23 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         outputType = new OutputTypeDefinition();
         outputType.setJavaClass(clazz);
         outputType.setValidate(true);
+        return this;
+    }
+
+    /**
+     * Adds a custom property on the route.
+     */
+    public RouteDefinition routeProperty(String key, String value) {
+        if (routeProperties == null) {
+            routeProperties = new ArrayList<>();
+        }
+
+        PropertyDefinition prop = new PropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+
+        routeProperties.add(prop);
+
         return this;
     }
 
@@ -1156,6 +1186,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return this.outputType;
     }
 
+    public List<PropertyDefinition> getRouteProperties() {
+        return routeProperties;
+    }
+
+    /**
+     * To set metadata as properties on the route.
+     */
+    @XmlElement(name = "routeProperty")
+    @Metadata(label = "advanced")
+    public void setRouteProperties(List<PropertyDefinition> routeProperties) {
+        this.routeProperties = routeProperties;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(CamelContext camelContext, Collection<Route> routes, FromDefinition fromType) throws Exception {
@@ -1294,7 +1337,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
         }
 
-        List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);
+        List<ProcessorDefinition<?>> list = new ArrayList<>(outputs);
         for (ProcessorDefinition<?> output : list) {
             try {
                 output.addRoutes(routeContext, routes);

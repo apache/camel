@@ -1,16 +1,10 @@
 {
   "properties": [
     {
-      "name": "management.endpoint.camelroutes.path",
-      "type": "java.lang.String",
-      "description": "The URL path to use for Camel Routes actuator endpoint.",
-      "defaultValue": "/camel/routes"
-    },
-    {
       "name": "management.endpoint.camelroutes.read-only",
       "type": "java.lang.Boolean",
       "description": "Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled.",
-      "defaultValue": "true"
+      "defaultValue": true
     },
     {
       "name": "management.endpoint.camelroutes.enabled",

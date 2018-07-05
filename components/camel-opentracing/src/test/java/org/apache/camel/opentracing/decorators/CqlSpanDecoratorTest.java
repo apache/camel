@@ -48,7 +48,7 @@ public class CqlSpanDecoratorTest {
         SpanDecorator decorator = new CqlSpanDecorator();
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, exchange, endpoint);
 
@@ -72,7 +72,7 @@ public class CqlSpanDecoratorTest {
         SpanDecorator decorator = new CqlSpanDecorator();
 
         MockTracer tracer = new MockTracer();
-        MockSpan span = (MockSpan)tracer.buildSpan("TestSpan").start();
+        MockSpan span = tracer.buildSpan("TestSpan").start();
 
         decorator.pre(span, exchange, endpoint);
 

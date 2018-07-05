@@ -115,14 +115,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             config.timeBetweenEvictionRunsMillis = 30 * 1000L;
             config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
             config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-            pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
+            pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(), config);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
                         new Object[]{config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool});
             }
         } else {
-            pool = new SharedSingletonObjectPool<Channel>(new NettyProducerPoolableObjectFactory());
+            pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory());
             if (LOG.isDebugEnabled()) {
                 LOG.info("Created NettyProducer shared singleton pool -> {}", pool);
             }

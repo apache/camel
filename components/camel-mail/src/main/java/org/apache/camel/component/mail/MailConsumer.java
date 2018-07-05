@@ -280,7 +280,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
     private Message[] retrieveAllMessages() throws MessagingException {
         int total = folder.getMessageCount();
-        List<Message> msgs = new ArrayList<Message>();
+        List<Message> msgs = new ArrayList<>();
 
         // Note that message * numbers start at 1, not 0
         for (int i = 1; i <= total; i++) {
@@ -327,7 +327,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Queue<Exchange> createExchanges(List<KeyValueHolder<String, Message>> messages) throws MessagingException {
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Queue<Exchange> answer = new LinkedList<>();
 
         int fetchSize = getEndpoint().getConfiguration().getFetchSize();
         int count = fetchSize == -1 ? messages.size() : Math.min(fetchSize, messages.size());

@@ -38,6 +38,7 @@ import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
@@ -210,7 +211,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (uri.startsWith("https:")) {
             addressUri = "https://" + remaining;
         }
-        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
+        Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
@@ -236,7 +237,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             thisHttpConnectionManager.setParams(connectionManagerParams);
         }
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
-        final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
+        final Set<AuthMethod> authMethods = new LinkedHashSet<>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
@@ -297,7 +298,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                                    String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
@@ -310,6 +311,26 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         if (!ObjectHelper.isEmpty(uriTemplate)) {
             url += "/" + uriTemplate;
+        }
+        
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("http", true);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        // build query string, and append any endpoint configuration properties
+        if (config.getComponent() == null || config.getComponent().equals("http")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        // get the endpoint
+        String query = URISupport.createQueryString(map);
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
         }
 
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);

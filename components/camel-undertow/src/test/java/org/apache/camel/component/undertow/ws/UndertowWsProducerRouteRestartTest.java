@@ -63,7 +63,7 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
     }
 
     private void doTestWSHttpCall() throws Exception {
-        final List<Object> received = new ArrayList<Object>();
+        final List<Object> received = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(1);
 
         AsyncHttpClient c = new DefaultAsyncHttpClient();

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.22.0-SNAPSHOT</version>
+        <version>2.23.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ejb</artifactId>
@@ -60,6 +60,14 @@
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-test-spring</artifactId>
           <scope>test</scope>
+        </dependency>
+        <!-- relying on the xbean-asm5-shaded version (currently 4.2) transitively through -->
+        <!-- the 'org.apache.openejb:openejb-core' dependency would cause the tests to fail -->
+        <dependency>
+          <groupId>org.apache.xbean</groupId>
+          <artifactId>xbean-asm5-shaded</artifactId>
+          <version>${xbean-asm5-shaded-version}</version>
+          <scope>test</scope>
         </dependency>           
         <dependency>
           <groupId>org.apache.logging.log4j</groupId>
@@ -85,9 +93,9 @@
 
     <profiles>
         <profile>
-            <id>jdk9-build</id>
+            <id>jdk9+-build</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>[9,)</jdk>
             </activation>
             <build>
                 <plugins>

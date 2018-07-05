@@ -36,8 +36,8 @@ import org.apache.camel.spi.TracedRouteNodes;
  */
 @Deprecated
 public class DefaultTracedRouteNodes implements TracedRouteNodes {
-    private final Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();
-    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeCounter = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
+    private final Stack<List<RouteNode>> routeNodes = new Stack<>();
+    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeCounter = new HashMap<>();
 
     public DefaultTracedRouteNodes() {
         // create an empty list to start with
@@ -47,7 +47,7 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
     public void addTraced(RouteNode entry) {
         List<RouteNode> list = routeNodes.isEmpty() ? null : routeNodes.peek();
         if (list == null) {
-            list = new ArrayList<RouteNode>();
+            list = new ArrayList<>();
             routeNodes.push(list);
         }
         list.add(entry);
@@ -70,7 +70,7 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
     }
 
     public List<RouteNode> getNodes() {
-        List<RouteNode> answer = new ArrayList<RouteNode>();
+        List<RouteNode> answer = new ArrayList<>();
         for (List<RouteNode> list : routeNodes) {
             answer.addAll(list);
         }

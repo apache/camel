@@ -40,7 +40,7 @@ public class SoapToSoapIgnoreTest extends CamelTestSupport {
 
     @BeforeClass
     public static void setup() {
-        namespacePrefixMap = new HashMap<String, String>();
+        namespacePrefixMap = new HashMap<>();
         namespacePrefixMap.put("http://schemas.xmlsoap.org/soap/envelope/", "soap");
         namespacePrefixMap.put("http://www.w3.org/2001/XMLSchema", "xsd");
         namespacePrefixMap.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");

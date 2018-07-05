@@ -33,7 +33,7 @@ public class AggregateExpressionSizeOverrideFixedTimeoutTest extends ContextTest
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("mySize", 4);
 

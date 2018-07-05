@@ -38,20 +38,20 @@
     </serviceCallConfiguration>
 
     <serviceCallConfiguration id="conf2">
-      <aggregatingServiceDiscovery>
+      <combinedServiceDiscovery>
         <staticServiceDiscovery>
           <servers>localhost:9092</servers>
         </staticServiceDiscovery>
         <staticServiceDiscovery>
           <servers>localhost:9093,localhost:9094,localhost:9095,localhost:9096</servers>
         </staticServiceDiscovery>
-      </aggregatingServiceDiscovery>
-      <chainedServiceFilter>
+      </combinedServiceDiscovery>
+      <combinedServiceFilter>
         <healthyServiceFilter/>
         <blacklistServiceFilter>
           <servers>localhost:9095,localhost:9096</servers>
         </blacklistServiceFilter>
-      </chainedServiceFilter>
+      </combinedServiceFilter>
       <expression hostHeader="MyHostHeader" portHeader="MyPortHeader"/>
     </serviceCallConfiguration>
 

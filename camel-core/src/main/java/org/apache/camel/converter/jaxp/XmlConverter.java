@@ -1079,7 +1079,7 @@ public class XmlConverter {
 
     protected void setupFeatures(DocumentBuilderFactory factory) {
         Properties properties = System.getProperties();
-        List<String> features = new ArrayList<String>();
+        List<String> features = new ArrayList<>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
             if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {

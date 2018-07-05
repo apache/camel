@@ -31,7 +31,7 @@ elasticsearch-rest://clusterName[?options]
 === Endpoint Options
 
 // component options: START
-The Elastichsearch Rest component supports 12 options which are listed below.
+The Elastichsearch Rest component supports 12 options, which are listed below.
 
 
 

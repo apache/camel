@@ -66,12 +66,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     /**
      * The encoding hint map, used for writing a barcode.
      */
-    private final Map<EncodeHintType, Object> writerHintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+    private final Map<EncodeHintType, Object> writerHintMap = new EnumMap<>(EncodeHintType.class);
 
     /**
      * The decoding hint map, used for reading a barcode.
      */
-    private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+    private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
 
 
     /**

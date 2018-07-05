@@ -34,7 +34,7 @@ public enum ExchangePattern {
 
     // TODO: We should deprecate and only support InOnly, InOut, and InOptionalOut
 
-    protected static final Map<String, ExchangePattern> MAP = new HashMap<String, ExchangePattern>();
+    protected static final Map<String, ExchangePattern> MAP = new HashMap<>();
 
     /**
      * Returns the WSDL URI for this message exchange pattern

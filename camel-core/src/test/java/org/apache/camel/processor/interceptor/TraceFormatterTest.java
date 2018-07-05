@@ -31,7 +31,7 @@ import org.apache.camel.model.ProcessorDefinition;
  */
 public class TraceFormatterTest extends ContextTestSupport {
 
-    private List<String> tracedBodies = new ArrayList<String>();
+    private List<String> tracedBodies = new ArrayList<>();
 
     public void testSendingSomeMessagesBeingTraced() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");

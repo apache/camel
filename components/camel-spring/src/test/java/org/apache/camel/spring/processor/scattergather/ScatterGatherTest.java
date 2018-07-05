@@ -35,7 +35,7 @@ public class ScatterGatherTest extends ContextTestSupport {
         // END SNIPPET: e1
 
         // START SNIPPET: e2
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("listOfVendors", "bean:vendor1, bean:vendor2, bean:vendor3");
         headers.put("quoteRequestId", "quoteRequest-1");
         template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);

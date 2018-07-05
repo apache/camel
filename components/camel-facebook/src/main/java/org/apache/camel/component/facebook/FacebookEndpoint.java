@@ -124,7 +124,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     private void initState() {
         // get endpoint property names
-        final Set<String> arguments = new HashSet<String>();
+        final Set<String> arguments = new HashSet<>();
         arguments.addAll(getEndpointPropertyNames(configuration));
         // add inBody argument for producers
         if (inBody != null) {
@@ -132,7 +132,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
-        candidates = new ArrayList<FacebookMethodsType>();
+        candidates = new ArrayList<>();
         candidates.addAll(getCandidateMethods(method, argNames));
         if (!candidates.isEmpty()) {
             // found an exact name match, allows disambiguation if needed

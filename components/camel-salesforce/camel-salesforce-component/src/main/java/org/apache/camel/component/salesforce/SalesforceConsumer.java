@@ -213,7 +213,7 @@ public class SalesforceConsumer extends DefaultConsumer {
     }
 
     private void setHeaders(org.apache.camel.Message in, Message message) {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // set topic name
         headers.put("CamelSalesforceTopicName", topicName);
         // set message properties as headers

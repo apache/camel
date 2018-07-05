@@ -141,9 +141,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
-        Set<ComponentOption> componentOptions = new LinkedHashSet<ComponentOption>();
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        Set<ComponentOption> componentOptions = new LinkedHashSet<>();
 
         TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
         if (componentClassElement != null) {
@@ -240,7 +240,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         first = true;
 
         // sort the endpoint options in the standard order we prefer
-        List<EndpointPath> paths = new ArrayList<EndpointPath>();
+        List<EndpointPath> paths = new ArrayList<>();
         paths.addAll(endpointPaths);
         Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
 
@@ -288,7 +288,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
 
         // sort the endpoint options in the standard order we prefer
-        List<EndpointOption> options = new ArrayList<EndpointOption>();
+        List<EndpointOption> options = new ArrayList<>();
         options.addAll(endpointOptions);
         Collections.sort(options, EndpointHelper.createGroupAndLabelComparator());
 
@@ -509,7 +509,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 }
 
                 // gather enums
-                Set<String> enums = new LinkedHashSet<String>();
+                Set<String> enums = new LinkedHashSet<>();
 
                 boolean isEnum;
                 if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
@@ -595,7 +595,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     if (Strings.isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
                     }
-                    String defaultValueNote = path.defaultValueNote();
                     String required = metadata != null ? metadata.required() : null;
                     String label = path.label();
                     if (Strings.isNullOrEmpty(label) && metadata != null) {
@@ -616,7 +615,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
 
                     // gather enums
-                    Set<String> enums = new LinkedHashSet<String>();
+                    Set<String> enums = new LinkedHashSet<>();
 
                     boolean isEnum;
                     if (!Strings.isNullOrEmpty(path.enums())) {
@@ -711,7 +710,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         }
 
                         // gather enums
-                        Set<String> enums = new LinkedHashSet<String>();
+                        Set<String> enums = new LinkedHashSet<>();
 
                         boolean isEnum;
                         if (!Strings.isNullOrEmpty(param.enums())) {
@@ -777,7 +776,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     private static Map<String, String> parseAsMap(String data) {
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         String[] lines = data.split("\n");
         for (String line : lines) {
             if (!line.isEmpty()) {

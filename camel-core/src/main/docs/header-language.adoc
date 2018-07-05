@@ -9,7 +9,7 @@ headers.
 === Header Options
 
 // language options: START
-The Header language supports 1 options which are listed below.
+The Header language supports 1 options, which are listed below.
 
 
 

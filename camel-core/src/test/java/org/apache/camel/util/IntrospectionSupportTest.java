@@ -149,7 +149,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertFalse(IntrospectionSupport.hasProperties(empty, ""));
         assertFalse(IntrospectionSupport.hasProperties(empty, "foo."));
 
-        Map<String, Object> param = new HashMap<String, Object>();
+        Map<String, Object> param = new HashMap<>();
         assertFalse(IntrospectionSupport.hasProperties(param, null));
         assertFalse(IntrospectionSupport.hasProperties(param, ""));
         assertFalse(IntrospectionSupport.hasProperties(param, "foo."));
@@ -170,7 +170,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setName("Claus");
         bean.setPrice(10.0);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         IntrospectionSupport.getProperties(bean, map, null);
         assertEquals(3, map.size());
 
@@ -190,10 +190,10 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setDate(date);
         bean.setGoldCustomer(true);
         bean.setLittle(true);
-        Collection<?> children = new ArrayList<Object>();
+        Collection<?> children = new ArrayList<>();
         bean.setChildren(children);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         IntrospectionSupport.getProperties(bean, map, null);
         assertEquals(7, map.size());
 
@@ -213,7 +213,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setPrice(10.0);
         bean.setId("123");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         IntrospectionSupport.getProperties(bean, map, "bean.");
         assertEquals(3, map.size());
 
@@ -229,7 +229,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setPrice(10.0);
         bean.setId(null);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         IntrospectionSupport.getProperties(bean, map, null, false);
         assertEquals(2, map.size());
 
@@ -266,7 +266,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setDate(date);
         bean.setGoldCustomer(true);
         bean.setLittle(true);
-        Collection<?> children = new ArrayList<Object>();
+        Collection<?> children = new ArrayList<>();
         bean.setChildren(children);
 
         Object name = IntrospectionSupport.getProperty(bean, "name");
@@ -404,7 +404,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     public void testExtractProperties() throws Exception {
-        Map<String, Object> params = new LinkedHashMap<String, Object>();
+        Map<String, Object> params = new LinkedHashMap<>();
         params.put("foo.name", "Camel");
         params.put("foo.age", 5);
         params.put("bar", "yes");

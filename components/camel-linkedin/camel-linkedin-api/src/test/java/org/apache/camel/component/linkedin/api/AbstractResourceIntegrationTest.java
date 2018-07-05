@@ -43,7 +43,7 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
     protected static LinkedInOAuthRequestFilter requestFilter;
     private static Properties properties;
     private static OAuthToken token;
-    private static List<Object> resourceList = new ArrayList<Object>();
+    private static List<Object> resourceList = new ArrayList<>();
 
     @BeforeClass
     public static void beforeClass() throws Exception {

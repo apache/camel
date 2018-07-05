@@ -54,7 +54,7 @@ public class DockerConfigurationTest {
     public void testPropertyfromEndpointProperties() {
         String host = "camelhost";
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerHelper.transformFromHeaderName(DockerConstants.DOCKER_HOST), host);
         configuration.setParameters(parameters);
 

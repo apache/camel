@@ -49,7 +49,7 @@ public class AggregationStrategyMethodInfo {
 
     public Object invoke(Object pojo, Exchange oldExchange, Exchange newExchange) throws Exception {
         // evaluate the parameters
-        List<Object> list = new ArrayList<Object>(oldParameters.size() + newParameters.size());
+        List<Object> list = new ArrayList<>(oldParameters.size() + newParameters.size());
         for (ParameterInfo info : oldParameters) {
             if (oldExchange != null) {
                 Object value = info.getExpression().evaluate(oldExchange, info.getType());

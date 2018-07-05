@@ -261,10 +261,10 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  "http://localhost:" + CXFTestSupport.getPort1() + "/CxfBeanTest/PersonService/");
         
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "hello";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
         assertEquals("Get a wrong personId", "hello", personId.value);
         assertEquals("Get a wrong SSN", "000-000-0000", ssn.value);

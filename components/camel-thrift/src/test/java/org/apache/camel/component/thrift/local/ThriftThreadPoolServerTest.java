@@ -26,7 +26,6 @@ import org.apache.camel.component.thrift.server.ThriftThreadPoolServer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.thrift.TException;
-import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.server.TServer;
@@ -72,7 +71,7 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
         serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, InetAddress.getByName("localhost"), sslParams);
         ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(serverTransport);
 
-        args.processor((TProcessor)processor);
+        args.processor(processor);
         args.executorService(this.context().getExecutorServiceManager().newThreadPool(this, "test-server-invoker", 1, 10));
         args.startThreadPool(this.context().getExecutorServiceManager().newSingleThreadExecutor(this, "test-start-thread"));
         args.context(this.context());

@@ -16,22 +16,31 @@
  */
 package org.apache.camel.impl.cloud;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class LoadBalancerTest extends ContextTestSupport {
+import static org.junit.Assert.assertEquals;
+
+public class LoadBalancerTest {
+
+    private static StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
+
+    @BeforeClass
+    public static void setUp() {
+        serviceDiscovery.addServer("no-name@127.0.0.1:2001");
+        serviceDiscovery.addServer("no-name@127.0.0.1:2002");
+        serviceDiscovery.addServer("no-name@127.0.0.1:1001");
+        serviceDiscovery.addServer("no-name@127.0.0.1:1002");
+    }
+
     @Test
     public void testLoadBalancer() throws Exception {
-        StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 2001);
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 2002);
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 1001);
-        serviceDiscovery.addServer("no-name", "127.0.0.1", 1002);
-
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
-        loadBalancer.setCamelContext(context);
+        loadBalancer.setCamelContext(new DefaultCamelContext());
         loadBalancer.setServiceDiscovery(serviceDiscovery);
         loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
@@ -43,5 +52,15 @@ public class LoadBalancerTest extends ContextTestSupport {
             assertEquals(1002, service.getPort());
             return false;
         });
+    }
+
+    @Test(expected = RejectedExecutionException.class)
+    public void testNoActiveServices() throws Exception {
+        DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
+        loadBalancer.setCamelContext(new DefaultCamelContext());
+        loadBalancer.setServiceDiscovery(serviceDiscovery);
+        loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 1000).collect(Collectors.toList()));
+        loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
+        loadBalancer.process("no-name", service -> false);
     }
 }

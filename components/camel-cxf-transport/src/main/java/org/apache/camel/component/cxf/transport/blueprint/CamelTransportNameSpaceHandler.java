@@ -42,7 +42,7 @@ public class CamelTransportNameSpaceHandler extends BaseNamespaceHandler {
 
     @SuppressWarnings("rawtypes")
     public Set<Class> getManagedClasses() {
-        return new HashSet<Class>(Arrays.asList(CamelTransportNameSpaceHandler.class));
+        return new HashSet<>(Arrays.asList(CamelTransportNameSpaceHandler.class));
     }
 
     public URL getSchemaLocation(String s) {

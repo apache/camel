@@ -89,7 +89,7 @@ public class SpringBootRuntimeProvider implements RuntimeProvider {
 
     @Override
     public List<String> findComponentNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         InputStream is = camelCatalog.getVersionManager().getResourceAsStream(COMPONENTS_CATALOG);
         if (is != null) {
             try {
@@ -103,7 +103,7 @@ public class SpringBootRuntimeProvider implements RuntimeProvider {
 
     @Override
     public List<String> findDataFormatNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         InputStream is = camelCatalog.getVersionManager().getResourceAsStream(DATA_FORMATS_CATALOG);
         if (is != null) {
             try {
@@ -117,7 +117,7 @@ public class SpringBootRuntimeProvider implements RuntimeProvider {
 
     @Override
     public List<String> findLanguageNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         InputStream is = camelCatalog.getVersionManager().getResourceAsStream(LANGUAGE_CATALOG);
         if (is != null) {
             try {
@@ -131,7 +131,7 @@ public class SpringBootRuntimeProvider implements RuntimeProvider {
 
     @Override
     public List<String> findOtherNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         InputStream is = camelCatalog.getVersionManager().getResourceAsStream(OTHER_CATALOG);
         if (is != null) {
             try {

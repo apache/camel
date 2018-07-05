@@ -38,7 +38,7 @@ import org.apache.camel.util.IOHelper;
  */
 public class DefaultFactoryFinder implements FactoryFinder {
 
-    private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<String, Class<?>>();
+    private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
     private final ClassResolver classResolver;
     private final String path;
 
@@ -64,7 +64,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
     @Override
     public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws ClassNotFoundException, IOException {
         List<Class<T>> list = CastUtils.cast(findClasses(key));
-        List<T> answer = new ArrayList<T>(list.size());
+        List<T> answer = new ArrayList<>(list.size());
         answer.add(newInstance(key, injector, type));
         return answer;
     }

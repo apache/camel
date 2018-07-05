@@ -42,7 +42,7 @@ public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testAddComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.post_id", null);
         // parameter type is org.apache.camel.component.linkedin.api.model.Comment
@@ -55,7 +55,7 @@ public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testFlagCategory() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.post_id", null);
         // parameter type is org.apache.camel.component.linkedin.api.model.PostCategoryCode
@@ -68,7 +68,7 @@ public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testFollowPost() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.post_id", null);
         // parameter type is org.apache.camel.component.linkedin.api.model.IsFollowing
@@ -81,7 +81,7 @@ public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetPost() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.post_id", null);
         // parameter type is Long
@@ -101,7 +101,7 @@ public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetPostComments() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.post_id", null);
         // parameter type is Long
@@ -121,7 +121,7 @@ public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testLikePost() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.post_id", null);
         // parameter type is org.apache.camel.component.linkedin.api.model.IsLiked

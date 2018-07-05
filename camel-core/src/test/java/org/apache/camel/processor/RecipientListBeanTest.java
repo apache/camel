@@ -50,7 +50,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello b");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("one", 21);
         headers.put("two", "direct:a,direct:b,direct:c");
 

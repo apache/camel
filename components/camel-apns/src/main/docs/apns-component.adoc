@@ -52,7 +52,7 @@ apns:consumer[?options]
 
 
 // component options: START
-The APNS component supports 2 options which are listed below.
+The APNS component supports 2 options, which are listed below.
 
 
 

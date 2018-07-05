@@ -80,8 +80,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private final String path;
     private final ExecutorService executorService;
     private final EnsurePath ensurePath;
-    private final BlockingQueue<Operation> operations = new LinkedBlockingQueue<Operation>();
-    private final ListenerContainer<GroupListener<T>> listeners = new ListenerContainer<GroupListener<T>>();
+    private final BlockingQueue<Operation> operations = new LinkedBlockingQueue<>();
+    private final ListenerContainer<GroupListener<T>> listeners = new ListenerContainer<>();
     private final ConcurrentMap<String, ChildData<T>> currentData = new ConcurrentHashMap<>();
     private final AtomicBoolean started = new AtomicBoolean();
     private final AtomicBoolean connected = new AtomicBoolean();
@@ -241,7 +241,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             if (update) {
                 offerOperation(new CompositeOperation(
                     new RefreshOperation(this, RefreshMode.FORCE_GET_DATA_AND_STAT),
-                    new UpdateOperation<T>(this, state)
+                    new UpdateOperation<>(this, state)
                 ));
             }
         }
@@ -312,7 +312,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private void prunePartialState(final T ourState, final String pathId) throws Exception {
         if (ourState.uuid != null) {
             clearAndRefresh(true, true);
-            List<ChildData<T>> children = new ArrayList<ChildData<T>>(currentData.values());
+            List<ChildData<T>> children = new ArrayList<>(currentData.values());
             for (ChildData<T> child : children) {
                 if (ourState.uuid.equals(child.getNode().uuid) && !child.getPath().equals(pathId)) {
                     LOG.debug("Deleting partially created znode: " + child.getPath());
@@ -326,7 +326,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     public Map<String, T> members() {
         List<ChildData<T>> children = getActiveChildren();
         Collections.sort(children, sequenceComparator);
-        Map<String, T> members = new LinkedHashMap<String, T>();
+        Map<String, T> members = new LinkedHashMap<>();
         for (ChildData<T> child : children) {
             members.put(child.getPath(), child.getNode());
         }
@@ -354,7 +354,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     public List<T> slaves() {
         List<ChildData<T>> children = getActiveChildren();
         Collections.sort(children, sequenceComparator);
-        List<T> slaves = new ArrayList<T>();
+        List<T> slaves = new ArrayList<>();
         for (int i = 1; i < children.size(); i++) {
             slaves.add(children.get(i).getNode());
         }
@@ -536,7 +536,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             connected.set(true);
             offerOperation(new CompositeOperation(
                 new RefreshOperation(this, RefreshMode.FORCE_GET_DATA_AND_STAT),
-                new UpdateOperation<T>(this, state),
+                new UpdateOperation<>(this, state),
                 new EventOperation(this, GroupListener.GroupEvent.CONNECTED)
             ));
             break;
@@ -571,7 +571,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private void applyNewData(String fullPath, int resultCode, Stat stat, byte[] bytes) {
         if (resultCode == KeeperException.Code.OK.intValue()) {
             // otherwise - node must have dropped or something - we should be getting another event
-            ChildData<T> data = new ChildData<T>(fullPath, stat, bytes, decode(bytes));
+            ChildData<T> data = new ChildData<>(fullPath, stat, bytes, decode(bytes));
             ChildData<T> previousData = currentData.put(fullPath, data);
             if (previousData == null || previousData.getStat().getVersion() != stat.getVersion()) {
                 offerOperation(new EventOperation(this, GroupListener.GroupEvent.CHANGED));
@@ -618,7 +618,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     }
 
     public static <T> Map<String, T> members(ObjectMapper mapper, CuratorFramework curator, String path, Class<T> clazz) throws Exception {
-        Map<String, T> map = new TreeMap<String, T>();
+        Map<String, T> map = new TreeMap<>();
         List<String> nodes = curator.getChildren().forPath(path);
         for (String node : nodes) {
             byte[] data = curator.getData().forPath(path + "/" + node);

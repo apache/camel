@@ -26,7 +26,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS KMS component supports 5 options which are listed below.
+The AWS KMS component supports 5 options, which are listed below.
 
 
 
@@ -104,6 +104,17 @@ the https://aws.amazon.com/it/kms/[Amazon KMS] service.
 
 |`CamelAwsKMSKeyId` |`String` |The key Id 
 |=======================================================================
+
+#### KMS Producer operations
+
+Camel-AWS KMS component provides the following operation on the producer side:
+
+- listKeys
+- createKey
+- disableKey
+- scheduleKeyDeletion
+- describeKey
+- enableKey
 
 Dependencies
 

@@ -24,7 +24,7 @@ Recipient List
 ### Ruby Language Options
 
 // language options: START
-The Ruby language supports 1 options which are listed below.
+The Ruby language supports 1 options, which are listed below.
 
 
 

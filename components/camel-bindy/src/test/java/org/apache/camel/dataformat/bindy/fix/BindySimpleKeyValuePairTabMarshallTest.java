@@ -48,8 +48,8 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
 
     public List<Map<String, Object>> generateModel() {
 
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        List<Map<String, Object>> models = new ArrayList<>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         Header header = new Header();
         header.setBeginString("FIX 4.1");

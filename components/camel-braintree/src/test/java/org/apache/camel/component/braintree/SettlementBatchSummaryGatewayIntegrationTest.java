@@ -47,7 +47,7 @@ public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraint
     @Ignore
     @Test
     public void testGenerateWithCustomFields() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is java.util.Calendar
         headers.put("CamelBraintree.settlementDate", null);
         // parameter type is String

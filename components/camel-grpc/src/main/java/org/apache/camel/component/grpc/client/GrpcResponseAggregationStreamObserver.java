@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 public class GrpcResponseAggregationStreamObserver implements StreamObserver<Object> {
     private final Exchange exchange;
     private final AsyncCallback callback;
-    private List<Object> responseCollection = new LinkedList<Object>();
+    private List<Object> responseCollection = new LinkedList<>();
     
     public GrpcResponseAggregationStreamObserver(Exchange exchange, AsyncCallback callback) {
         this.exchange = exchange;

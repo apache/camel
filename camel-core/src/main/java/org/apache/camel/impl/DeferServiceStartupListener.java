@@ -33,7 +33,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class DeferServiceStartupListener implements StartupListener, Ordered {
 
-    private final Set<Service> services = new CopyOnWriteArraySet<Service>();
+    private final Set<Service> services = new CopyOnWriteArraySet<>();
 
     public void addService(Service service) {
         services.add(service);

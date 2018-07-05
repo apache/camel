@@ -503,6 +503,6 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     }
 
     public MllpConfiguration getConfiguration() {
-        return ((MllpEndpoint)this.getEndpoint()).getConfiguration();
+        return this.getEndpoint().getConfiguration();
     }
 }

@@ -42,7 +42,7 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
         account2.setLastName("Daubman");
         account2.setEmailAddress("ReadTheDevList@gmail.com");
 
-        List<Account> accountList = new ArrayList<Account>(2);
+        List<Account> accountList = new ArrayList<>(2);
 
         accountList.add(account1);
         accountList.add(account2);

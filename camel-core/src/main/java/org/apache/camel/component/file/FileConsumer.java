@@ -196,7 +196,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
      * @return wrapped as a GenericFile
      */
     public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
-        GenericFile<File> answer = new GenericFile<File>(probeContentType);
+        GenericFile<File> answer = new GenericFile<>(probeContentType);
         // use file specific binding
         answer.setBinding(new FileBinding());
 
@@ -241,8 +241,12 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
     @Override
     protected void updateFileHeaders(GenericFile<File> file, Message message) {
-        long length = file.getFile().length();
-        long modified = file.getFile().lastModified();
+        File upToDateFile = file.getFile();
+        if (fileHasMoved(file)) {
+            upToDateFile = new File(file.getAbsoluteFilePath());
+        }
+        long length = upToDateFile.length();
+        long modified = upToDateFile.lastModified();
         file.setFileLength(length);
         file.setLastModified(modified);
         if (length >= 0) {
@@ -256,5 +260,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
     @Override
     public FileEndpoint getEndpoint() {
         return (FileEndpoint) super.getEndpoint();
+    }
+
+    private boolean fileHasMoved(GenericFile<File> file) {
+        // GenericFile's absolute path is always up to date whereas the underlying file is not
+        return !file.getFile().getAbsolutePath().equals(file.getAbsoluteFilePath());
     }
 }

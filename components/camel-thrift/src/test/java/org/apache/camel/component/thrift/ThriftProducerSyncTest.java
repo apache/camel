@@ -42,7 +42,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
         List requestBody = new ArrayList();
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY));
 
         Object responseBody = template.requestBody("direct:thrift-calculate", requestBody);
@@ -59,8 +59,8 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
         List requestBody = new ArrayList();
 
-        requestBody.add((int)THRIFT_TEST_NUM1);
-        requestBody.add((int)THRIFT_TEST_NUM2);
+        requestBody.add(THRIFT_TEST_NUM1);
+        requestBody.add(THRIFT_TEST_NUM2);
 
         Object responseBody = template.requestBody("direct:thrift-add", requestBody);
 
@@ -76,7 +76,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
         List requestBody = new ArrayList();
 
-        requestBody.add((int)1);
+        requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, 0, Operation.DIVIDE));
 
         try {
@@ -113,10 +113,10 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
         
         List requestBody = new ArrayList();
 
-        requestBody.add((boolean)true);
+        requestBody.add(true);
         requestBody.add((byte)THRIFT_TEST_NUM1);
         requestBody.add((short)THRIFT_TEST_NUM1);
-        requestBody.add((int)THRIFT_TEST_NUM1);
+        requestBody.add(THRIFT_TEST_NUM1);
         requestBody.add((long)THRIFT_TEST_NUM1);
         requestBody.add((double)THRIFT_TEST_NUM1);
         requestBody.add("empty");

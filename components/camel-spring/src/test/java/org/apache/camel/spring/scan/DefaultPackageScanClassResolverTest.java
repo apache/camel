@@ -30,7 +30,7 @@ import org.apache.camel.spring.scan.c.ScanTargetThree;
 public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private DefaultPackageScanClassResolver resolver;
-    private Set<Class<? extends Annotation>> annotations = new HashSet<Class<? extends Annotation>>();
+    private Set<Class<? extends Annotation>> annotations = new HashSet<>();
     private String scanPackage = "org.apache.camel.spring.scan";
 
     public void setUp() throws Exception {

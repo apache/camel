@@ -58,7 +58,7 @@ into Beanstalk.
 
 
 // component options: START
-The Beanstalk component supports 2 options which are listed below.
+The Beanstalk component supports 2 options, which are listed below.
 
 
 

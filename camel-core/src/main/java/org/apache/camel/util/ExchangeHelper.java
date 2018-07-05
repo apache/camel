@@ -470,7 +470,7 @@ public final class ExchangeHelper {
      * @return a Map populated with the require variables
      */
     public static Map<String, Object> createVariableMap(Exchange exchange) {
-        Map<String, Object> answer = new HashMap<String, Object>();
+        Map<String, Object> answer = new HashMap<>();
         populateVariableMap(exchange, answer);
         return answer;
     }
@@ -957,6 +957,24 @@ public final class ExchangeHelper {
             }
         }
         return answer;
+    }
+
+    /**
+     * Resolve the component scheme (aka name) from the given endpoint uri
+     *
+     * @param uri  the endpoint uri
+     * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
+     */
+    public static String resolveScheme(String uri) {
+        String scheme = null;
+        if (uri != null) {
+            // Use the URI prefix to find the component.
+            String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
+            if (splitURI[1] != null) {
+                scheme = splitURI[0];
+            }
+        }
+        return scheme;
     }
 
     @SuppressWarnings("unchecked")

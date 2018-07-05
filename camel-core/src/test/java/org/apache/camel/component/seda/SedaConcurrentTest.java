@@ -71,7 +71,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         mock.setResultMinimumWaitTime(500);
 
         ExecutorService executors = Executors.newFixedThreadPool(10);
-        List<Object> replies = new ArrayList<Object>(20);
+        List<Object> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final int num = i;
             Object out = executors.submit(new Callable<Object>() {
@@ -102,7 +102,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         // must start the template
         pt.start();
 
-        List<Future<Object>> replies = new ArrayList<Future<Object>>(20);
+        List<Future<Object>> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             Future<Object> out = pt.asyncRequestBody("seda:bar", "Message " + i);
             replies.add(out);

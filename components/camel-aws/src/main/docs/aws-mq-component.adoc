@@ -26,7 +26,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS MQ component supports 5 options which are listed below.
+The AWS MQ component supports 5 options, which are listed below.
 
 
 

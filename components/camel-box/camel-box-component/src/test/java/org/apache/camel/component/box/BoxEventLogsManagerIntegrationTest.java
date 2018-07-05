@@ -47,7 +47,7 @@ public class BoxEventLogsManagerIntegrationTest extends AbstractBoxTestSupport {
         Date after = new Date();
         after.setTime(before.getTime() - ONE_MINUTE_OF_MILLISECONDS);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.position", null);
         // parameter type is java.util.Date

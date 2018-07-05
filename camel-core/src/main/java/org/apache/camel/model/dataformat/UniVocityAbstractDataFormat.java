@@ -314,7 +314,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         if (headers == null) {
             return null;
         }
-        List<String> names = new ArrayList<String>(headers.size());
+        List<String> names = new ArrayList<>(headers.size());
         for (UniVocityHeader header : headers) {
             if (header.getName() != null && !header.getName().isEmpty()) {
                 names.add(header.getName());

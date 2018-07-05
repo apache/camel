@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -70,13 +71,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private Boolean skipBindingOnErrorCode;
 
     @XmlAttribute
+    private Boolean clientRequestValidation;
+
+    @XmlAttribute
     private Boolean enableCORS;
 
     @XmlAttribute
     private Boolean apiDocs;
 
+    @XmlElement(name = "securityDefinitions") // use the name swagger uses
+    private RestSecuritiesDefinition securityDefinitions;
+
     @XmlElementRef
-    private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
+    private List<VerbDefinition> verbs = new ArrayList<>();
 
     @Override
     public String getLabel() {
@@ -147,6 +154,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return verbs;
     }
 
+    public RestSecuritiesDefinition getSecurityDefinitions() {
+        return securityDefinitions;
+    }
+
+    /**
+     * Sets the security definitions such as Basic, OAuth2 etc.
+     */
+    public void setSecurityDefinitions(RestSecuritiesDefinition securityDefinitions) {
+        this.securityDefinitions = securityDefinitions;
+    }
+
     /**
      * The HTTP verbs this REST service accepts and uses
      */
@@ -165,6 +183,22 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCORS() {
@@ -391,6 +425,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * To configure security definitions.
+     */
+    public RestSecuritiesDefinition securityDefinitions() {
+        if (securityDefinitions == null) {
+            securityDefinitions = new RestSecuritiesDefinition(this);
+        }
+        return securityDefinitions;
+    }
+
     public RestDefinition produces(String mediaType) {
         if (getVerbs().isEmpty()) {
             this.produces = mediaType;
@@ -487,6 +531,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition clientRequestValidation(boolean clientRequestValidation) {
+        if (getVerbs().isEmpty()) {
+            this.clientRequestValidation = clientRequestValidation;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setClientRequestValidation(clientRequestValidation);
+        }
+
+        return this;
+    }
+
     public RestDefinition enableCORS(boolean enableCORS) {
         if (getVerbs().isEmpty()) {
             this.enableCORS = enableCORS;
@@ -513,6 +569,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             verb.setApiDocs(apiDocs);
         }
 
+        return this;
+    }
+
+    /**
+     * Sets the security setting for this verb.
+     */
+    public RestDefinition security(String key) {
+        return security(key, null);
+    }
+
+    /**
+     * Sets the security setting for this verb.
+     */
+    public RestDefinition security(String key, String scopes) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        SecurityDefinition sd = new SecurityDefinition();
+        sd.setKey(key);
+        sd.setScopes(scopes);
+        verb.getSecurity().add(sd);
         return this;
     }
 
@@ -615,7 +695,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // sanity check this rest definition do not have duplicates
         validateUniquePaths();
 
-        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> answer = new ArrayList<>();
         if (camelContext.getRestConfigurations().isEmpty()) {
             // make sure to initialize a rest configuration when its empty
             // lookup a global which may have been setup via camel-spring-boot etc
@@ -650,13 +730,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // sanity check this rest definition do not have duplicates
         validateUniquePaths();
 
-        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> answer = new ArrayList<>();
         addRouteDefinition(camelContext, answer, restConfiguration.getComponent());
         return answer;
     }
 
     protected void validateUniquePaths() {
-        Set<String> paths = new HashSet<String>();
+        Set<String> paths = new HashSet<>();
         for (VerbDefinition verb : verbs) {
             String path = verb.asVerb();
             if (verb.getUri() != null) {
@@ -679,7 +759,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         String from = "rest-api:" + configuration.getApiContextPath();
 
         // append options
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
 
         String routeId = configuration.getApiContextRouteId();
         if (routeId == null) {
@@ -760,15 +840,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
             }
+            if (verb.getClientRequestValidation() != null) {
+                binding.setClientRequestValidation(verb.getClientRequestValidation());
+            } else {
+                binding.setClientRequestValidation(getClientRequestValidation());
+            }
             if (verb.getEnableCORS() != null) {
                 binding.setEnableCORS(verb.getEnableCORS());
             } else {
                 binding.setEnableCORS(getEnableCORS());
             }
-            // register all the default values for the query parameters
             for (RestOperationParamDefinition param : verb.getParams()) {
+                // register all the default values for the query parameters
                 if (RestParamType.query == param.getType() && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), param.getDefaultValue());
+                }
+                // register which parameters are required
+                if (param.getRequired()) {
+                    if (RestParamType.query == param.getType()) {
+                        binding.addRequiredQueryParameter(param.getName());
+                    } else if (RestParamType.header == param.getType()) {
+                        binding.addRequiredHeader(param.getName());
+                    } else if (RestParamType.body == param.getType()) {
+                        binding.setRequiredBody(true);
+                    }
                 }
             }
 
@@ -778,7 +873,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
 
             // append options
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap<>();
             // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 options.put("consumes", verb.getConsumes());

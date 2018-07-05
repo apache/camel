@@ -26,8 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.ganglia.GangliaConfiguration</code>
- * 
- * @version 
  */
 public class GangliaConfigurationTest {
     

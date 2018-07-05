@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements RuntimeCamelCatalog {
 
     // cache of operation -> result
-    private final Map<String, Object> cache = new HashMap<String, Object>();
+    private final Map<String, Object> cache = new HashMap<>();
     private boolean caching;
 
     /**

@@ -27,7 +27,7 @@ public class SplitterCollateTest extends ContextTestSupport {
     public void testSplitterCollate() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(2);
 
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("A");
         data.add("B");
         data.add("C");

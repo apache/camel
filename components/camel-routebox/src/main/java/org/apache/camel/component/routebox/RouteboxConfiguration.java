@@ -69,7 +69,7 @@ public class RouteboxConfiguration {
     @UriParam(label = "advanced")
     private ProducerTemplate innerProducerTemplate;
     @UriParam(label = "advanced", javaType = "java.lang.String")
-    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    private List<RouteBuilder> routeBuilders = new ArrayList<>();
 
     public RouteboxConfiguration() {
     }

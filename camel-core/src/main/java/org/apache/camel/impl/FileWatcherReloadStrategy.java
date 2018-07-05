@@ -56,6 +56,7 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     private String folder;
     private boolean isRecursive;
+    private WatchService watcher;
     private ExecutorService executorService;
     private WatchFileChangesTask task;
     private Map<WatchKey, Path> folderKeys;
@@ -143,10 +144,10 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
             try {
                 Path path = dir.toPath();
-                WatchService watcher = path.getFileSystem().newWatchService();
+                watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
                 if (isRecursive) {
-                    this.folderKeys = new HashMap<WatchKey, Path>();
+                    this.folderKeys = new HashMap<>();
                     registerRecursive(watcher, path, modifier);
                 } else {
                     registerPathToWatcher(modifier, path, watcher);
@@ -190,6 +191,10 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
+        }
+
+        if (watcher != null) {
+            IOHelper.close(watcher);
         }
     }
 

@@ -54,7 +54,7 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/oldlock?initialDelay=0&delay=10&readLockDeleteOrphanLockFiles=false&recursive=true").routeId("foo").noAutoStartup()
+                from("file:target/oldlock?initialDelay=0&delay=10&readLock=markerFile&readLockDeleteOrphanLockFiles=false&recursive=true").routeId("foo").noAutoStartup()
                         .convertBodyTo(String.class).to("log:result", "mock:result");
             }
         };

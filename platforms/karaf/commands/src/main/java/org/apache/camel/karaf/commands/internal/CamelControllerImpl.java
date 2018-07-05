@@ -47,7 +47,7 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     @Override
     public List<CamelContext> getLocalCamelContexts() {
-        List<CamelContext> camelContexts = new ArrayList<CamelContext>();
+        List<CamelContext> camelContexts = new ArrayList<>();
         try {
             ServiceReference<?>[] references = bundleContext.getServiceReferences(CamelContext.class.getName(), null);
             if (references != null) {
@@ -77,11 +77,11 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     @Override
     public List<Map<String, String>> getCamelContexts() throws Exception {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> answer = new ArrayList<>();
 
         List<CamelContext> camelContexts = getLocalCamelContexts();
         for (CamelContext camelContext : camelContexts) {
-            Map<String, String> row = new LinkedHashMap<String, String>();
+            Map<String, String> row = new LinkedHashMap<>();
             row.put("name", camelContext.getName());
             row.put("state", camelContext.getStatus().name());
             row.put("uptime", camelContext.getUptime());

@@ -86,7 +86,7 @@ public final class UnitOfWorkHelper {
 
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            List<Synchronization> copy = new ArrayList<Synchronization>(synchronizations);
+            List<Synchronization> copy = new ArrayList<>(synchronizations);
 
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(copy);
@@ -114,7 +114,7 @@ public final class UnitOfWorkHelper {
     public static void beforeRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            List<Synchronization> copy = new ArrayList<Synchronization>(synchronizations);
+            List<Synchronization> copy = new ArrayList<>(synchronizations);
 
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(copy);
@@ -139,7 +139,7 @@ public final class UnitOfWorkHelper {
     public static void afterRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            List<Synchronization> copy = new ArrayList<Synchronization>(synchronizations);
+            List<Synchronization> copy = new ArrayList<>(synchronizations);
 
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(copy);

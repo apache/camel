@@ -17,15 +17,18 @@
 package org.apache.camel.component.telegram.integration;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
+import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.Assert;
@@ -91,6 +94,60 @@ public class TelegramServiceTest {
 
         service.sendMessage(authorizationToken, msg);
     }
+    
+    @Test
+    public void testSendMessageWithKeyboard() {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("Choose one option!");
+        
+        InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
+                .text("Option One - I").build();
+        
+        InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
+                .text("Option One - II").build();
+        
+        InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
+                .text("Option Two - I").build();
+        
+        InlineKeyboardButton buttonOptionThreeI = InlineKeyboardButton.builder()
+                .text("Option Three - I").build();
+        
+        InlineKeyboardButton buttonOptionThreeII = InlineKeyboardButton.builder()
+                .text("Option Three - II").build();
+        
+        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
+                .keyboard()
+                    .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
+                    .addRow(Arrays.asList(buttonOptionTwoI))
+                    .addRow(Arrays.asList(buttonOptionThreeI, buttonOptionThreeII))
+                    .close()
+                .oneTimeKeyboard(true)
+                .build();
+        
+        msg.setReplyKeyboardMarkup(replyMarkup);
+        
+        service.sendMessage(authorizationToken, msg);        
+    }
+    
+    @Test
+    public void testSendMessageDisablingCustomKeyboard() {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("Your answer was accepted!");
+        
+        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
+                .removeKeyboard(true)
+                .build();
+        
+        msg.setReplyKeyboardMarkup(replyMarkup);
+        
+        service.sendMessage(authorizationToken, msg);        
+    }    
 
     @Test
     public void testSendFull() {

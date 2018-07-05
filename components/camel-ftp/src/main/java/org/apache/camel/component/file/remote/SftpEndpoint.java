@@ -65,7 +65,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
     }
 
     protected GenericFileProducer<SftpRemoteFile> buildProducer() {
-        return new RemoteFileProducer<SftpRemoteFile>(this, createRemoteFileOperations());
+        return new RemoteFileProducer<>(this, createRemoteFileOperations());
     }
 
     public RemoteFileOperations<SftpRemoteFile> createRemoteFileOperations() {

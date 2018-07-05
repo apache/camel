@@ -125,7 +125,7 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"velocity:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);        
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);        
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
            
         // now change content in the file in the classpath

@@ -66,7 +66,7 @@ public class BoxGroupsManager {
         try {
             LOG.debug("Getting all groups");
 
-            Collection<BoxGroup> groups = new ArrayList<BoxGroup>();
+            Collection<BoxGroup> groups = new ArrayList<>();
             for (BoxGroup.Info groupInfo : BoxGroup.getAllGroups(boxConnection)) {
                 groups.add(groupInfo.getResource());
             }
@@ -295,17 +295,17 @@ public class BoxGroupsManager {
      *            - the updated information.
      * @return The group information.
      */
-    public BoxGroupMembership updateGroupMembershipInfo(String groupMemebershipId, BoxGroupMembership.Info info) {
+    public BoxGroupMembership updateGroupMembershipInfo(String groupMembershipId, BoxGroupMembership.Info info) {
         try {
-            LOG.debug("Updating info for groupMembership(id=" + groupMemebershipId + ")");
-            if (groupMemebershipId == null) {
-                throw new IllegalArgumentException("Parameter 'groupMemebershipId' can not be null");
+            LOG.debug("Updating info for groupMembership(id=" + groupMembershipId + ")");
+            if (groupMembershipId == null) {
+                throw new IllegalArgumentException("Parameter 'groupMembershipId' can not be null");
             }
             if (info == null) {
                 throw new IllegalArgumentException("Parameter 'info' can not be null");
             }
 
-            BoxGroupMembership groupMembership = new BoxGroupMembership(boxConnection, groupMemebershipId);
+            BoxGroupMembership groupMembership = new BoxGroupMembership(boxConnection, groupMembershipId);
 
             groupMembership.updateInfo(info);
             return groupMembership;

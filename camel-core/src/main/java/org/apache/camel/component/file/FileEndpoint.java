@@ -67,14 +67,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private String chmodDirectory;
 
     public FileEndpoint() {
-        // use marker file as default exclusive read locks
-        this.readLock = "markerFile";
     }
 
     public FileEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        // use marker file as default exclusive read locks
-        this.readLock = "markerFile";
     }
 
     public FileConsumer createConsumer(Processor processor) throws Exception {
@@ -163,7 +159,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             throw new IllegalArgumentException("You must configure fileExist=Move when moveExisting has been set");
         }
 
-        return new GenericFileProducer<File>(this, operations);
+        return new GenericFileProducer<>(this, operations);
     }
 
     public Exchange createExchange(GenericFile<File> file) {
@@ -298,7 +294,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+        Set<PosixFilePermission> permissions = new HashSet<>();
         if (ObjectHelper.isEmpty(chmod)) {
             return permissions;
         }
@@ -359,7 +355,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getDirectoryPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+        Set<PosixFilePermission> permissions = new HashSet<>();
         if (ObjectHelper.isEmpty(chmodDirectory)) {
             return permissions;
         }

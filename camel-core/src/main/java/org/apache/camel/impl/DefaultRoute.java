@@ -41,8 +41,8 @@ import org.apache.camel.util.TimeUtils;
 public abstract class DefaultRoute extends ServiceSupport implements Route {
 
     private final Endpoint endpoint;
-    private final Map<String, Object> properties = new HashMap<String, Object>();
-    private final List<Service> services = new ArrayList<Service>();
+    private final Map<String, Object> properties = new HashMap<>();
+    private final List<Service> services = new ArrayList<>();
     private final RouteContext routeContext;
     private Date startDate;
 
@@ -65,6 +65,10 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
 
     public String getId() {
         return (String) properties.get(Route.ID_PROPERTY);
+    }
+
+    public String getGroup() {
+        return (String) properties.get(Route.GROUP_PROPERTY);
     }
 
     public String getUptime() {

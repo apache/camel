@@ -88,7 +88,7 @@ public class SnsProducer extends DefaultProducer {
     }
 
     Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
-        Map<String, MessageAttributeValue> result = new HashMap<String, MessageAttributeValue>();
+        Map<String, MessageAttributeValue> result = new HashMap<>();
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         for (Entry<String, Object> entry : headers.entrySet()) {
             // only put the message header which is not filtered into the message attribute

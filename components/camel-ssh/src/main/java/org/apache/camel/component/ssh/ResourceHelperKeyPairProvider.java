@@ -101,7 +101,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
         }
 
         final List<KeyPair> keys =
-                new ArrayList<KeyPair>(this.resources.length);
+                new ArrayList<>(this.resources.length);
 
         for (String resource : resources) {
             PEMParser r = null;

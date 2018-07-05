@@ -583,9 +583,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     public void testSecureSocketProtocols() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
-        SSLEngine controlEngine = controlContext.createSSLEngine();
-        SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
-        SSLServerSocket controlServerSocket = (SSLServerSocket) controlContext.getServerSocketFactory().createServerSocket();
 
         // default
         SSLContextParameters scp = new SSLContextParameters();
@@ -810,7 +807,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     protected String[] getDefaultCipherSuiteIncludes(String[] availableCipherSuites) {
-        List<String> enabled = new LinkedList<String>();
+        List<String> enabled = new LinkedList<>();
 
         for (String string : availableCipherSuites) {
             if (!string.contains("_anon_") && !string.contains("_NULL_")

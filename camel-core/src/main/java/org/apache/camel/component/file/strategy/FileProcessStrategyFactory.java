@@ -45,26 +45,26 @@ public final class FileProcessStrategyFactory {
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isDelete) {
-            GenericFileDeleteProcessStrategy<File> strategy = new GenericFileDeleteProcessStrategy<File>();
+            GenericFileDeleteProcessStrategy<File> strategy = new GenericFileDeleteProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             return strategy;
         } else if (isMove || isNoop) {
-            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (!isNoop) {
                 // move on commit is only possible if not noop
                 if (moveExpression != null) {
-                    GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                    GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<>();
                     renamer.setExpression(moveExpression);
                     strategy.setCommitRenamer(renamer);
                 } else {
@@ -73,20 +73,20 @@ public final class FileProcessStrategyFactory {
             }
             // both move and noop supports pre move
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             // both move and noop supports move failed
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             return strategy;
         } else {
             // default strategy will move files in a .camel/ subfolder where the file was consumed
-            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             strategy.setCommitRenamer(getDefaultCommitRenamer(context));
             return strategy;
@@ -97,7 +97,7 @@ public final class FileProcessStrategyFactory {
         // use context to lookup language to let it be loose coupled
         Language language = context.resolveLanguage("file");
         Expression expression = language.createExpression("${file:parent}/.camel/${file:onlyname}");
-        return new GenericFileExpressionRenamer<File>(expression);
+        return new GenericFileExpressionRenamer<>(expression);
     }
 
     @SuppressWarnings("unchecked")

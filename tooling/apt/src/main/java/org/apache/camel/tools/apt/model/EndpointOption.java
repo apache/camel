@@ -18,8 +18,6 @@ package org.apache.camel.tools.apt.model;
 
 import java.util.Set;
 
-import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
-
 import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 
 public final class EndpointOption {

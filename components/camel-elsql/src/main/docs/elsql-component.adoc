@@ -50,7 +50,7 @@ If a named parameter cannot be resolved, then an exception is thrown.
 ### Options
 
 // component options: START
-The ElSQL component supports 5 options which are listed below.
+The ElSQL component supports 5 options, which are listed below.
 
 
 

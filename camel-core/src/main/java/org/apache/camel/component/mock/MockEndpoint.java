@@ -562,7 +562,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expects(new Runnable() {
             public void run() {
                 // these are the expected values to find
-                final Set<Object> actualHeaderValues = new CopyOnWriteArraySet<Object>(values);
+                final Set<Object> actualHeaderValues = new CopyOnWriteArraySet<>(values);
 
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
                     Exchange exchange = getReceivedExchange(i);
@@ -592,7 +592,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderValuesReceivedInAnyOrder(String name, Object... values) {
-        List<Object> valueList = new ArrayList<Object>();
+        List<Object> valueList = new ArrayList<>();
         valueList.addAll(Arrays.asList(values));
         expectedHeaderValuesReceivedInAnyOrder(name, valueList);
     }
@@ -605,7 +605,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void expectedPropertyReceived(final String name, final Object value) {
         if (expectedPropertyValues == null) {
-            expectedPropertyValues = new HashMap<String, Object>();
+            expectedPropertyValues = new HashMap<>();
         }
         expectedPropertyValues.put(name, value);
 
@@ -649,7 +649,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expects(new Runnable() {
             public void run() {
                 // these are the expected values to find
-                final Set<Object> actualPropertyValues = new CopyOnWriteArraySet<Object>(values);
+                final Set<Object> actualPropertyValues = new CopyOnWriteArraySet<>(values);
 
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
                     Exchange exchange = getReceivedExchange(i);
@@ -679,7 +679,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedPropertyValuesReceivedInAnyOrder(String name, Object... values) {
-        List<Object> valueList = new ArrayList<Object>();
+        List<Object> valueList = new ArrayList<>();
         valueList.addAll(Arrays.asList(values));
         expectedPropertyValuesReceivedInAnyOrder(name, valueList);
     }    
@@ -696,7 +696,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public void expectedBodiesReceived(final List<?> bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
-        this.actualBodyValues = new ArrayList<Object>();
+        this.actualBodyValues = new ArrayList<>();
 
         expects(new Runnable() {
             public void run() {
@@ -765,7 +765,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<Object>();
+        List<Object> bodyList = new ArrayList<>();
         bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceived(bodyList);
     }
@@ -803,11 +803,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public void expectedBodiesReceivedInAnyOrder(final List<?> bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
-        this.actualBodyValues = new ArrayList<Object>();
+        this.actualBodyValues = new ArrayList<>();
 
         expects(new Runnable() {
             public void run() {
-                List<Object> actualBodyValuesSet = new ArrayList<Object>(actualBodyValues);
+                List<Object> actualBodyValuesSet = new ArrayList<>(actualBodyValues);
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
                     Exchange exchange = getReceivedExchange(i);
                     assertTrue("No exchange received for counter: " + i, exchange != null);
@@ -829,7 +829,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedBodiesReceivedInAnyOrder(Object... bodies) {
-        List<Object> bodyList = new ArrayList<Object>();
+        List<Object> bodyList = new ArrayList<>();
         bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceivedInAnyOrder(bodyList);
     }
@@ -1014,7 +1014,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     public void assertNoDuplicates(Expression expression) {
-        Map<Object, Exchange> map = new HashMap<Object, Exchange>();
+        Map<Object, Exchange> map = new HashMap<>();
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {
             Exchange e2 = list.get(i);
@@ -1297,10 +1297,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expectedCount = -1;
         counter = 0;
         defaultProcessor = null;
-        processors = new HashMap<Integer, Processor>();
-        receivedExchanges = new CopyOnWriteArrayList<Exchange>();
-        failures = new CopyOnWriteArrayList<Throwable>();
-        tests = new CopyOnWriteArrayList<Runnable>();
+        processors = new HashMap<>();
+        receivedExchanges = new CopyOnWriteArrayList<>();
+        failures = new CopyOnWriteArrayList<>();
+        tests = new CopyOnWriteArrayList<>();
         latch = null;
         sleepForEmptyTest = 0;
         resultWaitTime = 0;
@@ -1308,7 +1308,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         assertPeriod = 0L;
         expectedMinimumCount = -1;
         expectedBodyValues = null;
-        actualBodyValues = new ArrayList<Object>();
+        actualBodyValues = new ArrayList<>();
         expectedHeaderValues = null;
         actualHeaderValues = null;
         expectedPropertyValues = null;

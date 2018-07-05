@@ -38,7 +38,7 @@ public class SpringSplitterBodyTest extends SpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("A", "B", "C");
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("A");
         list.add("B");
         list.add("C");

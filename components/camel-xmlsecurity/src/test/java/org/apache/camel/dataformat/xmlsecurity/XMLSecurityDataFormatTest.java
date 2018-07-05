@@ -381,7 +381,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadAsymmetricKeyDecryption() throws Exception {
-        final Map<String, String> namespaces = new HashMap<String, String>();
+        final Map<String, String> namespaces = new HashMap<>();
         namespaces.put("ns1", "http://cheese.xmlsecurity.camel.apache.org/");
         
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -413,7 +413,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         ksParameters.setResource("recipient.ks");
         
         
-        final Map<String, String> namespaces = new HashMap<String, String>();
+        final Map<String, String> namespaces = new HashMap<>();
         namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
 
 

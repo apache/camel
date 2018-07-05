@@ -205,7 +205,7 @@ public class MethodInfo {
     }
 
     private Map<Class<?>, Annotation> collectMethodAnnotations(Class<?> c, Method method) {
-        Map<Class<?>, Annotation> annotations = new HashMap<Class<?>, Annotation>();
+        Map<Class<?>, Annotation> annotations = new HashMap<>();
         collectMethodAnnotations(c, method, annotations);
         return annotations;
     }
@@ -517,7 +517,7 @@ public class MethodInfo {
             Class<?> type = method.getDeclaringClass();
 
             // create the search order of types to scan
-            List<Class<?>> typesToSearch = new ArrayList<Class<?>>();
+            List<Class<?>> typesToSearch = new ArrayList<>();
             addTypeAndSuperTypes(type, typesToSearch);
             Class<?>[] interfaces = type.getInterfaces();
             for (Class<?> anInterface : interfaces) {

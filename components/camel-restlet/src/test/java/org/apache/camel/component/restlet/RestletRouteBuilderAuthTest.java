@@ -35,7 +35,7 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
         // START SNIPPET: auth_request
         final String id = "89531";
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(RestletConstants.RESTLET_LOGIN, "admin");
         headers.put(RestletConstants.RESTLET_PASSWORD, "foo");
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_XML);
@@ -50,7 +50,7 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
 
     @Test(expected = CamelExecutionException.class)
     public void testhBasicAuthError() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(RestletConstants.RESTLET_LOGIN, "admin");
         headers.put(RestletConstants.RESTLET_PASSWORD, "bad");
         headers.put("id", "xyz");

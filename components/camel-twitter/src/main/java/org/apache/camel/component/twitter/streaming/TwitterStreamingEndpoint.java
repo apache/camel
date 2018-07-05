@@ -24,7 +24,6 @@ import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.data.StreamingType;
-import org.apache.camel.component.twitter.data.TimelineType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

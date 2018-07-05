@@ -36,7 +36,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;
     private RoundRobinLoadBalancer loadBalancer;
     private int numberOfHashGroups = 64 * 1024;
-    private final Map<Object, Processor> stickyMap = new HashMap<Object, Processor>();
+    private final Map<Object, Processor> stickyMap = new HashMap<>();
 
     public StickyLoadBalancer(Expression correlationExpression) {
         this.correlationExpression = correlationExpression;

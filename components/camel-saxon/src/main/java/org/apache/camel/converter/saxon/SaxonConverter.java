@@ -72,7 +72,7 @@ public final class SaxonConverter {
 
     @Converter
     public static NodeList toDOMNodeList(List<? extends NodeInfo> nodeList) {
-        List<Node> domNodeList = new LinkedList<Node>();
+        List<Node> domNodeList = new LinkedList<>();
         if (nodeList != null) {
             for (NodeInfo ni : nodeList) {
                 domNodeList.add(NodeOverNodeInfo.wrap(ni));
@@ -96,14 +96,14 @@ public final class SaxonConverter {
             // the default Xerces Node implementation also implements NodeList.
             tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
-                List<NodeInfo> nil = new LinkedList<NodeInfo>();
+                List<NodeInfo> nil = new LinkedList<>();
                 nil.add((NodeInfo) value);
                 return tc.convertTo(type, exchange, toDOMNodeList(nil));
             }
         } else if (List.class.isAssignableFrom(value.getClass())) {
             TypeConverter tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
-                List<NodeInfo> lion = new LinkedList<NodeInfo>();
+                List<NodeInfo> lion = new LinkedList<>();
                 for (Object o : (List<?>) value) {
                     if (o instanceof NodeInfo) {
                         lion.add((NodeInfo) o);
@@ -121,7 +121,7 @@ public final class SaxonConverter {
             // try type conversion in the fallback type converter.
             TypeConverter tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
-                List<Node> domNodeList = new LinkedList<Node>();
+                List<Node> domNodeList = new LinkedList<>();
                 domNodeList.add((NodeOverNodeInfo) value);
                 return tc.convertTo(type, exchange, new DOMNodeList(domNodeList));
             }

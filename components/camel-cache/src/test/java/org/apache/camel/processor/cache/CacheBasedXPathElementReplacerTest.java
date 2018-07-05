@@ -56,7 +56,7 @@ public class CacheBasedXPathElementReplacerTest extends BaseCacheTest {
 
         resultEndpoint.expectedMessageCount(1);
 
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         keys.add("book1");
         keys.add("book2");
         keys.add("XML_FRAGMENT");

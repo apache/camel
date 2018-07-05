@@ -108,7 +108,7 @@ public class DefaultAttachment implements Attachment {
     }
 
     private Map<String, Object> createHeaders() {
-        return new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     public boolean equals(Object other) {

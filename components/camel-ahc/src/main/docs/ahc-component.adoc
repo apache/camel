@@ -103,7 +103,7 @@ with the following path and query parameters:
 
 
 // component options: START
-The AHC component supports 8 options which are listed below.
+The AHC component supports 8 options, which are listed below.
 
 
 

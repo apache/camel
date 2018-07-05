@@ -26,7 +26,6 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.PushResult;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -60,7 +59,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
             }
         });
 
-        Iterable<PushResult> result = template.requestBody("direct:push", "", Iterable.class);
+        template.requestBody("direct:push", "", Iterable.class);
 
         repository.close();
     }

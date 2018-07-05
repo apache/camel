@@ -88,7 +88,7 @@ public class CustomFiltersTest extends BaseJettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        List<Filter> filters = new ArrayList<Filter>();
+        List<Filter> filters = new ArrayList<>();
         filters.add(new MyTestFilter());
         jndi.bind("myFilters", filters);
         return jndi;

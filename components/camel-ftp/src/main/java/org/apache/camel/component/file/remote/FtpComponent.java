@@ -48,7 +48,7 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
         FtpUtils.ensureRelativeFtpDirectory(this, config);
 
-        FtpEndpoint<FTPFile> answer = new FtpEndpoint<FTPFile>(uri, this, config);
+        FtpEndpoint<FTPFile> answer = new FtpEndpoint<>(uri, this, config);
         extractAndSetFtpClientConfigParameters(parameters, answer);
         extractAndSetFtpClientParameters(parameters, answer);
 

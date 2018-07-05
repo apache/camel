@@ -33,7 +33,7 @@ public final class ResultBuilder {
 
     public ResultBuilder() {
         this.scope = Optional.empty();
-        this.status = scope.empty();
+        this.status = Optional.empty();
     }
 
     // **********************************

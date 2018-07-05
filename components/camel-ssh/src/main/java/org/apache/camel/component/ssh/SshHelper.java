@@ -31,6 +31,7 @@ import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.future.OpenFuture;
 import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,7 @@ public final class SshHelper {
                 throw new RuntimeCamelException("Failed to authenticate username " + configuration.getUsername());
             }
         
-            channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
+            channel = session.createChannel(Channel.CHANNEL_EXEC, command);
 
             ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{0});
             channel.setIn(in);

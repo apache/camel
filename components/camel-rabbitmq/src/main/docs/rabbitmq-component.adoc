@@ -47,7 +47,7 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component supports 48 options which are listed below.
+The RabbitMQ component supports 49 options, which are listed below.
 
 
 
@@ -64,7 +64,7 @@ The RabbitMQ component supports 48 options which are listed below.
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
 | *autoDetectConnection Factory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
-| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 0 | int
+| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
 | *automaticRecovery Enabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
@@ -92,6 +92,7 @@ The RabbitMQ component supports 48 options which are listed below.
 | *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
 | *durable* (common) | If we are declaring a durable exchange (the exchange will survive a server restart) | true | boolean
 | *exclusive* (common) | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | boolean
+| *exclusiveConsumer* (consumer) | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | boolean
 | *passive* (common) | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
 | *skipQueueDeclare* (common) | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | boolean
 | *skipQueueBind* (common) | If true the queue will not be bound to the exchange after declaring it | false | boolean
@@ -125,7 +126,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (60 parameters):
+==== Query Parameters (61 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -154,6 +155,7 @@ with the following path and query parameters:
 | *autoAck* (consumer) | If messages should be auto acknowledged | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Number of concurrent consumers when consuming from broker. (eg similar as to the same option for the JMS component). | 1 | int
+| *exclusiveConsumer* (consumer) | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | boolean
 | *prefetchCount* (consumer) | The maximum number of messages that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
 | *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
 | *prefetchGlobal* (consumer) | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
@@ -179,7 +181,7 @@ with the following path and query parameters:
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *queueArgs* (advanced) | *Deprecated* Key/value args for configuring the queue parameters when declare=true |  | Map
 | *queueArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
-| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 0 | int
+| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
 | *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | long

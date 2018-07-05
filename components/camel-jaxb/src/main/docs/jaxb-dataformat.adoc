@@ -11,7 +11,7 @@ payload.
 ### Options
 
 // dataformat options: START
-The JAXB dataformat supports 18 options which are listed below.
+The JAXB dataformat supports 18 options, which are listed below.
 
 
 

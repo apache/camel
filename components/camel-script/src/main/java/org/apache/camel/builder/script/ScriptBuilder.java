@@ -194,7 +194,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
      */
     public ScriptBuilder attribute(String name, Object value) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<>();
         }
         attributes.put(name, value);
         return this;

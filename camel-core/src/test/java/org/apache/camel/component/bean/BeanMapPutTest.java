@@ -28,7 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanMapPutTest extends ContextTestSupport {
 
-    private Map<String, String> myMap = new HashMap<String, String>();
+    private Map<String, String> myMap = new HashMap<>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

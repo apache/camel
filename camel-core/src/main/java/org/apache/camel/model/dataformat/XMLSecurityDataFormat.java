@@ -471,7 +471,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @Override
     public void setNamespaces(Map<String, String> nspaces) {
         if (this.namespaces == null) {
-            this.namespaces = new HashMap<String, String>();
+            this.namespaces = new HashMap<>();
         }
         this.namespaces.putAll(nspaces);
     }

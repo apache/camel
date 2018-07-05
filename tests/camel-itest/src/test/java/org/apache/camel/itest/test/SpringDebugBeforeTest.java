@@ -32,7 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringDebugBeforeTest extends CamelSpringTestSupport {
 
-    private final List<String> before = new ArrayList<String>();
+    private final List<String> before = new ArrayList<>();
 
     @Override
     public boolean isUseDebugger() {

@@ -316,7 +316,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
     
     @Override
     public void setUp() {
-        nsmap = new HashMap<String, String>();
+        nsmap = new HashMap<>();
         nsmap.put("g", "urn:g");
         nsmap.put("c", "urn:c");
     }
@@ -409,7 +409,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
         xtei.setGroup(group);
 
         Iterator<?> it = xtei.createIterator(in, "utf-8");
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         while (it.hasNext()) {
             results.add((String)it.next());
         }

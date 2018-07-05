@@ -125,7 +125,7 @@ public class ConverterTest extends TestCase {
 
 
     public void testCollectionToArrayConversion() throws Exception {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("one");
         list.add("two");
 
@@ -137,7 +137,7 @@ public class ConverterTest extends TestCase {
     }
 
     public void testCollectionToPrimitiveArrayConversion() throws Exception {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         list.add(5);
         list.add(6);
 

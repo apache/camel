@@ -50,7 +50,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     
     /**
-     * Creates a new token based group titerator
+     * Creates a new token based group iterator
      *
      * @param camelContext  the camel context
      * @param it            the iterator to group
@@ -155,7 +155,12 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
             data = it.next();
 
             if (skipFirst && hasSkipFirst.compareAndSet(false, true)) {
-                data = it.next();
+                if (it.hasNext()) {
+                    data = it.next();
+                } else {
+                    // Content with header only which is marked to skip
+                    data = "";
+                }
             }
 
             // include token in between

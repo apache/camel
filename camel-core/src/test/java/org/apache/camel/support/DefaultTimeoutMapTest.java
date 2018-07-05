@@ -38,7 +38,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
     public void testDefaultTimeoutMap() throws Exception {
-        DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<Object, Object>(executor);
+        DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<>(executor);
         map.start();
         assertTrue(map.currentTime() > 0);
 
@@ -48,7 +48,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testDefaultTimeoutMapPurge() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
 
@@ -69,7 +69,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testDefaultTimeoutMapForcePurge() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
 
@@ -87,7 +87,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testDefaultTimeoutMapGetRemove() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
 
@@ -107,7 +107,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testDefaultTimeoutMapGetKeys() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
 
@@ -125,7 +125,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testExecutor() throws Exception {
         ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
 
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(e, 50);
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(e, 50);
         map.start();
         assertEquals(50, map.getPurgePollTime());
 
@@ -147,8 +147,8 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testExpiredInCorrectOrder() throws Exception {
-        final List<String> keys = new ArrayList<String>();
-        final List<Integer> values = new ArrayList<Integer>();
+        final List<String> keys = new ArrayList<>();
+        final List<Integer> values = new ArrayList<>();
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100) {
             @Override
@@ -191,8 +191,8 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testExpiredNotEvicted() throws Exception {
-        final List<String> keys = new ArrayList<String>();
-        final List<Integer> values = new ArrayList<Integer>();
+        final List<String> keys = new ArrayList<>();
+        final List<Integer> values = new ArrayList<>();
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100) {
             @Override
@@ -234,7 +234,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testDefaultTimeoutMapStopStart() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         map.put("A", 1, 500);
 

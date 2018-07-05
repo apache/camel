@@ -93,7 +93,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
     public void sendCustomHeaderValues() throws Exception {
         result.expectedMessageCount(1);
         final Date now = new Date();
-        final Map<String, String> s3Headers = new HashMap<String, String>();
+        final Map<String, String> s3Headers = new HashMap<>();
         s3Headers.put("x-aws-s3-header", "extra");
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {

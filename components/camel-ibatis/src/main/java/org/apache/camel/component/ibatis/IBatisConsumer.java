@@ -87,7 +87,7 @@ public class IBatisConsumer extends ScheduledBatchPollingConsumer {
         List<Object> data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
         // create a list of exchange objects with the data
-        Queue<DataHolder> answer = new LinkedList<DataHolder>();
+        Queue<DataHolder> answer = new LinkedList<>();
         if (useIterator) {
             for (Object item : data) {
                 Exchange exchange = createExchange(item);

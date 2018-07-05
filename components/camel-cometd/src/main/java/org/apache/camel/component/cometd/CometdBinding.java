@@ -121,7 +121,7 @@ public class CometdBinding {
 
     //TODO: do something in the style of JMS where they have header Strategies?
     private Object filterHeaders(Map<String, Object> headers) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         for (Entry<String, Object> entry : headers.entrySet()) {
             if (entry != null && entry.getKey() != null) {
                 map.put(entry.getKey(), entry.getValue());

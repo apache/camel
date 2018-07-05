@@ -93,7 +93,7 @@ example, to +
 jms:topic:Stocks.Prices
 -----------------------
 
-You append query options to the URI using the following format,
+You append query options to the URI by using the following format,
 `?option=value&option=value&...`
 
 ### Notes
@@ -106,8 +106,8 @@ some caching in the JMS provider to avoid
 http://activemq.apache.org/jmstemplate-gotchas.html[poor performance].
 
 If you intend to use http://activemq.apache.org/[Apache ActiveMQ] as
-your Message Broker - which is a good choice as ActiveMQ rocks,
-then we recommend that you either:
+your message broker, the recommendation is that you do one of the
+following: 
 
 * Use the ActiveMQ component, which is already
 optimized to use ActiveMQ efficiently
@@ -174,10 +174,8 @@ Camel consumes the message
 
 ### Options
 
-You can configure many different properties on the JMS endpoint which
-map to properties on the
-http://camel.apache.org/maven/current/camel-jms/apidocs/org/apache/camel/component/jms/JmsConfiguration.html[JMSConfiguration
-POJO].
+You can configure many different properties on the JMS endpoint, which
+map to properties on the `JMSConfiguration` object. 
 
 [WARNING]
 ====
@@ -198,7 +196,7 @@ about these properties by consulting the relevant Spring documentation.
 
 
 // component options: START
-The JMS component supports 80 options which are listed below.
+The JMS component supports 80 options, which are listed below.
 
 
 
@@ -426,6 +424,129 @@ with the following path and query parameters:
 // endpoint options: END
 
 
+
+### Samples
+
+JMS is used in many examples for other components as well. But we
+provide a few samples below to get started.
+
+#### Receiving from JMS
+
+In the following sample we configure a route that receives JMS messages
+and routes the message to a POJO:
+
+[source,java]
+--------------------------------
+from("jms:queue:foo").
+   to("bean:myBusinessLogic");
+--------------------------------
+
+You can of course use any of the EIP patterns so the route can be
+context based. For example, here's how to filter an order topic for the
+big spenders:
+
+[source,java]
+----------------------------------------------
+from("jms:topic:OrdersTopic").
+  filter().method("myBean", "isGoldCustomer").
+  to("jms:queue:BigSpendersQueue");
+----------------------------------------------
+
+#### Sending to JMS
+
+In the sample below we poll a file folder and send the file content to a
+JMS topic. As we want the content of the file as a `TextMessage` instead
+of a `BytesMessage`, we need to convert the body to a `String`:
+
+[source,java]
+------------------------------
+from("file://orders").
+  convertBodyTo(String.class).
+  to("jms:topic:OrdersTopic");
+------------------------------
+
+#### Using Annotations
+
+Camel also has annotations so you can use link:pojo-consuming.html[POJO
+Consuming] and POJO Producing.
+
+#### Spring DSL sample
+
+The preceding examples use the Java DSL. Camel also supports Spring XML
+DSL. Here is the big spender sample using Spring DSL:
+
+[source,xml]
+---------------------------------------------------
+<route>
+  <from uri="jms:topic:OrdersTopic"/>
+  <filter>
+    <method bean="myBean" method="isGoldCustomer"/>
+    <to uri="jms:queue:BigSpendersQueue"/>
+  </filter>
+</route>
+---------------------------------------------------
+
+#### Other samples
+
+JMS appears in many of the examples for other components and EIP
+patterns, as well in this Camel documentation. So feel free to browse
+the documentation. 
+
+#### Using JMS as a Dead Letter Queue storing Exchange
+
+Normally, when using <<jms-component,JMS>> as the transport, it only
+transfers the body and headers as the payload. If you want to use
+<<jms-component,JMS>> with a link:dead-letter-channel.html[Dead Letter
+Channel], using a JMS queue as the Dead Letter Queue, then normally the
+caused Exception is not stored in the JMS message. You can, however, use
+the `transferExchange` option on the JMS dead letter queue to instruct
+Camel to store the entire Exchange in the queue as a
+`javax.jms.ObjectMessage` that holds a
+`org.apache.camel.impl.DefaultExchangeHolder`. This allows you to
+consume from the Dead Letter Queue and retrieve the caused exception
+from the Exchange property with the key `Exchange.EXCEPTION_CAUGHT`. The
+demo below illustrates this:
+
+[source,java]
+------------------------------------------------------------------------
+// setup error handler to use JMS as queue and store the entire Exchange
+errorHandler(deadLetterChannel("jms:queue:dead?transferExchange=true"));
+------------------------------------------------------------------------
+
+Then you can consume from the JMS queue and analyze the problem:
+
+[source,java]
+-----------------------------------------------------------------------------------
+from("jms:queue:dead").to("bean:myErrorAnalyzer");
+
+// and in our bean
+String body = exchange.getIn().getBody();
+Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+// the cause message is
+String problem = cause.getMessage();
+-----------------------------------------------------------------------------------
+
+#### Using JMS as a Dead Letter Channel storing error only
+
+You can use JMS to store the cause error message or to store a custom
+body, which you can initialize yourself. The following example uses the
+Message Translator EIP to do a
+transformation on the failed exchange before it is moved to the
+<<jms-component,JMS>> dead letter queue:
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+// we sent it to a seda dead queue first
+errorHandler(deadLetterChannel("seda:dead"));
+
+// and on the seda dead queue we can do the custom transformation before its sent to the JMS queue
+from("seda:dead").transform(exceptionMessage()).to("jms:queue:dead");
+--------------------------------------------------------------------------------------------------
+
+Here we only store the original cause error message in the transform.
+You can, however, use any Expression to send
+whatever you like. For example, you can invoke a method on a Bean or use
+a custom processor.
 
 
 
@@ -1068,10 +1189,10 @@ the service bean as shown below:
 
 [source,java]
 ----------------------------------------------------------------------------------------
-   from("direct:someWhere")
-     .setHeader("CamelJmsRequestTimeout", method(ServiceBean.class, "whatIsTheTimeout"))
-     .to("jms:queue:foo?replyTo=bar&requestTimeout=30s")
-     .to("bean:processReply");
+from("direct:someWhere")
+  .setHeader("CamelJmsRequestTimeout", method(ServiceBean.class, "whatIsTheTimeout"))
+  .to("jms:queue:foo?replyTo=bar&requestTimeout=30s")
+  .to("bean:processReply");
 ----------------------------------------------------------------------------------------
 
 When you do fire and forget (InOut) over <<jms-component,JMS>> with Camel
@@ -1131,8 +1252,8 @@ component/endpoint:
 The benefit of doing so is that the cacheLevel setting will be honored
 when using local transactions without a configured TransactionManager.
 When a TransactionManager is configured, no caching happens at DMLC
-level and its necessary to rely on a pooled connection factory. For more
-details about this kind of setup see
+level and it is necessary to rely on a pooled connection factory. For more
+details about this kind of setup, see
 http://tmielke.blogspot.com/2012/03/camel-jms-with-transactions-lessons.html[here]
 and
 http://forum.springsource.org/showthread.php?123631-JMS-DMLC-not-caching%20connection-when-using-TX-despite-cacheLevel-CACHE_CONSUMER&p=403530&posted=1#post403530[here].
@@ -1152,10 +1273,10 @@ And then later use it to send a reply using regular JMS or Camel.
 
 [source,java]
 ----------------------------------------------------------------------------------------
-    // we need to pass in the JMS component, and in this sample we use ActiveMQ
-    JmsEndpoint endpoint = JmsEndpoint.newInstance(replyDestination, activeMQComponent);
-    // now we have the endpoint we can use regular Camel API to send a message to it
-    template.sendBody(endpoint, "Here is the late reply.");
+// we need to pass in the JMS component, and in this sample we use ActiveMQ
+JmsEndpoint endpoint = JmsEndpoint.newInstance(replyDestination, activeMQComponent);
+// now we have the endpoint we can use regular Camel API to send a message to it
+template.sendBody(endpoint, "Here is the late reply.");
 ----------------------------------------------------------------------------------------
 
 A different solution to sending a reply is to provide the
@@ -1166,14 +1287,14 @@ For example:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------
-    // we pretend to send it to some non existing dummy queue
-    template.send("activemq:queue:dummy, new Processor() {
-        public void process(Exchange exchange) throws Exception {
-            // and here we override the destination with the ReplyTo destination object so the message is sent to there instead of dummy
-            exchange.getIn().setHeader(JmsConstants.JMS_DESTINATION, replyDestination);
-            exchange.getIn().setBody("Here is the late reply.");
-        }
+// we pretend to send it to some non existing dummy queue
+template.send("activemq:queue:dummy, new Processor() {
+   public void process(Exchange exchange) throws Exception {
+      // and here we override the destination with the ReplyTo destination object so the message is sent to there instead of dummy
+      exchange.getIn().setHeader(JmsConstants.JMS_DESTINATION, replyDestination);
+      exchange.getIn().setBody("Here is the late reply.");
     }
+}
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 ### Using a request timeout
@@ -1183,130 +1304,6 @@ style message Exchange (we use the `requestBody`
 method = `InOut`) to the slow queue for further processing in Camel and
 we wait for a return reply:
 
-### Samples
-
-JMS is used in many examples for other components as well. But we
-provide a few samples below to get started.
-
-#### Receiving from JMS
-
-In the following sample we configure a route that receives JMS messages
-and routes the message to a POJO:
-
-[source,java]
---------------------------------
-   from("jms:queue:foo").
-     to("bean:myBusinessLogic");
---------------------------------
-
-You can of course use any of the EIP patterns so the route can be
-context based. For example, here's how to filter an order topic for the
-big spenders:
-
-[source,java]
-----------------------------------------------
-from("jms:topic:OrdersTopic").
-  filter().method("myBean", "isGoldCustomer").
-    to("jms:queue:BigSpendersQueue");
-----------------------------------------------
-
-#### Sending to JMS
-
-In the sample below we poll a file folder and send the file content to a
-JMS topic. As we want the content of the file as a `TextMessage` instead
-of a `BytesMessage`, we need to convert the body to a `String`:
-
-[source,java]
-------------------------------
-from("file://orders").
-  convertBodyTo(String.class).
-  to("jms:topic:OrdersTopic");
-------------------------------
-
-#### Using Annotations
-
-Camel also has annotations so you can use link:pojo-consuming.html[POJO
-Consuming] and POJO Producing.
-
-#### Spring DSL sample
-
-The preceding examples use the Java DSL. Camel also supports Spring XML
-DSL. Here is the big spender sample using Spring DSL:
-
-[source,xml]
----------------------------------------------------
-<route>
-  <from uri="jms:topic:OrdersTopic"/>
-  <filter>
-    <method bean="myBean" method="isGoldCustomer"/>
-    <to uri="jms:queue:BigSpendersQueue"/>
-  </filter>
-</route>
----------------------------------------------------
-
-#### Other samples
-
-JMS appears in many of the examples for other components and EIP
-patterns, as well in this Camel documentation. So feel free to browse
-the documentation. If you have time, check out the this tutorial that
-uses JMS but focuses on how well Spring Remoting and Camel works
-together Tutorial-JmsRemoting.
-
-#### Using JMS as a Dead Letter Queue storing Exchange
-
-Normally, when using <<jms-component,JMS>> as the transport, it only
-transfers the body and headers as the payload. If you want to use
-<<jms-component,JMS>> with a link:dead-letter-channel.html[Dead Letter
-Channel], using a JMS queue as the Dead Letter Queue, then normally the
-caused Exception is not stored in the JMS message. You can, however, use
-the `transferExchange` option on the JMS dead letter queue to instruct
-Camel to store the entire Exchange in the queue as a
-`javax.jms.ObjectMessage` that holds a
-`org.apache.camel.impl.DefaultExchangeHolder`. This allows you to
-consume from the Dead Letter Queue and retrieve the caused exception
-from the Exchange property with the key `Exchange.EXCEPTION_CAUGHT`. The
-demo below illustrates this:
-
-[source,java]
-------------------------------------------------------------------------
-// setup error handler to use JMS as queue and store the entire Exchange
-errorHandler(deadLetterChannel("jms:queue:dead?transferExchange=true"));
-------------------------------------------------------------------------
-
-Then you can consume from the JMS queue and analyze the problem:
-
-[source,java]
------------------------------------------------------------------------------------
-from("jms:queue:dead").to("bean:myErrorAnalyzer");
-
-// and in our bean
-String body = exchange.getIn().getBody();
-Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-// the cause message is
-String problem = cause.getMessage();
------------------------------------------------------------------------------------
-
-#### Using JMS as a Dead Letter Channel storing error only
-
-You can use JMS to store the cause error message or to store a custom
-body, which you can initialize yourself. The following example uses the
-Message Translator EIP to do a
-transformation on the failed exchange before it is moved to the
-<<jms-component,JMS>> dead letter queue:
-
-[source,java]
---------------------------------------------------------------------------------------------------
-// we sent it to a seda dead queue first
-errorHandler(deadLetterChannel("seda:dead"));
-
-// and on the seda dead queue we can do the custom transformation before its sent to the JMS queue
-from("seda:dead").transform(exceptionMessage()).to("jms:queue:dead");
---------------------------------------------------------------------------------------------------
-
-Here we only store the original cause error message in the transform.
-You can, however, use any Expression to send
-whatever you like. For example, you can invoke a method on a Bean or use
-a custom processor.
 
 ### Sending an InOnly message and keeping the JMSReplyTo header
 
@@ -1321,12 +1318,12 @@ For example to send an _InOnly_ message to the foo queue, but with a
 
 [source,java]
 -------------------------------------------------------------------------------------
-        template.send("activemq:queue:foo?preserveMessageQos=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("World");
-                exchange.getIn().setHeader("JMSReplyTo", "bar");
-            }
-        });
+template.send("activemq:queue:foo?preserveMessageQos=true", new Processor() {
+   public void process(Exchange exchange) throws Exception {
+      exchange.getIn().setBody("World");
+      exchange.getIn().setHeader("JMSReplyTo", "bar");
+    }
+});
 -------------------------------------------------------------------------------------
 
 Notice we use `preserveMessageQos=true` to instruct Camel to keep the
@@ -1373,13 +1370,4 @@ wmq.setDestinationResolver(new DestinationResolver() {
 
 ### See Also
 
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Transactional Client
-* Bean Integration
-* Tutorial-JmsRemoting
-* http://activemq.apache.org/jmstemplate-gotchas.html[JMSTemplate
-gotchas]
+* http://activemq.apache.org/jmstemplate-gotchas.html[JMSTemplate gotchas]

@@ -28,7 +28,7 @@ public class TraceHandlerTestHandler implements TraceEventHandler {
     private boolean traceAllNodes;
 
     public TraceHandlerTestHandler() {
-        this.eventMessages = new LinkedList<StringBuilder>();
+        this.eventMessages = new LinkedList<>();
         this.traceAllNodes = false;
     }
 

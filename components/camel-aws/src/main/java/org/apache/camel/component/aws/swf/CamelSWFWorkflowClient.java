@@ -94,7 +94,7 @@ public class CamelSWFWorkflowClient {
         WorkflowExecutionDetail executionDetail = endpoint.getSWClient().describeWorkflowExecution(describeRequest);
         WorkflowExecutionInfo instanceMetadata = executionDetail.getExecutionInfo();
 
-        Map<String, Object> info = new HashMap<String, Object>();
+        Map<String, Object> info = new HashMap<>();
         info.put("closeStatus", instanceMetadata.getCloseStatus());
         info.put("closeTimestamp", instanceMetadata.getCloseTimestamp());
         info.put("executionStatus", instanceMetadata.getExecutionStatus());

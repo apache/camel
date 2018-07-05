@@ -10,7 +10,7 @@ This endpoint only supports producers.
 ### Options
 
 // component options: START
-The Ignite ID Generator component supports 4 options which are listed below.
+The Ignite ID Generator component supports 4 options, which are listed below.
 
 
 

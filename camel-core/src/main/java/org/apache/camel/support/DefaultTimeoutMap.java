@@ -52,7 +52,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final ConcurrentMap<K, TimeoutMapEntry<K, V>> map = new ConcurrentHashMap<K, TimeoutMapEntry<K, V>>();
+    private final ConcurrentMap<K, TimeoutMapEntry<K, V>> map = new ConcurrentHashMap<>();
     private final ScheduledExecutorService executor;
     private volatile ScheduledFuture<?> future;
     private final long purgePollTime;
@@ -94,7 +94,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
     
     public V put(K key, V value, long timeoutMillis) {
-        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
+        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         if (useLock) {
             lock.lock();
         }
@@ -110,7 +110,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
     
     public V putIfAbsent(K key, V value, long timeoutMillis) {
-        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
+        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         if (useLock) {
             lock.lock();
         }
@@ -191,7 +191,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         
         long now = currentTime();
 
-        List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K, V>>();
+        List<TimeoutMapEntry<K, V>> expired = new ArrayList<>();
 
         if (useLock) {
             lock.lock();
@@ -220,7 +220,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                     }
                 });
 
-                List<K> evicts = new ArrayList<K>(expired.size());
+                List<K> evicts = new ArrayList<>(expired.size());
                 try {
                     // now fire eviction notification
                     for (TimeoutMapEntry<K, V> entry : expired) {

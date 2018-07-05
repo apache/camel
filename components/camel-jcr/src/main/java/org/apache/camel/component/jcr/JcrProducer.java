@@ -91,7 +91,7 @@ public class JcrProducer extends DefaultProducer {
     }
 
     private Map<String, Object> filterComponentHeaders(Map<String, Object> properties) {
-        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+        Map<String, Object> result = new HashMap<>(properties.size());
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             if (!key.equals(JcrConstants.JCR_NODE_NAME) && !key.equals(JcrConstants.JCR_OPERATION) && !key.equals(JcrConstants.JCR_NODE_TYPE)) {

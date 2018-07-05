@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class NewCommentConsumer extends AbstractJIRAConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(NewCommentConsumer.class);
 
-    private List<Long> commentIds = new ArrayList<Long>();
+    private List<Long> commentIds = new ArrayList<>();
 
     public NewCommentConsumer(JIRAEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -63,7 +63,7 @@ public class NewCommentConsumer extends AbstractJIRAConsumer {
 
     // In the end, we want *new* comments oldest to newest.
     private Stack<Comment> getComments() {
-        Stack<Comment> newComments = new Stack<Comment>();
+        Stack<Comment> newComments = new Stack<>();
         List<BasicIssue> issues = getIssues();
         for (BasicIssue issue : issues) {
             Issue fullIssue = client().getIssueClient().getIssue(issue.getKey(), null);

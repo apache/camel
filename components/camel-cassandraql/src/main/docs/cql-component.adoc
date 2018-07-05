@@ -245,3 +245,25 @@ Alternatively, the `CassandraAggregationRepository` does not have a
 |`readConsistencyLevel` |  | Consistency level used to read/check exchange: `ONE`, `TWO`, `QUORUM`,
 `LOCAL_QUORUM`…
 |=======================================================================
+
+=== Examples
+
+To insert something on a table you can use the following code:
+
+[source,java]
+---------------------------------------------------------
+String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
+from("direct:input")
+    .to("cql://localhost/camel_ks?cql=" + CQL);
+---------------------------------------------------------
+
+At this point you should be able to insert data by using a list as body
+
+[source,java]
+---------------------------------------------------------
+Arrays.asList("davsclaus", "Claus", "Ibsen")
+---------------------------------------------------------
+
+The same approach can be used for updating or querying the table.
+
+

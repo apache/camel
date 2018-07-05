@@ -44,7 +44,7 @@ public class SplitterUsingBeanReturningMessageTest extends ContextTestSupport {
             Message in = exchange.getIn();
             assertNotNull(in.toString());
 
-            List<Message> msgs = new LinkedList<Message>();
+            List<Message> msgs = new LinkedList<>();
 
             Message copy = in.copy();
             assertNotNull(copy.toString());

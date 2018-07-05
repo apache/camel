@@ -74,11 +74,16 @@ public class BasicValidationHandler extends AbstractHandler {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
-        if (responseContent != null) {
+        String content = buildResponse(request);
+        if (content != null) {
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter out = response.getWriter();
-            out.print(responseContent);
+            out.print(content);
         }
+    }
+
+    protected String buildResponse(HttpServletRequest request) {
+        return responseContent;
     }
 
     protected boolean validateQuery(HttpServletRequest request) {

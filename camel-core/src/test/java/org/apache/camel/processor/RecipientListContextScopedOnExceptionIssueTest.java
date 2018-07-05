@@ -67,7 +67,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
 
         String foo = "direct:foo,direct:fail";
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 
@@ -108,7 +108,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
 
         String foo = "direct:foo,direct:fail";
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 

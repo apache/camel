@@ -111,7 +111,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
         Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
 
-        Map<String, Object> customHeaders = new HashMap<String, Object>();
+        Map<String, Object> customHeaders = new HashMap<>();
         customHeaders.put("stringHeader", "A string");
         customHeaders.put("bigDecimalHeader", new BigDecimal("12.34"));
         customHeaders.put("integerHeader", 42);
@@ -342,6 +342,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     public void createEndpointWithExclusiveEnabled() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusive=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isExclusive());
+    }
+
+    @Test
+    public void createEndpointWithExclusiveConsumerEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusiveConsumer=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isExclusiveConsumer());
     }
 
     @Test

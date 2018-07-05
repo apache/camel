@@ -95,6 +95,14 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
         return processor.isIgnoreInvalidEndpoint();
     }
 
+    public Boolean isAllowOptimisedComponents() {
+        return processor.isAllowOptimisedComponents();
+    }
+
+    public Boolean isOptimised() {
+        return processor.getDynamicAware() != null;
+    }
+
     @Override
     public TabularData extendedInformation() {
         try {

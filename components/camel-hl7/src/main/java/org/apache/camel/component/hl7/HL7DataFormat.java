@@ -89,7 +89,7 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  */
 public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
+    private static final Map<String, String> HEADER_MAP = new HashMap<>();
 
     private HapiContext hapiContext;
     private Parser parser;

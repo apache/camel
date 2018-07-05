@@ -33,7 +33,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupport {
 
     private static final String FAKE = "!!! Get DataSource fake !!!";
-    private final Hashtable<String, String> env = new Hashtable<String, String>();
+    private final Hashtable<String, String> env = new Hashtable<>();
 
     @Override
     protected void setUp() throws Exception {

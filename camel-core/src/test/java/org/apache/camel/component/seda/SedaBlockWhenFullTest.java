@@ -30,7 +30,8 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final int DELAY_LONG = 100;
     private static final String MOCK_URI = "mock:blockWhenFullOutput";
     private static final String SIZE_PARAM = "?size=%d";
-    private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0";
+    private static final String SEDA_WITH_OFFER_TIMEOUT_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&offerTimeout=100";
+    private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=200";
     private static final String DEFAULT_URI = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE);
 
     @Override
@@ -44,6 +45,22 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
                 from(DEFAULT_URI).delay(DELAY).to("mock:whatever");
             }
         };
+    }
+    
+    
+   
+    public void testSedaOfferTimeoutWhenFull() throws Exception {
+        try {
+            SedaEndpoint seda = context.getEndpoint(SEDA_WITH_OFFER_TIMEOUT_URI, SedaEndpoint.class);
+            assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
+
+            sendTwoOverCapacity(SEDA_WITH_OFFER_TIMEOUT_URI, QUEUE_SIZE);
+
+            fail("Fails to insert element into queue, "
+                    + "after timeout of"  + seda.getOfferTimeout() + "milliseconds");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalStateException.class, e.getCause());
+        }
     }
 
     public void testSedaDefaultWhenFull() throws Exception {
@@ -61,7 +78,6 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
 
     public void testSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 2);
-        
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 

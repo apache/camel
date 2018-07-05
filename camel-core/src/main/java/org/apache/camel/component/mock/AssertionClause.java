@@ -39,7 +39,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
 
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
-    private final Set<Predicate> predicates = new LinkedHashSet<Predicate>();
+    private final Set<Predicate> predicates = new LinkedHashSet<>();
     private final Expression previous = new PreviousTimestamp();
     private final Expression next = new NextTimestamp();
 
@@ -75,7 +75,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
      * Adds the given predicate to this assertion clause
      */
     public ExpressionClause<AssertionClause> predicate() {
-        ExpressionClause<AssertionClause> clause = new ExpressionClause<AssertionClause>(this);
+        ExpressionClause<AssertionClause> clause = new ExpressionClause<>(this);
         addPredicate(clause);
         return clause;
     }

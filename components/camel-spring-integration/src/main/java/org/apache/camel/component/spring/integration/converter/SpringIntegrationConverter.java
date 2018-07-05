@@ -56,7 +56,7 @@ public final class SpringIntegrationConverter {
 
         // Create a new spring message and copy the attributes and body from the camel message
         MessageHeaders messageHeaders = new MessageHeaders(camelMessage.getHeaders());
-        return new GenericMessage<Object>(camelMessage.getBody(), messageHeaders);
+        return new GenericMessage<>(camelMessage.getBody(), messageHeaders);
     }
 
     @Converter

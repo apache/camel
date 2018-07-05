@@ -51,7 +51,7 @@ import org.junit.Test;
 public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
 
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
-    private static List<String> received = new ArrayList<String>();
+    private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(10);
     protected Properties originalValues = new Properties();
     protected String pwd = "changeit";

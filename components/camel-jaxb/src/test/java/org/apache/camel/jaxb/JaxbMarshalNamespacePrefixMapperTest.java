@@ -35,7 +35,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("http://www.camel.apache.org/jaxb/example/order/1", "o");
         map.put("http://www.camel.apache.org/jaxb/example/address/1", "a");
 

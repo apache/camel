@@ -45,7 +45,7 @@ metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ### Options
 
 // component options: START
-The Metrics component supports 2 options which are listed below.
+The Metrics component supports 2 options, which are listed below.
 
 
 
@@ -153,11 +153,6 @@ class MyBean extends RouteBuilder {
 }
 ----
 
-CAUTION: `MetricRegistry` uses internal thread(s) for reporting. There is no
-public API in version DropWizard `3.0.1` for users to clean up on exit. Thus using
-Camel Metrics Component leads to Java classloader leak and my cause
-`OutOfMemoryErrors` in some cases.
-
 ### Usage
 
 Each metric has type and name. Supported types are
@@ -228,7 +223,7 @@ from("direct:in")
 ----
 // decrement counter simple.counter by 3
 from("direct:in")
-    .to("metric:counter:simple.counter?decrement=3")
+    .to("metrics:counter:simple.counter?decrement=3")
     .to("direct:out");
 ----
 
@@ -249,7 +244,7 @@ values specified in Metrics component URI.
 // update counter simple.counter by 417
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_COUNTER_INCREMENT, constant(417L))
-    .to("metric:counter:simple.counter?increment=7")
+    .to("metrics:counter:simple.counter?increment=7")
     .to("direct:out");
 ----
 
@@ -314,7 +309,7 @@ component URI.
 // adds value 992 to simple.histogram
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_HISTOGRAM_VALUE, constant(992L))
-    .to("metric:histogram:simple.histogram?value=700")
+    .to("metrics:histogram:simple.histogram?value=700")
     .to("direct:out")
 
 ----
@@ -368,7 +363,7 @@ component URI.
 // updates meter simple.meter with value 345
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_METER_MARK, constant(345L))
-    .to("metric:meter:simple.meter?mark=123")
+    .to("metrics:meter:simple.meter?mark=123")
     .to("direct:out");
 ----
 
@@ -421,7 +416,7 @@ component URI.
 // sets timer action using header
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_TIMER_ACTION, TimerAction.start)
-    .to("metric:timer:simple.timer")
+    .to("metrics:timer:simple.timer")
     .to("direct:out");
 ----
 
@@ -446,7 +441,7 @@ If `subject` is not defined it's simply ignored, i.e. the gauge is not registere
 ----
 // update gauge "simple.gauge" by a bean "mySubjectBean"
 from("direct:in")
-    .to("metric:gauge:simple.gauge?subject=#mySubjectBean")
+    .to("metrics:gauge:simple.gauge?subject=#mySubjectBean")
     .to("direct:out");
 ----
 
@@ -467,7 +462,7 @@ default one specified in a URI.
 // update gauge simple.gauge by a String literal "myUpdatedSubject"
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_GAUGE_SUBJECT, constant("myUpdatedSubject"))
-    .to("metric:counter:simple.gauge?subject=#mySubjectBean")
+    .to("metrics:counter:simple.gauge?subject=#mySubjectBean")
     .to("direct:out");
 ----
 
@@ -535,7 +530,7 @@ is the name of the route. And `###type###` is the value of responses.
 
  
 
-From Java code tou can get hold of
+From Java code you can get hold of
 the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`
 as shown below:

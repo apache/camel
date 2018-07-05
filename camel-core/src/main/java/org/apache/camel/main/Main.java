@@ -162,7 +162,7 @@ public class Main extends MainSupport {
     }
 
     protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> answer = new HashMap<String, CamelContext>();
+        Map<String, CamelContext> answer = new HashMap<>();
 
         CamelContext camelContext = createContext();
         if (registry.size() > 0) {

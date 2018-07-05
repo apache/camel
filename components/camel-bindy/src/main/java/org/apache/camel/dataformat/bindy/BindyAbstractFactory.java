@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
-    protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
+    protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<>();
     protected FormatFactory formatFactory;
     protected Set<Class<?>> models;
     protected Set<String> modelClassNames;
@@ -68,8 +68,8 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @throws Exception
      */
     public void initModel() throws Exception {
-        models = new HashSet<Class<?>>();
-        modelClassNames = new HashSet<String>();
+        models = new HashSet<>();
+        modelClassNames = new HashSet<>();
         
         loadModels(type);
     }
@@ -161,7 +161,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @throws Exception can be thrown
      */
     public Map<String, Object> factory() throws Exception {
-        Map<String, Object> mapModel = new HashMap<String, Object>();
+        Map<String, Object> mapModel = new HashMap<>();
 
         for (Class<?> cl : models) {
             Object obj = ObjectHelper.newInstance(cl);

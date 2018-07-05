@@ -37,7 +37,7 @@ public class RestletMultiUriTemplatesEndpointTest extends RestletTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("/users/{username}");
         list.add("/atom/collection/{id}/component/{cid}");
 

@@ -26,7 +26,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StatefulService;
 import org.apache.camel.impl.JavaUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
@@ -60,7 +59,7 @@ public class CuratorLeaderElection {
     private final String candidateName;
     private final Lock lock = new ReentrantLock();
     private final CountDownLatch electionComplete = new CountDownLatch(1);
-    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
+    private final List<ElectionWatcher> watchers = new ArrayList<>();
     private AtomicBoolean masterNode = new AtomicBoolean(false);
     private volatile boolean isCandidateCreated;
     private int enabledCount = 1;

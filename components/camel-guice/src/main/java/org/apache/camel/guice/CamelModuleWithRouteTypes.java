@@ -47,7 +47,7 @@ public class CamelModuleWithRouteTypes extends CamelModule {
     private Set<Class<? extends RoutesBuilder>> routes;
 
     public CamelModuleWithRouteTypes(Class<? extends RoutesBuilder>... routeTypes) {
-        this.routes = new HashSet<Class<? extends RoutesBuilder>>();
+        this.routes = new HashSet<>();
         for (Class<? extends RoutesBuilder> route : routeTypes) {
             routes.add(route);
         }

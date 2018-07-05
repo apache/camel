@@ -42,7 +42,7 @@ public class GridFsProducerOperationsTest extends AbstractMongoDbTest {
     
     @Test
     public void testOperations() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         String fn = "filename.for.db.txt";
         assertEquals(0, gridfs.find(fn).size());
         

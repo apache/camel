@@ -87,7 +87,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
     public void testBeanParameterNoBody() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Is Hadrian 21 years old?");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("SomeTest", true);
         headers.put("SomeAge", 21);
         headers.put("SomeName", "Hadrian");

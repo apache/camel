@@ -69,7 +69,7 @@ public class DnsDigEndpointTest extends CamelTestSupport {
                 return RESPONSE_MONKEY.equals(str);
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "monkey.wp.dg.cx");
         headers.put("dns.type", "TXT");
         template.sendBodyAndHeaders(null, headers);

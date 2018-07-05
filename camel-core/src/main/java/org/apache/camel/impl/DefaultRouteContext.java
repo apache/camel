@@ -33,6 +33,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
@@ -52,14 +53,14 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class DefaultRouteContext implements RouteContext {
-    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
+    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private FromDefinition from;
     private final Collection<Route> routes;
     private Endpoint endpoint;
-    private final List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
+    private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private InterceptStrategy managedInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
@@ -70,7 +71,7 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
-    private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
+    private List<RoutePolicy> routePolicyList = new ArrayList<>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
     private RouteError routeError;
@@ -88,7 +89,7 @@ public class DefaultRouteContext implements RouteContext {
      */
     public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.routes = new ArrayList<Route>();
+        this.routes = new ArrayList<>();
         this.route = new RouteDefinition("temporary");
     }
 
@@ -236,6 +237,34 @@ public class DefaultRouteContext implements RouteContext {
                 rest = "true";
             }
             edcr.getProperties().put(Route.REST_PROPERTY, rest);
+
+            List<PropertyDefinition> properties = route.getRouteProperties();
+            if (properties != null) {
+                final String[] reservedProperties = new String[] {
+                    Route.ID_PROPERTY,
+                    Route.PARENT_PROPERTY,
+                    Route.GROUP_PROPERTY,
+                    Route.REST_PROPERTY,
+                    Route.DESCRIPTION_PROPERTY
+                };
+
+                for (PropertyDefinition prop : properties) {
+                    try {
+                        final String key = CamelContextHelper.parseText(camelContext, prop.getKey());
+                        final String val = CamelContextHelper.parseText(camelContext, prop.getValue());
+
+                        for (String property : reservedProperties) {
+                            if (property.equalsIgnoreCase(key)) {
+                                throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
+                            }
+                        }
+
+                        edcr.getProperties().put(key, val);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
+            }
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);

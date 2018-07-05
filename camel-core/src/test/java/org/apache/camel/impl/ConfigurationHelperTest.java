@@ -170,7 +170,7 @@ public class ConfigurationHelperTest {
         Field[] fields = clazz.getDeclaredFields();
         
         // Put the Fields in a Map first for a prettier print
-        Map<String, Field> map = new HashMap<String, Field>();
+        Map<String, Field> map = new HashMap<>();
 
         URIField anno = null;
         for (final Field field : fields) {

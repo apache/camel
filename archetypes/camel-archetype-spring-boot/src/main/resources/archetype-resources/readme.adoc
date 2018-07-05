@@ -26,13 +26,13 @@ You can run this example using
 To show a summary of all the routes
 
 ----
-curl -XGET -s http://localhost:8080/camel/routes
+curl -XGET -s http://localhost:8080/camelroutes
 ----
 
 To show detailed information for a specific route
 
 ----
-curl -XGET -s http://localhost:8080/camel/routes/{id}/info
+curl -XGET -s http://localhost:8080/camelroutes/{id}/detail
 ----
 
 

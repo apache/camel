@@ -35,6 +35,8 @@ public class CamelZookeeperTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelZookeeperTest.class))
+                .includeTestDependencies(false)
+                .unitTestsEnabled(false)
                 .build();
     }
 

@@ -36,8 +36,7 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
         StringBuilder sb = new StringBuilder("Camel rocks!");
 
         int mimeFoldingLimit = 76;
-        int headerLength = "subject: ".length();
-        for (int i = 0; headerLength + sb.length() <= mimeFoldingLimit; i++) {
+        while (sb.length() <= mimeFoldingLimit) {
             sb.insert(7, "o");
         }
         longSubject = sb.toString();

@@ -41,8 +41,8 @@ import javax.ws.rs.core.Response;
 @Path("/customerservice/")
 public class CustomerService {
     private final AtomicLong currentId = new AtomicLong(123L);
-    private final Map<Long, Customer> customers = new ConcurrentHashMap<Long, Customer>();
-    private final Map<Long, Order> orders = new ConcurrentHashMap<Long, Order>();
+    private final Map<Long, Customer> customers = new ConcurrentHashMap<>();
+    private final Map<Long, Order> orders = new ConcurrentHashMap<>();
 
     public CustomerService() {
         init();
@@ -68,7 +68,7 @@ public class CustomerService {
     @Path("/customers/")
     @Produces("application/xml")
     public List<Customer> getCustomers() {
-        List<Customer> list = new ArrayList<Customer>(customers.values());
+        List<Customer> list = new ArrayList<>(customers.values());
         return list;
     }
     

@@ -88,7 +88,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     private Authentication createAuthenticationToken(String username, String password, String... roles) {
         Authentication authToken;
         if (roles != null && roles.length > 0) {
-            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roles.length);
+            List<GrantedAuthority> authorities = new ArrayList<>(roles.length);
             for (String role : roles) {
                 authorities.add(new SimpleGrantedAuthority(role));
             }

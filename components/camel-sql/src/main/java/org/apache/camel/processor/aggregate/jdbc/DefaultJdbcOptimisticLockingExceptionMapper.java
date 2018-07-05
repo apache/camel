@@ -40,7 +40,7 @@ import org.springframework.dao.DataIntegrityViolationException;
  */
 public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimisticLockingExceptionMapper {
 
-    private final Set<String> classNames = new LinkedHashSet<String>();
+    private final Set<String> classNames = new LinkedHashSet<>();
 
     @Override
     public boolean isOptimisticLocking(Exception cause) {

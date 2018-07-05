@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
 
-    private final transient List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
+    private final transient List<JobToAdd> jobsToAdd = new ArrayList<>();
 
     @Metadata(label = "advanced")
     private Scheduler scheduler;

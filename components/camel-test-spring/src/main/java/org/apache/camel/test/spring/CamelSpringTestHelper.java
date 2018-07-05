@@ -40,9 +40,9 @@ import org.springframework.test.context.TestContext;
  */
 public final class CamelSpringTestHelper {
     
-    private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<String>();
-    private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<Class<?>>();
-    private static ThreadLocal<TestContext> testContext = new ThreadLocal<TestContext>();
+    private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<>();
+    private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<>();
+    private static ThreadLocal<TestContext> testContext = new ThreadLocal<>();
 
     private CamelSpringTestHelper() {
     }
@@ -75,7 +75,7 @@ public final class CamelSpringTestHelper {
      * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
      */
     public static Collection<Method> getAllMethods(Class<?> clazz)  {
-        Set<Method> methods = new LinkedHashSet<Method>();
+        Set<Method> methods = new LinkedHashSet<>();
         Class<?> currentClass = clazz;
         
         while (currentClass != null) {

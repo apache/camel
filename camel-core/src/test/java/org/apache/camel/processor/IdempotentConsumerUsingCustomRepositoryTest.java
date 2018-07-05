@@ -97,7 +97,7 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
     }
 
     private static final class MyRepo implements IdempotentRepository<String> {
-        private final Map<String, String> cache = new HashMap<String, String>();
+        private final Map<String, String> cache = new HashMap<>();
 
         private MyRepo() {
             // pre start with 4 already in there

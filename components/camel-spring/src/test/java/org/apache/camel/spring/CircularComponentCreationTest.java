@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
@@ -49,10 +48,9 @@ public class CircularComponentCreationTest {
 
     private void doTest(String path) {
         AbstractXmlApplicationContext applicationContext = null;
-        CamelContext camelContext = null;
         try {
             applicationContext = new ClassPathXmlApplicationContext(path);
-            camelContext = new SpringCamelContext(applicationContext);
+            new SpringCamelContext(applicationContext);
         } finally {
             IOHelper.close(applicationContext);
         }

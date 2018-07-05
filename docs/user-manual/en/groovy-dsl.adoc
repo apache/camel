@@ -400,3 +400,9 @@ Using the plain Java DSL, the route would look something like this:
             .to("direct:not-null");
 ...
 -----------------------------------
+
+[[GroovyDSL-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:dsl.adoc[DSL]

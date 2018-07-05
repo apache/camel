@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.consul;
 
+import com.orbitz.consul.Consul;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -24,6 +26,8 @@ import org.apache.camel.spi.UriParams;
 public class ConsulConfiguration extends ConsulClientConfiguration {
     @UriParam
     private String key;
+    @UriParam(label = "common")
+    private Consul consulClient;
     @UriParam(label = "producer")
     private String action;
     @UriParam(label = "producer", defaultValue = "false")
@@ -64,6 +68,17 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
      */
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public Consul getConsulClient() {
+        return consulClient;
+    }
+
+    /**
+     * Reference to a `com.orbitz.consul.Consul` in the registry.
+     */
+    public void setConsulClient(Consul consulClient) {
+        this.consulClient = consulClient;
     }
 
     // ****************************************

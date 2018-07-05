@@ -82,9 +82,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
             // clone as NettyHttpConfiguration
             NettyHttpConfiguration answer = (NettyHttpConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(getEncoders());
+            List<ChannelHandler> encodersCopy = new ArrayList<>(getEncoders());
             answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<ChannelHandler>(getDecoders());
+            List<ChannelHandler> decodersCopy = new ArrayList<>(getDecoders());
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {

@@ -120,7 +120,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
         // there can be multiple resources
         // so we have all this lovely code to turn that into an URL[]
-        final List<URL> list = new ArrayList<URL>();
+        final List<URL> list = new ArrayList<>();
         final Iterable it = ObjectHelper.createIterable(resourceUri);
         for (final Object path : it) {
             final URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), path.toString());

@@ -39,7 +39,7 @@ public class StubComponentConfiguration
      * Sets the default maximum capacity of the SEDA queue (i.e., the number of
      * messages it can hold).
      */
-    private Integer queueSize;
+    private Integer queueSize = 1000;
     /**
      * Sets the default number of concurrent threads processing exchanges.
      */
@@ -49,6 +49,22 @@ public class StubComponentConfiguration
      */
     @NestedConfigurationProperty
     private BlockingQueueFactory<Exchange> defaultQueueFactory;
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block
+     * until the queue's capacity is no longer exhausted. By default, an
+     * exception will be thrown stating that the queue is full. By enabling this
+     * option, the calling thread will instead block and wait until the message
+     * can be accepted.
+     */
+    private Boolean defaultBlockWhenFull = false;
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block
+     * until the queue's capacity is no longer exhausted. By default, an
+     * exception will be thrown stating that the queue is full. By enabling this
+     * option, where a configured timeout can be added to the block case.
+     * Utilizing the .offer(timeout) method of the underlining java queue
+     */
+    private Long defaultOfferTimeout;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -79,6 +95,22 @@ public class StubComponentConfiguration
     public void setDefaultQueueFactory(
             BlockingQueueFactory<Exchange> defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
+    }
+
+    public Boolean getDefaultBlockWhenFull() {
+        return defaultBlockWhenFull;
+    }
+
+    public void setDefaultBlockWhenFull(Boolean defaultBlockWhenFull) {
+        this.defaultBlockWhenFull = defaultBlockWhenFull;
+    }
+
+    public Long getDefaultOfferTimeout() {
+        return defaultOfferTimeout;
+    }
+
+    public void setDefaultOfferTimeout(Long defaultOfferTimeout) {
+        this.defaultOfferTimeout = defaultOfferTimeout;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

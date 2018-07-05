@@ -40,7 +40,7 @@ import org.xml.sax.XMLReader;
  * Manages a pool of XMLReader (and associated SAXParser) instances for reuse.
  */
 public class XMLReaderPool {
-    private final Queue<WeakReference<XMLReader>> pool = new ConcurrentLinkedQueue<WeakReference<XMLReader>>();
+    private final Queue<WeakReference<XMLReader>> pool = new ConcurrentLinkedQueue<>();
     private final SAXParserFactory saxParserFactory;
 
     /**
@@ -86,8 +86,8 @@ public class XMLReaderPool {
      */
     private final class OneTimeXMLReader implements XMLReader {
         private final XMLReader xmlReader;
-        private final Map<String, Boolean> initFeatures = new HashMap<String, Boolean>();
-        private final Map<String, Object> initProperties = new HashMap<String, Object>();
+        private final Map<String, Boolean> initFeatures = new HashMap<>();
+        private final Map<String, Object> initProperties = new HashMap<>();
         private final ContentHandler initContentHandler;
         private final DTDHandler initDtdHandler;
         private final EntityResolver initEntityResolver;
@@ -125,7 +125,7 @@ public class XMLReaderPool {
                 xmlReader.setErrorHandler(initErrorHandler);
 
                 // return the wrapped instance to the pool
-                pool.offer(new WeakReference<XMLReader>(xmlReader));
+                pool.offer(new WeakReference<>(xmlReader));
             } finally {
                 readerInvalid = true;
             }

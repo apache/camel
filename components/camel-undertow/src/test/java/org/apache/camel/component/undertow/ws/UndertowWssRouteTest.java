@@ -114,7 +114,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        final List<String> received = new ArrayList<String>();
+        final List<String> received = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(10);
 
         AsyncHttpClient c = createAsyncHttpSSLClient();

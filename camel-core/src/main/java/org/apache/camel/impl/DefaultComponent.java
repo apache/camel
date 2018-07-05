@@ -344,14 +344,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         Object value = parameters.remove(key);
-        if (value == null) {
+        if (value != null) {
+            // if we have a value then convert it
+            return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
+        } else {
             value = defaultValue;
         }
         if (value == null) {
             return null;
         }
 
-        return CamelContextHelper.convertTo(getCamelContext(), type, value);
+        return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
     }
 
     /**

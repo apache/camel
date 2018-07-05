@@ -53,7 +53,7 @@ public class CamelContinuationServlet extends CamelServlet {
     // we must remember expired exchanges as Jetty will initiate a new continuation when we send
     // back the error when timeout occurred, and thus in the async callback we cannot check the
     // continuation if it was previously expired. So that's why we have our own map for that
-    private final Map<String, String> expiredExchanges = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> expiredExchanges = new ConcurrentHashMap<>();
 
     @Override
     protected void doService(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -62,9 +62,19 @@ public class CamelContinuationServlet extends CamelServlet {
         // is there a consumer registered for the request.
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
+            // okay we cannot process this requires so return either 404 or 405.
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
+            if (hasAnyMethod) {
+                log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                return;
+            } else {
+                log.debug("No consumer to service request {} as resource is not found", request);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        }       
 
         // figure out if continuation is enabled and what timeout to use
         boolean useContinuation = false;

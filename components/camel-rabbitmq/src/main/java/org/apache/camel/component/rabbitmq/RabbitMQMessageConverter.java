@@ -78,6 +78,9 @@ public class RabbitMQMessageConverter {
         if (properties.getUserId() != null) {
             exchange.getIn().setHeader(RabbitMQConstants.USERID, properties.getUserId());
         }
+        if (properties.getDeliveryMode() != null) {
+            exchange.getIn().setHeader(RabbitMQConstants.DELIVERY_MODE, properties.getDeliveryMode());
+        }
     }
 
     public AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {

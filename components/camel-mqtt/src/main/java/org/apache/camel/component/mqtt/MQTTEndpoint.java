@@ -69,7 +69,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     private CallbackConnection connection;
     private volatile boolean connected;
-    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
+    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<>();
 
     @UriPath @Metadata(required = "true")
     private String name;
@@ -310,7 +310,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     void connect() throws Exception {
-        final Promise<Object> promise = new Promise<Object>();
+        final Promise<Object> promise = new Promise<>();
         connection.connect(new Callback<Void>() {
             public void onSuccess(Void value) {
                 LOG.debug("Connected to {}", configuration.getHost());

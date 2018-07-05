@@ -66,7 +66,7 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         // Prepare test
         assertEquals(0, testCollection.count());
         Object[] req = new Object[] {"{\"_id\":\"testSave1\", \"scientist\":\"Einstein\"}", "{\"_id\":\"testSave2\", \"scientist\":\"Copernicus\"}"};
-        Object result = template.requestBody("direct:insert", req);
+        template.requestBody("direct:insert", req);
         //assertTrue(result instanceof WriteResult);
         assertEquals("Number of records persisted must be 2", 2, testCollection.count());
         

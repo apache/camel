@@ -110,10 +110,10 @@ abstract class AbstractTracked {
      * AbstractTracked constructor.
      */
     AbstractTracked() {
-        tracked = new HashMap<Object, Object>();
+        tracked = new HashMap<>();
         trackingCount = 0;
-        adding = new ArrayList<Object>(6);
-        initial = new LinkedList<Object>();
+        adding = new ArrayList<>(6);
+        initial = new LinkedList<>();
         closed = false;
     }
 

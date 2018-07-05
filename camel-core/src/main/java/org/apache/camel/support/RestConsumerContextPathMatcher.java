@@ -116,7 +116,7 @@ public final class RestConsumerContextPathMatcher {
     public static ConsumerPath matchBestPath(String requestMethod, String requestPath, List<ConsumerPath> consumerPaths) {
         ConsumerPath answer = null;
 
-        List<ConsumerPath> candidates = new ArrayList<ConsumerPath>();
+        List<ConsumerPath> candidates = new ArrayList<>();
 
         // first match by http method
         for (ConsumerPath entry : consumerPaths) {

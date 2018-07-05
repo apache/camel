@@ -479,7 +479,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
     }
     
     private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        Map<String, String> answer  = new LinkedHashMap<>();
         for (String param : queryString.split("&")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
@@ -538,7 +538,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
     }
 
     private Map<String, String> getMatrixParametersFromMatrixString(String matrixString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        Map<String, String> answer  = new LinkedHashMap<>();
         for (String param : matrixString.split(";")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
@@ -616,7 +616,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
 
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         if (response instanceof Response) {
 
             for (Map.Entry<String, List<Object>> entry : ((Response) response).getMetadata().entrySet()) {
@@ -845,7 +845,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
         
         ClientFactoryBeanCache(final int maxCacheSize) {
-            this.cache = new LRUSoftCache<String, JAXRSClientFactoryBean>(maxCacheSize);
+            this.cache = new LRUSoftCache<>(maxCacheSize);
         }
         
         public void start() throws Exception {

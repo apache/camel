@@ -39,7 +39,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
-    private final Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<String, AtomicInteger>();
+    private final Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<>();
     private PooledConnectionFactory connectionFactory;
     private ExecutorService executorService;
 

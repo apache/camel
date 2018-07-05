@@ -33,12 +33,12 @@ import org.apache.camel.impl.JndiRegistry;
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
     private final String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
-    private final Set<String> names = new TreeSet<String>();
+    private final Set<String> names = new TreeSet<>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyDirectoryFilter<Object>());
+        jndi.bind("myFilter", new MyDirectoryFilter<>());
         return jndi;
     }
 
@@ -67,7 +67,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         // check names
         assertEquals(4, names.size());
         // copy to list so its easier to index
-        List<String> list = new ArrayList<String>(names);
+        List<String> list = new ArrayList<>(names);
         list.sort(null);
 
         assertEquals("okDir", list.get(0));

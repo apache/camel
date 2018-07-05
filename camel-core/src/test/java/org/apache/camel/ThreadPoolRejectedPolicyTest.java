@@ -33,11 +33,11 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
 
-        final MockCallable<String> task1 = new MockCallable<String>();
+        final MockCallable<String> task1 = new MockCallable<>();
         final Future<?> result1 = executorService.submit(task1);
         final MockRunnable task2 = new MockRunnable();
         final Future<?> result2 = executorService.submit(task2);
-        final MockCallable<String> task3 = new MockCallable<String>();
+        final MockCallable<String> task3 = new MockCallable<>();
         try {
             executorService.submit(task3);
             fail("Third task should have been rejected by a threadpool is full with 1 task and queue is full with 1 task.");
@@ -57,12 +57,12 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
-        final MockRejectableCallable<String> task2 = new MockRejectableCallable<String>();
+        final MockRejectableCallable<String> task2 = new MockRejectableCallable<>();
         final Future<?> result2 = executorService.submit(task2);
         final MockRejectableRunnable task3 = new MockRejectableRunnable();
         final Future<?> result3 = executorService.submit(task3);
 
-        final MockRejectableCallable<String> task4 = new MockRejectableCallable<String>();
+        final MockRejectableCallable<String> task4 = new MockRejectableCallable<>();
         final Future<?> result4 = executorService.submit(task4);
 
         shutdownAndAwait(executorService);

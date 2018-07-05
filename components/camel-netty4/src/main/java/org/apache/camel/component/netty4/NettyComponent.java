@@ -81,7 +81,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
         // merge any custom bootstrap configuration on the config
         NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap<>();
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
@@ -121,7 +121,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     }
 
     /**
-     * To use the given EventExecutorGroup
+     * To use the given EventExecutorGroup.
      */
     public void setExecutorService(EventExecutorGroup executorService) {
         this.executorService = executorService;

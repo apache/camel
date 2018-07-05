@@ -164,6 +164,7 @@ i.e. You may have an instance in NYC and an instance in SFO. You would configure
 		<property name="hostname" value="service.example.com" />
 		<property name="resolvesTo" value="nyc-service.example.com" />
 		<property name="ttl" value="60000" />
+		<property name="stopRoutesOnException" value="false" />
 	</bean>
 
 	<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">

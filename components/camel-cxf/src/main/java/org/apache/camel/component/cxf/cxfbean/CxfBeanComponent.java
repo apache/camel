@@ -33,7 +33,7 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 @Deprecated
 public class CxfBeanComponent extends HeaderFilterStrategyComponent {
 
-    private Map<String, CxfBeanEndpoint> endpoints = new HashMap<String, CxfBeanEndpoint>();
+    private Map<String, CxfBeanEndpoint> endpoints = new HashMap<>();
 
     public CxfBeanComponent() {
         super(CxfBeanEndpoint.class);
@@ -55,7 +55,7 @@ public class CxfBeanComponent extends HeaderFilterStrategyComponent {
         setProperties(answer, parameters);
 
         // add to the endpoints map before calling the endpoint's init() method to 
-        // make sure the the CxfBeanDestination activate() method can find the endpoint 
+        // make sure the CxfBeanDestination activate() method can find the endpoint 
         // from the map.
         endpoints.put(answer.createEndpointUri(), answer);
         answer.init();

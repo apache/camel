@@ -63,7 +63,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<String, String>();
+                Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);

@@ -28,7 +28,7 @@ import org.apache.camel.spi.SynchronizationRouteAware;
 
 public class RouteAwareSynchronizationTest extends ContextTestSupport {
 
-    private static final List<String> EVENTS = new ArrayList<String>();
+    private static final List<String> EVENTS = new ArrayList<>();
 
     public void testRouteAwareSynchronization() throws Exception {
         EVENTS.clear();

@@ -40,7 +40,14 @@ public class LRASagaCoordinator implements CamelSagaCoordinator {
 
     @Override
     public CompletableFuture<Void> beginStep(Exchange exchange, CamelSagaStep step) {
-        LRASagaStep sagaStep = LRASagaStep.fromCamelSagaStep(step, exchange);
+        LRASagaStep sagaStep;
+        try {
+            sagaStep = LRASagaStep.fromCamelSagaStep(step, exchange);
+        } catch (RuntimeException ex) {
+            return CompletableFuture.supplyAsync(() -> {
+                throw ex;
+            });
+        }
         return sagaService.getClient().join(this.lraURL, sagaStep);
     }
 

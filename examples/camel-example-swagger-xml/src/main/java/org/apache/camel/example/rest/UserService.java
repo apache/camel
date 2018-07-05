@@ -27,7 +27,7 @@ import java.util.TreeMap;
 public class UserService {
 
     // use a tree map so they become sorted
-    private final Map<String, User> users = new TreeMap<String, User>();
+    private final Map<String, User> users = new TreeMap<>();
 
     private Random ran = new Random();
 

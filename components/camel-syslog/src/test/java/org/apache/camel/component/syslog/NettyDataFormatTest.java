@@ -97,7 +97,6 @@ public class NettyDataFormatTest extends CamelTestSupport {
                     .process(new Processor() {
                         public void process(Exchange ex) {
                             assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
-                            SyslogMessage message = ex.getIn().getBody(SyslogMessage.class);
                         }
                     }).to("mock:syslogReceiver").
                     marshal(syslogDataFormat).to("mock:syslogReceiver2");

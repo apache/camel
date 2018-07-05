@@ -51,7 +51,7 @@ public class TestUserMethodsTest extends CamelFacebookTestSupport {
         assertNotNull("Test User2", testUser2);
 
         // make friends, not enemies
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelFacebook.testUser2", testUser2);
         Boolean worked = template().requestBodyAndHeaders("direct:makeFriendTestUser", testUser1, headers, Boolean.class);
         assertTrue("Friends not made", worked);

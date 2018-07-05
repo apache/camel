@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.s3;
 public enum S3Operations {
 
     copyObject,
+    listObjects,
     deleteObject,
     deleteBucket,
     listBuckets,

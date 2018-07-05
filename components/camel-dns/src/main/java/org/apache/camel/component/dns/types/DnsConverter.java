@@ -42,7 +42,7 @@ public final class DnsConverter {
 
     @Converter
     public static List<String> toList(Record[] records) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (Record rec : records) {
             list.add(toString(rec));
         }

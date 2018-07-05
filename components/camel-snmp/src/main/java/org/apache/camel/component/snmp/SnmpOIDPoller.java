@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.snmp;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -50,6 +52,9 @@ import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultTcpTransportMapping;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
+import org.snmp4j.util.DefaultPDUFactory;
+import org.snmp4j.util.TreeEvent;
+import org.snmp4j.util.TreeUtils;
 
 public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseListener {
 
@@ -167,9 +172,37 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         
         this.pdu.setType(type);
 
-        // prepare the request items
-        for (OID oid : this.endpoint.getOids()) {
-            this.pdu.add(new VariableBinding(oid));
+        if (!endpoint.isTreeList()) {
+            // prepare the request items
+            for (OID oid : this.endpoint.getOids()) {
+                this.pdu.add(new VariableBinding(oid));
+            }
+        } else {
+            TreeUtils treeUtils = new TreeUtils(snmp, new DefaultPDUFactory());
+            for (OID oid : this.endpoint.getOids()) {
+                List events = treeUtils.getSubtree(target, new OID(oid));
+                for (Object eventObj : events) {
+                    TreeEvent event = (TreeEvent) eventObj;
+                    if (event == null) {
+                        LOG.warn("Event is null");
+                        continue;
+                    }
+                    if (event.isError()) {
+                        LOG.error("Error in event: {}", event.getErrorMessage());
+                        continue;
+                    }
+                    VariableBinding[] varBindings = event.getVariableBindings();
+                    if (varBindings == null || varBindings.length == 0) {
+                        continue;
+                    }
+                    for (VariableBinding varBinding : varBindings) {
+                        if (varBinding == null) {
+                            continue;
+                        }
+                        this.pdu.add(varBinding);
+                    }
+                }
+            }
         }
 
         // send the request

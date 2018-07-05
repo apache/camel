@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class BindySimpleCsvBooleanTrueMarshallTest extends AbstractJUnit4SpringContextTests {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "andrew,true\r\n";
 
     @Produce(uri = "direct:start")
@@ -54,7 +54,7 @@ public class BindySimpleCsvBooleanTrueMarshallTest extends AbstractJUnit4SpringC
 
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         BooleanExample example = new BooleanExample();
         

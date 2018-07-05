@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
@@ -43,15 +45,18 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 
 @UriParams
-public class KafkaConfiguration implements Cloneable {
+public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware {
 
     //Common configuration properties
-    @UriPath(label = "common") @Metadata(required = "true")
+    @UriPath(label = "common")
+    @Metadata(required = "true")
     private String topic;
     @UriParam(label = "common")
     private String brokers;
     @UriParam(label = "common")
     private String clientId;
+    @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
 
     @UriParam(label = "consumer")
     private boolean topicIsPattern;
@@ -294,10 +299,10 @@ public class KafkaConfiguration implements Cloneable {
     private Double kerberosRenewWindowFactor = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_WINDOW_FACTOR;
     @UriParam(label = "common,security", defaultValue = "DEFAULT")
     //sasl.kerberos.principal.to.local.rules
-    private String kerberosPrincipalToLocalRules; 
+    private String kerberosPrincipalToLocalRules;
     @UriParam(label = "common,security", secret = true)
     //sasl.jaas.config
-    private String saslJaasConfig;   
+    private String saslJaasConfig;
 
     public KafkaConfiguration() {
     }
@@ -343,7 +348,7 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, ProducerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, isEnableIdempotence());
         addPropertyIfNotNull(props, ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
-        
+
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
@@ -403,7 +408,7 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
-        
+
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -1029,14 +1034,14 @@ public class KafkaConfiguration implements Cloneable {
     public void setSaslMechanism(String saslMechanism) {
         this.saslMechanism = saslMechanism;
     }
-    
+
     public String getSaslJaasConfig() {
         return saslJaasConfig;
     }
 
     /**
      * Expose the kafka sasl.jaas.config parameter
-     * 
+     *
      * Example:
      * org.apache.kafka.common.security.plain.PlainLoginModule required username="USERNAME" password="PASSWORD";
      */
@@ -1498,7 +1503,7 @@ public class KafkaConfiguration implements Cloneable {
      * Set if KafkaConsumer will read from beginning or end on startup:
      * beginning : read from beginning
      * end : read from end
-     * 
+     *
      * This is replacing the earlier property seekToBeginning
      */
     public void setSeekTo(String seekTo) {
@@ -1559,6 +1564,7 @@ public class KafkaConfiguration implements Cloneable {
     public String getInterceptorClasses() {
         return interceptorClasses;
     }
+
     /**
      * Sets interceptors for producer or consumers.
      * Producer interceptors have to be classes implementing {@link org.apache.kafka.clients.producer.ProducerInterceptor}
@@ -1596,4 +1602,16 @@ public class KafkaConfiguration implements Cloneable {
     public void setReconnectBackoffMaxMs(Integer reconnectBackoffMaxMs) {
         this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
 }

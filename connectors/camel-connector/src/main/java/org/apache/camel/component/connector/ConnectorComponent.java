@@ -97,6 +97,7 @@ public interface ConnectorComponent extends Component {
      *
      * @deprecated use {@link #setOptions(Map)} instead
      */
+    @Deprecated
     default void setComponentOptions(Map<String, Object> options) {
         setOptions(options);
     }

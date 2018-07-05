@@ -93,7 +93,7 @@ public class OsgiServletRegisterer {
         HttpContext actualHttpContext = (httpContext == null)
             ? httpService.createDefaultHttpContext()
             : httpContext;
-        final Dictionary<String, String> initParams = new Hashtable<String, String>();
+        final Dictionary<String, String> initParams = new Hashtable<>();
         initParams.put("matchOnUriPrefix", matchOnUriPrefix ? "true" : "false");
         initParams.put("servlet-name", servletName);
         httpService.registerServlet(alias, servlet, initParams, actualHttpContext);

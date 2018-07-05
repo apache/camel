@@ -42,7 +42,7 @@ public class RouteboxDefaultContextAndRouteBuilderTest extends RouteboxDemoTestS
         JndiRegistry registry = new JndiRegistry(createJndiContext());
         
         // Wire the routeDefinitions & dispatchStrategy to the outer camelContext where the routebox is declared
-        List<RouteBuilder> routes = new ArrayList<RouteBuilder>();
+        List<RouteBuilder> routes = new ArrayList<>();
         routes.add(new SimpleRouteBuilder());
         registry.bind("registry", createInnerRegistry());
         registry.bind("routes", routes);

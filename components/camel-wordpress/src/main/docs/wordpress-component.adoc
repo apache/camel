@@ -10,7 +10,7 @@ Currently only the **Posts** and **Users** operations are supported.
 === Options
 
 // component options: START
-The Wordpress component supports 2 options which are listed below.
+The Wordpress component supports 2 options, which are listed below.
 
 
 
@@ -26,7 +26,7 @@ The Wordpress component supports 2 options which are listed below.
 The Wordpress endpoint is configured using URI syntax:
 
 ----
-wordpress:operation
+wordpress:operationDetail
 ----
 
 with the following path and query parameters:
@@ -77,7 +77,7 @@ The `WordpressConfiguration` class can be used to set initial properties configu
 ----
 public void configure() {
     final WordpressConfiguration configuration = new WordpressConfiguration();
-    final WordpressComponent component = new WordpressComponent();
+    final WordpressComponentConfiguration component = new WordpressComponentConfiguration();
     configuration.setApiVersion("2");
     configuration.setUrl("http://yoursite.com/wp-json/");
     component.setConfiguration(configuration);

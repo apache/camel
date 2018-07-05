@@ -36,7 +36,7 @@ public class MyBatisConsumerIsolatedTest extends Assert {
         MyBatisConsumer consumer = new MyBatisConsumer(mock(MyBatisEndpoint.class), mock(Processor.class));
         consumer.setMaxMessagesPerPoll(batchSize);
 
-        Queue<Object> emptyMessageQueue = new ArrayDeque<Object>();
+        Queue<Object> emptyMessageQueue = new ArrayDeque<>();
         for (int i = 0; i < 10; i++) {
             MyBatisConsumer.DataHolder dataHolder = new MyBatisConsumer.DataHolder();
             dataHolder.exchange = new DefaultExchange(mock(CamelContext.class));

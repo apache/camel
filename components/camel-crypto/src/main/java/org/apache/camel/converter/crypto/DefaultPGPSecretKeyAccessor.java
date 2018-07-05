@@ -39,10 +39,10 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
  */
 public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
-    private final Map<String, List<PGPSecretKeyAndPrivateKeyAndUserId>> userIdPart2SecretKeyList = new HashMap<String, List<PGPSecretKeyAndPrivateKeyAndUserId>>(
+    private final Map<String, List<PGPSecretKeyAndPrivateKeyAndUserId>> userIdPart2SecretKeyList = new HashMap<>(
             3);
 
-    private final Map<Long, PGPPrivateKey> keyId2PrivateKey = new HashMap<Long, PGPPrivateKey>(3);
+    private final Map<Long, PGPPrivateKey> keyId2PrivateKey = new HashMap<>(3);
 
     private final PGPSecretKeyRingCollection pgpSecretKeyring;
 
@@ -74,7 +74,7 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
     @Override
     public List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts) throws Exception {
-        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<PGPSecretKeyAndPrivateKeyAndUserId>(3);
+        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<>(3);
         for (String useridPart : useridParts) {
             List<PGPSecretKeyAndPrivateKeyAndUserId> partResult = userIdPart2SecretKeyList.get(useridPart);
             if (partResult == null) {

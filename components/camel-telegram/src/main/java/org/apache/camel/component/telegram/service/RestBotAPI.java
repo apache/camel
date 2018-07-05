@@ -17,8 +17,8 @@
 package org.apache.camel.component.telegram.service;
 
 import java.util.List;
+
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -27,6 +27,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
@@ -50,15 +51,11 @@ public interface RestBotAPI {
 
     @POST
     @Path("/bot{authorizationToken}/sendMessage")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     void sendMessage(
             @PathParam("authorizationToken") String authorizationToken,
-            @FormParam("chat_id") String chatId,
-            @FormParam("text") String text,
-            @FormParam("parse_mode") String parseMode,
-            @FormParam("disable_web_page_preview") Boolean disableWebPagePreview,
-            @FormParam("disable_notification") Boolean disableNotification,
-            @FormParam("reply_to_message_id") Long replyToMessageId);
+            OutgoingTextMessage message);
 
 
     @POST

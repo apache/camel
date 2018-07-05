@@ -61,7 +61,7 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(topic).addMessageListener(argument.capture());
-        final Message<String> msg = new Message<String>("foo", "foo", new java.util.Date().getTime(), null);
+        final Message<String> msg = new Message<>("foo", "foo", new java.util.Date().getTime(), null);
         argument.getValue().onMessage(msg);
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);

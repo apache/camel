@@ -60,6 +60,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     private Integer cacheSize;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoint;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowOptimisedComponents;
 
     public ToDynamicDefinition() {
     }
@@ -87,7 +89,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     protected Expression createExpression(RouteContext routeContext) {
-        List<Expression> list = new ArrayList<Expression>();
+        List<Expression> list = new ArrayList<>();
 
         String[] parts = safeSplitRaw(uri);
         for (String part : parts) {
@@ -163,6 +165,16 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         return this;
     }
 
+    /**
+     * Whether to allow components to optimise toD if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
+        setAllowOptimisedComponents(allowOptimisedComponents);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -201,6 +213,14 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
+    public Boolean getAllowOptimisedComponents() {
+        return allowOptimisedComponents;
+    }
+
+    public void setAllowOptimisedComponents(Boolean allowOptimisedComponents) {
+        this.allowOptimisedComponents = allowOptimisedComponents;
+    }
+
     // Utilities
     // -------------------------------------------------------------------------
 
@@ -215,7 +235,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     private static List<Pair> checkRAW(String s) {
         Matcher matcher = RAW_PATTERN.matcher(s);
-        List<Pair> answer = new ArrayList<Pair>();
+        List<Pair> answer = new ArrayList<>();
         // Check all occurrences
         while (matcher.find()) {
             answer.add(new Pair(matcher.start(), matcher.end() - 1));

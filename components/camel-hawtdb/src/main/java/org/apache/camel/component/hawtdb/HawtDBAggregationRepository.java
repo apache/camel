@@ -239,7 +239,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public Set<String> getKeys() {
-        final Set<String> keys = new LinkedHashSet<String>();
+        final Set<String> keys = new LinkedHashSet<>();
 
         hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
@@ -283,7 +283,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public Set<String> scan(CamelContext camelContext) {
-        final Set<String> answer = new LinkedHashSet<String>();
+        final Set<String> answer = new LinkedHashSet<>();
         hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
                 // scan could potentially be running while we are shutting down so check for that

@@ -198,7 +198,6 @@ public class BoxCollaborationsManager {
      * 
      * @param collaborationId
      *            - the id of comment to change.
-     * @return The comment with changed message.
      */
     public void deleteCollaboration(String collaborationId) {
         try {

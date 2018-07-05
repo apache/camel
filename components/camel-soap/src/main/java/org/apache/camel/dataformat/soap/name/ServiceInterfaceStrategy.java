@@ -43,12 +43,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategy.class);
-    private Map<String, MethodInfo> soapActionToMethodInfo = new HashMap<String, MethodInfo>();
-    private Map<String, QName> inTypeNameToQName = new HashMap<String, QName>();
-    private Map<String, QName> outTypeNameToQName = new HashMap<String, QName>();
+    private Map<String, MethodInfo> soapActionToMethodInfo = new HashMap<>();
+    private Map<String, QName> inTypeNameToQName = new HashMap<>();
+    private Map<String, QName> outTypeNameToQName = new HashMap<>();
     private boolean isClient;
     private ElementNameStrategy fallBackStrategy;
-    private Map<QName, Class<? extends Exception>> faultNameToException = new HashMap<QName, Class<? extends Exception>>();
+    private Map<QName, Class<? extends Exception>> faultNameToException = new HashMap<>();
 
     /**
      * Init with JAX-WS service interface
@@ -90,7 +90,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     }
 
     private List<TypeInfo> getInInfo(Method method) {
-        List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
+        List<TypeInfo> typeInfos = new ArrayList<>();
         RequestWrapper requestWrapper = method.getAnnotation(RequestWrapper.class);
 
         // parameter types are returned in declaration order
@@ -107,7 +107,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         // annotations are returned in declaration order
         Annotation[][] annotations = method.getParameterAnnotations();
 
-        List<WebParam> webParams = new ArrayList<WebParam>();
+        List<WebParam> webParams = new ArrayList<>();
 
         for (Annotation[] singleParameterAnnotations : annotations) {
             for (Annotation annotation : singleParameterAnnotations) {

@@ -61,7 +61,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         this.camelContext = camelContext;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        this.tracker = new ServiceTracker<TypeConverterLoader, Object>(bundleContext, TypeConverterLoader.class.getName(), this);
+        this.tracker = new ServiceTracker<>(bundleContext, TypeConverterLoader.class.getName(), this);
     }
 
     public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
@@ -225,7 +225,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         ServiceReference<TypeConverterLoader>[] serviceReferences = this.tracker.getServiceReferences();
         if (serviceReferences != null) {
             ArrayList<ServiceReference<TypeConverterLoader>> servicesList = 
-                new ArrayList<ServiceReference<TypeConverterLoader>>(Arrays.asList(serviceReferences));
+                new ArrayList<>(Arrays.asList(serviceReferences));
             // Just make sure we install the high ranking fallback converter at last
             Collections.sort(servicesList);
             for (ServiceReference<TypeConverterLoader> sr : servicesList) {

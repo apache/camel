@@ -67,6 +67,17 @@ public class LimitsTest {
     }
 
     @Test
+    public void shouldDeserializeWithUnsupportedKeys() throws JsonProcessingException, IOException {
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
+
+        final Limits withUnsupported = mapper.readerFor(Limits.class)
+            .readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
+
+        assertNotNull(withUnsupported);
+        assertNotNull(withUnsupported.forOperation("Camel-NotSupportedKey"));
+    }
+
+    @Test
     public void shouldSupportGettingAllDefinedUsages() throws IntrospectionException {
         final BeanInfo beanInfo = Introspector.getBeanInfo(Limits.class);
 

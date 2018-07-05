@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class FacebookMethodsTypeHelperTest {
 
-    private Set<String> names = new HashSet<String>();
+    private Set<String> names = new HashSet<>();
     private final List<String> getExcludes;
     private final List<String> searchIncludes;
 
@@ -102,7 +102,7 @@ public class FacebookMethodsTypeHelperTest {
                     // will throw an exception if can't be found
                     final List<Object> arguments = FacebookMethodsTypeHelper.getArguments(method.getName());
                     final int nArgs = arguments.size() / 2;
-                    List<Class<?>> types = new ArrayList<Class<?>>(nArgs);
+                    List<Class<?>> types = new ArrayList<>(nArgs);
                     for (int i = 0; i < nArgs; i++) {
                         types.add((Class<?>) arguments.get(2 * i));
                     }

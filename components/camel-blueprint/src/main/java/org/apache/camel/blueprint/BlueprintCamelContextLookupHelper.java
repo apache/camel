@@ -39,7 +39,7 @@ public final class BlueprintCamelContextLookupHelper {
      * @return a set with the ids of the {@link BlueprintCamelContext}, never <tt>null</tt>, but can be empty set.
      */
     public static Set<String> lookupBlueprintCamelContext(BlueprintContainer container) {
-        Set<String> ids = new LinkedHashSet<String>();
+        Set<String> ids = new LinkedHashSet<>();
         for (Object id : container.getComponentIds()) {
             ComponentMetadata meta = container.getComponentMetadata(id.toString());
 

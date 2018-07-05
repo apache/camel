@@ -184,6 +184,18 @@ in a given period to avoid downstream route does not get overloaded?
 number of endpoints?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
+|Hystrix |How can I stop to call an external service if the service is broken?
+
+|image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
+|Service Call |How can I call a remote service in a distributed system
+where the service is looked up from a service registry of some sorts?
+
+|image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
+|Saga |How can I define a series of related actions in a Camel route
+that should be either completed successfully (all of them) or not-executed/compensated?
+
+
+|image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
 |Multicast |How can I route a message to a number
 of endpoints at the same time?
 

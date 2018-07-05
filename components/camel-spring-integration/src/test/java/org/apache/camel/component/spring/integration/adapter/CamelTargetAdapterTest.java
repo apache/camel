@@ -71,9 +71,9 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         final CountDownLatch latch = new CountDownLatch(1);
         MessageChannel requestChannel = getMandatoryBean(MessageChannel.class, "channelD");
         DirectChannel responseChannel = getMandatoryBean(DirectChannel.class, "channelC");
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MessageHeaders.REPLY_CHANNEL, responseChannel);
-        GenericMessage<String> message = new GenericMessage<String>(MESSAGE_BODY, headers);
+        GenericMessage<String> message = new GenericMessage<>(MESSAGE_BODY, headers);
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();

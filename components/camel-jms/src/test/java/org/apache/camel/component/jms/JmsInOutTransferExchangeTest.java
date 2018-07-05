@@ -60,7 +60,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(new SerializableRequestDto("Restless Camel"));
                 
-                Map<String, Object> map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("boolean", Boolean.TRUE);
                 map.put("string", "hello");
                 map.put("long", new Long(123));

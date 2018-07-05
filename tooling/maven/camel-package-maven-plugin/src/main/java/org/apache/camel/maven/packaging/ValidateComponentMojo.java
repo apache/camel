@@ -99,7 +99,7 @@ public class ValidateComponentMojo extends AbstractMojo {
         if (!validate) {
             getLog().info("Validation disabled");
         } else {
-            final Set<File> jsonFiles = new TreeSet<File>();
+            final Set<File> jsonFiles = new TreeSet<>();
             PackageHelper.findJsonFiles(outDir, jsonFiles, new CamelComponentsFileFilter());
             boolean failed = false;
 

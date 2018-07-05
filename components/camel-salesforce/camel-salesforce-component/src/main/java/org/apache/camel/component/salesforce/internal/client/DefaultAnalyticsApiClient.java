@@ -118,7 +118,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
         if (!useGet) {
             try {
                 // wrap reportMetadata in a map
-                final HashMap<String, Object> input = new HashMap<String, Object>();
+                final HashMap<String, Object> input = new HashMap<>();
                 input.put("reportMetadata", reportMetadata);
                 marshalRequest(input, request);
             } catch (SalesforceException e) {
@@ -152,7 +152,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
         if (reportMetadata != null) {
             try {
                 // wrap reportMetadata in a map
-                final HashMap<String, Object> input = new HashMap<String, Object>();
+                final HashMap<String, Object> input = new HashMap<>();
                 input.put("reportMetadata", reportMetadata);
                 marshalRequest(input, request);
             } catch (SalesforceException e) {

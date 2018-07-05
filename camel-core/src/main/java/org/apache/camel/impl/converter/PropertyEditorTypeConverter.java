@@ -45,7 +45,7 @@ public class PropertyEditorTypeConverter implements TypeConverter {
     @SuppressWarnings("unchecked")
     private final Map<Class<?>, Class<?>> misses = LRUCacheFactory.newLRUSoftCache(1000);
     // we don't anticipate so many property editors so we have unbounded map
-    private final Map<Class<?>, PropertyEditor> cache = new HashMap<Class<?>, PropertyEditor>();
+    private final Map<Class<?>, PropertyEditor> cache = new HashMap<>();
 
     public void clear() {
         cache.clear();

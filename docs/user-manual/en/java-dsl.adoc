@@ -195,6 +195,6 @@ RouteBuilder builder = new RouteBuilder() {
 See Also
 ^^^^^^^^
 
-* DSL
-* Examples
+* link:dsl.adoc[DSL]
+
 

@@ -32,7 +32,7 @@ import static org.apache.camel.component.hl7.HL7.terser;
 ### Terser Language options
 
 // language options: START
-The HL7 Terser language supports 1 options which are listed below.
+The HL7 Terser language supports 1 options, which are listed below.
 
 
 

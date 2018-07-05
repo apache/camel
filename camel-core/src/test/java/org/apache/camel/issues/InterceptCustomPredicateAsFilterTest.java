@@ -35,7 +35,7 @@ public class InterceptCustomPredicateAsFilterTest extends ContextTestSupport {
 
     private static class MyFiler implements Predicate {
 
-        private List<String> bodies = new ArrayList<String>();
+        private List<String> bodies = new ArrayList<>();
 
         public boolean matches(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);

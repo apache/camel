@@ -295,7 +295,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public void addModule(Module module) {
         if (this.modules == null) {
-            this.modules = new ArrayList<Module>();
+            this.modules = new ArrayList<>();
         }
         this.modules.add(module);
     }

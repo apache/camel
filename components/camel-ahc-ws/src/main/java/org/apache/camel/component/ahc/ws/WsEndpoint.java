@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
-    private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
+    private final Set<WsConsumer> consumers = new HashSet<>();
     private final WsListener listener = new WsListener();
     private transient WebSocket websocket;
 

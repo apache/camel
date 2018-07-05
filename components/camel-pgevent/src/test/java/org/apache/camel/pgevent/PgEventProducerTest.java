@@ -30,7 +30,7 @@ import org.apache.camel.component.pgevent.PgEventEndpoint;
 import org.apache.camel.component.pgevent.PgEventProducer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertTrue;
@@ -113,7 +113,7 @@ public class PgEventProducerTest {
         when(message.getBody(String.class)).thenReturn("pgevent");
         when(endpoint.getChannel()).thenReturn("camel");
         when(connection.isServerMinimumVersion(9, 0)).thenReturn(true);
-        when(connection.prepareCall(Mockito.anyString())).thenReturn(statement);
+        when(connection.prepareCall(ArgumentMatchers.anyString())).thenReturn(statement);
 
         PgEventProducer producer = new PgEventProducer(endpoint);
         producer.start();

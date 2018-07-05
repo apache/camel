@@ -20,12 +20,15 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.w3c.dom.NodeList;
 
@@ -86,7 +89,7 @@ public final class CollectionHelper {
             if (oldValue instanceof List) {
                 list = (List<Object>) oldValue;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(oldValue);
                 // replace old entry with list
                 map.remove(key);
@@ -99,7 +102,7 @@ public final class CollectionHelper {
     }
 
     public static <T> Set<T> createSetContaining(T... contents) {
-        Set<T> contentsAsSet = new HashSet<T>();
+        Set<T> contentsAsSet = new HashSet<>();
         contentsAsSet.addAll(Arrays.asList(contents));
         return contentsAsSet;
     }
@@ -154,5 +157,62 @@ public final class CollectionHelper {
                 target.put(newKey, value);
             }
         }
+    }
+
+    /**
+     * Build an unmodifiable map on top of a given map. Note tha thew given map is
+     * copied if not null.
+     *
+     * @param map a map
+     * @return an unmodifiable map.
+     */
+    public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> map) {
+        return map == null
+            ? Collections.emptyMap()
+            : Collections.unmodifiableMap(new HashMap<>(map));
+    }
+
+
+    /**
+     * Build a map from varargs.
+     */
+    public static <K, V> Map<K, V> mapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
+        Map<K, V> map = creator.get();
+        map.put(key, value);
+
+        for (int i = 0; i < keyVals.length; i += 2) {
+            map.put(
+                (K) keyVals[i],
+                (V) keyVals[i + 1]
+            );
+        }
+
+        return map;
+    }
+
+
+    /**
+     * Build an immutable map from varargs.
+     */
+    public static <K, V> Map<K, V> immutableMapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
+        return Collections.unmodifiableMap(
+            mapOf(creator, key, value, keyVals)
+        );
+    }
+
+    /**
+     * Build a map from varargs.
+     */
+    public static <K, V> Map<K, V> mapOf(K key, V value, Object... keyVals) {
+        return mapOf(HashMap::new, key, value, keyVals);
+    }
+
+    /**
+     * Build an immutable map from varargs.
+     */
+    public static <K, V> Map<K, V> immutableMapOf(K key, V value, Object... keyVals) {
+        return Collections.unmodifiableMap(
+            mapOf(HashMap::new, key, value, keyVals)
+        );
     }
 }

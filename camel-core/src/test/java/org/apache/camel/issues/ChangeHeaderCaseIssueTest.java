@@ -40,7 +40,7 @@ public class ChangeHeaderCaseIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // only the changed case header should exist
-        Map<String, Object> headers = new HashMap<String, Object>(mock.getReceivedExchanges().get(0).getIn().getHeaders());
+        Map<String, Object> headers = new HashMap<>(mock.getReceivedExchanges().get(0).getIn().getHeaders());
         assertEquals("cool", headers.get("SoapAction"));
         assertEquals(null, headers.get("SOAPAction"));
     }

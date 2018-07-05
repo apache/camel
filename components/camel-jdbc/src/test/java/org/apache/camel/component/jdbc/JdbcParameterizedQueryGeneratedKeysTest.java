@@ -27,7 +27,7 @@ public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGenerat
     private static final Map<String, Object> VALUE_MAP;
 
     static {
-        VALUE_MAP = new HashMap<String, Object>();
+        VALUE_MAP = new HashMap<>();
         VALUE_MAP.put("value", "testValue");
     }
 

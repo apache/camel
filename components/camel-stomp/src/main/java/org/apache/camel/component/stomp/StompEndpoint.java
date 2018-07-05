@@ -66,7 +66,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
     @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
-    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<StompConsumer>();
+    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
 
     public StompEndpoint(String uri, StompComponent component, StompConfiguration configuration, String destination) {
         super(uri, component);

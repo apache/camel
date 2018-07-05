@@ -18,13 +18,15 @@ package org.apache.camel.component.telegram.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
+import org.apache.camel.component.telegram.model.InlineKeyboardButton;
+import org.apache.camel.component.telegram.model.OutgoingTextMessage;
+import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
 import org.mockito.Mockito;
 
 /**
@@ -40,8 +42,8 @@ public class TelegramTestSupport extends CamelTestSupport {
     /**
      * Restores the status of {@code TelegramServiceProvider} if it has been mocked.
      */
-    @After
-    public void tearDown() {
+    @Override
+    public void doPostTearDown() throws Exception {
         if (telegramServiceMocked) {
             TelegramServiceProvider.get().restoreDefaultService();
             this.telegramServiceMocked = false;
@@ -59,6 +61,35 @@ public class TelegramTestSupport extends CamelTestSupport {
         this.telegramServiceMocked = true;
 
         return mockService;
+    }
+    
+    /**
+     * Construct an inline keyboard sample to be used with an OutgoingTextMessage.
+     * 
+     * @param message OutgoingTextMessage previously created
+     * @return OutgoingTextMessage set with an inline keyboard
+     */
+    public OutgoingTextMessage withInlineKeyboardContainingTwoRows(OutgoingTextMessage message) {
+        
+        InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
+                .text("Option One - I").build();
+        
+        InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
+                .text("Option One - II").build();
+        
+        InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
+                .text("Option Two - I").build();
+        
+        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
+                .keyboard()
+                    .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
+                    .addRow(Arrays.asList(buttonOptionTwoI))
+                    .close()
+                .oneTimeKeyboard(true)
+                .build();        
+        message.setReplyKeyboardMarkup(replyMarkup);        
+        
+        return message;
     }
 
     /**

@@ -216,7 +216,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
     public void clear() {
         final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
 
-        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 if (isJoinTransaction()) {
                     entityManager.joinTransaction();

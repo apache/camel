@@ -52,7 +52,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @XmlElement(name = "body")
     private ExpressionSubElementDefinition newExchangeExpression;
     @XmlElementRef
-    private List<SetHeaderDefinition> headers = new ArrayList<SetHeaderDefinition>();
+    private List<SetHeaderDefinition> headers = new ArrayList<>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
@@ -91,7 +91,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         // is true bt default
         boolean isCopy = getCopy() == null || getCopy();
 
-        WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal, getPattern(), threadPool, shutdownThreadPool);
+        WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal, getPattern(), threadPool, shutdownThreadPool, isDynamic());
         answer.setCopy(isCopy);
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);

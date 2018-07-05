@@ -152,7 +152,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setBody(client.bulk(bulkRequest).actionGet());
         } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            List<String> indexedIds = new ArrayList<String>();
+            List<String> indexedIds = new ArrayList<>();
             for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
                 indexedIds.add(response.getId());
             }

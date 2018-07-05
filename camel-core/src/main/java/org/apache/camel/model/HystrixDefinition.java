@@ -42,7 +42,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private OnFallbackDefinition onFallback;
     @XmlAttribute

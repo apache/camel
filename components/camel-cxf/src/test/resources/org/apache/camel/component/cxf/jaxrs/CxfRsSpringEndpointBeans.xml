@@ -23,22 +23,31 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
   <cxf:rsServer id="rsServer" address="http://localhost:9000/router"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
     loggingFeatureEnabled="true" loggingSizeLimit="200">
+    <cxf:properties>
+        <entry key="aKey" value="aValue"/>
+    </cxf:properties>
     <cxf:providers>
        <ref bean="jsonProvider"/>
     </cxf:providers>
+    <cxf:inInterceptors>
+        <bean class="org.apache.camel.component.cxf.jaxrs.TestInInterceptor"/>
+    </cxf:inInterceptors>
   </cxf:rsServer>
 
   <cxf:rsClient id="rsClient" address="http://localhost:9002/helloworld"
-    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService">
+    <cxf:inInterceptors>
+        <bean class="org.apache.camel.component.cxf.jaxrs.TestInInterceptor"/>
+    </cxf:inInterceptors>
+  </cxf:rsClient>
 
-  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider"/>
+  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   </camelContext>

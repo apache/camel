@@ -384,7 +384,7 @@ public class EnvelopedDataTest {
         throws UnsupportedEncodingException, Exception {
         KeyStoreParameters keystorePas = KeystoreUtil.getKeyStoreParameters(keystoreName);
 
-        List<RecipientInfo> recipients = new ArrayList<RecipientInfo>(aliases.length);
+        List<RecipientInfo> recipients = new ArrayList<>(aliases.length);
         for (String alias : aliases) {
             DefaultKeyTransRecipientInfo recipient = new DefaultKeyTransRecipientInfo();
             recipient.setCertificateAlias(alias);

@@ -68,7 +68,7 @@ public final class RouteDefinitionHelper {
      * @return the endpoints uris
      */
     public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs, boolean includeDynamic) {
-        Set<String> answer = new LinkedHashSet<String>();
+        Set<String> answer = new LinkedHashSet<>();
 
         if (includeInputs) {
             for (FromDefinition from : route.getInputs()) {
@@ -120,7 +120,7 @@ public final class RouteDefinitionHelper {
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
         // handle custom assigned id's first, and then afterwards assign auto generated ids
-        Set<String> customIds = new HashSet<String>();
+        Set<String> customIds = new HashSet<>();
 
         for (final RouteDefinition route : routes) {
             // if there was a custom id assigned, then make sure to support property placeholders
@@ -173,7 +173,7 @@ public final class RouteDefinitionHelper {
      * @return <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
-        Set<String> routesIds = new LinkedHashSet<String>();
+        Set<String> routesIds = new LinkedHashSet<>();
         // gather all ids for the existing route, but only include custom ids, and no abstract ids
         // as abstract nodes is cross-cutting functionality such as interceptors etc
         for (RouteDefinition route : routes) {
@@ -186,7 +186,7 @@ public final class RouteDefinitionHelper {
 
         // gather all ids for the target route, but only include custom ids, and no abstract ids
         // as abstract nodes is cross-cutting functionality such as interceptors etc
-        Set<String> targetIds = new LinkedHashSet<String>();
+        Set<String> targetIds = new LinkedHashSet<>();
         ProcessorDefinitionHelper.gatherAllNodeIds(target, targetIds, true, false);
 
         // now check for clash with the target route
@@ -298,13 +298,13 @@ public final class RouteDefinitionHelper {
         initRouteInputs(context, route.getInputs());
 
         // abstracts is the cross cutting concerns
-        List<ProcessorDefinition<?>> abstracts = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition<?>> abstracts = new ArrayList<>();
 
         // upper is the cross cutting concerns such as interceptors, error handlers etc
-        List<ProcessorDefinition<?>> upper = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition<?>> upper = new ArrayList<>();
 
         // lower is the regular route
-        List<ProcessorDefinition<?>> lower = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition<?>> lower = new ArrayList<>();
 
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
@@ -454,17 +454,17 @@ public final class RouteDefinitionHelper {
         for (ProcessorDefinition processor : abstracts) {
             if (processor instanceof InterceptSendToEndpointDefinition) {
                 if (interceptSendToEndpointDefinitions == null) {
-                    interceptSendToEndpointDefinitions = new ArrayList<InterceptSendToEndpointDefinition>();
+                    interceptSendToEndpointDefinitions = new ArrayList<>();
                 }
                 interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition) processor);
             } else if (processor instanceof InterceptFromDefinition) {
                 if (interceptFromDefinitions == null) {
-                    interceptFromDefinitions = new ArrayList<InterceptFromDefinition>();
+                    interceptFromDefinitions = new ArrayList<>();
                 }
                 interceptFromDefinitions.add((InterceptFromDefinition) processor);
             } else if (processor instanceof InterceptDefinition) {
                 if (intercepts == null) {
-                    intercepts = new ArrayList<InterceptDefinition>();
+                    intercepts = new ArrayList<>();
                 }
                 intercepts.add((InterceptDefinition) processor);
             }
@@ -555,7 +555,7 @@ public final class RouteDefinitionHelper {
 
     private static void initOnCompletions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                           List<OnCompletionDefinition> onCompletions) {
-        List<OnCompletionDefinition> completions = new ArrayList<OnCompletionDefinition>();
+        List<OnCompletionDefinition> completions = new ArrayList<>();
 
         // find the route scoped onCompletions
         for (ProcessorDefinition out : abstracts) {

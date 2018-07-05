@@ -169,7 +169,7 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     /**
-     * Set the the delivery mode (ordered, unordered)
+     * Set the delivery mode (ordered, unordered)
      */
     public void setEventOrdering(String eventOrdering) {
         setEventOrdering(EventOrdering.valueOf(eventOrdering));
@@ -184,7 +184,7 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     /**
-     * Set the the delivery mode (synchronous, asynchronous)
+     * Set the delivery mode (synchronous, asynchronous)
      */
     public void setEventFiring(String eventFiring) {
         setEventFiring(EventFiring.valueOf(eventFiring));

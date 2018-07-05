@@ -39,7 +39,7 @@ public class JndiTest extends TestSupport {
             assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
             Properties properties = new Properties();
             properties.load(in);
-            return new InitialContext(new Hashtable<Object, Object>(properties));
+            return new InitialContext(new Hashtable<>(properties));
         } finally {
             IOHelper.close(in);
         }

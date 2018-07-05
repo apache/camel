@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +34,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -42,7 +45,10 @@ public class WebsocketComponentServletTest {
     private static final String PROTOCOL = "ws";
     private static final String MESSAGE = "message";
     private static final String CONNECTION_KEY = "random-connection-key";
+    private static final InetSocketAddress ADDRESS = InetSocketAddress.createUnresolved("127.0.0.1", 12345);
 
+    @Mock
+    private Session session;
     @Mock
     private WebsocketConsumer consumer;
     @Mock
@@ -56,10 +62,10 @@ public class WebsocketComponentServletTest {
 
     @Before
     public void setUp() throws Exception {
-        socketFactory = new HashMap<String, WebSocketFactory>();
+        socketFactory = new HashMap<>();
         socketFactory.put("default", new DefaultWebsocketFactory());
-        
         websocketComponentServlet = new WebsocketComponentServlet(sync, null, socketFactory);
+        when(session.getRemoteAddress()).thenReturn(ADDRESS);
     }
 
     @Test
@@ -82,9 +88,10 @@ public class WebsocketComponentServletTest {
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
         DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
+        defaultWebsocket.setSession(session);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
-        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
         inOrder.verifyNoMoreInteractions();
     }
 

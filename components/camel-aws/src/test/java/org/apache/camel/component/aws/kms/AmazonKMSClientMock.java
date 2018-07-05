@@ -180,7 +180,8 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public EnableKeyResult enableKey(EnableKeyRequest enableKeyRequest) {
-        throw new UnsupportedOperationException();
+        EnableKeyResult res = new EnableKeyResult();
+        return res;
     }
 
     @Override
@@ -256,7 +257,7 @@ public class AmazonKMSClientMock implements AWSKMS {
     @Override
     public ListKeysResult listKeys(ListKeysRequest listKeysRequest) {
         ListKeysResult result = new ListKeysResult();
-        List<KeyListEntry> keyList = new ArrayList<KeyListEntry>();
+        List<KeyListEntry> keyList = new ArrayList<>();
         KeyListEntry kle = new KeyListEntry();
         kle.withKeyId("keyId");
         keyList.add(kle);
@@ -333,7 +334,7 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public void shutdown() {
-        throw new UnsupportedOperationException();      
+        throw new UnsupportedOperationException();
     }
 
     @Override

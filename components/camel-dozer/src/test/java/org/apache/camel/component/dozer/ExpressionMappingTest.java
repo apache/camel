@@ -55,7 +55,7 @@ public class ExpressionMappingTest {
     @Test
     public void testExpressionMapping() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         final String customerNumber = "CAFE-123";
         final String orderNumber = "ABC-000";
         headers.put("customerNumber", customerNumber);

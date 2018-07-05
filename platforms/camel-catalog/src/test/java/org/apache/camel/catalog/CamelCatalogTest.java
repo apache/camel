@@ -171,7 +171,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriMapFile() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("directoryName", "src/data/inbox");
         map.put("noop", "true");
         map.put("delay", "5000");
@@ -185,7 +185,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriMapFtp() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("host", "someserver");
         map.put("port", "21");
         map.put("directoryName", "foo");
@@ -200,7 +200,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriMapJms() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("destinationType", "queue");
         map.put("destinationName", "foo");
 
@@ -210,7 +210,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriNetty4http() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         // use http protocol
         map.put("protocol", "http");
         map.put("host", "localhost");
@@ -237,7 +237,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriTimer() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("timerName", "foo");
         map.put("period", "5000");
 
@@ -247,7 +247,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointDefaultValue() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("destinationName", "cheese");
         map.put("maxMessagesPerTask", "-1");
 
@@ -257,7 +257,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriPropertiesPlaceholders() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("timerName", "foo");
         map.put("period", "{{howoften}}");
         map.put("repeatCount", "5");
@@ -271,7 +271,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriBeanLookup() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("resourceUri", "foo.xslt");
         map.put("converter", "#myConverter");
 
@@ -284,7 +284,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("destinationName", "foo");
         String uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:foo", uri);
@@ -429,7 +429,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriLog() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("loggerName", "foo");
         map.put("loggerLevel", "WARN");
         map.put("multiline", "true");
@@ -444,7 +444,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriLogShort() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("loggerName", "foo");
         map.put("loggerLevel", "DEBUG");
 
@@ -453,7 +453,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testAsEndpointUriWithplaceholder() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("query", "{{insert}}");
         assertEquals("sql:{{insert}}", catalog.asEndpointUri("sql", map, false));
 
@@ -580,6 +580,10 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, true, false);
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
+        assertTrue(result.isSuccess());
+
+        // connection factory
+        result = catalog.validateEndpointProperties("activemq:Consumer.Baz.VirtualTopic.FooRequest?connectionFactory=#pooledJmsConnectionFactory");
         assertTrue(result.isSuccess());
     }
 
@@ -1087,6 +1091,19 @@ public class CamelCatalogTest {
 
         doc = catalog.componentAsciiDoc("unknown");
         assertNull(doc);
+    }
+
+    @Test
+    public void testTransactedAndPolicyNoOutputs() throws Exception {
+        String json = catalog.modelJSonSchema("transacted");
+        assertNotNull(json);
+        assertTrue(json.contains("\"output\": false"));
+        assertFalse(json.contains("\"outputs\":"));
+
+        json = catalog.modelJSonSchema("policy");
+        assertNotNull(json);
+        assertTrue(json.contains("\"output\": false"));
+        assertFalse(json.contains("\"outputs\":"));
     }
 
     @Test

@@ -45,7 +45,7 @@ public class CamelWorkflowDefinitionFactoryFactory extends WorkflowDefinitionFac
 
     @Override
     public Iterable<WorkflowType> getWorkflowTypesToRegister() {
-        ArrayList<WorkflowType> workflowTypes = new ArrayList<WorkflowType>(1);
+        ArrayList<WorkflowType> workflowTypes = new ArrayList<>(1);
         WorkflowType workflowType = new WorkflowType();
         workflowType.setName(configuration.getEventName());
         workflowType.setVersion(configuration.getVersion());

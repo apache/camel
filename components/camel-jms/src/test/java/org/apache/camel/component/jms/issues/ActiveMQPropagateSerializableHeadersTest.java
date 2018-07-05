@@ -50,7 +50,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
     @Before
     public void setup() {
         calValue = Calendar.getInstance();
-        mapValue = new LinkedHashMap<String, Object>();
+        mapValue = new LinkedHashMap<>();
         mapValue.put("myStringEntry", "stringValue");
         mapValue.put("myCalEntry", Calendar.getInstance());
         mapValue.put("myIntEntry", 123);

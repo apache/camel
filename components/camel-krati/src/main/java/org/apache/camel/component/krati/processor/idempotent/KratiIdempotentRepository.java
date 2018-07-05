@@ -37,7 +37,7 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
 
     private DataSet<byte[]> dataSet;
     private int initialCapacity = 100;
-    private Serializer<String> serializer = new KratiDefaultSerializer<String>();
+    private Serializer<String> serializer = new KratiDefaultSerializer<>();
     private SegmentFactory segmentFactory = new ChannelSegmentFactory();
 
     public KratiIdempotentRepository(String repositoryPath) {

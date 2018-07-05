@@ -30,5 +30,5 @@ public interface KafkaManualCommitFactory {
      * Creates a new instance
      */
     KafkaManualCommit newInstance(Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
-                                  StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset);
+                                  StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset);
 }

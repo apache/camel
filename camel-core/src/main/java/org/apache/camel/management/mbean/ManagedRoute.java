@@ -33,6 +33,11 @@ import javax.management.ObjectName;
 import javax.management.Query;
 import javax.management.QueryExp;
 import javax.management.StringValueExp;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 import org.w3c.dom.Document;
 
@@ -42,6 +47,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
@@ -97,6 +103,36 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             id = VALUE_UNKNOWN;
         }
         return id;
+    }
+
+    public String getRouteGroup() {
+        return route.getGroup();
+    }
+
+    @Override
+    public TabularData getRouteProperties() {
+        try {
+            final Map<String, Object> properties = route.getProperties();
+            final TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.camelRoutePropertiesTabularType());
+            final CompositeType ct = CamelOpenMBeanTypes.camelRoutePropertiesCompositeType();
+
+            // gather route properties
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                final String key = entry.getKey();
+                final String val = context.getTypeConverter().convertTo(String.class, entry.getValue());
+
+                CompositeData data = new CompositeDataSupport(
+                    ct,
+                    new String[]{"key", "value"},
+                    new Object[]{key, val}
+                );
+
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public String getDescription() {
@@ -374,7 +410,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
                 ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
-                List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
+                List<ManagedProcessorMBean> mps = new ArrayList<>();
                 for (ObjectName on : names) {
                     ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
 
@@ -386,7 +422,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 mps.sort(new OrderProcessorMBeans());
 
                 // walk the processors in reverse order, and calculate the accumulated total time
-                Map<String, Long> accumulatedTimes = new HashMap<String, Long>();
+                Map<String, Long> accumulatedTimes = new HashMap<>();
                 Collections.reverse(mps);
                 for (ManagedProcessorMBean processor : mps) {
                     processorAccumulatedTime += processor.getTotalProcessingTime();

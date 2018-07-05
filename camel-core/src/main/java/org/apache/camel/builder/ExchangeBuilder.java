@@ -34,8 +34,8 @@ public final class ExchangeBuilder {
     private CamelContext context;
     private ExchangePattern pattern;
     private Object body;
-    private Map<String, Object> headers = new HashMap<String, Object>();
-    private Map<String, Object> properties = new HashMap<String, Object>();
+    private Map<String, Object> headers = new HashMap<>();
+    private Map<String, Object> properties = new HashMap<>();
 
     public ExchangeBuilder(CamelContext context) {
         this.context = context;

@@ -494,7 +494,7 @@ public final class DefaultExchange implements Exchange {
             // unit of work not yet registered so we store the on completion temporary
             // until the unit of work is assigned to this exchange by the unit of work
             if (onCompletions == null) {
-                onCompletions = new ArrayList<Synchronization>();
+                onCompletions = new ArrayList<>();
             }
             onCompletions.add(onCompletion);
         } else {
@@ -529,7 +529,7 @@ public final class DefaultExchange implements Exchange {
     public List<Synchronization> handoverCompletions() {
         List<Synchronization> answer = null;
         if (onCompletions != null) {
-            answer = new ArrayList<Synchronization>(onCompletions);
+            answer = new ArrayList<>(onCompletions);
             onCompletions.clear();
             onCompletions = null;
         }

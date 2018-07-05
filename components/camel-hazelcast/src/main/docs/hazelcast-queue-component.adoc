@@ -9,7 +9,7 @@ The http://www.hazelcast.com/[Hazelcast] Queue component is one of Camel Hazelca
 ### Options
 
 // component options: START
-The Hazelcast Queue component supports 3 options which are listed below.
+The Hazelcast Queue component supports 3 options, which are listed below.
 
 
 

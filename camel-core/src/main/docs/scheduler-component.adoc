@@ -19,7 +19,7 @@ scheduler:name[?options]
 ----
 
 Where `name` is the name of the scheduler, which is created and shared
-across endpoints. So if you use the same name for all your timer
+across endpoints. So if you use the same name for all your scheduler
 endpoints, only one scheduler thread pool and thread will be used - but
 you can configure the thread pool to allow more concurrent threads.
 
@@ -32,7 +32,7 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The Scheduler component supports 2 options which are listed below.
+The Scheduler component supports 2 options, which are listed below.
 
 
 
@@ -122,7 +122,7 @@ To set up a route that generates an event every 60 seconds:
 
 [source,java]
 ----
-from("scheduler://foo?period=60s").to("bean:myBean?method=someMethodName");
+from("scheduler://foo?delay=60s").to("bean:myBean?method=someMethodName");
 ----
 
 The above route will generate an event and then invoke the
@@ -134,7 +134,7 @@ And the route in Spring DSL:
 [source,xml]
 ----
 <route>
-  <from uri="scheduler://foo?period=60s"/>
+  <from uri="scheduler://foo?delay=60s"/>
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
 ----

@@ -42,7 +42,7 @@ import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT
  */
 public class AvroListener {
 
-    private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<String, AvroConsumer>();
+    private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
     private AvroConsumer defaultConsumer;
     private final Server server;
 

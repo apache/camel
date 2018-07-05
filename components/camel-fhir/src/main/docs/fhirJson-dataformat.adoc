@@ -13,7 +13,7 @@ JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
 ### FHIR JSON Format Options
 
 // dataformat options: START
-The FHIR JSon dataformat supports 2 options which are listed below.
+The FHIR JSon dataformat supports 2 options, which are listed below.
 
 
 

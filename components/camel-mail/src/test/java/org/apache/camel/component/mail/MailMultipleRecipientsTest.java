@@ -35,7 +35,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // test with both comma and semi colon as Camel supports both kind of separators
         headers.put("to", "claus@localhost, willem@localhost ; hadrian@localhost, \"Snell, Tracy\" <tracy@localhost>");
         headers.put("cc", "james@localhost");

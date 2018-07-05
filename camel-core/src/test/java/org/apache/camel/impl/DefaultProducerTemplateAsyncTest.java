@@ -160,7 +160,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "cheese");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cheese");
         Future<Object> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers);
@@ -186,7 +186,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "cheese");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cheese");
         Future<String> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers, String.class);

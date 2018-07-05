@@ -45,6 +45,18 @@ public class TwilioComponentConfiguration
     @NestedConfigurationProperty
     private TwilioRestClient restClient;
     /**
+     * The account to use.
+     */
+    private String username;
+    /**
+     * Auth token for the account.
+     */
+    private String password;
+    /**
+     * The account SID to use.
+     */
+    private String accountSid;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -66,6 +78,30 @@ public class TwilioComponentConfiguration
 
     public void setRestClient(TwilioRestClient restClient) {
         this.restClient = restClient;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAccountSid() {
+        return accountSid;
+    }
+
+    public void setAccountSid(String accountSid) {
+        this.accountSid = accountSid;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
@@ -93,18 +129,6 @@ public class TwilioComponentConfiguration
          *            methodName to set
          */
         private String methodName;
-        /**
-         * The account to use.
-         */
-        private String username;
-        /**
-         * Auth token for the account.
-         */
-        private String password;
-        /**
-         * The account SID to use.
-         */
-        private String accountSid;
 
         public TwilioApiName getApiName() {
             return apiName;
@@ -120,30 +144,6 @@ public class TwilioComponentConfiguration
 
         public void setMethodName(String methodName) {
             this.methodName = methodName;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public String getAccountSid() {
-            return accountSid;
-        }
-
-        public void setAccountSid(String accountSid) {
-            this.accountSid = accountSid;
         }
     }
 }

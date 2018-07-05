@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.ObjectHelper;
 
@@ -31,7 +32,7 @@ public class DummyRestProducerFactory implements RestProducerFactory {
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                             String verb, String basePath, final String uriTemplate, String queryParameters,
-                            String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         // use a dummy endpoint
         Endpoint endpoint = camelContext.getEndpoint("stub:dummy");

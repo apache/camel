@@ -31,7 +31,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
 
     private static final String[] EXISTED_USERS = {"Kim", "Pavlo", "Peter"};
     private static String[] broadcastMessageTo = {};
-    private static Map<String, String> connectionKeyUserMap = new HashMap<String, String>();
+    private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
     @Test
     public void testWebsocketEventsResendingEnabled() throws Exception {

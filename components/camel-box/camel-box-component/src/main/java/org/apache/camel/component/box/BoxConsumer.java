@@ -55,7 +55,7 @@ public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguratio
 
         // Add listener property to register this consumer as listener for
         // events.
-        properties = new HashMap<String, Object>();
+        properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());
         properties.put(LISTENER_PROPERTY, this);
 

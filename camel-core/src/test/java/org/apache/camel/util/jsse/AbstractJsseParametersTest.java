@@ -91,7 +91,7 @@ public abstract class AbstractJsseParametersTest extends TestSupport {
         if (supplementalProperties != null) {
             Properties mergedProps = new Properties();
 
-            Set<String> keys = new HashSet<String>();
+            Set<String> keys = new HashSet<>();
             keys.addAll(properties.stringPropertyNames());
             keys.addAll(supplementalProperties.stringPropertyNames());
 

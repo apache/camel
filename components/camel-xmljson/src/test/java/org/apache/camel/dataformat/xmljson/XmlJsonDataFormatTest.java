@@ -238,7 +238,7 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
                 // from JSON to XML - inline dataformat
                 from("direct:unmarshalInline").unmarshal().xmljson().to("mock:xmlInline");
                 
-                Map<String, String> xmlJsonOptions = new HashMap<String, String>();
+                Map<String, String> xmlJsonOptions = new HashMap<>();
                 xmlJsonOptions.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ENCODING, "UTF-8");
                 xmlJsonOptions.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.FORCE_TOP_LEVEL_OBJECT, "true");
                 xmlJsonOptions.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.TRIM_SPACES, "true");
@@ -252,7 +252,7 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
                 // from JSON to XML - inline dataformat w/ options
                 from("direct:unmarshalInlineOptions").unmarshal().xmljson(xmlJsonOptions).to("mock:xmlInlineOptions");
 
-                Map<String, String> xmlJsonOptionsArrays = new HashMap<String, String>();
+                Map<String, String> xmlJsonOptionsArrays = new HashMap<>();
                 xmlJsonOptionsArrays.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ELEMENT_NAME, "el");
                 xmlJsonOptionsArrays.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ARRAY_NAME, "ar");
 

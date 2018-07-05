@@ -91,7 +91,7 @@ public class JndiRegistry implements Registry {
     }
 
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> answer = new LinkedHashMap<String, T>();
+        Map<String, T> answer = new LinkedHashMap<>();
         try {
             NamingEnumeration<NameClassPair> list = getContext().list("");
             while (list.hasMore()) {
@@ -109,7 +109,7 @@ public class JndiRegistry implements Registry {
     }
 
     public <T> Set<T> findByType(Class<T> type) {
-        Set<T> answer = new LinkedHashSet<T>();
+        Set<T> answer = new LinkedHashSet<>();
         try {
             NamingEnumeration<NameClassPair> list = getContext().list("");
             while (list.hasMore()) {
@@ -163,7 +163,7 @@ public class JndiRegistry implements Registry {
     }
 
     protected Context createContext() throws NamingException {
-        Hashtable<Object, Object> properties = new Hashtable<Object, Object>(System.getProperties());
+        Hashtable<Object, Object> properties = new Hashtable<>(System.getProperties());
         if (environment != null) {
             properties.putAll(environment);
         }

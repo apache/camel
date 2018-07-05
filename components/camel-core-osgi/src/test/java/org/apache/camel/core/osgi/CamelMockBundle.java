@@ -65,11 +65,11 @@ public class CamelMockBundle extends MockBundle {
     }
 
     private Enumeration<String> getListEnumeration(String prefix, String entrys[]) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String entry : entrys) {            
             list.add(prefix + entry);
         }
-        return new ListEnumeration<String>(list);
+        return new ListEnumeration<>(list);
     }
 
     public Enumeration<String> getEntryPaths(String path) {
@@ -92,12 +92,12 @@ public class CamelMockBundle extends MockBundle {
     
     public Enumeration<URL> findEntries(String path, String filePattern, boolean recurse) {
         if (path.equals("/org/apache/camel/core/osgi/test") && filePattern.equals("*.class")) {
-            List<URL> urls = new ArrayList<URL>();
+            List<URL> urls = new ArrayList<>();
             URL url = getClass().getClassLoader().getResource("org/apache/camel/core/osgi/test/MyTypeConverter.class");
             urls.add(url);
             url = getClass().getClassLoader().getResource("org/apache/camel/core/osgi/test/MyRouteBuilder.class");
             urls.add(url);
-            return new ListEnumeration<URL>(urls);
+            return new ListEnumeration<>(urls);
         } else {
             return CastUtils.cast(super.findEntries(path, filePattern, recurse));
         }

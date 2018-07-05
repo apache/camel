@@ -119,7 +119,7 @@ public class SqsProducer extends DefaultProducer {
     }
 
     Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
-        Map<String, MessageAttributeValue> result = new HashMap<String, MessageAttributeValue>();
+        Map<String, MessageAttributeValue> result = new HashMap<>();
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         for (Entry<String, Object> entry : headers.entrySet()) {
             // only put the message header which is not filtered into the message attribute
@@ -135,9 +135,30 @@ public class SqsProducer extends DefaultProducer {
                     mav.setDataType("Binary");
                     mav.withBinaryValue((ByteBuffer)value);
                     result.put(entry.getKey(), mav);
+                } else if (value instanceof Boolean) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("Number.Boolean");
+                    mav.withStringValue(((Boolean)value) ? "1" : "0");
+                    result.put(entry.getKey(), mav);
                 } else if (value instanceof Number) {
                     MessageAttributeValue mav = new MessageAttributeValue();
-                    mav.setDataType("Number");
+                    final String dataType;
+                    if (value instanceof Integer) {
+                        dataType = "Number.int";
+                    } else if (value instanceof Byte) {
+                        dataType = "Number.byte";
+                    } else if (value instanceof Double) {
+                        dataType = "Number.double";
+                    } else if (value instanceof Float) {
+                        dataType = "Number.float";
+                    } else if (value instanceof Long) {
+                        dataType = "Number.long";
+                    } else if (value instanceof Short) {
+                        dataType = "Number.short";
+                    } else {
+                        dataType = "Number";
+                    }
+                    mav.setDataType(dataType);
                     mav.withStringValue(((Number)value).toString());
                     result.put(entry.getKey(), mav);
                 } else {

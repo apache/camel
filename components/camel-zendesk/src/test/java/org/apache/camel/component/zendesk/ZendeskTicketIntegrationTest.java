@@ -86,7 +86,7 @@ public class ZendeskTicketIntegrationTest extends AbstractZendeskTestSupport {
 
         // add a comment to the ticket
         String commentBody = "This is a comment from camel-zendesk.";
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         Assert.assertEquals("ticketId", ZendeskApiMethod.CREATECOMMENT.getArgNames().get(0));
         Assert.assertEquals(long.class, ZendeskApiMethod.CREATECOMMENT.getArgTypes().get(0));
         headers.put("CamelZendesk.ticketId", answer.getId());

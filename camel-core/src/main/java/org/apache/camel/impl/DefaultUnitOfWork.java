@@ -187,7 +187,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     public synchronized void addSynchronization(Synchronization synchronization) {
         if (synchronizations == null) {
-            synchronizations = new ArrayList<Synchronization>();
+            synchronizations = new ArrayList<>();
         }
         log.trace("Adding synchronization {}", synchronization);
         synchronizations.add(synchronization);
@@ -417,7 +417,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     private Set<Object> getTransactedBy() {
         if (transactedBy == null) {
-            transactedBy = new LinkedHashSet<Object>();
+            transactedBy = new LinkedHashSet<>();
         }
         return transactedBy;
     }

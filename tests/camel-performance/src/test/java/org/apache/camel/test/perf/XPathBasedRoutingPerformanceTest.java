@@ -63,7 +63,7 @@ public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTes
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                Map<String, String> namespaces = new HashMap<String, String>();
+                Map<String, String> namespaces = new HashMap<>();
                 namespaces.put("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
                 namespaces.put("m", "http://services.samples/xsd");
 

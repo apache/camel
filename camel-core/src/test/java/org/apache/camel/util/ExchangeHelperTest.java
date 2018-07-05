@@ -100,7 +100,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
     }
 
     public void testGetExchangeById() throws Exception {
-        List<Exchange> list = new ArrayList<Exchange>();
+        List<Exchange> list = new ArrayList<>();
         Exchange e1 = context.getEndpoint("mock:foo").createExchange();
         Exchange e2 = context.getEndpoint("mock:foo").createExchange();
         list.add(e1);
@@ -116,7 +116,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         exchange.getOut().setBody("bar");
         exchange.getOut().setHeader("quote", "Camel rocks");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, map);
 
         assertEquals(8, map.size());

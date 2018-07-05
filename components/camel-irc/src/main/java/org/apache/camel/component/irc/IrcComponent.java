@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IrcComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
-    private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+    private final transient Map<String, IRCConnection> connectionCache = new HashMap<>();
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
@@ -136,7 +136,7 @@ public class IrcComponent extends UriEndpointComponent implements SSLContextPara
     @Override
     protected void doStop() throws Exception {
         // lets use a copy so we can clear the connections eagerly in case of exceptions
-        Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
+        Map<String, IRCConnection> map = new HashMap<>(connectionCache);
         connectionCache.clear();
         for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {
             closeConnection(entry.getKey(), entry.getValue());

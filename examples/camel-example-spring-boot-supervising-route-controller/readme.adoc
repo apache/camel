@@ -14,35 +14,35 @@ Beside JMX you can use Spring Boot Endpoints to interact with the routes:
 +
 [source]
 ----
-curl -XGET -s http://localhost:8080/camel/routes
+curl -XGET -s http://localhost:8080/actuator/camelroutes
 ----
 +
 +* To get details about a route
 ++
 +[source]
 +----
-+curl -XGET -s http://localhost:8080/camel/routes/{id}/detail
++curl -XGET -s http://localhost:8080/actuator/camelroutes/{id}/detail
 +----
 
 * To get info about a route
 +
 [source]
 ----
-curl -XGET -s http://localhost:8080/camel/routes/{id}/info
+curl -XGET -s http://localhost:8080/actuator/camelroutes/{id}/info
 ----
 
 * To stop a route
 +
 [source]
 ----
-curl -XPOST -s http://localhost:8080/camel/routes/{id}/stop
+curl -XPOST -H "Content-Type: application/json" -s http://localhost:8080/actuator/camelroutes/{id}/stop
 ----
 
 * To start a route
 +
 [source]
 ----
-curl -XPOST -s http://localhost:8080/camel/routes/{id}/stop
+curl -XPOST -H "Content-Type: application/json" -s http://localhost:8080/actuator/camelroutes/{id}/start
 ----
 
 

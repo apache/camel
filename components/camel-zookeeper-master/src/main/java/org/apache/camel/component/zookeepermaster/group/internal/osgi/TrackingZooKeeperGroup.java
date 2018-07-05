@@ -32,7 +32,7 @@ public class TrackingZooKeeperGroup<T extends NodeState> extends DelegateZooKeep
     public TrackingZooKeeperGroup(BundleContext bundleContext, String path, Class<T> clazz) {
         super(path, clazz);
         this.bundleContext = bundleContext;
-        this.tracker = new ServiceTracker<CuratorFramework, CuratorFramework>(bundleContext, CuratorFramework.class, new ServiceTrackerCustomizer<CuratorFramework, CuratorFramework>() {
+        this.tracker = new ServiceTracker<>(bundleContext, CuratorFramework.class, new ServiceTrackerCustomizer<CuratorFramework, CuratorFramework>() {
             @Override
             public CuratorFramework addingService(ServiceReference<CuratorFramework> reference) {
                 CuratorFramework curator = TrackingZooKeeperGroup.this.bundleContext.getService(reference);

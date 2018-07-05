@@ -94,7 +94,7 @@ public class BasicMessageFilter implements MessageFilter {
 
         Map<String, Object> headers = inOrOut.getHeaders();
 
-        HashSet<String> headerKeySet = new HashSet<String>(headers.keySet());
+        HashSet<String> headerKeySet = new HashSet<>(headers.keySet());
 
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI);
@@ -135,7 +135,7 @@ public class BasicMessageFilter implements MessageFilter {
     protected void doProcessSoapAttachments(Message inOrOut, SoapMessage response) {
         Map<String, DataHandler> attachments = inOrOut.getAttachments();
 
-        Set<String> keySet = new HashSet<String>(attachments.keySet());
+        Set<String> keySet = new HashSet<>(attachments.keySet());
         for (String key : keySet) {
             response.addAttachment(key, attachments.get(key));
         }

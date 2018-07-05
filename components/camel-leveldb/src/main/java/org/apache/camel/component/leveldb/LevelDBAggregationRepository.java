@@ -193,7 +193,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     public Set<String> getKeys() {
-        final Set<String> keys = new LinkedHashSet<String>();
+        final Set<String> keys = new LinkedHashSet<>();
 
         // interval task could potentially be running while we are shutting down so check for that
         if (!isRunAllowed()) {
@@ -229,7 +229,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     public Set<String> scan(CamelContext camelContext) {
-        final Set<String> answer = new LinkedHashSet<String>();
+        final Set<String> answer = new LinkedHashSet<>();
 
         if (!isRunAllowed()) {
             return null;

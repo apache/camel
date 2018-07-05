@@ -25,7 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.dozer.Mapper;
 import org.junit.Test;
 
-import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createMapper;
 import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createServiceCustomer;
 
 public class DozerTypeConverterTest extends CamelTestSupport {

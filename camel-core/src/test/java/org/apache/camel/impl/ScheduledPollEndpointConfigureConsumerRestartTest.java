@@ -33,7 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class ScheduledPollEndpointConfigureConsumerRestartTest extends ContextTestSupport {
 
     private MyEndpoint my;
-    private Map<String, Object> props = new HashMap<String, Object>();
+    private Map<String, Object> props = new HashMap<>();
 
     public void testRestart() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);

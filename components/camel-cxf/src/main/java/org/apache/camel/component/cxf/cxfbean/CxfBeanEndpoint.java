@@ -79,7 +79,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         if (obj instanceof List) {
             serviceBeans = (List<Object>)obj;
         } else {
-            serviceBeans = new ArrayList<Object>(1);
+            serviceBeans = new ArrayList<>(1);
             serviceBeans.add(obj);
         }
         

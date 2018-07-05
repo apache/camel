@@ -125,7 +125,7 @@ public class ServicePoolAwareLeakyTest extends ContextTestSupport {
     public void testForMemoryLeak() throws Exception {
         registerLeakyComponent();
 
-        final Map<String, AtomicLong> references = new HashMap<String, AtomicLong>();
+        final Map<String, AtomicLong> references = new HashMap<>();
 
         // track LeakySieveProducer lifecycle
         context.addLifecycleStrategy(new LifecycleStrategySupport() {

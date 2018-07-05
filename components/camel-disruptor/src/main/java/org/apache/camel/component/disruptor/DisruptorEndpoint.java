@@ -54,8 +54,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
 
-    private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
-    private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
+    private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<>();
+    private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
     private final DisruptorReference disruptorReference;
 
     @UriPath(description = "Name of queue") @Metadata(required = "true")
@@ -315,8 +315,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> createConsumerEventHandlers() {
-        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result =
-                new HashMap<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>>();
+        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result = new HashMap<>();
 
         for (final DisruptorConsumer consumer : consumers) {
             result.put(consumer, consumer.createEventHandlers(concurrentConsumers));

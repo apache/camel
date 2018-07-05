@@ -75,6 +75,9 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Uri");
         assertEquals("direct:${header.whereto}", uri);
 
+        Boolean optimised = (Boolean) mbeanServer.getAttribute(on, "Optimised");
+        assertFalse(optimised);
+
         String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
         assertNull(pattern);
 
@@ -88,7 +91,7 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(6, data.size());
+        assertEquals(7, data.size());
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);

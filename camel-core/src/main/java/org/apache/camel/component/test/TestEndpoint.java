@@ -73,7 +73,7 @@ public class TestEndpoint extends MockEndpoint {
     protected void doStart() throws Exception {
         LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
 
-        final List<Object> expectedBodies = new ArrayList<Object>();
+        final List<Object> expectedBodies = new ArrayList<>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // if file based we need to load the file into memory as the file may be deleted/moved afterwards
@@ -137,7 +137,7 @@ public class TestEndpoint extends MockEndpoint {
     }
 
     /**
-     * If enabled the the messages loaded from the test endpoint will be split using new line delimiters
+     * If enabled the messages loaded from the test endpoint will be split using new line delimiters
      * so each line is an expected message.
      * <br/>
      * For example to use a file endpoint to load a file where each line is an expected message.

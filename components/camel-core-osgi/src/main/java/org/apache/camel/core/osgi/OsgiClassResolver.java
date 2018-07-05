@@ -124,7 +124,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
     @Override
     public Enumeration<URL> loadAllResourcesAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        Vector<URL> answer = new Vector<URL>();
+        Vector<URL> answer = new Vector<>();
 
         try {
             String resolvedName = resolveUriPath(uri);

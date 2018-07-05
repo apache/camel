@@ -17,7 +17,7 @@ https://github.com/apache/thrift[Apache Thrift Implementation] +
 ### Thrift Options
 
 // dataformat options: START
-The Thrift dataformat supports 3 options which are listed below.
+The Thrift dataformat supports 3 options, which are listed below.
 
 
 

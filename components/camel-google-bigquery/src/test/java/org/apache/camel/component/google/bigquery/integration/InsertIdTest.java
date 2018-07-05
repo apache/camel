@@ -99,7 +99,6 @@ public class InsertIdTest extends BigQueryTestSupport {
         Exchange exchange2 = new DefaultExchange(context);
         String uuid2Col2 = UUID.randomUUID().toString();
 
-        Map<String, String> object2 = new HashMap<>();
         object.put("col1", uuidCol1);
         object.put("col2", uuid2Col2);
         exchange2.getIn().setBody(object);
@@ -130,7 +129,6 @@ public class InsertIdTest extends BigQueryTestSupport {
         Exchange exchange2 = new DefaultExchange(context);
         String uuid2Col2 = UUID.randomUUID().toString();
 
-        Map<String, String> object2 = new HashMap<>();
         object.put("col1", uuidCol1);
         object.put("col2", uuid2Col2);
         exchange2.getIn().setBody(object);

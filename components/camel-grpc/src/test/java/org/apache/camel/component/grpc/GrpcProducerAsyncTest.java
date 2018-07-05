@@ -209,7 +209,6 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         
         @Override
         public StreamObserver<PingRequest> pingAsyncSync(StreamObserver<PongResponse> responseObserver) {
-            @SuppressWarnings({"unchecked", "rawtypes"})
             StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
 
                 @Override
@@ -233,7 +232,6 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         
         @Override
         public StreamObserver<PingRequest> pingAsyncAsync(StreamObserver<PongResponse> responseObserver) {
-            @SuppressWarnings({"unchecked", "rawtypes"})
             StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
 
                 @Override

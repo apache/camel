@@ -31,7 +31,7 @@ public class AggregateExpressionTimeoutTest extends ContextTestSupport {
     public void testAggregateExpressionTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("timeout", 100);
 

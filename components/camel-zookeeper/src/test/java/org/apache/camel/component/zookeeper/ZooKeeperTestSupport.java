@@ -305,7 +305,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
     }
 
     public static void deleteDir(File f) {
-        LinkedList<File> deleteStack = new LinkedList<File>();
+        LinkedList<File> deleteStack = new LinkedList<>();
         deleteStack.addLast(f);
         deleteDir(deleteStack);
     }

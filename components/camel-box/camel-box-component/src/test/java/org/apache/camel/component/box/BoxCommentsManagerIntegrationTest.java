@@ -53,7 +53,7 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testAddFileComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFile.getID());
         // parameter type is String
@@ -74,7 +74,7 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         BoxComment.Info commentInfo = testFile.addComment(CAMEL_TEST_FILE_COMMENT);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.commentId", commentInfo.getID());
         // parameter type is String
@@ -131,7 +131,7 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         BoxComment.Info commentInfo = testFile.addComment(CAMEL_TEST_FILE_COMMENT);
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.commentId", commentInfo.getID());
         // parameter type is String

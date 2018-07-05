@@ -152,7 +152,7 @@ public class ServicePoolTest extends ContextTestSupport {
 
     public void testAcquireAdd() throws Exception {
         Endpoint endpoint = context.getEndpoint("mock:foo");
-        List<Producer> producers = new ArrayList<Producer>();
+        List<Producer> producers = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             Producer producer = pool.acquire(endpoint);
@@ -192,7 +192,7 @@ public class ServicePoolTest extends ContextTestSupport {
         final Endpoint endpoint = context.getEndpoint("mock:foo");
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        List<Future<Integer>> response = new ArrayList<Future<Integer>>();
+        List<Future<Integer>> response = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             final int index = i;
             Future<Integer> out = executor.submit(new Callable<Integer>() {
@@ -220,7 +220,7 @@ public class ServicePoolTest extends ContextTestSupport {
         final Endpoint endpoint = context.getEndpoint("mock:foo");
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        List<Future<Integer>> response = new ArrayList<Future<Integer>>();
+        List<Future<Integer>> response = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             final int index = i;
             Future<Integer> out = executor.submit(new Callable<Integer>() {

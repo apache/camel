@@ -74,8 +74,8 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
             return;
         }
 
-        final Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
-        final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        final Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
+        final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
         
         Exchange exchange = context.createProducerTemplate().send("direct://testEndpoint", new Processor() {
 

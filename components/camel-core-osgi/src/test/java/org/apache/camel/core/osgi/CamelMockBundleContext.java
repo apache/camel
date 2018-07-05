@@ -77,7 +77,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         // lookup Java class if clazz contains dot (.) symbol
         if (clazz.contains(".")) {
             try {
-                final Class c = Class.forName(clazz);
+                Class.forName(clazz);
                 return super.getServiceReference(clazz);
             } catch (ClassNotFoundException ex) {
                 return null; // class not found so no service reference is returned

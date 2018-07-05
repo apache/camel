@@ -34,7 +34,7 @@ where `topic` is the name of the topic to listen too.
 ### URI options
 
 // component options: START
-The OSGi EventAdmin component supports 2 options which are listed below.
+The OSGi EventAdmin component supports 2 options, which are listed below.
 
 
 

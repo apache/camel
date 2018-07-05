@@ -96,7 +96,7 @@ public class Resequencer extends BatchProcessor implements Traceable {
             };
         }
 
-        return new TreeSet<Exchange>(answer);
+        return new TreeSet<>(answer);
     }
 
 }

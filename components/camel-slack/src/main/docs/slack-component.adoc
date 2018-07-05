@@ -43,7 +43,7 @@ slack:@username[?options]
 
 
 // component options: START
-The Slack component supports 2 options which are listed below.
+The Slack component supports 2 options, which are listed below.
 
 
 

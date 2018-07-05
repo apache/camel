@@ -255,7 +255,7 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
-            List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
+            List<Processor> endpoints = new ArrayList<>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
             assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "direct://tap");
@@ -299,7 +299,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals(3, line.getProcessors().size());
             // last should be our seda
 
-            List<Processor> processors = new ArrayList<Processor>(line.getProcessors());
+            List<Processor> processors = new ArrayList<>(line.getProcessors());
             Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
             assertSendTo(sendTo, "direct://d");
         }

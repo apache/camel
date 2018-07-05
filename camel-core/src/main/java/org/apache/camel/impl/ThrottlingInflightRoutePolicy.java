@@ -55,7 +55,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         Context, Route
     }
 
-    private final Set<Route> routes = new LinkedHashSet<Route>();
+    private final Set<Route> routes = new LinkedHashSet<>();
     private ContextScopedEventNotifier eventNotifier;
     private CamelContext camelContext;
     private final Lock lock = new ReentrantLock();

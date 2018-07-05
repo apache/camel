@@ -109,7 +109,7 @@ public final class JsonSchemaHelper {
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
     public static List<Map<String, String>> parseJsonSchema(String group, String json, boolean parseProperties) {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> answer = new ArrayList<>();
         if (json == null) {
             return answer;
         }
@@ -134,7 +134,7 @@ public final class JsonSchemaHelper {
             // need to safe encode \" so we can parse the line
             line = line.replaceAll("\"\\\\\"\"", '"' + QUOT + '"');
 
-            Map<String, String> row = new LinkedHashMap<String, String>();
+            Map<String, String> row = new LinkedHashMap<>();
             Matcher matcher = PATTERN.matcher(line);
 
             String key;

@@ -96,7 +96,7 @@ public class BoxUsersManager {
         try {
             LOG.debug("Getting all enterprise users matching filterTerm=" + filterTerm);
 
-            List<BoxUser.Info> users = new ArrayList<BoxUser.Info>();
+            List<BoxUser.Info> users = new ArrayList<>();
             Iterable<BoxUser.Info> iterable;
             if (filterTerm == null) {
                 iterable = BoxUser.getAllEnterpriseUsers(boxConnection);

@@ -35,7 +35,7 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
+    private static List<EventObject> events = new ArrayList<>();
     private static String stopOrder;
 
     @Override

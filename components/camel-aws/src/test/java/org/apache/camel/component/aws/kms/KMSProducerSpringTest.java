@@ -87,6 +87,22 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
     }
     
     @Test
+    public void kmsEnableKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        template.request("direct:enableKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMSConstants.OPERATION, KMSOperations.enableKey);
+                exchange.getIn().setHeader(KMSConstants.KEY_ID, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+    }
+    
+    @Test
     public void kmsScheduleKeyDeletionTest() throws Exception {
 
         mock.expectedMessageCount(1);

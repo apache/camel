@@ -42,7 +42,7 @@ public class CommentsResourceIntegrationTest extends AbstractLinkedInTestSupport
     @Ignore
     @Test
     public void testGetComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.comment_id", null);
         // parameter type is String

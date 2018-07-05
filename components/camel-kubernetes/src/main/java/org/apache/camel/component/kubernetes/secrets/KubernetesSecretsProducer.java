@@ -168,8 +168,6 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Create a specific secret require specify a secret bean");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         secret = getEndpoint().getKubernetesClient().secrets()
                 .inNamespace(namespaceName).create(secretToCreate);
         

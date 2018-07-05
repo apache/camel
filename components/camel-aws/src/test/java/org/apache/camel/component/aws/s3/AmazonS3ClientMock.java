@@ -82,8 +82,8 @@ import org.junit.Assert;
 
 public class AmazonS3ClientMock extends AmazonS3Client {
     
-    List<S3Object> objects = new CopyOnWriteArrayList<S3Object>();
-    List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<PutObjectRequest>();
+    List<S3Object> objects = new CopyOnWriteArrayList<>();
+    List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<>();
     
     private boolean nonExistingBucketCreated;
     
@@ -116,7 +116,15 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public ObjectListing listObjects(String bucketName) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        ObjectListing list = new ObjectListing();
+        list.setBucketName("test");
+        list.setTruncated(false);
+        S3ObjectSummary summary = new S3ObjectSummary();
+        summary.setBucketName("test");
+        summary.setSize(10000L);
+        summary.setKey("Myfile");
+        list.getObjectSummaries().add(summary);
+        return list;
     }
 
     @Override
@@ -167,7 +175,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public List<Bucket> listBuckets() throws AmazonClientException, AmazonServiceException {
-        ArrayList<Bucket> list = new ArrayList<Bucket>();
+        ArrayList<Bucket> list = new ArrayList<>();
         Bucket bucket = new Bucket("camel-bucket");
         bucket.setOwner(new Owner("Camel", "camel"));
         bucket.setCreationDate(new Date());

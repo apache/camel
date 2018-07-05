@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,8 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 public class CamelSpringBootExecutionListener extends AbstractTestExecutionListener {
+
+    protected static ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
 
@@ -61,6 +62,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         String testName = testContext.getTestMethod().getName();
 
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
+        threadApplicationContext.set(context);
 
         // mark Camel to be startable again and start Camel
         System.clearProperty("skipStartingCamelContext");
@@ -72,4 +74,18 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);
     }
 
+    @Override
+    public void afterTestMethod(TestContext testContext) throws Exception {
+        LOG.info("@RunWith(CamelSpringBootRunner.class) after: {}.{}", testContext.getTestClass(), testContext.getTestMethod().getName());
+
+        Class<?> testClass = testContext.getTestClass();
+        String testName = testContext.getTestMethod().getName();
+
+        ConfigurableApplicationContext context = threadApplicationContext.get();
+        if (context != null && context.isRunning()) {
+            // dump route coverage for each test method so its accurate statistics
+            // even if spring application context is running (i.e. its not dirtied per test method)
+            CamelAnnotationsHandler.handleRouteCoverageDump(context, testClass, s -> testName);
+        }
+    }
 }

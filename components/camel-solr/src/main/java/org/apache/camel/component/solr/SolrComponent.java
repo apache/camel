@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class SolrComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
-    private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<SolrEndpoint, SolrServerReference>();
+    private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
 
     protected static final class SolrServerReference {
 

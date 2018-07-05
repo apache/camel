@@ -31,8 +31,8 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
 
-    private static List<String> bodies = new ArrayList<String>();
-    private static List<String> previouses = new ArrayList<String>();
+    private static List<String> bodies = new ArrayList<>();
+    private static List<String> previouses = new ArrayList<>();
 
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");

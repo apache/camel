@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 292 in 199 JAR artifacts (20 deprecated)
+Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -26,8 +26,11 @@ Number of Components: 292 in 199 JAR artifacts (20 deprecated)
 | link:camel-apns/src/main/docs/apns-component.adoc[APNS] (camel-apns) +
 `apns:name` | 2.8 | For sending notifications to Apple iOS devices.
 
+| link:camel-as2/camel-as2-component/src/main/docs/as2-component.adoc[AS2] (camel-as2) +
+`as2:name` | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+
 | link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
-`asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server Asterisk PBX Server.
+`asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
 
 | link:camel-atmos/src/main/docs/atmos-component.adoc[Atmos] (camel-atmos) +
 `atmos:name/operation` | 2.15 | The atmos component is used for integrating with EMC's Atomos Storage.
@@ -296,6 +299,9 @@ Number of Components: 292 in 199 JAR artifacts (20 deprecated)
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | 2.15 | The google-mail component provides access to Google Mail.
 
+| link:camel-google-mail/src/main/docs/google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) +
+`google-mail-stream:index` | 2.22 | The google-mail component provides access to Google Mail.
+
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
 
@@ -533,6 +539,9 @@ Number of Components: 292 in 199 JAR artifacts (20 deprecated)
 | link:camel-metrics/src/main/docs/metrics-component.adoc[Metrics] (camel-metrics) +
 `metrics:metricsType:metricsName` | 2.14 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
 
+| link:camel-micrometer/src/main/docs/micrometer-component.adoc[Micrometer] (camel-micrometer) +
+`micrometer:metricsType:meterName` | 2.22 | To collect various metrics directly from Camel routes using the Micrometer library.
+
 | link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
 `mina:protocol:host:port` | 1.0 | *deprecated* Socket level networking using TCP or UDP with the Apache Mina 1.x library.
 
@@ -716,6 +725,9 @@ Number of Components: 292 in 199 JAR artifacts (20 deprecated)
 | link:../camel-core/src/main/docs/seda-component.adoc[SEDA] (camel-core) +
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
+| link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
+`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
 
@@ -848,8 +860,11 @@ Number of Components: 292 in 199 JAR artifacts (20 deprecated)
 | link:camel-weather/src/main/docs/weather-component.adoc[Weather] (camel-weather) +
 `weather:name` | 2.12 | Polls the weather information from Open Weather Map.
 
+| link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) +
+`web3j:nodeAddress` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
+
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
-`wordpress:operation` | 2.21 | Integrates Camel with Wordpress.
+`wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
@@ -1066,7 +1081,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1110,6 +1125,8 @@ Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
 
 | link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
 
+| link:camel-rxjava2/src/main/docs/rxjava2.adoc[Rxjava2] (camel-rxjava2) | 2.22 | RxJava2 based back-end for Camel's reactive streams component
+
 | link:camel-scala/src/main/docs/scala.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
 
 | link:camel-scr/src/main/docs/scr.adoc[SCR] (camel-scr) | 2.15 | *deprecated* Camel with OSGi SCR (Declarative Services)
@@ -1122,7 +1139,11 @@ Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
 
 | link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) | 2.19 | Camel Cloud integration with Spring Cloud
 
+| link:camel-spring-cloud-consul/src/main/docs/spring-cloud-consul.adoc[Spring Cloud Consul] (camel-spring-cloud-consul) | 2.19 | Camel Cloud integration with Spring Cloud Consul
+
 | link:camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc[Spring Cloud Netflix] (camel-spring-cloud-netflix) | 2.19 | Camel Cloud integration with Spring Cloud Netflix
+
+| link:camel-spring-cloud-zookeeper/src/main/docs/spring-cloud-zookeeper.adoc[Spring Cloud Zookeeper] (camel-spring-cloud-zookeeper) | 2.19 | Camel Cloud integration with Spring Cloud Zookeeper
 
 | link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 
@@ -1141,6 +1162,10 @@ Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
 | link:camel-test-karaf/src/main/docs/test-karaf.adoc[Test Karaf] (camel-test-karaf) | 2.18 | Camel integration testing with Apache Karaf
 
 | link:camel-test-spring/src/main/docs/test-spring.adoc[Test Spring] (camel-test-spring) | 2.10 | Camel unit testing with Spring
+
+| link:camel-testcontainers/src/main/docs/testcontainers.adoc[Testcontainers] (camel-testcontainers) | 2.22 | Camel support for testcontainers
+
+| link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and  testcontainers
 
 | link:camel-testng/src/main/docs/testng.adoc[TestNG] (camel-testng) | 2.8 | *deprecated* Camel unit testing with TestNG
 

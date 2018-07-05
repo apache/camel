@@ -27,7 +27,9 @@
 			http://www.springframework.org/schema/security/spring-security.xsd">
 
     <spring-security:authentication-manager alias="authenticationManager">
-    	<spring-security:authentication-provider user-service-ref="userDetailsService"/>
+    	<spring-security:authentication-provider user-service-ref="userDetailsService">
+            <spring-security:password-encoder ref="passwordEncoder"/>
+    	</spring-security:authentication-provider>
     </spring-security:authentication-manager>
 
     <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
@@ -36,6 +38,8 @@
         </constructor-arg>
         <property name="allowIfAllAbstainDecisions" value="true"/>
     </bean>
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
 
     <spring-security:user-service id="userDetailsService">
         <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>

@@ -8,7 +8,7 @@ The Twitter Search component consumes search results.
 ### Component Options
 
 // component options: START
-The Twitter Search component supports 9 options which are listed below.
+The Twitter Search component supports 9 options, which are listed below.
 
 
 
@@ -49,7 +49,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (41 parameters):
+==== Query Parameters (42 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -61,6 +61,7 @@ with the following path and query parameters:
 | *distanceMetric* (consumer) | Used by the non-stream geography search, to search by radius using the configured metrics. The unit can either be mi for miles, or km for kilometers. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. | km | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *extendedMode* (consumer) | Used for enabling full text from twitter (eg receive tweets that contains more than 140 characters). | true | boolean
 | *latitude* (consumer) | Used by the non-stream geography search to search by latitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
 | *locations* (consumer) | Bounding boxes, created by pairs of lat/lons. Can be used for streaming/filter. A pair is defined as lat,lon. And multiple paris can be separated by semi colon. |  | String
 | *longitude* (consumer) | Used by the non-stream geography search to search by longitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double

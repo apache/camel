@@ -180,7 +180,7 @@ public class EndpointStatisticCommand extends AbstractCamelCommand {
                 }
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>();
+            final Map<String, Integer> retval = new Hashtable<>();
             retval.put(CONTEXT_COLUMN_LABEL, maxContextLen);
             retval.put(URI_COLUMN_LABEL, maxUriLen);
             retval.put(ROUTE_COLUMN_LABEL, maxRouteIdLen);

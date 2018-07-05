@@ -17,9 +17,9 @@
 package org.apache.camel.spring.cloud;
 
 import org.apache.camel.impl.cloud.ServiceCallConstants;
-import org.apache.camel.model.cloud.AggregatingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
-import org.apache.camel.model.cloud.ChainedServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration;
 import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -69,7 +69,7 @@ public class ServiceCallConfigurationTest {
         assertNotNull("No ServiceDiscoveryConfiguration (2)", conf.getServiceDiscoveryConfiguration());
         assertNull(conf.getLoadBalancerConfiguration());
 
-        AggregatingServiceCallServiceDiscoveryConfiguration discovery2 = (AggregatingServiceCallServiceDiscoveryConfiguration)conf.getServiceDiscoveryConfiguration();
+        CombinedServiceCallServiceDiscoveryConfiguration discovery2 = (CombinedServiceCallServiceDiscoveryConfiguration)conf.getServiceDiscoveryConfiguration();
         assertEquals(2, discovery2.getServiceDiscoveryConfigurations().size());
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);
@@ -88,7 +88,7 @@ public class ServiceCallConfigurationTest {
         assertEquals(1, sconf.getServers().size());
         assertEquals("localhost:9093,localhost:9094,localhost:9095,localhost:9096", sconf.getServers().get(0));
 
-        ChainedServiceCallServiceFilterConfiguration filter = (ChainedServiceCallServiceFilterConfiguration)conf.getServiceFilterConfiguration();
+        CombinedServiceCallServiceFilterConfiguration filter = (CombinedServiceCallServiceFilterConfiguration)conf.getServiceFilterConfiguration();
         assertEquals(2, filter.getServiceFilterConfigurations().size());
         assertTrue(filter.getServiceFilterConfigurations().get(0) instanceof HealthyServiceCallServiceFilterConfiguration);
         assertTrue(filter.getServiceFilterConfigurations().get(1) instanceof BlacklistServiceCallServiceFilterConfiguration);

@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService, NonManagedService {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
+    private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
     private Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
     private String[] acceptableSchemes = {};
@@ -84,7 +84,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
 
     public void addFilter(PackageScanFilter filter) {
         if (scanFilters == null) {
-            scanFilters = new LinkedHashSet<PackageScanFilter>();
+            scanFilters = new LinkedHashSet<>();
         }
         scanFilters.add(filter);
     }
@@ -114,7 +114,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
 
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
-        return Collections.unmodifiableSet(new LinkedHashSet<ClassLoader>(classLoaders));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
     }
 
     public void setClassLoaders(Set<ClassLoader> classLoaders) {
@@ -132,7 +132,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
-        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+        Set<Class<?>> classes = new LinkedHashSet<>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
         }
@@ -152,7 +152,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithAnyPackageScanFilter(annotations, true));
-        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+        Set<Class<?>> classes = new LinkedHashSet<>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
         }
@@ -172,7 +172,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
 
         PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
-        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+        Set<Class<?>> classes = new LinkedHashSet<>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
         }
@@ -187,7 +187,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
             return Collections.emptySet();
         }
 
-        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+        Set<Class<?>> classes = new LinkedHashSet<>();
         for (String pkg : packageNames) {
             find(filter, pkg, classes);
         }
@@ -416,7 +416,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
      * @return all the .class entries from the JAR
      */
     protected List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
 
         JarInputStream jarStream = null;
         try {

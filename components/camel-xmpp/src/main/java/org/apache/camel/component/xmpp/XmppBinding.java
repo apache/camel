@@ -132,7 +132,7 @@ public class XmppBinding {
     }
 
     public Map<String, Object> extractHeadersFromXmpp(Stanza stanza, Exchange exchange) {
-        Map<String, Object> answer = new HashMap<String, Object>();
+        Map<String, Object> answer = new HashMap<>();
 
         ExtensionElement jpe = stanza.getExtension(JivePropertiesExtension.NAMESPACE);
         if (jpe instanceof JivePropertiesExtension) {

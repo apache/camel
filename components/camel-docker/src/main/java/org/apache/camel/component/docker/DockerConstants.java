@@ -26,7 +26,7 @@ public final class DockerConstants {
 
     public static final String DOCKER_PREFIX = "CamelDocker";
 
-    public static final Map<String, Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<String, Class<?>>();
+    public static final Map<String, Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<>();
 
     /**
      * Endpoint configuration defaults

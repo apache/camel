@@ -124,7 +124,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     private List<Object> getModels(Exchange exchange, Object body) {
         List<Object> models;
         if ((models = exchange.getContext().getTypeConverter().convertTo(List.class, body)) == null) {
-            models = new ArrayList<Object>();
+            models = new ArrayList<>();
             Iterator<Object> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 models.add(it.next());
@@ -146,7 +146,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     }
 
     private List<Object> readModels(Exchange exchange, InputStream stream) throws Exception {
-        List<Object> results = new ArrayList<Object>();
+        List<Object> results = new ArrayList<>();
         BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
 
         BeanReader in = factory.createReader(getStreamName(), streamReader);

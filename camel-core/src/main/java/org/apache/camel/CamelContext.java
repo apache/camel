@@ -405,7 +405,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a readonly list of names of the components currently registered
      *
-     * @return a readonly list with the names of the the components
+     * @return a readonly list with the names of the components
      */
     List<String> getComponentNames();
 
@@ -1105,7 +1105,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a readonly list with the names of the languages currently registered.
      *
-     * @return a readonly list with the names of the the languages
+     * @return a readonly list with the names of the languages
      */
     List<String> getLanguageNames();
 
@@ -1403,6 +1403,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * @deprecated use {@link #getGlobalOption(String)} instead.
      */
+    @Deprecated
     String getProperty(String key);
 
     /**
@@ -1613,7 +1614,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
-     * Gets the the application CamelContext class loader which may be helpful for running camel in other containers
+     * Gets the application CamelContext class loader which may be helpful for running camel in other containers
      *
      * @return the application CamelContext class loader
      */

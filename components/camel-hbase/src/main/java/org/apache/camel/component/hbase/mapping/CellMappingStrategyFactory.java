@@ -31,7 +31,7 @@ public class CellMappingStrategyFactory {
     public static final String BODY = "body";
 
     private static final Logger LOG = LoggerFactory.getLogger(CellMappingStrategyFactory.class);
-    private static final Map<String, CellMappingStrategy> DEFAULT_STRATEGIES = new HashMap<String, CellMappingStrategy>();
+    private static final Map<String, CellMappingStrategy> DEFAULT_STRATEGIES = new HashMap<>();
 
     public CellMappingStrategyFactory() {
         DEFAULT_STRATEGIES.put(HEADER, new HeaderMappingStrategy());

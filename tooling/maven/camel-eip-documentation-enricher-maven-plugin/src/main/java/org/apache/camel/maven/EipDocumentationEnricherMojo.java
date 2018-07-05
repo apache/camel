@@ -156,7 +156,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         NodeList elementsAndTypes = domFinder.findElementsAndTypes();
         documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
         Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
-        Set<String> injectedTypes = new LinkedHashSet<String>();
+        Set<String> injectedTypes = new LinkedHashSet<>();
 
         getLog().info("Found " + typeToNameMap.size() + " models to use when enriching the XSD schema");
 
@@ -212,7 +212,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private Map<String, String> buildTypeToNameMap(NodeList elementsAndTypes) {
-        Map<String, String> typeToNameMap = new LinkedHashMap<String, String>();
+        Map<String, String> typeToNameMap = new LinkedHashMap<>();
         for (int i = 0; i < elementsAndTypes.getLength(); i++) {
             Element item = (Element) elementsAndTypes.item(i);
             String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);

@@ -467,7 +467,7 @@ public final class ServiceHelper {
      * @return the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service, boolean includeErrorHandler) {
-        Set<Service> answer = new LinkedHashSet<Service>();
+        Set<Service> answer = new LinkedHashSet<>();
         doGetChildServices(answer, service, includeErrorHandler);
         return answer;
     }

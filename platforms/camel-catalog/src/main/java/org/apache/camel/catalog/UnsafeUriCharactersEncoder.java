@@ -96,7 +96,7 @@ public final class UnsafeUriCharactersEncoder {
 
     private static List<Pair> checkRAW(String s) {
         Matcher matcher = RAW_PATTERN.matcher(s);
-        List<Pair> answer = new ArrayList<Pair>();
+        List<Pair> answer = new ArrayList<>();
         // Check all occurrences
         while (matcher.find()) {
             answer.add(new Pair(matcher.start(), matcher.end()));
@@ -137,7 +137,7 @@ public final class UnsafeUriCharactersEncoder {
         if (checkRaw) {
             rawPairs = checkRAW(s);
         } else {
-            rawPairs = new ArrayList<Pair>();
+            rawPairs = new ArrayList<>();
         }
 
         int n = s == null ? 0 : s.length();

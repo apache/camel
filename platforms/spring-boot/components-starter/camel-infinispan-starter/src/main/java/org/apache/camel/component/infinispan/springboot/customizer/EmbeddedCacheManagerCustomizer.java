@@ -26,17 +26,16 @@ import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
+import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 @Order(101)
 @Configuration
-@Conditional(EmbeddedCacheManagerCustomizer.Conditions.class)
-@AutoConfigureAfter(CamelAutoConfiguration.class)
+@ConditionalOnBean({ EmbeddedCacheManager.class, CamelAutoConfiguration.class })
+@AutoConfigureAfter({ CamelAutoConfiguration.class, CacheAutoConfiguration.class })
 @AutoConfigureBefore(InfinispanComponentAutoConfiguration.class)
 @EnableConfigurationProperties(EmbeddedCacheManagerCustomizerConfiguration.class)
 public class EmbeddedCacheManagerCustomizer implements HasId, ComponentCustomizer<InfinispanComponent> {
@@ -57,31 +56,5 @@ public class EmbeddedCacheManagerCustomizer implements HasId, ComponentCustomize
     @Override
     public String getId() {
         return "camel.component.infinispan.customizer.embedded-cache-manager";
-    }
-
-    // *************************************************************************
-    // By default ConditionalOnBean works using an OR operation so if you list
-    // a number of classes, the condition succeeds if a single instance of the
-    // classes is found.
-    //
-    // A workaround is to use AllNestedConditions and creates some dummy classes
-    // annotated @ConditionalOnBean
-    //
-    // This should be fixed in spring-boot 2.0 where ConditionalOnBean uses and
-    // AND operation instead of the OR as it does today.
-    // *************************************************************************
-
-    static class Conditions extends AllNestedConditions {
-        public Conditions() {
-            super(ConfigurationPhase.REGISTER_BEAN);
-        }
-
-        @ConditionalOnBean(EmbeddedCacheManager.class)
-        static class OnCacheManager {
-        }
-
-        @ConditionalOnBean(CamelAutoConfiguration.class)
-        static class OnCamelAutoConfiguration {
-        }
     }
 }

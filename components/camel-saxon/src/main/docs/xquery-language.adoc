@@ -14,7 +14,7 @@ Recipient List.
 ### XQuery Language options
 
 // language options: START
-The XQuery language supports 3 options which are listed below.
+The XQuery language supports 3 options, which are listed below.
 
 
 

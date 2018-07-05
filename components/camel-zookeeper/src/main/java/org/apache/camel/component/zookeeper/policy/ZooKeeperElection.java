@@ -73,7 +73,7 @@ public class ZooKeeperElection {
     private volatile boolean isCandidateCreated;
     private int enabledCount = 1;
     private UuidGenerator uuidGenerator = new JavaUuidGenerator();
-    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
+    private final List<ElectionWatcher> watchers = new ArrayList<>();
 
     public ZooKeeperElection(CamelContext camelContext, String uri, int enabledCount) {
         this(camelContext.createProducerTemplate(), camelContext, uri, enabledCount);

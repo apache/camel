@@ -54,7 +54,7 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
         final Job jobMock = mock(Job.class);
         // stats that may be set in the consumer:
         // mock stats : "tube", "state", "age", "time-left", "timeouts", "releases", "buries", "kicks"
-        Map<String, String> stats = new HashMap<String, String>();
+        Map<String, String> stats = new HashMap<>();
         stats.put("tube", "A");
         stats.put("state", "Test");
         stats.put("age", "0");

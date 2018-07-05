@@ -47,7 +47,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
 
     private final BundleContext bundleContext;
     private final Map<CamelContext, ServiceRegistration<?>> registrations 
-        = new ConcurrentHashMap<CamelContext, ServiceRegistration<?>>();
+        = new ConcurrentHashMap<>();
 
     public OsgiCamelContextPublisher(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
@@ -115,7 +115,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         if (!lookupCamelContext(bundleContext, symbolicName, name)) {
             Version bundleVersion = getBundleVersion(bundleContext.getBundle());
 
-            Dictionary<String, Object > props = new Hashtable<String, Object>();
+            Dictionary<String, Object > props = new Hashtable<>();
             props.put(CONTEXT_SYMBOLIC_NAME_PROPERTY, symbolicName);
             props.put(CONTEXT_VERSION_PROPERTY, bundleVersion);
             props.put(CONTEXT_NAME_PROPERTY, name);

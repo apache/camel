@@ -44,8 +44,8 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
-    private static List<EventObject> events2 = new ArrayList<EventObject>();
+    private static List<EventObject> events = new ArrayList<>();
+    private static List<EventObject> events2 = new ArrayList<>();
 
     @Override
     protected boolean useJmx() {

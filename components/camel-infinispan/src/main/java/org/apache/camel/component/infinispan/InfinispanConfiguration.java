@@ -69,6 +69,7 @@ public class InfinispanConfiguration implements Cloneable {
      *
      * @deprecated replaced by @{link setOperation}
      */
+    @Deprecated
     public void setCommand(String command) {
         if (command.startsWith(InfinispanConstants.OPERATION)) {
             command = command.substring(InfinispanConstants.OPERATION.length()).toUpperCase();
@@ -255,7 +256,11 @@ public class InfinispanConfiguration implements Cloneable {
     }
 
     /**
-     * The CacheContainer configuration
+     * The CacheContainer configuration. Uses if the cacheContainer is not defined.
+     * Must be the following types:
+     * org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration;
+     * org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration;
+     * 
      */
     public void setCacheContainerConfiguration(Object cacheContainerConfiguration) {
         this.cacheContainerConfiguration = cacheContainerConfiguration;

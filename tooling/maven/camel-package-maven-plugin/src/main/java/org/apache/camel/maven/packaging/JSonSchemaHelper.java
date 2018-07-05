@@ -36,7 +36,6 @@ public final class JSonSchemaHelper {
      * @param json the json
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
-    @SuppressWarnings("unchecked")
     public static List<Map<String, String>> parseJsonSchema(String group, String json, boolean parseProperties) {
         List<Map<String, String>> answer = new ArrayList<>();
         if (json == null) {
@@ -47,24 +46,24 @@ public final class JSonSchemaHelper {
         try {
             JsonObject output = (JsonObject) Jsoner.deserialize(json);
             for (String key : output.keySet()) {
-                Map row = output.getMap(key);
+                Map<?, ?> row = output.getMap(key);
                 if (key.equals(group)) {
                     if (parseProperties) {
                         // flattern each entry in the row with name as they key, and its value as the content (its a map also)
                         for (Object obj : row.entrySet()) {
-                            Map.Entry entry = (Map.Entry) obj;
-                            Map<String, String> newRow = new LinkedHashMap();
+                            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                            Map<String, String> newRow = new LinkedHashMap<>();
                             newRow.put("name", entry.getKey().toString());
 
-                            Map newData = transformMap((Map) entry.getValue());
+                            Map<String, String> newData = transformMap((Map<?, ?>) entry.getValue());
                             newRow.putAll(newData);
                             answer.add(newRow);
                         }
                     } else {
                         // flattern each entry in the row as a list of single Map<key, value> elements
-                        Map newData = transformMap(row);
+                        Map<?, ?> newData = transformMap(row);
                         for (Object obj : newData.entrySet()) {
-                            Map.Entry entry = (Map.Entry) obj;
+                            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
                             Map<String, String> newRow = new LinkedHashMap<>();
                             newRow.put(entry.getKey().toString(), entry.getValue().toString());
                             answer.add(newRow);
@@ -80,16 +79,16 @@ public final class JSonSchemaHelper {
         return answer;
     }
 
-    private static Map<String, String> transformMap(Map jsonMap) {
+    private static Map<String, String> transformMap(Map<?, ?> jsonMap) {
         Map<String, String> answer = new LinkedHashMap<>();
 
         for (Object rowObj : jsonMap.entrySet()) {
-            Map.Entry rowEntry = (Map.Entry) rowObj;
+            Map.Entry<?, ?> rowEntry = (Map.Entry<?, ?>) rowObj;
             // if its a list type then its an enum, and we need to parse it as a single line separated with comma
             // to be backwards compatible
             Object newValue = rowEntry.getValue();
             if (newValue instanceof List) {
-                List list = (List) newValue;
+                List<?> list = (List<?>) newValue;
                 CollectionStringBuffer csb = new CollectionStringBuffer(",");
                 for (Object line : list) {
                     csb.append(line);

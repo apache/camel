@@ -1,0 +1,204 @@
+[[as2-component]]
+== AS2 Component
+
+*Available as of Camel version 2.22*
+
+The AS2 component provides transport of EDI messages using the HTTP transfer protocol
+as specified in https://tools.ietf.org/html/rfc4130[RFC4130]. 
+
+NOTE: This component is currently a work in progress. Expect URI options and path and query parameters to change in future versions of this component.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-as2</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+=== AS2 Options
+
+
+// component options: START
+The AS2 component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | AS2Configuration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The AS2 endpoint is configured using URI syntax:
+
+----
+as2:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Some description of this option, and what it does |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+=== URI format
+
+[source]
+----
+as2://apiName/methodName
+----
+
+apiName can be one of:
+
+* client
+* server
+
+=== Client Endpoints:
+
+Client endpoints use the endpoint prefix *`client`* followed by the name of a method
+and associated options described next. The endpoint URI MUST contain the prefix *`client`*.
+
+[source]
+----
+as2://client/method?[options]
+----
+
+Endpoint options that are not mandatory are denoted by *[]*. When there
+are no mandatory options for an endpoint, one of the set of *[]* options
+MUST be provided. Producer endpoints can also use a special
+option *`inBody`* that in turn should contain the name of the endpoint
+option whose value will be contained in the Camel Exchange In message.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelAS2.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint
+option *`inBody=option`* would override a *`CamelAS2.option`* header.
+
+If a value is not provided for the option *defaultRequest* either in the
+endpoint URI or in a message header, it will be assumed to be `null`.
+Note that the `null` value will only be used if other options do not
+satisfy matching endpoints.
+
+In case of AS2 API errors the endpoint will throw a
+RuntimeCamelException with a
+*org.apache.http.HttpException* derived exception
+cause.
+
+[width="100%",cols="10%,10%,70%",options="header"]
+|===
+|Method |Options |Result Body Type
+
+|send |ediMessage, requestUri, subject, from, as2From, as2To, as2MessageStructure, ediMessageContentType, ediMessageTransferEncoding, dispositionNotificationTo, signedReceiptMicAlgorithms |org.apache.http.protocol.HttpCoreContext
+|===
+
+URI Options for _client_
+
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|ediMessage |String
+
+|requestUri |String
+
+|subject |String
+
+|from |String
+
+|as2From |String
+
+|as2To |String
+
+|as2MessageStructure |org.apache.camel.component.as2.api.AS2MessageStructure
+
+|ediMessageContentType |String
+
+|ediMessageTransferEncoding |String
+
+|dispositionNotificationTo |String
+
+|signedReceiptMicAlgorithms |String[]
+|===
+
+
+=== Server Endpoints:
+
+Server endpoints use the endpoint prefix *`server`* followed by the name of a method
+and associated options described next. The endpoint URI MUST contain the prefix *`server`*.
+
+[source]
+----
+as2://server/method?[options]
+----
+
+Endpoint options that are not mandatory are denoted by *[]*. When there
+are no mandatory options for an endpoint, one of the set of *[]* options
+MUST be provided. Producer endpoints can also use a special
+option *`inBody`* that in turn should contain the name of the endpoint
+option whose value will be contained in the Camel Exchange In message.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelAS2.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint
+option *`inBody=option`* would override a *`CamelAS2.option`* header.
+
+If a value is not provided for the option *defaultRequest* either in the
+endpoint URI or in a message header, it will be assumed to be `null`.
+Note that the `null` value will only be used if other options do not
+satisfy matching endpoints.
+
+In case of AS2 API errors the endpoint will throw a
+RuntimeCamelException with a
+*org.apache.http.HttpException* derived exception
+cause.
+
+[width="100%",cols="10%,10%,70%",options="header"]
+|===
+|Method |Options |Result Body Type
+
+|listen |requestUriPattern |org.apache.http.protocol.HttpCoreContext
+|===
+
+URI Options for _server_
+
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|requestUriPattern |String
+|===
+

@@ -32,8 +32,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class TraceInterceptorDestinationTest extends ContextTestSupport {
 
-    private List<String> tracedBodies = new ArrayList<String>();
-    private List<String> tracedHeaders = new ArrayList<String>();
+    private List<String> tracedBodies = new ArrayList<>();
+    private List<String> tracedHeaders = new ArrayList<>();
 
     public void testSendingSomeMessagesBeingTraced() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");

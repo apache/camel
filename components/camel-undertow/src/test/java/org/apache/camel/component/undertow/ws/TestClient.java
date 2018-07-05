@@ -55,7 +55,7 @@ public class TestClient {
     }
 
     public TestClient(String url, AsyncHttpClientConfig conf, int count) {
-        this.received = new ArrayList<Object>();
+        this.received = new ArrayList<>();
         this.latch = new CountDownLatch(count);
         this.client = conf == null ? new DefaultAsyncHttpClient() : new DefaultAsyncHttpClient(conf);
         this.url = url;
@@ -89,7 +89,7 @@ public class TestClient {
     }
 
     public <T> List<T> getReceived(Class<T> cls) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         for (Object o : received) {
             list.add(getValue(o, cls));
         }

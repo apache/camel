@@ -44,7 +44,7 @@ public class SimpleOgnlTest {
 
     @Test
     public void testSimpleOgnlListExpression() throws Exception {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("one");
         list.add("two");
 

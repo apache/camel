@@ -33,7 +33,7 @@ public class CompositeRegistry implements Registry {
     private final List<Registry> registryList;
     
     public CompositeRegistry() {
-        registryList = new ArrayList<Registry>();
+        registryList = new ArrayList<>();
     }
     
     public CompositeRegistry(List<Registry> registries) {

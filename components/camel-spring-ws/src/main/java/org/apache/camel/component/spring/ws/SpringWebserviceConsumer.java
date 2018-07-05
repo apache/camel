@@ -115,7 +115,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     private void populateExchangeWithBreadcrumbFromMessageContext(Exchange exchange, MessageContext messageContext) {
         if (messageContext != null) {
             HttpServletRequest obj = (HttpServletRequest) messageContext.getProperty("transport.http.servletRequest");
-            String breadcrumbId = (String) obj.getHeader(Exchange.BREADCRUMB_ID);
+            String breadcrumbId = obj.getHeader(Exchange.BREADCRUMB_ID);
             exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
         }
     }

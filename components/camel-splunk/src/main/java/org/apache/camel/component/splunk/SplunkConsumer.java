@@ -101,7 +101,7 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
 
     protected Queue<Exchange> createExchanges(List<SplunkEvent> splunkEvents) {
         LOG.trace("Received {} messages in this poll", splunkEvents.size());
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Queue<Exchange> answer = new LinkedList<>();
         for (SplunkEvent splunkEvent : splunkEvents) {
             Exchange exchange = getEndpoint().createExchange();
             Message message = exchange.getIn();

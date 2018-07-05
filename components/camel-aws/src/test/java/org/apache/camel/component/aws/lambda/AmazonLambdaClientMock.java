@@ -210,7 +210,7 @@ public class AmazonLambdaClientMock implements AWSLambda {
     public InvokeResult invoke(InvokeRequest invokeRequest) {
         InvokeResult result = new InvokeResult();
 
-        Map<String, Object> payload = new HashMap<String, Object>();
+        Map<String, Object> payload = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
             payload = mapper.readValue(StandardCharsets.UTF_8.decode(invokeRequest.getPayload()).toString(), new TypeReference<Map<String, String>>() {
@@ -247,7 +247,7 @@ public class AmazonLambdaClientMock implements AWSLambda {
     public ListFunctionsResult listFunctions() {
 
         ListFunctionsResult result = new ListFunctionsResult();
-        Collection<FunctionConfiguration> listFunctions = new ArrayList<FunctionConfiguration>();
+        Collection<FunctionConfiguration> listFunctions = new ArrayList<>();
         FunctionConfiguration configuration = new FunctionConfiguration();
         configuration.setFunctionName("GetHelloWithName");
         configuration.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");

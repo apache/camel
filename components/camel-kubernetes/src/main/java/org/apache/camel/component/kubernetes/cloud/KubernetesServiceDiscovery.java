@@ -17,53 +17,20 @@
 
 package org.apache.camel.component.kubernetes.cloud;
 
-import io.fabric8.kubernetes.api.model.EndpointAddress;
-import io.fabric8.kubernetes.api.model.EndpointPort;
-import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
-import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
-import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.impl.cloud.DefaultServiceDiscovery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Discovers where services are running on which servers in Kubernetes.
  */
-abstract class KubernetesServiceDiscovery extends DefaultServiceDiscovery {
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesServiceDiscovery.class);
-    private static final int FIRST = 0;
-
+public abstract class KubernetesServiceDiscovery extends DefaultServiceDiscovery {
     private final KubernetesConfiguration configuration;
-    private final String namespace;
-    private final String portName;
-    private AutoAdaptableKubernetesClient client;
 
-    KubernetesServiceDiscovery(KubernetesConfiguration configuration) {
+    public KubernetesServiceDiscovery(KubernetesConfiguration configuration) {
         this.configuration = configuration;
-        this.namespace = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
-        this.portName = configuration.getPortName();
-        this.client = null;
-    }
-
-    @Override
-    public String toString() {
-        return "KubernetesServiceDiscovery";
-    }
-
-    protected ServiceDefinition newServer(String serviceName, EndpointAddress address, EndpointPort port) {
-        return new DefaultServiceDefinition(serviceName, address.getIp(), port.getPort());
     }
 
     protected KubernetesConfiguration getConfiguration() {
         return this.configuration;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public String getPortName() {
-        return portName;
     }
 }

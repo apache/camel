@@ -20,9 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -37,7 +34,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
 import org.junit.Test;
-import org.mozilla.universalchardet.UniversalDetector;
 
 import static org.hamcrest.Matchers.*;
 
@@ -60,7 +56,7 @@ public class TikaParseTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody(String.class);
                 Map<String, Object> headerMap = exchange.getIn().getHeaders();
                 assertThat(body, instanceOf(String.class));
-                
+
                 Charset detectedCharset = null;
                 try {
                     InputStream bodyIs = new ByteArrayInputStream(((String)body).getBytes());
@@ -69,10 +65,10 @@ public class TikaParseTest extends CamelTestSupport {
                 } catch (IOException e1) {
                     fail();
                 }
-                
-                
+
+
                 assertThat(detectedCharset.name(), startsWith(Charset.defaultCharset().name()));
-                
+
                 assertThat((String) body, containsString("test"));
                 assertThat(headerMap.get(Exchange.CONTENT_TYPE), equalTo("application/msword"));
                 return true;
@@ -80,7 +76,7 @@ public class TikaParseTest extends CamelTestSupport {
         });
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testDocumentParseWithEncoding() throws Exception {
 
@@ -95,7 +91,7 @@ public class TikaParseTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody(String.class);
                 Map<String, Object> headerMap = exchange.getIn().getHeaders();
                 assertThat(body, instanceOf(String.class));
-                
+
                 Charset detectedCharset = null;
                 try {
                     InputStream bodyIs = new ByteArrayInputStream(((String)body).getBytes(StandardCharsets.UTF_16));
@@ -104,8 +100,8 @@ public class TikaParseTest extends CamelTestSupport {
                 } catch (IOException e1) {
                     fail();
                 }
-                
-                
+
+
                 assertThat(detectedCharset.name(), startsWith(StandardCharsets.UTF_16.name()));
                 assertThat(headerMap.get(Exchange.CONTENT_TYPE), equalTo("application/vnd.oasis.opendocument.text"));
                 return true;

@@ -68,7 +68,7 @@ public class SchematronProducer extends DefaultProducer {
      */
     private void setValidationReport(Exchange exchange, String report, String status) {
         // if exchange pattern is In and Out set details on the Out message.
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Constants.VALIDATION_STATUS, status);
         headers.put(Constants.VALIDATION_REPORT, report);
         if (exchange.getPattern().isOutCapable()) {

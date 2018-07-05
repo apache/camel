@@ -72,7 +72,7 @@ public class CMISSessionFacade {
     }
 
     void initSession() {
-        Map<String, String> parameter = new HashMap<String, String>();
+        Map<String, String> parameter = new HashMap<>();
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
         parameter.put(SessionParameter.ATOMPUB_URL, this.url);
         parameter.put(SessionParameter.USER, this.username);
@@ -133,7 +133,7 @@ public class CMISSessionFacade {
     //some duplication
     public List<Map<String, Object>> retrieveResult(Boolean retrieveContent, Integer readSize,
                                                     ItemIterable<QueryResult> itemIterable) {
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> result = new ArrayList<>();
         boolean queryForContent = retrieveContent != null ? retrieveContent : readContent;
         int documentsToRead = readSize != null ? readSize : readCount;
         int count = 0;

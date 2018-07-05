@@ -22,12 +22,17 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.internal.client.RestClient;
+import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -39,6 +44,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.stubbing.Answer;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class CamelSalesforceMojoOutputTest {
@@ -49,17 +61,17 @@ public class CamelSalesforceMojoOutputTest {
     @Parameter(1)
     public SObjectDescription description;
 
-    @Parameter(3)
-    public String expected;
+    @Parameter(4)
+    public Function<String, String> fileNameAdapter = Function.identity();
 
     @Parameter(0)
     public String json;
 
-    @Parameter(4)
+    @Parameter(3)
     public GenerateMojo mojo;
 
     @Parameter(2)
-    public String source;
+    public Set<String> sources;
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
@@ -70,22 +82,24 @@ public class CamelSalesforceMojoOutputTest {
 
         final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
 
+        final RestClient client = mockRestClient();
+
+        mojo.descriptions = new ObjectDescriptions(client, 0, null, null, null, null, mojo.getLog());
+
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
-        final File generatedFile = new File(pkgDir, source);
-        final String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
+        for (final String source : sources) {
+            String expected = fileNameAdapter.apply(source);
 
-        if (TestSupport.getJavaMajorVersion() >= 9
-            && (source.equals("Case.java") || source.equals("ComplexCalculatedFormula.java"))) {
-            // Content is the same, the ordering is a bit different.
-            source += "-Java9";
+            final File generatedFile = new File(pkgDir, source);
+            final String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
+
+            final String expectedContent = IOUtils.toString(
+                CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
+
+            Assert.assertEquals("Generated source file in " + source
+                + " must be equal to the one present in test/resources/" + expected, generatedContent, expectedContent);
         }
-        final String expectedContent = IOUtils.toString(
-            CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
-
-        Assert.assertEquals(
-            "Generated source file in " + source + " must be equal to the one present in test/resources",
-            generatedContent, expectedContent);
     }
 
     @Parameters(name = "json = {0}, source = {2}")
@@ -98,12 +112,13 @@ public class CamelSalesforceMojoOutputTest {
             testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
             testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"),
             testCase("asset.json", "Asset.java"), //
-            testCase("asset.json", "Asset.java", "Asset_LocalDateTime.java", mojo -> {
+            testCase("asset.json", mojo -> {
                 mojo.customTypes = new HashMap<>();
                 mojo.customTypes.put("date", "java.time.LocalDateTime");
 
                 mojo.setup();
-            }));
+            }, s -> "Asset_LocalDateTime.java", "Asset.java"), //
+            testCase("with_reference.json", "With_Reference__c.java", "With_External_Id__c_Lookup.java"));
     }
 
     static GenerateMojo createMojo() {
@@ -121,15 +136,70 @@ public class CamelSalesforceMojoOutputTest {
         }
     }
 
-    static Object[] testCase(final String json, final String source) throws IOException {
-        return testCase(json, source, source, String::valueOf);
+    static String java9CompatibilityAdapter(final String source) {
+        if (TestSupport.getJavaMajorVersion() >= 9
+            && (source.equals("Case.java") || source.equals("ComplexCalculatedFormula.java"))) {
+            // Content is the same, the ordering is a bit different.
+            return source + "-Java9";
+        }
+
+        return source;
     }
 
-    static Object[] testCase(final String json, final String source, final String expected,
-        final Consumer<GenerateMojo> mojoConfigurator) throws IOException {
+    static RestClient mockRestClient() {
+        final RestClient client = mock(RestClient.class);
+        doAnswer(provideResource("/global_sobjects.json")).when(client).getGlobalObjects(anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/account.json")).when(client).getDescription(eq("Account"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/asset.json")).when(client).getDescription(eq("Asset"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/case.json")).when(client).getDescription(eq("Case"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/invoice.json")).when(client).getDescription(eq("Invoice__c"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/line_item.json")).when(client).getDescription(eq("Line_Item__c"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/merchandise.json")).when(client).getDescription(eq("Merchandise__c"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/with_reference.json")).when(client).getDescription(eq("With_Reference__c"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/product2.json")).when(client).getDescription(eq("Product2"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/with_external_id.json")).when(client).getDescription(eq("With_External_Id__c"),
+            anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/group.json")).when(client).getDescription(eq("Group"), anyMap(),
+            any(ResponseCallback.class));
+        doAnswer(provideResource("/user.json")).when(client).getDescription(eq("User"), anyMap(),
+            any(ResponseCallback.class));
+        return client;
+    }
+
+    static Answer<Void> provideResource(final String resource) {
+        return invocation -> {
+            final ResponseCallback callback = Arrays.stream(invocation.getArguments())
+                .filter(ResponseCallback.class::isInstance).map(ResponseCallback.class::cast).findFirst().get();
+
+            callback.onResponse(CamelSalesforceMojoOutputTest.class.getResourceAsStream(resource), null, null);
+            return null;
+        };
+    }
+
+    static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator,
+        final Function<String, String> adapter, final String... sources) throws IOException {
         final GenerateMojo mojo = createMojo();
         mojoConfigurator.accept(mojo);
 
-        return new Object[] {json, createSObjectDescription(json), source, expected, mojo};
+        return new Object[] {json, createSObjectDescription(json), new HashSet<>(Arrays.asList(sources)), mojo,
+            adapter};
+    }
+
+    static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator, final String... sources)
+        throws IOException {
+        return testCase(json, mojoConfigurator, CamelSalesforceMojoOutputTest::java9CompatibilityAdapter, sources);
+    }
+
+    static Object[] testCase(final String json, final String... sources) throws IOException {
+        return testCase(json, String::valueOf, sources);
     }
 }

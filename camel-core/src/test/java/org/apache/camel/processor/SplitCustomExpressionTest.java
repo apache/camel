@@ -58,7 +58,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
 
             // just split the body by comma
             String[] parts = body.split(",");
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             for (String part : parts) {
                 list.add(part);
             }

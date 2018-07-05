@@ -84,7 +84,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
 
     @Test
     public void testPutWithTTL() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
         headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
         headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
@@ -111,7 +111,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testGetAllEmptySet() {
-        Set<Object> l = new HashSet<Object>();
+        Set<Object> l = new HashSet<>();
         Map t = new HashMap();
         t.put("key1", "value1");
         t.put("key2", "value2");
@@ -127,7 +127,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testGetAllOnlyOneKey() {
-        Set<Object> l = new HashSet<Object>();
+        Set<Object> l = new HashSet<>();
         l.add("key1");
         Map t = new HashMap();
         t.put("key1", "value1");
@@ -172,7 +172,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testUpdateOldValue() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
         headers.put(HazelcastConstants.OBJECT_VALUE, "my-foo");
         template.sendBodyAndHeaders("direct:update", "replaced", headers);
@@ -183,7 +183,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testPutIfAbsent() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
         verify(map).putIfAbsent("4711", "replaced");
@@ -191,7 +191,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testPutIfAbsentWithTtl() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
         headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
         headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
@@ -201,7 +201,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testEvict() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
         template.sendBodyAndHeaders("direct:evict", "", headers);
         verify(map).evict("4711");
@@ -209,7 +209,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     
     @Test
     public void testEvictAll() throws InterruptedException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         template.sendBodyAndHeaders("direct:evictAll", "", headers);
         verify(map).evictAll();
     }

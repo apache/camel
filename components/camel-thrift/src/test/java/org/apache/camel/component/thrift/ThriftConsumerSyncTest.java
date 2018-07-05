@@ -92,8 +92,8 @@ public class ThriftConsumerSyncTest extends CamelTestSupport {
 
         assertNotNull(echoResult);
         assertTrue(echoResult instanceof Work);
-        assertEquals(THRIFT_TEST_NUM1, ((Work)echoResult).num1);
-        assertEquals(Operation.MULTIPLY, ((Work)echoResult).op);
+        assertEquals(THRIFT_TEST_NUM1, echoResult.num1);
+        assertEquals(Operation.MULTIPLY, echoResult.op);
     }
     
     @Override

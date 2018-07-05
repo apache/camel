@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;

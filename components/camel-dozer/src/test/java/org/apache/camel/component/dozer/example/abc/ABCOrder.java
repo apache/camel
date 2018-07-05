@@ -316,7 +316,7 @@ public class ABCOrder {
          */
         public List<ABCOrder.OrderItems.Item> getItem() {
             if (item == null) {
-                item = new ArrayList<ABCOrder.OrderItems.Item>();
+                item = new ArrayList<>();
             }
             return this.item;
         }

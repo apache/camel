@@ -77,7 +77,7 @@ options related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 7 options which are listed below.
+The Netty HTTP component supports 7 options, which are listed below.
 
 
 

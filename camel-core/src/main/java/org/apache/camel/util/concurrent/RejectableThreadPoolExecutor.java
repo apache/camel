@@ -79,7 +79,7 @@ public class RejectableThreadPoolExecutor extends ThreadPoolExecutor {
     @Override
     protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
         if (runnable instanceof Rejectable) {
-            return new RejectableFutureTask<T>(runnable, value);
+            return new RejectableFutureTask<>(runnable, value);
         } else {
             return super.newTaskFor(runnable, value);
         }
@@ -88,7 +88,7 @@ public class RejectableThreadPoolExecutor extends ThreadPoolExecutor {
     @Override
     protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
         if (callable instanceof Rejectable) {
-            return new RejectableFutureTask<T>(callable);
+            return new RejectableFutureTask<>(callable);
         } else {
             return super.newTaskFor(callable);
         }

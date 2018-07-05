@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.csv;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,7 @@ final class CsvRecordConverters {
 
         @Override
         public List<String> convertRecord(CSVRecord record) {
-            List<String> answer = new ArrayList<String>(record.size());
+            List<String> answer = new ArrayList<>(record.size());
             for (int i = 0; i < record.size(); i++) {
                 answer.add(record.get(i));
             }

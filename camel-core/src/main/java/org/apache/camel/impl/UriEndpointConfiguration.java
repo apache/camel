@@ -143,7 +143,7 @@ public class UriEndpointConfiguration implements EndpointConfiguration {
         if (propertyMap == null) {
             propertyMap = UriEndpointComponent.createParameterConfigurationMap(getEndpointClass());
         }
-        return new TreeMap<String, ParameterConfiguration>(propertyMap);
+        return new TreeMap<>(propertyMap);
     }
 
 }

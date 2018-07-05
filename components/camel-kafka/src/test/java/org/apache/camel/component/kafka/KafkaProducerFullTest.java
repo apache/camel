@@ -17,14 +17,17 @@
 package org.apache.camel.component.kafka;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -33,9 +36,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.Headers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,23 +56,31 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC_BYTES = "testBytes";
     private static final String TOPIC_BYTES_IN_HEADER = "testBytesHeader";
     private static final String GROUP_BYTES = "groupStrings";
+    private static final String TOPIC_PROPAGATED_HEADERS = "testPropagatedHeaders";
 
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
 
     @EndpointInject(uri = "kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1")
     private Endpoint toStrings;
+
     @EndpointInject(uri = "kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1&partitionKey=1")
     private Endpoint toStrings2;
+
     @EndpointInject(uri = "kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
             + "&interceptorClasses=org.apache.camel.component.kafka.MockProducerInterceptor")
     private Endpoint toStringsWithInterceptor;
+
     @EndpointInject(uri = "mock:kafkaAck")
     private MockEndpoint mockEndpoint;
+
     @EndpointInject(uri = "kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
             + "&serializerClass=org.apache.kafka.common.serialization.ByteArraySerializer&"
             + "keySerializerClass=org.apache.kafka.common.serialization.ByteArraySerializer")
     private Endpoint toBytes;
+
+    @EndpointInject(uri = "kafka:" + TOPIC_PROPAGATED_HEADERS + "?requestRequiredAcks=-1")
+    private Endpoint toPropagatedHeaders;
 
     @Produce(uri = "direct:startStrings")
     private ProducerTemplate stringsTemplate;
@@ -78,6 +94,16 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     @Produce(uri = "direct:startTraced")
     private ProducerTemplate interceptedTemplate;
 
+    @Produce(uri = "direct:propagatedHeaders")
+    private ProducerTemplate propagatedHeadersTemplate;
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myStrategy", new MyHeaderFilterStrategy());
+        return jndi;
+    }
+
     @BeforeClass
     public static void before() {
         Properties stringsProps = new Properties();
@@ -90,14 +116,14 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        stringsConsumerConn = new KafkaConsumer<String, String>(stringsProps);
+        stringsConsumerConn = new KafkaConsumer<>(stringsProps);
 
         Properties bytesProps = new Properties();
         bytesProps.putAll(stringsProps);
         bytesProps.put("group.id", GROUP_BYTES);
         bytesProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         bytesProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        bytesConsumerConn = new KafkaConsumer<byte[], byte[]>(bytesProps);
+        bytesConsumerConn = new KafkaConsumer<>(bytesProps);
     }
 
     @AfterClass
@@ -118,6 +144,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
                 from("direct:startBytes").to(toBytes).to(mockEndpoint);
 
                 from("direct:startTraced").to(toStringsWithInterceptor).to(mockEndpoint);
+
+                from("direct:propagatedHeaders").to(toPropagatedHeaders).to(mockEndpoint);
             }
         };
     }
@@ -201,13 +229,13 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        List<String> msgs = new ArrayList<String>();
+        List<String> msgs = new ArrayList<>();
         for (int x = 0; x < messageInTopic; x++) {
             msgs.add("Message " + x);
         }
 
         sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "1");
-        msgs = new ArrayList<String>();
+        msgs = new ArrayList<>();
         for (int x = 0; x < messageInOtherTopic; x++) {
             msgs.add("Other Message " + x);
         }
@@ -245,11 +273,11 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        Map<String, Object> inTopicHeaders = new HashMap<String, Object>();
+        Map<String, Object> inTopicHeaders = new HashMap<>();
         inTopicHeaders.put(KafkaConstants.PARTITION_KEY, "1".getBytes());
         sendMessagesInRoute(messageInTopic, bytesTemplate, "IT test message".getBytes(), inTopicHeaders);
 
-        Map<String, Object> otherTopicHeaders = new HashMap<String, Object>();
+        Map<String, Object> otherTopicHeaders = new HashMap<>();
         otherTopicHeaders.put(KafkaConstants.PARTITION_KEY, "1".getBytes());
         otherTopicHeaders.put(KafkaConstants.TOPIC, TOPIC_BYTES_IN_HEADER);
         sendMessagesInRoute(messageInOtherTopic, bytesTemplate, "IT test message in other topic".getBytes(), otherTopicHeaders);
@@ -269,6 +297,89 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
             assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
             assertTrue("Topic Name start with 'test'", recordMetaData1.get(0).topic().startsWith("test"));
         }
+    }
+
+    @Test
+    public void propagatedHeaderIsReceivedByKafka() throws Exception {
+        String propagatedStringHeaderKey = "PROPAGATED_STRING_HEADER";
+        String propagatedStringHeaderValue = "propagated string header value";
+
+        String propagatedIntegerHeaderKey = "PROPAGATED_INTEGER_HEADER";
+        Integer propagatedIntegerHeaderValue = 54545;
+
+        String propagatedLongHeaderKey = "PROPAGATED_LONG_HEADER";
+        Long propagatedLongHeaderValue = 5454545454545L;
+
+        String propagatedDoubleHeaderKey = "PROPAGATED_DOUBLE_HEADER";
+        Double propagatedDoubleHeaderValue = 43434.545D;
+
+        String propagatedBytesHeaderKey = "PROPAGATED_BYTES_HEADER";
+        byte[] propagatedBytesHeaderValue = new byte[]{121, 34, 34, 54, 5, 3, 54, -34};
+
+        Map<String, Object> camelHeaders = new HashMap<>();
+        camelHeaders.put(propagatedStringHeaderKey, propagatedStringHeaderValue);
+        camelHeaders.put(propagatedIntegerHeaderKey, propagatedIntegerHeaderValue);
+        camelHeaders.put(propagatedLongHeaderKey, propagatedLongHeaderValue);
+        camelHeaders.put(propagatedDoubleHeaderKey, propagatedDoubleHeaderValue);
+        camelHeaders.put(propagatedBytesHeaderKey, propagatedBytesHeaderValue);
+        camelHeaders.put("CustomObjectHeader", new Object());
+        camelHeaders.put("CamelFilteredHeader", "CamelFilteredHeader value");
+
+        CountDownLatch messagesLatch = new CountDownLatch(1);
+        propagatedHeadersTemplate.sendBodyAndHeaders("Some test message", camelHeaders);
+
+        List<ConsumerRecord<String, String>> records = pollForRecords(stringsConsumerConn, TOPIC_PROPAGATED_HEADERS, messagesLatch);
+        boolean allMessagesReceived = messagesLatch.await(10_000, TimeUnit.MILLISECONDS);
+
+        assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
+
+        ConsumerRecord<String, String> record = records.get(0);
+        Headers headers = record.headers();
+        assertNotNull("Kafka Headers should not be null.", headers);
+        // we have 5 headers and 1 header with breadcrumbId
+        assertEquals("One propagated header is expected.", 6, headers.toArray().length);
+        assertEquals("Propagated string value received", propagatedStringHeaderValue,
+                new String(getHeaderValue(propagatedStringHeaderKey, headers)));
+        assertEquals("Propagated integer value received", propagatedIntegerHeaderValue,
+                new Integer(ByteBuffer.wrap(getHeaderValue(propagatedIntegerHeaderKey, headers)).getInt()));
+        assertEquals("Propagated long value received", propagatedLongHeaderValue,
+                new Long(ByteBuffer.wrap(getHeaderValue(propagatedLongHeaderKey, headers)).getLong()));
+        assertEquals("Propagated double value received", propagatedDoubleHeaderValue,
+                new Double(ByteBuffer.wrap(getHeaderValue(propagatedDoubleHeaderKey, headers)).getDouble()));
+        assertArrayEquals("Propagated byte array value received", propagatedBytesHeaderValue, getHeaderValue(propagatedBytesHeaderKey, headers));
+    }
+
+    @Test
+    public void headerFilterStrategyCouldBeOverridden() {
+        KafkaEndpoint kafkaEndpoint = context.getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?headerFilterStrategy=#myStrategy", KafkaEndpoint.class);
+        assertIsInstanceOf(MyHeaderFilterStrategy.class, kafkaEndpoint.getConfiguration().getHeaderFilterStrategy());
+    }
+
+    private byte[] getHeaderValue(String headerKey, Headers headers) {
+        Header foundHeader = StreamSupport.stream(headers.spliterator(), false)
+                .filter(header -> header.key().equals(headerKey))
+                .findFirst()
+                .orElse(null);
+        assertNotNull("Header should be sent", foundHeader);
+        return foundHeader.value();
+    }
+
+    private List<ConsumerRecord<String, String>> pollForRecords(KafkaConsumer<String, String> consumerConn,
+                                                                String topic, CountDownLatch messagesLatch) {
+
+        List<ConsumerRecord<String, String>> consumedRecords = new ArrayList<>();
+        consumerConn.subscribe(Collections.singletonList(topic));
+
+        new Thread(() -> {
+            while (messagesLatch.getCount() != 0) {
+                for (ConsumerRecord<String, String> record : consumerConn.poll(100)) {
+                    consumedRecords.add(record);
+                    messagesLatch.countDown();
+                }
+            }
+        }).start();
+
+        return consumedRecords;
     }
 
     private void createKafkaMessageConsumer(KafkaConsumer<String, String> consumerConn,
@@ -308,7 +419,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     private void sendMessagesInRoute(int messages, ProducerTemplate template, Object bodyOther, String... headersWithValue) {
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+        Map<String, Object> headerMap = new HashMap<>();
         if (headersWithValue != null) {
             for (int i = 0; i < headersWithValue.length; i = i + 2) {
                 headerMap.put(headersWithValue[i], headersWithValue[i + 1]);
@@ -321,6 +432,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         for (int k = 0; k < messages; k++) {
             template.sendBodyAndHeaders(bodyOther, headerMap);
         }
+    }
+
+    private static class MyHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
 }
