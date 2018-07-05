@@ -18,7 +18,6 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -26,130 +25,16 @@
     <artifactId>components</artifactId>
     <version>2.23.0-SNAPSHOT</version>
   </parent>
-  
-  <artifactId>camel-fhir</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: Fhir</name>
-  <description>Camel FHIR HL7 support</description>
 
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.fhir.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.dynamic>
-      org.hl7.fhir.*
-    </camel.osgi.dynamic>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.DataFormatResolver;dataformat=fhirJson,
-      org.apache.camel.spi.DataFormatResolver;dataformat=fhirXml
-    </camel.osgi.export.service>
-  </properties>
+  <artifactId>camel-fhir-parent</artifactId>
+  <packaging>pom</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
+  <name>Camel :: FHIR :: Parent</name>
+  <description>Camel FHIR parent</description>
 
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-base</artifactId>
-      <version>${hapi-fhir-version}</version>
-    </dependency>
+  <modules>
+    <module>camel-fhir-api</module>
+    <module>camel-fhir-component</module>
+  </modules>
 
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-client</artifactId>
-      <version>${hapi-fhir-version}</version>
-    </dependency>
-
-    <!-- These aren't needed for compilation but makes camel-fhir easier to use for third party projects/users e.g wildfly-camel -->
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-structures-dstu3</artifactId>
-      <version>${hapi-fhir-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-structures-dstu2</artifactId>
-      <version>${hapi-fhir-version}</version>
-    </dependency>
-
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hl7</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v24</artifactId>
-      <version>${hapi-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <!--Let's skip over IT tests as they rely on a public external test server being up and running-->
-            <include>**/*Test</include>
-          </includes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-    <profile>
-      <id>it.fhir</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*</include>
-              </includes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
