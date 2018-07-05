@@ -751,7 +751,7 @@
     <zendesk-client-version>0.6.2</zendesk-client-version>
     <zipkin-libthrift-version>0.9.3</zipkin-libthrift-version>
     <zipkin-reporter-version>2.7.6</zipkin-reporter-version>
-    <zipkin-version>2.9.4</zipkin-version>
+    <zipkin-version>2.10.0</zipkin-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
