@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To configure security definition
+ * To configure rest security definitions.
  */
 @Metadata(label = "rest,security", title = "Security Definitions")
 @XmlRootElement(name = "securityDefinitions")
@@ -56,6 +56,9 @@ public class RestSecuritiesDefinition {
         return securityDefinitions;
     }
 
+    /**
+     * Security definitions
+     */
     public void setSecurityDefinitions(List<RestSecurityDefinition> securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
     }
