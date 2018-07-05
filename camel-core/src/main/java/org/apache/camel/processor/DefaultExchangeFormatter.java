@@ -237,8 +237,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     /**
      * Filters the headers or properties before formatting them. No default behavior, but can be overridden.
-     * @param map
-     * @return
      */
     protected Map<String, Object> filterHeaderAndProperties(Map<String, Object> map) {
         return map;
