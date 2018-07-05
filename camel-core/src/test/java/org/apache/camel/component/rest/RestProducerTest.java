@@ -40,17 +40,17 @@ public class RestProducerTest {
     public void shouldCreateOptionalPlaceholderQueryParametersForPresentValues()
         throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
-        message.setHeader("param", "header");
+        message.setHeader("paramPlaceholderName", "paramValue");
 
-        assertEquals("param=header", RestProducer.createQueryParameters("param={param?}", message));
+        assertEquals("param=paramValue", RestProducer.createQueryParameters("param={paramPlaceholderName?}", message));
     }
 
     @Test
     public void shouldCreatePlaceholderQueryParameters() throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
-        message.setHeader("param", "header");
+        message.setHeader("paramPlaceholderName", "paramValue");
 
-        assertEquals("param=header", RestProducer.createQueryParameters("param={param}", message));
+        assertEquals("param=paramValue", RestProducer.createQueryParameters("param={paramPlaceholderName}", message));
     }
 
     @Test
@@ -63,17 +63,17 @@ public class RestProducerTest {
         throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
 
-        assertEquals("", RestProducer.createQueryParameters("param={param?}", message));
+        assertEquals("", RestProducer.createQueryParameters("param={paramPlaceholderName?}", message));
     }
 
     @Test
     public void shouldSupportAllCombinations() throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
-        message.setHeader("required", "header_required");
-        message.setHeader("optional_present", "header_optional_present");
+        message.setHeader("requiredParamPlaceholder", "header_required_value");
+        message.setHeader("optionalPresentParamPlaceholder", "header_optional_present_value");
 
-        assertEquals("given=value&required=header_required&optional_present=header_optional_present",
+        assertEquals("given=value&required=header_required_value&optional_present=header_optional_present_value",
             RestProducer.createQueryParameters(
-                "given=value&required={required}&optional={optional?}&optional_present={optional_present?}", message));
+                "given=value&required={requiredParamPlaceholder}&optional={optionalParamPlaceholder?}&optional_present={optionalPresentParamPlaceholder?}", message));
     }
 }
