@@ -30,7 +30,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.spi.Metadata;
@@ -38,8 +37,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents an endpoint which only becomes active when the {@link CamelClusterView}
- * has the leadership.
+ * Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
  */
 @ManagedResource(description = "Managed Service Endpoint")
 @UriEndpoint(
