@@ -139,6 +139,8 @@ public class SalesforceConsumer extends DefaultConsumer {
         case PLATFORM_EVENT:
             createPlatformEventMessage(message, in);
             break;
+        default:
+            throw new IllegalStateException("Unknown message kind: " + messageKind);
         }
 
         try {
