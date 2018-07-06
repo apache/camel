@@ -130,11 +130,12 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
             if (correlationExpression != null) {
                 key = correlationExpression.evaluate(exchange, Integer.class);
                 delayQ = locateDelayQueue(key, doneSync);
+                calculateAndSetMaxRequestsPerPeriod(delayQ, exchange, key);
             } else {
                 delayQ = delayQueue;
+                calculateAndSetMaxRequestsPerPeriod(exchange);
             }
-            
-            calculateAndSetMaxRequestsPerPeriod(delayQ, exchange, key);
+
             ThrottlePermit permit = delayQ.poll();
 
             if (permit == null) {
@@ -295,31 +296,24 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
     /**
      * Evaluates the maxRequestsPerPeriodExpression and adjusts the throttle rate up or down.
      */
-    protected void calculateAndSetMaxRequestsPerPeriod(DelayQueue<ThrottlePermit> delayQueue, final Exchange exchange, final Integer key) throws Exception {
+    protected void calculateAndSetMaxRequestsPerPeriod(final Exchange exchange) throws Exception {
         Integer newThrottle = maxRequestsPerPeriodExpression.evaluate(exchange, Integer.class);
 
         if (newThrottle != null && newThrottle < 0) {
             throw new IllegalStateException("The maximumRequestsPerPeriod must be a positive number, was: " + newThrottle);
         }
 
-        Object lockOnSync = this;
-        Integer currentThrottleRate = throttleRate;
-        if (correlationExpression != null) {
-            currentThrottleRate = throttleRatesMap.get(key);
-            lockOnSync = key;
-        }
-
-        synchronized (lockOnSync) {
-            if (newThrottle == null && currentThrottleRate == 0) {
+        synchronized (this) {
+            if (newThrottle == null && throttleRate == 0) {
                 throw new RuntimeExchangeException("The maxRequestsPerPeriodExpression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
             }
 
             if (newThrottle != null) {
-                if (newThrottle != currentThrottleRate) {
+                if (newThrottle != throttleRate) {
                     // get the queue from the cache
                     // decrease
-                    if (currentThrottleRate > newThrottle) {
-                        int delta = currentThrottleRate - newThrottle;
+                    if (throttleRate > newThrottle) {
+                        int delta = throttleRate - newThrottle;
 
                         // discard any permits that are needed to decrease throttling
                         while (delta > 0) {
@@ -327,25 +321,69 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                             delta--;
                             log.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
                         }
-                        log.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", currentThrottleRate, newThrottle, exchange.getExchangeId());
+                        log.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
 
                     // increase
-                    } else if (newThrottle > currentThrottleRate) {
-                        int delta = newThrottle - currentThrottleRate;
+                    } else if (newThrottle > throttleRate) {
+                        int delta = newThrottle - throttleRate;
                         for (int i = 0; i < delta; i++) {
                             delayQueue.put(new ThrottlePermit(-1));
                         }
-                        if (currentThrottleRate == 0) {
+                        if (throttleRate == 0) {
                             log.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
                         } else {
-                            log.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", currentThrottleRate, newThrottle, exchange.getExchangeId());
+                            log.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
                         }
                     }
-                    if (correlationExpression != null) {
-                        throttleRatesMap.put(key, newThrottle);
-                    } else {
-                        throttleRate = newThrottle;
+                    throttleRate = newThrottle;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Evaluates the maxRequestsPerPeriodExpression and adjusts the throttle rate up or down.
+     */
+    protected void calculateAndSetMaxRequestsPerPeriod(DelayQueue<ThrottlePermit> delayQueue, final Exchange exchange, final Integer key) throws Exception {
+        Integer newThrottle = maxRequestsPerPeriodExpression.evaluate(exchange, Integer.class);
+
+        if (newThrottle != null && newThrottle < 0) {
+            throw new IllegalStateException("The maximumRequestsPerPeriod must be a positive number, was: " + newThrottle);
+        }
+
+        synchronized (key) {
+            if (newThrottle == null && throttleRatesMap.get(key) == 0) {
+                throw new RuntimeExchangeException("The maxRequestsPerPeriodExpression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
+            }
+
+            if (newThrottle != null) {
+                if (newThrottle != throttleRatesMap.get(key)) {
+                    // get the queue from the cache
+                    // decrease
+                    if (throttleRatesMap.get(key) > newThrottle) {
+                        int delta = throttleRatesMap.get(key) - newThrottle;
+
+                        // discard any permits that are needed to decrease throttling
+                        while (delta > 0) {
+                            delayQueue.take();
+                            delta--;
+                            log.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
+                        }
+                        log.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRatesMap.get(key), newThrottle, exchange.getExchangeId());
+
+                    // increase
+                    } else if (newThrottle > throttleRatesMap.get(key)) {
+                        int delta = newThrottle - throttleRatesMap.get(key);
+                        for (int i = 0; i < delta; i++) {
+                            delayQueue.put(new ThrottlePermit(-1));
+                        }
+                        if (throttleRatesMap.get(key) == 0) {
+                            log.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
+                        } else {
+                            log.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRatesMap.get(key), newThrottle, exchange.getExchangeId());
+                        }
                     }
+                    throttleRatesMap.put(key, newThrottle);
                 }
             }
         }

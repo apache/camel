@@ -42,9 +42,7 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>Invoice__c</members>
-        <members>Line_Item__c</members>
-        <members>Merchandise__c</members>
+        <members>*</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -89,5 +87,5 @@
         <members>CamelSalesforceIntegrationTests</members>
         <name>ConnectedApp</name>
     </types>
-    <version>38.0</version>
+    <version>41.0</version>
 </Package>
