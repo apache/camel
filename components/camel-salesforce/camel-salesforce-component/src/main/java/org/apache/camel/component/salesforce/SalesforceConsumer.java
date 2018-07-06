@@ -18,20 +18,20 @@ package org.apache.camel.component.salesforce;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
@@ -41,41 +41,57 @@ import org.cometd.bayeux.client.ClientSessionChannel;
  */
 public class SalesforceConsumer extends DefaultConsumer {
 
+    private enum MessageKind {
+        PLATFORM_EVENT, PUSH_TOPIC;
 
-    private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
-    private static final String EVENT_PROPERTY = "event";
-    private static final String TYPE_PROPERTY = "type";
+        public static MessageKind fromTopicName(final String topicName) {
+            if (topicName.startsWith("event/") || topicName.startsWith("/event/")) {
+                return MessageKind.PLATFORM_EVENT;
+            }
+
+            return PUSH_TOPIC;
+        }
+    }
+
     private static final String CREATED_DATE_PROPERTY = "createdDate";
-    private static final String SOBJECT_PROPERTY = "sobject";
-    private static final String REPLAY_ID_PROPERTY = "replayId";
+    private static final String EVENT_PROPERTY = "event";
     private static final double MINIMUM_VERSION = 24.0;
+    private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
+    private static final String REPLAY_ID_PROPERTY = "replayId";
+    private static final String SOBJECT_PROPERTY = "sobject";
+    private static final String TYPE_PROPERTY = "type";
 
     private final SalesforceEndpoint endpoint;
-    private final SubscriptionHelper subscriptionHelper;
+    private final MessageKind messageKind;
     private final ObjectMapper objectMapper;
 
-    private final String topicName;
+    private final boolean rawPayload;
     private final Class<?> sObjectClass;
     private boolean subscribed;
+    private final SubscriptionHelper subscriptionHelper;
+    private final String topicName;
 
-
-    public SalesforceConsumer(SalesforceEndpoint endpoint, Processor processor, SubscriptionHelper helper) {
+    public SalesforceConsumer(final SalesforceEndpoint endpoint, final Processor processor, final SubscriptionHelper helper) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        ObjectMapper configuredObjectMapper = endpoint.getConfiguration().getObjectMapper();
+        final ObjectMapper configuredObjectMapper = endpoint.getConfiguration().getObjectMapper();
         if (configuredObjectMapper != null) {
-            this.objectMapper = configuredObjectMapper;
+            objectMapper = configuredObjectMapper;
         } else {
-            this.objectMapper = OBJECT_MAPPER;
+            objectMapper = OBJECT_MAPPER;
         }
 
         // check minimum supported API version
-        if (Double.valueOf(endpoint.getConfiguration().getApiVersion()) < MINIMUM_VERSION) {
+        if (Double.parseDouble(endpoint.getConfiguration().getApiVersion()) < MINIMUM_VERSION) {
             throw new IllegalArgumentException("Minimum supported API version for consumer endpoints is " + 24.0);
         }
 
-        this.topicName = endpoint.getTopicName();
-        this.subscriptionHelper = helper;
+        topicName = endpoint.getTopicName();
+        subscriptionHelper = helper;
+
+        messageKind = MessageKind.fromTopicName(topicName);
+
+        rawPayload = endpoint.getConfiguration().getRawPayload();
 
         // get sObjectClass to convert to
         final String sObjectName = endpoint.getConfiguration().getSObjectName();
@@ -99,6 +115,125 @@ public class SalesforceConsumer extends DefaultConsumer {
 
     }
 
+    public String getTopicName() {
+        return topicName;
+    }
+
+    @Override
+    public void handleException(String message, Throwable t) {
+        super.handleException(message, t);
+    }
+
+    public void processMessage(final ClientSessionChannel channel, final Message message) {
+        if (log.isDebugEnabled()) {
+            log.debug("Received event {} on channel {}", channel.getId(), channel.getChannelId());
+        }
+
+        final Exchange exchange = endpoint.createExchange();
+        final org.apache.camel.Message in = exchange.getIn();
+
+        switch (messageKind) {
+        case PUSH_TOPIC:
+            createPushTopicMessage(message, in);
+            break;
+        case PLATFORM_EVENT:
+            createPlatformEventMessage(message, in);
+            break;
+        }
+
+        try {
+            getAsyncProcessor().process(exchange);
+        } catch (final Exception e) {
+            final String msg = String.format("Error processing %s: %s", exchange, e);
+            handleException(msg, new SalesforceException(msg, e));
+        } finally {
+            final Exception ex = exchange.getException();
+            if (ex != null) {
+                final String msg = String.format("Unhandled exception: %s", ex.getMessage());
+                handleException(msg, new SalesforceException(msg, ex));
+            }
+        }
+    }
+
+    void createPlatformEventMessage(final Message message, final org.apache.camel.Message in) {
+        setHeaders(in, message);
+
+        final Map<String, Object> data = message.getDataAsMap();
+
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> event = (Map<String, Object>) data.get("event");
+
+        final Object replayId = event.get(REPLAY_ID_PROPERTY);
+        if (replayId != null) {
+            in.setHeader("CamelSalesforceReplayId", replayId);
+        }
+
+        in.setHeader("CamelSalesforcePlatformEventSchema", data.get("schema"));
+        in.setHeader("CamelSalesforceEventType", topicName.substring(topicName.lastIndexOf('/') + 1));
+
+        final Object payload = data.get("payload");
+
+        final PlatformEvent platformEvent = objectMapper.convertValue(payload, PlatformEvent.class);
+        in.setHeader("CamelSalesforceCreatedDate", platformEvent.getCreated());
+
+        if (rawPayload) {
+            in.setBody(message);
+        } else {
+            in.setBody(platformEvent);
+        }
+
+    }
+
+    void createPushTopicMessage(final Message message, final org.apache.camel.Message in) {
+        setHeaders(in, message);
+
+        final Map<String, Object> data = message.getDataAsMap();
+
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
+        final Object eventType = event.get(TYPE_PROPERTY);
+        final Object createdDate = event.get(CREATED_DATE_PROPERTY);
+        final Object replayId = event.get(REPLAY_ID_PROPERTY);
+
+        in.setHeader("CamelSalesforceTopicName", topicName);
+        in.setHeader("CamelSalesforceEventType", eventType);
+        in.setHeader("CamelSalesforceCreatedDate", createdDate);
+        if (replayId != null) {
+            in.setHeader("CamelSalesforceReplayId", replayId);
+        }
+
+        // get SObject
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
+        try {
+
+            final String sObjectString = objectMapper.writeValueAsString(sObject);
+            log.debug("Received SObject: {}", sObjectString);
+
+            if (rawPayload) {
+                // return sobject string as exchange body
+                in.setBody(sObjectString);
+            } else if (sObjectClass == null) {
+                // return sobject map as exchange body
+                in.setBody(sObject);
+            } else {
+                // create the expected SObject
+                in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
+            }
+        } catch (final IOException e) {
+            final String msg = String.format("Error parsing message [%s] from Topic %s: %s", message, topicName, e.getMessage());
+            handleException(msg, new SalesforceException(msg, e));
+        }
+    }
+
+    void setHeaders(final org.apache.camel.Message in, final Message message) {
+        in.setHeader("CamelSalesforceChannel", message.getChannel());
+        final String clientId = message.getClientId();
+        if (ObjectHelper.isNotEmpty(clientId)) {
+            in.setHeader("CamelSalesforceClientId", clientId);
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -106,7 +241,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final SalesforceEndpointConfig config = endpoint.getConfiguration();
 
         // is a query configured in the endpoint?
-        if (config.getSObjectQuery() != null) {
+        if (messageKind == MessageKind.PUSH_TOPIC && ObjectHelper.isNotEmpty(config.getSObjectQuery())) {
             // Note that we don't lookup topic if the query is not specified
             // create REST client for PushTopic operations
             final SalesforceComponent salesforceComponent = endpoint.getComponent();
@@ -116,7 +251,7 @@ public class SalesforceConsumer extends DefaultConsumer {
             ServiceHelper.startService(restClient);
 
             try {
-                PushTopicHelper helper = new PushTopicHelper(config, topicName, restClient);
+                final PushTopicHelper helper = new PushTopicHelper(config, topicName, restClient);
                 helper.createOrUpdateTopic();
             } finally {
                 // don't forget to stop the client
@@ -138,98 +273,6 @@ public class SalesforceConsumer extends DefaultConsumer {
             // unsubscribe from topic
             subscriptionHelper.unsubscribe(topicName, this);
         }
-    }
-
-    public void processMessage(ClientSessionChannel channel, Message message) {
-        final Exchange exchange = endpoint.createExchange();
-        org.apache.camel.Message in = exchange.getIn();
-        setHeaders(in, message);
-
-        // get event data
-        // TODO do we need to add NPE checks for message/data.get***???
-        Map<String, Object> data = message.getDataAsMap();
-
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
-        final Object eventType = event.get(TYPE_PROPERTY);
-        Object createdDate = event.get(CREATED_DATE_PROPERTY);
-        Object replayId = event.get(REPLAY_ID_PROPERTY);
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("Received event %s on channel %s created on %s",
-                    eventType, channel.getChannelId(), createdDate));
-        }
-
-        in.setHeader("CamelSalesforceEventType", eventType);
-        in.setHeader("CamelSalesforceCreatedDate", createdDate);
-        if (replayId != null) {
-            in.setHeader("CamelSalesforceReplayId", replayId);
-        }
-
-        // get SObject
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
-        try {
-
-            final String sObjectString = objectMapper.writeValueAsString(sObject);
-            log.debug("Received SObject: {}", sObjectString);
-
-            if (endpoint.getConfiguration().getRawPayload()) {
-                // return sobject string as exchange body
-                in.setBody(sObjectString);
-            } else if (sObjectClass == null) {
-                // return sobject map as exchange body
-                in.setBody(sObject);
-            } else {
-                // create the expected SObject
-                in.setBody(objectMapper.readValue(
-                        new StringReader(sObjectString), sObjectClass));
-            }
-        } catch (IOException e) {
-            final String msg = String.format("Error parsing message [%s] from Topic %s: %s",
-                    message, topicName, e.getMessage());
-            handleException(msg, new SalesforceException(msg, e));
-        }
-
-        try {
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // noop
-                    if (log.isTraceEnabled()) {
-                        log.trace("Done processing event: {} {}", eventType.toString(),
-                                doneSync ? "synchronously" : "asynchronously");
-                    }
-                }
-            });
-        } catch (Exception e) {
-            String msg = String.format("Error processing %s: %s", exchange, e);
-            handleException(msg, new SalesforceException(msg, e));
-        } finally {
-            Exception ex = exchange.getException();
-            if (ex != null) {
-                String msg = String.format("Unhandled exception: %s", ex.getMessage());
-                handleException(msg, new SalesforceException(msg, ex));
-            }
-        }
-    }
-
-    private void setHeaders(org.apache.camel.Message in, Message message) {
-        Map<String, Object> headers = new HashMap<>();
-        // set topic name
-        headers.put("CamelSalesforceTopicName", topicName);
-        // set message properties as headers
-        headers.put("CamelSalesforceChannel", message.getChannel());
-        headers.put("CamelSalesforceClientId", message.getClientId());
-
-        in.setHeaders(headers);
-    }
-
-    @Override
-    public void handleException(String message, Throwable t) {
-        super.handleException(message, t);
-    }
-
-    public String getTopicName() {
-        return topicName;
     }
 
 }
