@@ -8,8 +8,8 @@ https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] servic
 
 Prerequisites
 
-You must have a valid Windows Azure Storage account. More information is available at
-https://docs.microsoft.com/azure/[Azure Documentation Portal].
+You must have a valid Microsoft Azure account. More information is available at
+https://azure.microsoft.com/en-us/free/[Azure Portal].
 
 ### URI Format
 
