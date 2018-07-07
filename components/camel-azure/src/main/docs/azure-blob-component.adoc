@@ -129,6 +129,63 @@ You have to provide the containerOrBlob name and the credentials if the private 
 
 |=======================================================================
 
+
+#### Azure Blob Service operations
+
+*Operations common to all block types*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`getBlob`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`deleteBlob`  |Delete the blob.
+|`listBlobs`  |List the blobs.
+
+|===
+
+*Block blob operations*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`updateBlockBlob`  |Put block blob content that either creates a new block blob or overwrites the existing block blob content.
+|`uploadBlobBlocks`  |Upload block blob content, by first generating a sequence of blob blocks and then committing them to a blob. If you enable the message *CommitBlockListLater* property, you can execute the commit later with the `commitBlobBlockList` operation. You can later update individual block blobs.
+|`commitBlobBlockList`  |Commit a sequence of blob blocks to the block list that you previously uploaded to the blob service (by using the `updateBlockBlob` operation with the message *CommitBlockListLater* property enabled).
+|`getBlobBlockList`  |Get the block blob list.
+
+|===
+
+*Append blob operations*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`createAppendBlob`  |Create an append block. By default, if the block already exists then it is not reset. Note that you can alternately create an append blob by enabling the message *AppendBlobCreated* property and using the `updateAppendBlob` operation. 
+
+|`updateAppendBlob`  |Append the new content to the blob. This operation also creates the blob if it does not already exist and if you enabled a message *AppendBlobCreated* property.
+
+|===
+
+
+*Page Block operations*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`createPageBlob`  |Create a page block. By default, if the block already exists then it is not reset. Note that you can also create a page blob (and set its contents) by enabling a message *PageBlobCreated* property and by using the `updatePageBlob` operation.
+|`updatePageBlob`  |Create a page block (unless you enable a message *PageBlobCreated* property and the identically named block already exists) and set the content of this blob.
+|`resizePageBlob`  |Resize the page blob.
+|`clearPageBlob`  |Clear the page blob.
+|`getPageBlobRanges`  |Get the page blob page ranges.
+
+|===
+
+
+
 #### Azure Blob Client configuration
 
 If your Camel Application is running behind a firewall or if you need to
