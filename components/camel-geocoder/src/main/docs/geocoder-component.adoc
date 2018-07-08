@@ -70,12 +70,8 @@ with the following path and query parameters:
 | *clientKey* (producer) | Private key for Google Maps API Premium Plan |  | String
 | *headersOnly* (producer) | Whether to only enrich the Exchange with headers, and leave the body as-is. | false | boolean
 | *language* (producer) | The language in which to return results. | en | String
-| *httpClientConfigurer* (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc |  | HttpClientConfigurer
-| *httpConnectionManager* (advanced) | To use a custom HttpConnectionManager to manage connections |  | HttpConnectionManager
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *proxyAuthDomain* (proxy) | Domain for proxy NTML authentication |  | String
-| *proxyAuthHost* (proxy) | Optional host for proxy NTML authentication |  | String
-| *proxyAuthMethod* (proxy) | Authentication method for proxy, either as Basic, Digest or NTLM. |  | String
+| *proxyAuthMethod* (proxy) | Authentication method for proxy, either as Basic or Digest. |  | String
 | *proxyAuthPassword* (proxy) | Password for proxy authentication |  | String
 | *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
 | *proxyHost* (proxy) | The proxy host name |  | String
