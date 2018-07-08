@@ -18,7 +18,7 @@ from("activemq:My.Queue").
 ### Options
 
 // dataformat options: START
-The XML Beans dataformat supports 2 options which are listed below.
+The XML Beans dataformat supports 2 options, which are listed below.
 
 
 

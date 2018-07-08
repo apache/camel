@@ -12,7 +12,7 @@ This data format supports ZIP64, as long as Java 7 or later is being used].
 === ZipFile Options
 
 // dataformat options: START
-The Zip File dataformat supports 4 options which are listed below.
+The Zip File dataformat supports 4 options, which are listed below.
 
 
 

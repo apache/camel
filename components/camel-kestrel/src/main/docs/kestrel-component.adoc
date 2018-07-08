@@ -67,7 +67,7 @@ kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 
 
 // component options: START
-The Kestrel component supports 2 options which are listed below.
+The Kestrel component supports 2 options, which are listed below.
 
 
 

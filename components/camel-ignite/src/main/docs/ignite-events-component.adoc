@@ -11,7 +11,7 @@ The Exchanges created by this consumer put the received Event object into the bo
 ### Options
 
 // component options: START
-The Ignite Events component supports 4 options which are listed below.
+The Ignite Events component supports 4 options, which are listed below.
 
 
 

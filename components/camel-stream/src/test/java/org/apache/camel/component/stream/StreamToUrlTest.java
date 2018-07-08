@@ -51,7 +51,7 @@ public class StreamToUrlTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("stream:url?url=mock:");
+                from("direct:start").to("stream:url?url=mock:&httpHeaders.foo=123&httpHeaders.bar=yes");
             }
         };
     }
@@ -64,6 +64,9 @@ public class StreamToUrlTest extends CamelTestSupport {
         // Then
         String messageReceived = new String(buffer.toByteArray()).trim();
         assertEquals(message, messageReceived);
+
+        assertEquals("123", MockURLConnection.getHeaders().get("foo"));
+        assertEquals("yes", MockURLConnection.getHeaders().get("bar"));
     }
 
 }

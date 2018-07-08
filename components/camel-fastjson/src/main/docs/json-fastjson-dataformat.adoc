@@ -17,7 +17,7 @@ from("activemq:My.Queue").
 
 
 // dataformat options: START
-The JSon Fastjson dataformat supports 19 options which are listed below.
+The JSon Fastjson dataformat supports 19 options, which are listed below.
 
 
 

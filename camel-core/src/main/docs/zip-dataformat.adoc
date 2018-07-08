@@ -20,7 +20,7 @@ solution to have a low memory footprint.
 === Options
 
 // dataformat options: START
-The Zip Deflate Compression dataformat supports 2 options which are listed below.
+The Zip Deflate Compression dataformat supports 2 options, which are listed below.
 
 
 

@@ -24,7 +24,7 @@ you can for example do
 ### Options
 
 // dataformat options: START
-The RSS dataformat supports 1 options which are listed below.
+The RSS dataformat supports 1 options, which are listed below.
 
 
 

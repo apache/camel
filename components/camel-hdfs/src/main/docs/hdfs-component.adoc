@@ -56,7 +56,7 @@ fileMode=Append to append each of the chunks together.
 
 
 // component options: START
-The HDFS component supports 2 options which are listed below.
+The HDFS component supports 2 options, which are listed below.
 
 
 

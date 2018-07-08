@@ -21,7 +21,7 @@ semantics are assigned as follows:
 ### Options
 
 // dataformat options: START
-The XML JSon dataformat supports 13 options which are listed below.
+The XML JSon dataformat supports 13 options, which are listed below.
 
 
 

@@ -46,7 +46,7 @@ registry.
 
 
 // component options: START
-The Guava EventBus component supports 3 options which are listed below.
+The Guava EventBus component supports 3 options, which are listed below.
 
 
 

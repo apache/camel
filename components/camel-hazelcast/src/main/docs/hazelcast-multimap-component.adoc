@@ -9,7 +9,7 @@ The http://www.hazelcast.com/[Hazelcast] Multimap component is one of Camel Haze
 ### Options
 
 // component options: START
-The Hazelcast Multimap component supports 3 options which are listed below.
+The Hazelcast Multimap component supports 3 options, which are listed below.
 
 
 

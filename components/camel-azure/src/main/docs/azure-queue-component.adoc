@@ -8,8 +8,8 @@ https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] servic
 
 Prerequisites
 
-You must have a valid Windows Azure Storage account. More information is available at
-https://docs.microsoft.com/azure/[Azure Documentation Portal].
+You must have a valid Microsoft Azure account. More information is available at
+https://azure.microsoft.com/en-us/free/[Azure Portal].
 
 ### URI Format
 
@@ -117,6 +117,27 @@ You have to provide the containerAndQueue URI  and the credentials.
 |Header |Type |Description
 | | |
 |=======================================================================
+
+
+
+#### Azure Queue Service operations
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`listQueues`  |List the queues.
+|`createQueue`  |Create the queue.
+|`deleteQueue`  |Delete the queue.
+|`addMessage`  |Add a message to the queue.
+|`retrieveMessage`  |Retrieve a message from the queue.
+|`peekMessage`  |View the message inside the queue, for example, to determine whether the message arrived at the correct queue.
+|`updateMessage`  |Update the message in the queue.
+|`deleteMessage`  |Delete the message in the queue.
+
+|===
+
+
 
 #### Azure Queue Client configuration
 

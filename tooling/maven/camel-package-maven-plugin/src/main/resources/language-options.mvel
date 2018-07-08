@@ -1,7 +1,7 @@
 @if{languageOptions.isEmpty()}
 The @{title} language has no options.
 @else{}
-The @{title} language supports @{languageOptions.size()} options which are listed below.
+The @{title} language supports @{languageOptions.size()} options, which are listed below.
 @end{}
 
 @if{!languageOptions.isEmpty()}

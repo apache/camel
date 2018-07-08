@@ -290,7 +290,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         signingCert = Utils.makeCertificate(
                                         signingKP, signingDN, issueKP, issueDN);
 
-        certList = new ArrayList<X509Certificate>();
+        certList = new ArrayList<>();
 
         certList.add(signingCert);
         certList.add(issueCert);

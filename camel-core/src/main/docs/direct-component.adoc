@@ -30,7 +30,7 @@ Where *someName* can be any string to uniquely identify the endpoint
 
 
 // component options: START
-The Direct component supports 3 options which are listed below.
+The Direct component supports 3 options, which are listed below.
 
 
 

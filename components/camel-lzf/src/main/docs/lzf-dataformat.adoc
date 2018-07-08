@@ -15,7 +15,7 @@ comressed using LZF algotithm.
 ### Options
 
 // dataformat options: START
-The LZF Deflate Compression dataformat supports 2 options which are listed below.
+The LZF Deflate Compression dataformat supports 2 options, which are listed below.
 
 
 

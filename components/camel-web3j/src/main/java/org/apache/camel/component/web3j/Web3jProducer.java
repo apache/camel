@@ -605,7 +605,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         List<String> addresses = message.getHeader(Web3jConstants.ADDRESSES, configuration::getAddresses, List.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
 
-        org.web3j.protocol.core.methods.request.EthFilter ethFilter = endpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
+        org.web3j.protocol.core.methods.request.EthFilter ethFilter = Web3jEndpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
 
         Request<?, EthFilter> request = web3j.ethNewFilter(ethFilter);
         setRequestId(message, request);
@@ -680,7 +680,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         DefaultBlockParameter toBlock = toBlockParameter(message.getHeader(Web3jConstants.TO_BLOCK, configuration::getToBlock, Object.class));
         List<String> addresses = message.getHeader(Web3jConstants.ADDRESSES, configuration::getAddresses, List.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
-        org.web3j.protocol.core.methods.request.EthFilter ethFilter = endpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
+        org.web3j.protocol.core.methods.request.EthFilter ethFilter = Web3jEndpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
 
         Request<?, EthLog> request = web3j.ethGetLogs(ethFilter);
         setRequestId(message, request);
@@ -862,7 +862,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     void shhNewFilter(Message message) throws IOException {
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
-        org.web3j.protocol.core.methods.request.ShhFilter shhFilter = endpoint.buildShhFilter(data, topics);
+        org.web3j.protocol.core.methods.request.ShhFilter shhFilter = Web3jEndpoint.buildShhFilter(data, topics);
 
         Request<?, ShhNewFilter> request = web3j.shhNewFilter(shhFilter);
         setRequestId(message, request);

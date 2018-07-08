@@ -54,7 +54,7 @@ directly in the camel-core.
 === Options
 
 // component options: START
-The XSLT component supports 9 options which are listed below.
+The XSLT component supports 9 options, which are listed below.
 
 
 

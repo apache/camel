@@ -35,7 +35,7 @@ their `pom.xml` for this component:
 
 
 // component options: START
-The Atmosphere Websocket component supports 8 options which are listed below.
+The Atmosphere Websocket component supports 8 options, which are listed below.
 
 
 

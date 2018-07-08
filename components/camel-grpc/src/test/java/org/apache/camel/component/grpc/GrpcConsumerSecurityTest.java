@@ -74,8 +74,8 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
                                                                    .build())
                                         .build();
         
-        jwtCorrectChannel = NettyChannelBuilder.forAddress("localhost", GRPC_JWT_CORRECT_TEST_PORT).usePlaintext(true).build();
-        jwtIncorrectChannel = NettyChannelBuilder.forAddress("localhost", GRPC_JWT_INCORRECT_TEST_PORT).usePlaintext(true).build();
+        jwtCorrectChannel = NettyChannelBuilder.forAddress("localhost", GRPC_JWT_CORRECT_TEST_PORT).usePlaintext().build();
+        jwtIncorrectChannel = NettyChannelBuilder.forAddress("localhost", GRPC_JWT_INCORRECT_TEST_PORT).usePlaintext().build();
         
         tlsAsyncStub = PingPongGrpc.newStub(tlsChannel);
         jwtCorrectAsyncStub = PingPongGrpc.newStub(jwtCorrectChannel).withCallCredentials(new JwtCallCredentials(correctJwtToken));

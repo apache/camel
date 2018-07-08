@@ -26,7 +26,7 @@ Value write requests from OPC UA Client will trigger messages which are sent int
 
 
 // component options: START
-The OPC UA Server component supports 20 options which are listed below.
+The OPC UA Server component supports 20 options, which are listed below.
 
 
 

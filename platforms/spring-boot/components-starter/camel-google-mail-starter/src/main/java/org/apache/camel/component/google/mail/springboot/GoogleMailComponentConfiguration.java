@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.mail.springboot;
 
-import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
@@ -112,12 +111,6 @@ public class GoogleMailComponentConfiguration
          * "camel-google-mail/1.0"
          */
         private String applicationName;
-        /**
-         * Specifies the level of permissions you want a mail application to
-         * have to a user account. See
-         * https://developers.google.com/gmail/api/auth/scopes for more info.
-         */
-        private List scopes;
 
         public GoogleMailApiName getApiName() {
             return apiName;
@@ -173,14 +166,6 @@ public class GoogleMailComponentConfiguration
 
         public void setApplicationName(String applicationName) {
             this.applicationName = applicationName;
-        }
-
-        public List getScopes() {
-            return scopes;
-        }
-
-        public void setScopes(List scopes) {
-            this.scopes = scopes;
         }
     }
 }

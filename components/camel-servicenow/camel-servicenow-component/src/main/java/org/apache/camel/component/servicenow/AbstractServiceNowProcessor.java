@@ -158,7 +158,13 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     }
 
     protected Object unwrap(JsonNode node, Class<?> model) throws IOException {
-        Object result;
+        if (model == String.class) {
+            // If the model is a String, let's just serialize it as
+            // a json string
+            return mapper.writeValueAsString(node);
+        }
+
+        final Object result;
 
         if (node.isArray()) {
             if (model.isInstance(Map.class)) {

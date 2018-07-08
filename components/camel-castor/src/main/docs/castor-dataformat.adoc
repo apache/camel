@@ -106,7 +106,7 @@ on multiple routes. You have to set the <castor> element directly in
 ### Options
 
 // dataformat options: START
-The Castor dataformat supports 9 options which are listed below.
+The Castor dataformat supports 9 options, which are listed below.
 
 
 

@@ -61,10 +61,10 @@ public class InfinispanManager implements Service {
         cacheContainer = configuration.getCacheContainer();
 
         if (cacheContainer == null) {
+            final Object containerConf = configuration.getCacheContainerConfiguration();
             // Check if a container configuration object has been provided so use
             // it and discard any other additional configuration.
-            if (configuration.getCacheContainerConfiguration() != null) {
-                final Object containerConf = configuration.getCacheContainerConfiguration();
+            if (containerConf != null) {
                 if (containerConf instanceof org.infinispan.client.hotrod.configuration.Configuration) {
                     cacheContainer = new RemoteCacheManager(
                         (org.infinispan.client.hotrod.configuration.Configuration)containerConf,

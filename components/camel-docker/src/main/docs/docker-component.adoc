@@ -23,7 +23,7 @@ Where *operation* is the specific action to perform on Docker.
 ### General Options
 
 // component options: START
-The Docker component supports 2 options which are listed below.
+The Docker component supports 2 options, which are listed below.
 
 
 

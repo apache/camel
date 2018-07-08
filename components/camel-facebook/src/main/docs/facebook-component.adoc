@@ -53,7 +53,7 @@ to application APIs.
 
 
 // component options: START
-The Facebook component supports 2 options which are listed below.
+The Facebook component supports 2 options, which are listed below.
 
 
 

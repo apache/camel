@@ -18,7 +18,6 @@ package org.apache.camel.component.google.mail.stream;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -84,10 +83,9 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
         ListMessagesResponse c = request.execute();
         if (c.getMessages() != null) {
-            for (Iterator iterator = c.getMessages().iterator(); iterator.hasNext();) {
-                Message message = (Message)iterator.next();
+            for (Message message : c.getMessages()) {
                 Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
-                Exchange exchange = ((GoogleMailStreamEndpoint)getEndpoint()).createExchange(getEndpoint().getExchangePattern(), mess);
+                Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), mess);
                 answer.add(exchange);
             }
         }
@@ -150,7 +148,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
                 LOG.trace("Marking email {} as read", id);
 
-                List<String> remove = new ArrayList<String>();
+                List<String> remove = new ArrayList<>();
                 remove.add(unreadLabelId);
                 ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
                 getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
@@ -173,7 +171,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         try {
             LOG.warn("Exchange failed, so rolling back mail {} to un " + exchange);
 
-            List<String> add = new ArrayList<String>();
+            List<String> add = new ArrayList<>();
             add.add(unreadLabelId);
             ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
             getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();

@@ -44,7 +44,7 @@ type and stream cache setting.
 ### Options
 
 // dataformat options: START
-The MIME Multipart dataformat supports 6 options which are listed below.
+The MIME Multipart dataformat supports 6 options, which are listed below.
 
 
 

@@ -42,7 +42,7 @@ in code).
 
 
 // component options: START
-The SCP component supports 2 options which are listed below.
+The SCP component supports 2 options, which are listed below.
 
 
 

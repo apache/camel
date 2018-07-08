@@ -315,8 +315,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> createConsumerEventHandlers() {
-        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result =
-                new HashMap<>();
+        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result = new HashMap<>();
 
         for (final DisruptorConsumer consumer : consumers) {
             result.put(consumer, consumer.createEventHandlers(concurrentConsumers));

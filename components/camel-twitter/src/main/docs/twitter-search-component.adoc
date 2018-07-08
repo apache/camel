@@ -8,7 +8,7 @@ The Twitter Search component consumes search results.
 ### Component Options
 
 // component options: START
-The Twitter Search component supports 9 options which are listed below.
+The Twitter Search component supports 9 options, which are listed below.
 
 
 

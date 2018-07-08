@@ -17,7 +17,7 @@ see Splitter.
 === Tokenize Options
 
 // language options: START
-The Tokenize language supports 10 options which are listed below.
+The Tokenize language supports 10 options, which are listed below.
 
 
 

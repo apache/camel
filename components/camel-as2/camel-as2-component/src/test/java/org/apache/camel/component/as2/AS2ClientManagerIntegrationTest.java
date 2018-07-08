@@ -28,7 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -38,6 +40,8 @@ import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.component.as2.api.Util;
+import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
@@ -46,18 +50,26 @@ import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ClientManagerApiMethod;
+import org.apache.camel.http.common.HttpMessage;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
+import org.apache.http.protocol.HttpDateGenerator;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
@@ -85,6 +97,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AS2ClientManagerIntegrationTest.class);
     private static final String PATH_PREFIX = AS2ApiCollection.getCollection().getApiName(AS2ClientManagerApiMethod.class).getName();
 
+    private static final String SERVER_FQDN = "server.example.com";
     private static final String ORIGIN_SERVER_NAME = "AS2ClientManagerIntegrationTest Server";
     private static final String AS2_VERSION = "1.1";
     private static final String REQUEST_URI = "/";
@@ -127,10 +140,17 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final String EXPECTED_AS2_VERSION = AS2_VERSION;
     private static final String EXPECTED_MDN_SUBJECT = MDN_SUBJECT_PREFIX + SUBJECT;
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] {"sha1", "md5"};
+    private static final String DISPOSITION_NOTIFICATION_OPTIONS = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
+    private static final int PARTNER_TARGET_PORT = 8888;
+    private static final int MDN_TARGET_PORT = AvailablePortFinder.getNextAvailable(8889);
+    private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + MDN_TARGET_PORT + "/handle-receipts";
+    private static final String REPORTING_UA = "Server Responding with MDN";
 
     private static AS2ServerConnection serverConnection;
     private static KeyPair serverSigningKP;
     private static List<X509Certificate> serverCertList;
+
+    private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
 
     private KeyPair issueKP;
     private X509Certificate issueCert;
@@ -183,7 +203,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void plainMessageSendTest() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelAS2.requestUri", REQUEST_URI);
         // parameter type is String
@@ -224,7 +244,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
         HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
-        assertEquals("Unexpected response type", AS2MimeType.MULTIPART_REPORT, HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE));
+        assertTrue("Unexpected response type", HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT));
         assertEquals("Unexpected mime version", AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION));
         assertEquals("Unexpected AS2 version", EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION));
         assertEquals("Unexpected MDN subject", EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT));
@@ -257,7 +277,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void multipartSignedMessageTest() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelAS2.requestUri", REQUEST_URI);
         // parameter type is String
@@ -344,6 +364,50 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Received content MIC does not match computed", computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest());
     }
 
+    @Test
+    public void asyncMDNTest() throws Exception {
+        AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(AS2_VERSION, ORIGIN_SERVER_NAME, SERVER_FQDN,
+                certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
+
+        // Create plain edi request message to acknowledge
+        ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, false);
+        HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
+        String httpdate = DATE_GENERATOR.getCurrentDate();
+        HttpMessageUtils.setHeaderValue(request, AS2Header.DATE, httpdate);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_TO, AS2_NAME);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_FROM, AS2_NAME);
+        String originalMessageId = Util.createMessageId(SERVER_FQDN);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.MESSAGE_ID, originalMessageId);
+        HttpMessageUtils.setHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS,
+                DISPOSITION_NOTIFICATION_OPTIONS);
+        EntityUtils.setMessageEntity(request, ediEntity);
+
+        // Create response for MDN creation.
+        HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        httpdate = DATE_GENERATOR.getCurrentDate();
+        response.setHeader(AS2Header.DATE, httpdate);
+        response.setHeader(AS2Header.SERVER, REPORTING_UA);
+
+        // Create a receipt for edi message
+        Map<String, String> extensionFields = new HashMap<String, String>();
+        extensionFields.put("Original-Recipient", "rfc822;" + AS2_NAME);
+        AS2DispositionModifier dispositionModifier = AS2DispositionModifier.createWarning("AS2 is cool!");
+        String[] failureFields = new String[] {"failure-field-1"};
+        String[] errorFields = new String[] {"error-field-1"};
+        String[] warningFields = new String[] {"warning-field-1"};
+        DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(request,
+                response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
+                true);
+
+        // Send MDN
+        @SuppressWarnings("unused")
+        HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
+        
+    }
+    
     @BeforeClass
     public static void setupTest() throws Exception {
         setupServerKeysAndCertificates();
@@ -373,8 +437,17 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                Processor proc = new Processor() {
+                    public void process(org.apache.camel.Exchange exchange) throws Exception {
+                        HttpMessage message = exchange.getIn(HttpMessage.class);
+                        @SuppressWarnings("unused")
+                        String body = message.getBody(String.class);
+                    }
+                };
                 // test route for send
                 from("direct://SEND").to("as2://" + PATH_PREFIX + "/send?inBody=ediMessage");
+                
+                from("jetty:http://localhost:" + MDN_TARGET_PORT + "/handle-receipts").process(proc);
 
             }
         };
@@ -403,7 +476,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         X509Certificate signingCert = Utils.makeCertificate(
                 serverSigningKP, signingDN, issueKP, issueDN);
 
-        serverCertList = new ArrayList<X509Certificate>();
+        serverCertList = new ArrayList<>();
 
         serverCertList.add(signingCert);
         serverCertList.add(issueCert);
@@ -411,7 +484,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(AS2_VERSION, ORIGIN_SERVER_NAME,
-                "server.example.com", 8888, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate());
+                SERVER_FQDN, PARTNER_TARGET_PORT, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate());
         serverConnection.listen("/", new RequestHandler());
     }
 
@@ -436,7 +509,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         signingCert = Utils.makeCertificate(
                                         signingKP, signingDN, issueKP, issueDN);
 
-        certList = new ArrayList<X509Certificate>();
+        certList = new ArrayList<>();
 
         certList.add(signingCert);
         certList.add(issueCert);

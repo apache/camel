@@ -21,7 +21,7 @@ prefix mappings when marshalling using SOAP data format.
 
 
 // dataformat options: START
-The SOAP dataformat supports 7 options which are listed below.
+The SOAP dataformat supports 7 options, which are listed below.
 
 
 

@@ -14,7 +14,7 @@ areas +
 DSL
 
 Before we look at these two areas we start with a bit of background
-information and looks at the concept from at a higher level using
+information and looks at the concept from a higher level using
 diagrams. +
  Then we check out the first area how a client can initiate an
 Async message exchange and we also throw in the
@@ -57,7 +57,7 @@ comes with the web content.
 In Camel a message is labeled with a Message
 Exchange Pattern that labels whether its a
 request only or request reply message. Camel uses the JBI
-term for this an uses `InOnly` for the request only, and `InOut` for the
+term `InOnly` for the request only and `InOut` for the
 request reply.
 
 For all message exchange they can be executed either:
@@ -105,7 +105,7 @@ synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The client wants to get the reply so it uses the Future handle it
 got as _response_ from step 1. With this handle it retrieves the reply,
-wait if nessasary if the reply is not ready.
+wait if necessary if the reply is not ready.
 
 [[Async-SynchronousRequestOnly]]
 Synchronous Request Only
@@ -131,7 +131,7 @@ So why do you want to use synchronous link:event-message.html[Request
 Only]? Well if you want to know whether the message was processed
 successfully or not before continuing. With synchronous it allows you to
 wait while the message is being processed. In case the processing was
-succesful the control is returned to the client with no notion of error.
+successful the control is returned to the client with no notion of error.
 In case of failure the client can detect this as an exception is thrown.
 (and `exchange.isFailed()` returns `true`).
 
@@ -160,7 +160,7 @@ application can do other work simultaneously. +
 *Notice:* As Camel always returns a `Future` handle for
 Async messaging to the client. The client can use this
 handler to get hold of the status of the processing whether the task is
-complete or an Exception occured during processing. Note that the client
+complete or an Exception occurred during processing. Note that the client
 is not required to do so, its perfect valid to just ignore the Future
 handle.
 
@@ -192,7 +192,7 @@ the most important in the table below:
 ScheduledExecutorService with 5 thread in the pool.
 
 |asyncSend |Future<Exchange> |Is used to send an async exchange to a Camel
-Endpoint. Camel will imeddiately return control to
+Endpoint. Camel will immediately return control to
 the caller thread after the task has been submitted to the executor
 service. This allows you to do other work while Camel processes the
 exchange in the other async thread.
@@ -290,8 +290,7 @@ Async API and what it can do.
 Example: Synchronous Request Reply
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This example is just to a pure synchronous version of the example from
-above that was Async based.
+This example is just a pure synchronous version of the async based example above.
 
 The route is the same, so its just how the client initiate and send the
 messages that differs:
@@ -353,7 +352,7 @@ Exchange exchange = endpoint.createExchange();
 exchange.getIn().setBody("Order ABC");
 // create a regular producer
 Producer producer = endpoint.createProducer();
-// normally you will use a shared exectutor service with pools
+// normally you will use a shared executor service with pools
 ExecutorService executor = Executors.newSingleThreadExecutor();
 // send it async with the help of this helper
 Future<Exchange> future = AsyncProcessorHelper.asyncProcess(executor, producer, exchange);
@@ -405,7 +404,7 @@ The `threads` DSL supports the following options:
 handling Async tasks and correlate replies etc. By
 default a pool size of 10 is used.
 
-|maxPoolSize |A number to indicate the maximum pool size of the of the underlying Java
+|maxPoolSize |A number to indicate the maximum pool size of the underlying Java
 `ExecutorService`
 
 |keepAliveTime |A number to indicate how long to keep inactive threads alive

@@ -78,7 +78,7 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the Crypto operation that was supplied in the the crypto scheme in
+     * Gets the Crypto operation that was supplied in the crypto scheme in
      * the endpoint uri
      */
     public CryptoOperation getCryptoOperation() {

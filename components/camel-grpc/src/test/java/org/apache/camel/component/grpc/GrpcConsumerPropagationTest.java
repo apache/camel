@@ -48,8 +48,8 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
     @Before
     public void startGrpcChannels() {
-        asyncOnNextChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_NEXT_REQUEST_TEST_PORT).usePlaintext(true).build();
-        asyncOnCompletedChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT).usePlaintext(true).build();
+        asyncOnNextChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_NEXT_REQUEST_TEST_PORT).usePlaintext().build();
+        asyncOnCompletedChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT).usePlaintext().build();
         asyncOnNextStub = PingPongGrpc.newStub(asyncOnNextChannel);
         asyncOnCompletedStub = PingPongGrpc.newStub(asyncOnCompletedChannel);
     }

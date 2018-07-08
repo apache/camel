@@ -58,6 +58,14 @@ public class VmComponentConfiguration
      */
     private Boolean defaultBlockWhenFull = false;
     /**
+     * Whether a thread that sends messages to a full SEDA queue will block
+     * until the queue's capacity is no longer exhausted. By default, an
+     * exception will be thrown stating that the queue is full. By enabling this
+     * option, where a configured timeout can be added to the block case.
+     * Utilizing the .offer(timeout) method of the underlining java queue
+     */
+    private Long defaultOfferTimeout;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -95,6 +103,14 @@ public class VmComponentConfiguration
 
     public void setDefaultBlockWhenFull(Boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
+    }
+
+    public Long getDefaultOfferTimeout() {
+        return defaultOfferTimeout;
+    }
+
+    public void setDefaultOfferTimeout(Long defaultOfferTimeout) {
+        this.defaultOfferTimeout = defaultOfferTimeout;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

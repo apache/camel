@@ -27,7 +27,7 @@ The queue will be created if they don't already exists. +
 
 
 // component options: START
-The AWS Simple Queue Service component supports 5 options which are listed below.
+The AWS Simple Queue Service component supports 5 options, which are listed below.
 
 
 

@@ -42,7 +42,7 @@ which are mandatory to configure before using.
 
 
 // component options: START
-The Yammer component supports 5 options which are listed below.
+The Yammer component supports 5 options, which are listed below.
 
 
 

@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -77,6 +78,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     private Boolean apiDocs;
+
+    @XmlElement(name = "securityDefinitions") // use the name swagger uses
+    private RestSecuritiesDefinition securityDefinitions;
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
@@ -148,6 +152,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public List<VerbDefinition> getVerbs() {
         return verbs;
+    }
+
+    public RestSecuritiesDefinition getSecurityDefinitions() {
+        return securityDefinitions;
+    }
+
+    /**
+     * Sets the security definitions such as Basic, OAuth2 etc.
+     */
+    public void setSecurityDefinitions(RestSecuritiesDefinition securityDefinitions) {
+        this.securityDefinitions = securityDefinitions;
     }
 
     /**
@@ -410,6 +425,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * To configure security definitions.
+     */
+    public RestSecuritiesDefinition securityDefinitions() {
+        if (securityDefinitions == null) {
+            securityDefinitions = new RestSecuritiesDefinition(this);
+        }
+        return securityDefinitions;
+    }
+
     public RestDefinition produces(String mediaType) {
         if (getVerbs().isEmpty()) {
             this.produces = mediaType;
@@ -544,6 +569,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             verb.setApiDocs(apiDocs);
         }
 
+        return this;
+    }
+
+    /**
+     * Sets the security setting for this verb.
+     */
+    public RestDefinition security(String key) {
+        return security(key, null);
+    }
+
+    /**
+     * Sets the security setting for this verb.
+     */
+    public RestDefinition security(String key, String scopes) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        SecurityDefinition sd = new SecurityDefinition();
+        sd.setKey(key);
+        sd.setScopes(scopes);
+        verb.getSecurity().add(sd);
         return this;
     }
 

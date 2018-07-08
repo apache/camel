@@ -55,6 +55,7 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "table");
         parameters.put("objectName", "incident");
+        parameters.put("metaType", "definition");
         //parameters.put("object.sys_user.fields", "first_name,last_name");
         //parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
         //parameters.put("object.incident.fields", "^sys_.*$");
@@ -83,6 +84,7 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
     public void testImportMetaData() throws Exception {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "import");
+        parameters.put("metaType", "list");
         //parameters.put("object.sys_user.fields", "first_name,last_name");
         //parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
         //parameters.put("object.incident.fields", "^sys_.*$");

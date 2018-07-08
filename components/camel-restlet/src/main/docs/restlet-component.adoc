@@ -63,7 +63,7 @@ option.
 
 
 // component options: START
-The Restlet component supports 22 options which are listed below.
+The Restlet component supports 22 options, which are listed below.
 
 
 

@@ -146,10 +146,10 @@ public final class DispositionNotificationContentUtils {
         DispositionMode dispositionMode = null;
         AS2DispositionType dispositionType = null;
         AS2DispositionModifier dispositionModifier = null;
-        List<String> failures = new ArrayList<String>();
-        List<String> errors = new ArrayList<String>();
-        List<String> warnings = new ArrayList<String>();
-        Map<String, String> extensionFields = new HashMap<String, String>();
+        List<String> failures = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
+        Map<String, String> extensionFields = new HashMap<>();
         ReceivedContentMic receivedContentMic = null;
 
         for (int i = 0; i < dispositionNotificationFields.size(); i++) {
@@ -255,7 +255,7 @@ public final class DispositionNotificationContentUtils {
 
         ParserCursor cursor = new ParserCursor(colon + 1, fieldLine.length());
 
-        final List<Element> elements = new ArrayList<Element>();
+        final List<Element> elements = new ArrayList<>();
         while (!cursor.atEnd()) {
             final Element element = parseDispositionFieldElement(fieldLine, cursor);
             if (element.getValue() != null) {
@@ -279,7 +279,7 @@ public final class DispositionNotificationContentUtils {
             return new Element(value, null);
         }
 
-        final List<String> parameters = new ArrayList<String>();
+        final List<String> parameters = new ArrayList<>();
         while (!cursor.atEnd()) {
             final String parameter = TOKEN_PARSER.parseToken(fieldLine, cursor, TOKEN_DELIMS);
             parameters.add(parameter);

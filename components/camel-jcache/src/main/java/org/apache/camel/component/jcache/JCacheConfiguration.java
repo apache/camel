@@ -312,7 +312,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * if the the event listener should block the thread causing the event
+     * if the event listener should block the thread causing the event
      */
     public boolean isSynchronous() {
         return synchronous;

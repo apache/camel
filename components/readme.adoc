@@ -27,7 +27,7 @@ Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 `apns:name` | 2.8 | For sending notifications to Apple iOS devices.
 
 | link:camel-as2/camel-as2-component/src/main/docs/as2-component.adoc[AS2] (camel-as2) +
-`as2:name` | 2.20 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+`as2:name` | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
 
 | link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
 `asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
@@ -540,7 +540,7 @@ Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 `metrics:metricsType:metricsName` | 2.14 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
 
 | link:camel-micrometer/src/main/docs/micrometer-component.adoc[Micrometer] (camel-micrometer) +
-`micrometer:metricsType:meterName` | 2.22 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
+`micrometer:metricsType:meterName` | 2.22 | To collect various metrics directly from Camel routes using the Micrometer library.
 
 | link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
 `mina:protocol:host:port` | 1.0 | *deprecated* Socket level networking using TCP or UDP with the Apache Mina 1.x library.
@@ -726,7 +726,7 @@ Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
-`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+`service:serviceName:delegateUri` | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
 
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
@@ -861,7 +861,7 @@ Number of Components: 297 in 203 JAR artifacts (20 deprecated)
 `weather:name` | 2.12 | Polls the weather information from Open Weather Map.
 
 | link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) +
-`web3j:host:port` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
+`web3j:nodeAddress` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.

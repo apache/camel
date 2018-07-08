@@ -36,7 +36,7 @@ for this component:
 
 
 // component options: START
-The Braintree component supports 2 options which are listed below.
+The Braintree component supports 2 options, which are listed below.
 
 
 
@@ -115,6 +115,8 @@ Endpoint prefix can be one of:
 * creditCardverification
 * customer
 * discount
+* dispute
+* documentUpload
 * merchantAccount
 * paymentmethod
 * paymentmethodNonce
@@ -356,6 +358,90 @@ braintree://discount/endpoint
  +
 
  +
+
+#### Endpoint prefix _dispute_
+
+The following endpoints can be invoked with the prefix *dispute* as
+follows:
+
+[source,java]
+----------------------------------------------
+braintree://dispute/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|accept |  |id
+|com.braintreegateway.Result
+
+|addFileEvidence |  |disputeId, documentId
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addFileEvidence |  |disputeId, fileEvidenceRequest
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addTextEvidence |  |disputeId, content
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addTextEvidence |  |disputeId, textEvidenceRequest
+|com.braintreegateway.Result<DisputeEvidence>
+
+|finalize |  |id
+|com.braintreegateway.Result
+
+|find |  |id
+|com.braintreegateway.Dispute
+
+|removeEvidence |  |id
+|com.braintreegateway.Result
+
+|search |  | disputeSearchRequest
+|com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute>
+|=======================================================================
+
+[[Braintree-URIOptionsfordispute]]
+URI Options for _dispute_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|id |String
+|disputeId |String
+|documentId |String
+|fileEvidenceRequest |com.braintreegateway.FileEvidenceRequest
+|content |String |
+|textEvidenceRequest |com.braintreegateway.TextEvidenceRequest
+|disputeSearchRequest |com.braintreegateway.DisputeSearchRequest
+|==========================================================
+
+
+#### Endpoint prefix _documentUpload_
+
+The following endpoints can be invoked with the prefix *documentUpload* as
+follows:
+
+[source,java]
+----------------------------------------------
+braintree://documentUpload/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.DocumentUpload>
+|=======================================================================
+
+[[Braintree-URIOptionsfordocumentUpload]]
+URI Options for _documentUpload_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|request |com.braintreegateway.DocumentUploadRequest
+|==========================================================
+
 
 #### Endpoint prefix _merchantAccount_
 

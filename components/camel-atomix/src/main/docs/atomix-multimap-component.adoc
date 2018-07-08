@@ -25,7 +25,7 @@ for this component:
 ----
 
 // component options: START
-The Atomix MultiMap component supports 5 options which are listed below.
+The Atomix MultiMap component supports 5 options, which are listed below.
 
 
 

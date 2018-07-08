@@ -33,13 +33,11 @@ import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.apache.camel.test.cdi.Order;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(CamelCdiRunner.class)
 public class CdiXmlTest {
@@ -95,7 +93,8 @@ public class CdiXmlTest {
     @Test
     @Order(3)
     public void verifyRescue(CamelContext context) {
-        assertThat("Neo is still in the matrix!",
-            context.getRouteStatus("terminal"), is(equalTo(ServiceStatus.Stopped)));
+        Awaitility.await("Neo is still in the matrix!")
+            .atMost(5, TimeUnit.SECONDS)
+            .until(() -> ServiceStatus.Stopped.equals(context.getRouteStatus("terminal")));
     }
 }

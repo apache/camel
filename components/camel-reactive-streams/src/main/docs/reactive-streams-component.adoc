@@ -45,7 +45,7 @@ external stream processing systems.
 
 
 // component options: START
-The Reactive Streams component supports 4 options which are listed below.
+The Reactive Streams component supports 4 options, which are listed below.
 
 
 

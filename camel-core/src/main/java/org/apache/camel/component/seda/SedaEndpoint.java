@@ -84,6 +84,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000;
     @UriParam(label = "producer")
+    private long offerTimeout;
+    @UriParam(label = "producer")
     private boolean blockWhenFull;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers;
@@ -126,7 +128,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull());
+        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), getOfferTimeout());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -332,6 +334,19 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+    
+    @ManagedAttribute
+    public long getOfferTimeout() {
+        return offerTimeout;
+    }
+    
+    /**
+     * offerTimeout (in milliseconds)  can be added to the block case when queue is full.
+     * You can disable timeout by using 0 or a negative value.
+     */
+    public void setOfferTimeout(long offerTimeout) {
+        this.offerTimeout = offerTimeout;
     }
 
     @ManagedAttribute

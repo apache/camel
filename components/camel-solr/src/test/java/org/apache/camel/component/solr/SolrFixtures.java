@@ -23,7 +23,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+
 
 
 public class SolrFixtures {
@@ -50,13 +50,13 @@ public class SolrFixtures {
 
     String solrRouteUri() {
         if (serverType == TestServerType.USE_HTTPS) {
-            return "solrs://localhost:" + httpsPort + "/solr";
+            return "solrs://127.0.0.1:" + httpsPort + "/solr/collection1";
         } else if (serverType == TestServerType.USE_CLOUD) {
             String zkAddrStr = cloudFixture.miniCluster.getZkServer().getZkAddress();
             return "solrCloud://localhost:" + httpsPort + "/solr?zkHost=" + zkAddrStr
                    + "&collection=collection1";
         } else {
-            return "solr://localhost:" + port + "/solr";
+            return "solr://localhost:" + port + "/solr/collection1";
         }
     }
 
@@ -74,13 +74,13 @@ public class SolrFixtures {
         solrHttpsRunner = JettySolrFactory.createJettyTestFixture(true);
         httpsPort = solrHttpsRunner.getLocalPort();
         log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());
-        solrHttpsServer = new HttpSolrServer("https://localhost:" + httpsPort + "/solr");
+        solrHttpsServer = new HttpSolrClient.Builder("https://127.0.0.1:" + httpsPort + "/solr").build();
         solrHttpsServer.setConnectionTimeout(60000);
 
         solrRunner = JettySolrFactory.createJettyTestFixture(false);
         port = solrRunner.getLocalPort();
 
-        solrServer = new HttpSolrServer("http://localhost:" + port + "/solr");
+        solrServer = new HttpSolrClient.Builder("http://localhost:" + port + "/solr").build();
 
         log.info("Started Test Server: " + solrRunner.getBaseUrl());
         cloudFixture = new SolrCloudFixture("src/test/resources/solr");
@@ -101,12 +101,12 @@ public class SolrFixtures {
     public static void clearIndex() throws SolrServerException, IOException {
         if (solrServer != null) {
             // Clear the Solr index.
-            solrServer.deleteByQuery("*:*");
-            solrServer.commit();
+            solrServer.deleteByQuery("collection1", "*:*");
+            solrServer.commit("collection1");
         }
         if (solrHttpsServer != null) {
-            solrHttpsServer.deleteByQuery("*:*");
-            solrHttpsServer.commit();
+            solrHttpsServer.deleteByQuery("collection1", "*:*");
+            solrHttpsServer.commit("collection1");
         }
         if (cloudFixture != null) {
             cloudFixture.solrClient.deleteByQuery("*:*");

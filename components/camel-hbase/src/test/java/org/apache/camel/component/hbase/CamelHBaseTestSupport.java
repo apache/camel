@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     //The hbase testing utility has special requirements on the umask.
-    //We hold this value to check if the the minicluster has properly started and tests can be run.
+    //We hold this value to check if the minicluster has properly started and tests can be run.
     protected static Boolean systemReady = true;
 
     protected static HBaseTestingUtility hbaseUtil = new HBaseTestingUtility();

@@ -62,7 +62,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
      * the check according to the limitation of the third party system i.e.
      * it should not be performed too often to avoid rate limiting. The options
      * argument can be used to pass information specific to the check like
-     * forcing the check to be performed against the the policies. The implementation
+     * forcing the check to be performed against the policies. The implementation
      * is responsible to catch an handle any exception thrown by the underlying
      * technology, including unchecked ones.
      */

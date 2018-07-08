@@ -92,7 +92,8 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
 
         // do we have a custom adapter for this POJO to a Processor
         // but only do this if allowed
-        if (allowProcessor(explicitMethodName, beanInfo)) {
+        // we need to check beanHolder is Processor is support, to avoid the bean cached issue
+        if (allowProcessor(explicitMethodName, beanInfo) && beanHolder.supportProcessor()) {
             processor = getProcessor();
             if (processor == null && !lookupProcessorDone) {
                 // only attempt to lookup the processor once or nearly once

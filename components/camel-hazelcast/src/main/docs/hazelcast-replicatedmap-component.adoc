@@ -10,7 +10,7 @@ A replicated map is a weakly consistent, distributed key-value data structure wi
 ### Options
  
 // component options: START
-The Hazelcast Replicated Map component supports 3 options which are listed below.
+The Hazelcast Replicated Map component supports 3 options, which are listed below.
 
 
 

@@ -39,7 +39,7 @@ strings.
 ### XMLSecurity Options
 
 // dataformat options: START
-The XML Security dataformat supports 12 options which are listed below.
+The XML Security dataformat supports 12 options, which are listed below.
 
 
 

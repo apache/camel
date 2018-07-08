@@ -31,7 +31,7 @@ ssh:[username[:password]@]host[:port][?options]
 
 
 // component options: START
-The SSH component supports 12 options which are listed below.
+The SSH component supports 12 options, which are listed below.
 
 
 

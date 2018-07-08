@@ -527,7 +527,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected JAXBContext createContext() throws JAXBException {
         if (contextPath != null) {
             // prefer to use application class loader which is most likely to be able to
-            // load the the class which has been JAXB annotated
+            // load the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
                 LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);

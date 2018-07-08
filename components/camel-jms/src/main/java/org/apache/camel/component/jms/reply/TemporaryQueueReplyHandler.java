@@ -49,7 +49,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     }
 
     public void onReply(String correlationId, Message reply, Session session) {
-        // create holder object with the the reply
+        // create holder object with the reply
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, reply, session);
         // process the reply
         replyManager.processReply(holder);

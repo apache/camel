@@ -68,7 +68,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
         Map<String, Object> props = new HashMap<>();
         props.put("action", "UsernameToken");
         props.put("user", username);
-        // Set the the password type to be plain text, 
+        // Set the password type to be plain text, 
         // so we can keep using the password to authenticate with spring security
         props.put("passwordType", "PasswordText");       
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);

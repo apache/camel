@@ -48,7 +48,7 @@ The Box component supports three different types of authenticated connections.
 === Box Options
 
 // component options: START
-The Box component supports 2 options which are listed below.
+The Box component supports 2 options, which are listed below.
 
 
 

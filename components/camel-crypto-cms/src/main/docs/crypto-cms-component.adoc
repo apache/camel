@@ -34,7 +34,7 @@ If the Bouncy Castle security provider is not registered then the Crypto CMS com
 ### Options
 
 // component options: START
-The Crypto CMS component supports 3 options which are listed below.
+The Crypto CMS component supports 3 options, which are listed below.
 
 
 

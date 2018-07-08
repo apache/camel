@@ -41,7 +41,7 @@ statement.
 
 
 // component options: START
-The Spring Batch component supports 3 options which are listed below.
+The Spring Batch component supports 3 options, which are listed below.
 
 
 

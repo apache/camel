@@ -35,6 +35,8 @@ public class CamelConsulTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelConsulTest.class))
+                .unitTestsEnabled(false)
+                .includeTestDependencies(false)
                 .build();
     }
 

@@ -212,6 +212,62 @@ To subscribe to an existing topic
 from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
 ----
 
+==== Platform events
+
+To emit a platform event use `createSObject` operation. And set the
+message body can be JSON string or InputStream with key-value data --
+in that case `sObjectName` needs to be set to the API name of the
+event, or a class that extends from AbstractDTOBase with the
+appropriate class name for the event.  
+
+For example using a DTO:
+
+[source,java]
+----
+class Order_Event__e extends AbstractDTOBase {
+  @JsonProperty("OrderNumber")
+  private String orderNumber;
+  // ... other properties and getters/setters
+}
+
+from("timer:tick")
+    .process(exchange -> {
+        final Message in = exchange.getIn();
+        String orderNumber = "ORD" + String.valueOf(in.getHeader(Exchange.TIMER_COUNTER));
+        Order_Event__e event = new Order_Event__e();
+        event.setOrderNumber(orderNumber);
+        in.setBody(event);
+    })
+    .to("salesforce:createSObject");
+----
+
+Or using JSON event data:
+
+[source,java]
+----
+from("timer:tick")
+    .process(exchange -> {
+        final Message in = exchange.getIn();
+        String orderNumber = "ORD" + String.valueOf(in.getHeader(Exchange.TIMER_COUNTER));
+        in.setBody("{\"OrderNumber\":\"" + orderNumber + "\"}");
+    })
+    .to("salesforce:createSObject?sObjectName=Order_Event__e");
+----
+
+To receive platform events use the consumer endpoint with the API name of
+the platform event prefixed with `event/` (or `/event/`), e.g.:
+`salesforce:events/Order_Event__e`. Processor consuming from that
+endpoint will receive either `org.apache.camel.component.salesforce.api.dto.PlatformEvent`
+object or `org.cometd.bayeux.Message` in the body depending on the
+`rawPayload` being `false` or `true` respectively.
+
+For example, in the simplest form to consume one event:
+
+[source,java]
+----
+PlatformEvent event = consumer.receiveBody("salesforce:event/Order_Event__e", PlatformEvent.class);
+----
+
 === Examples
 
 ==== Uploading a document to a ContentWorkspace
@@ -576,7 +632,7 @@ for details on how to generated the DTO.
 
 
 // component options: START
-The Salesforce component supports 29 options which are listed below.
+The Salesforce component supports 29 options, which are listed below.
 
 
 

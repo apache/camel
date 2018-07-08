@@ -43,7 +43,7 @@ The GoogleMail Component uses the following URI format:
 
 
 // component options: START
-The Google Mail Stream component supports 3 options which are listed below.
+The Google Mail Stream component supports 3 options, which are listed below.
 
 
 
@@ -119,5 +119,14 @@ with the following path and query parameters:
 ### Consumer
 
 The consumer will poll by default with the query "is:unread" and maxResults equals to 10.
+
+For example
+
+[source,java]
+---------------------------------------------------------
+from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=5&labels=GitHub,Apache").to("mock:result");
+---------------------------------------------------------
+
+This route will consume unread messages with labels Github and Apache and it will mark the messages as read.
 
    

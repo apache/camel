@@ -1,7 +1,7 @@
 @if{dataFormatOptions.isEmpty()}
 The @{title} dataformat has no options.
 @else{}
-The @{title} dataformat supports @{dataFormatOptions.size()} options which are listed below.
+The @{title} dataformat supports @{dataFormatOptions.size()} options, which are listed below.
 @end{}
 
 @if{!dataFormatOptions.isEmpty()}

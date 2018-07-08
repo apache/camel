@@ -473,7 +473,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Gets the Crypto operation that was supplied in the the crypto scheme in the endpoint uri
+     * Gets the Crypto operation that was supplied in the crypto scheme in the endpoint uri
      */
     public CryptoOperation getCryptoOperation() {
         return cryptoOperation;

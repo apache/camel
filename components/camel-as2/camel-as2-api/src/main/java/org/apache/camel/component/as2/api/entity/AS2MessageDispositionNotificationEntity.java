@@ -63,7 +63,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private String[] failureFields;
     private String[] errorFields;
     private String[] warningFields;
-    private Map<String, String> extensionFields = new HashMap<String, String>();
+    private Map<String, String> extensionFields = new HashMap<>();
     private ReceivedContentMic receivedContentMic;
 
     public AS2MessageDispositionNotificationEntity(HttpEntityEnclosingRequest request,

@@ -26,7 +26,7 @@ Maven users will need to add the following dependency to their pom.xml for this 
 ### Options
 
 // component options: START
-The Atomix Map component supports 5 options which are listed below.
+The Atomix Map component supports 5 options, which are listed below.
 
 
 

@@ -33,7 +33,7 @@ the Application Server JNDI Registry
 
 
 // component options: START
-The EJB component supports 3 options which are listed below.
+The EJB component supports 3 options, which are listed below.
 
 
 

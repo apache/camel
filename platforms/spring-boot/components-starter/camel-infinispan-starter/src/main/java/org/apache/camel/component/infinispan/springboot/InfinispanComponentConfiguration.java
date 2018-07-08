@@ -125,7 +125,12 @@ public class InfinispanComponentConfiguration
          */
         private Map configurationProperties;
         /**
-         * The CacheContainer configuration
+         * The CacheContainer configuration. Uses if the cacheContainer is not
+         * defined. Must be the following types:
+         * org.infinispan.client.hotrod.configuration.Configuration - for remote
+         * cache interaction configuration;
+         * org.infinispan.configuration.cache.Configuration - for embedded cache
+         * interaction configuration;
          */
         private Object cacheContainerConfiguration;
         /**

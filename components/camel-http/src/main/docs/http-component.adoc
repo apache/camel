@@ -115,7 +115,7 @@ from("direct:start")
 
 
 // component options: START
-The HTTP component supports 8 options which are listed below.
+The HTTP component supports 8 options, which are listed below.
 
 
 

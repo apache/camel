@@ -18,50 +18,50 @@ package org.apache.camel.component.caffeine.cache;
 
 import java.util.concurrent.TimeUnit;
 
-import com.codahale.metrics.Meter;
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 
 public class MetricsStatsCounter implements StatsCounter {
-    private final Meter hitCount;
-    private final Meter missCount;
-    private final Meter loadSuccessCount;
-    private final Meter loadFailureCount;
+    private final Counter hitCount;
+    private final Counter missCount;
+    private final Counter loadSuccessCount;
+    private final Counter loadFailureCount;
     private final Timer totalLoadTime;
-    private final Meter evictionCount;
-    private final Meter evictionWeight;
+    private final Counter evictionCount;
+    private final Counter evictionWeight;
 
     public MetricsStatsCounter(MetricRegistry registry) {
-        hitCount = registry.meter("camelcache.hits");
-        missCount = registry.meter("camelcache.misses");
+        hitCount = registry.counter("camelcache.hits");
+        missCount = registry.counter("camelcache.misses");
         totalLoadTime = registry.timer("camelcache.loads");
-        loadSuccessCount = registry.meter("camelcache.loads-success");
-        loadFailureCount = registry.meter("camelcache.loads-failure");
-        evictionCount = registry.meter("camelcache.evictions");
-        evictionWeight = registry.meter("camelcache.evictions-weight");
+        loadSuccessCount = registry.counter("camelcache.loads-success");
+        loadFailureCount = registry.counter("camelcache.loads-failure");
+        evictionCount = registry.counter("camelcache.evictions");
+        evictionWeight = registry.counter("camelcache.evictions-weight");
     }
 
     @Override
     public void recordHits(int count) {
-        hitCount.mark(count);
+        hitCount.inc(count);
     }
 
     @Override
     public void recordMisses(int count) {
-        missCount.mark(count);
+        missCount.inc(count);
     }
 
     @Override
     public void recordLoadSuccess(long loadTime) {
-        loadSuccessCount.mark();
+        loadSuccessCount.inc();
         totalLoadTime.update(loadTime, TimeUnit.NANOSECONDS);
     }
 
     @Override
     public void recordLoadFailure(long loadTime) {
-        loadFailureCount.mark();
+        loadFailureCount.inc();
         totalLoadTime.update(loadTime, TimeUnit.NANOSECONDS);
     }
 
@@ -72,8 +72,8 @@ public class MetricsStatsCounter implements StatsCounter {
 
     @Override
     public void recordEviction(int weight) {
-        evictionCount.mark();
-        evictionWeight.mark(weight);
+        evictionCount.inc();
+        evictionWeight.inc(weight);
     }
 
     @Override

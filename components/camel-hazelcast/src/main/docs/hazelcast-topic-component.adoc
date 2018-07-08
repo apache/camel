@@ -9,7 +9,7 @@ The http://www.hazelcast.com/[Hazelcast] Topic component is one of Camel Hazelca
 ### Options
 
 // component options: START
-The Hazelcast Topic component supports 3 options which are listed below.
+The Hazelcast Topic component supports 3 options, which are listed below.
 
 
 

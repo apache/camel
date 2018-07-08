@@ -26,7 +26,7 @@ Recipient List
 
 
 // language options: START
-The Groovy language supports 1 options which are listed below.
+The Groovy language supports 1 options, which are listed below.
 
 
 

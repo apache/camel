@@ -76,6 +76,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean autoDelete = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean exclusiveConsumer;
     @UriParam(label = "common")
     private boolean exclusive;
     @UriParam(label = "common")
@@ -983,6 +985,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public boolean isExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    /**
+     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
+     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     */
+    public void setExclusiveConsumer(boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
     }
 
     public boolean isPassive() {

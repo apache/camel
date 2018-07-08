@@ -12,7 +12,7 @@ exported/imported by Excel.
 ### Options
 
 // dataformat options: START
-The CSV dataformat supports 28 options which are listed below.
+The CSV dataformat supports 28 options, which are listed below.
 
 
 

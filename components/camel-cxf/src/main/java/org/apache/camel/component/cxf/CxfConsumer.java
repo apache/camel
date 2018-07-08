@@ -191,7 +191,7 @@ public class CxfConsumer extends DefaultConsumer {
                         }
                     });
 
-                } else if (continuation.isResumed()) {
+                } else if (!continuation.isTimeout() && continuation.isResumed()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         setResponseBack(cxfExchange, camelExchange);
@@ -199,7 +199,8 @@ public class CxfConsumer extends DefaultConsumer {
                         CxfConsumer.this.doneUoW(camelExchange);
                         throw ex;
                     }
-                } else if (!continuation.isResumed() && !continuation.isPending()) {
+
+                } else if (continuation.isTimeout() || (!continuation.isResumed() && !continuation.isPending())) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         if (!continuation.isPending()) {

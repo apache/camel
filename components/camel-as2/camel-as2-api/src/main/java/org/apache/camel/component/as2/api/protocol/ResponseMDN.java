@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
+import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -105,7 +106,10 @@ public class ResponseMDN implements HttpResponseInterceptor {
         String receiptAddress = HttpMessageUtils.getHeaderValue(request, AS2Header.RECEIPT_DELIVERY_OPTION);
         if (receiptAddress != null) {
             // Asynchronous Delivery
-            // TODO Implement
+
+            coreContext.setAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS, receiptAddress);
+            coreContext.setAttribute(AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN, multipartReportEntity);
+            
         } else {
             // Synchronous Delivery
 

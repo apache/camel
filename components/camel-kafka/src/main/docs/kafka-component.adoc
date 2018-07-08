@@ -33,7 +33,7 @@ kafka:topic[?options]
 
 
 // component options: START
-The Kafka component supports 8 options which are listed below.
+The Kafka component supports 8 options, which are listed below.
 
 
 
@@ -218,9 +218,22 @@ After the message is sent to Kafka, the following headers are available
 ==== Consuming messages from Kafka
 
 Here is the minimal route you need in order to read messages from Kafka.
+
 [source,java]
 ----
 from("kafka:test?brokers=localhost:9092")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+----
+
+If you need to consume messages from multiple topics you can use a comma separated list of topic names
+
+[source,java]
+----
+from("kafka:test,test1,test2?brokers=localhost:9092")
     .log("Message received from Kafka : ${body}")
     .log("    on the topic ${headers[kafka.TOPIC]}")
     .log("    on the partition ${headers[kafka.PARTITION]}")

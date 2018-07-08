@@ -49,7 +49,7 @@ import io.micrometer.core.instrument.search.Search;
 
 public class MicrometerModule extends Module {
 
-    static final Version VERSION = new Version(1, 0, 4, "", "io.micrometer", "micrometer-core");
+    static final Version VERSION = new Version(1, 0, 5, "", "io.micrometer", "micrometer-core");
 
     private final TimeUnit timeUnit;
     private final Iterable<Tag> matchingTags;

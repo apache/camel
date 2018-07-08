@@ -196,8 +196,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     protected Map<String, Object> prepareRequest(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) throws Exception {
         
         // create invocation context
-        WrappedMessageContext requestContext = new WrappedMessageContext(
-                new HashMap<String, Object>(), null, Scope.APPLICATION);
+        WrappedMessageContext requestContext = new WrappedMessageContext(new HashMap<String, Object>(), null, Scope.APPLICATION);
 
         camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
         

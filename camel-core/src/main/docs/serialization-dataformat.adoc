@@ -19,7 +19,7 @@ from("file://foo/bar").
 === Options
 
 // dataformat options: START
-The Java Object Serialization dataformat supports 1 options which are listed below.
+The Java Object Serialization dataformat supports 1 options, which are listed below.
 
 
 

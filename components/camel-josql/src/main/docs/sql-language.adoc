@@ -60,7 +60,7 @@ And the spring DSL:
 
 
 // language options: START
-The SQL language supports 1 options which are listed below.
+The SQL language supports 1 options, which are listed below.
 
 
 

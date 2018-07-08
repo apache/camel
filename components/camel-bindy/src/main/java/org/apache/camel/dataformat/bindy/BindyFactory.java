@@ -41,7 +41,7 @@ public interface BindyFactory {
      * 
      * @param data List<String> represents the csv, ... data to transform
      * @param model Map<String, object> is a collection of objects used to bind
-     *            data. String is the the key name of the class link to POJO
+     *            data. String is the key name of the class link to POJO
      *            objects
      * @param line is the position of the record into the file
      * @throws Exception can be thrown
@@ -54,7 +54,7 @@ public interface BindyFactory {
      * 
      * @return String represents a csv record created
      * @param model Map<String, Object> is a collection of objects used to
-     *            create csv, ... records. String is the the key name of the
+     *            create csv, ... records. String is the key name of the
      *            class link to POJO objects
      * @throws Exception can be thrown
      */

@@ -25,7 +25,7 @@ Recipient List
 ### Javascript Language Options
 
 // language options: START
-The JavaScript language supports 1 options which are listed below.
+The JavaScript language supports 1 options, which are listed below.
 
 
 

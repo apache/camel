@@ -24,7 +24,7 @@ Recipient List
 ### PHP Language Options
 
 // language options: START
-The PHP language supports 1 options which are listed below.
+The PHP language supports 1 options, which are listed below.
 
 
 

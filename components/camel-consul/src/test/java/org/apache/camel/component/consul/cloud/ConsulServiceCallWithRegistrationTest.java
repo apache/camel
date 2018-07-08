@@ -68,7 +68,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // context path is derived from the the jetty endpoint.
+                // context path is derived from the jetty endpoint.
                 from("direct:start")
                     .serviceCall()
                         .name(serviceName)

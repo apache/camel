@@ -35,7 +35,7 @@ Where *destination* is the name of the queue.
 
 
 // component options: START
-The Stomp component supports 8 options which are listed below.
+The Stomp component supports 8 options, which are listed below.
 
 
 

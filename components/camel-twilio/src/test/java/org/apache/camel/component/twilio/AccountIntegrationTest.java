@@ -47,10 +47,8 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
 
     @Test
     public void testFetcherWithPathSid() throws Exception {
-        TwilioConfiguration configuration = ((TwilioComponent) context().getComponent("twilio"))
-            .getConfiguration();
         final Account result = requestBodyAndHeaders("direct://FETCHER", null,
-            headers("CamelTwilioPathSid", configuration.getAccountSid()));
+            headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
 
         assertNotNull("fetcher result not null", result);
         assertNotNull("fetcher result sid not null", result.getSid());

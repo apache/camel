@@ -20,6 +20,16 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+Starting with Camel *2.22* gRCP requires strong own of the Google Guava version. It's necessary to
+add following configuration property to the maven file
+
+[source,xml]
+------------------------------------------------------------
+<properties>
+    <google-guava-version>${grpc-guava-version}</google-guava-version>
+<properties>
+------------------------------------------------------------
+
 ### URI format
 
 [source,java]

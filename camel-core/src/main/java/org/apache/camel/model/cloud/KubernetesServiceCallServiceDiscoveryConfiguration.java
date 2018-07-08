@@ -29,8 +29,12 @@ import org.apache.camel.spi.Metadata;
 public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute @Metadata(defaultValue = "environment", enums = "environment,dns,client")
     private String lookup = "environment";
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "dns,dnssrv")
     private String dnsDomain;
+    @XmlAttribute @Metadata(label = "dns,dnssrv")
+    private String portName;
+    @XmlAttribute @Metadata(label = "dns,dnssrv")
+    private String portProtocol = "tcp";
     @XmlAttribute
     private String namespace;
     @XmlAttribute
@@ -117,7 +121,9 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
      * When using client, then the client queries the kubernetes master to obtain a list
      * of active pods that provides the service, and then random (or round robin) select a pod.
      * <p/>
-     * When using dns the service name is resolved as <tt>name.namespace.service.dnsDomain</tt>.
+     * When using dns the service name is resolved as <tt>name.namespace.svc.dnsDomain</tt>.
+     * <p/>
+     * When using dnssrv the service name is resolved with SRV query for <tt>_<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.</tt>.
      * <p/>
      * When using environment then environment variables are used to lookup the service.
      * <p/>
@@ -136,6 +142,28 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
      */
     public void setDnsDomain(String dnsDomain) {
         this.dnsDomain = dnsDomain;
+    }
+
+    public String getPortName() {
+        return portName;
+    }
+
+    /**
+     * Sets the Port Name to use for DNS/DNSSRV lookup.
+     */
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
+
+    public String getPortProtocol() {
+        return portProtocol;
+    }
+
+    /**
+     * Sets the Port Protocol to use for DNS/DNSSRV lookup.
+     */
+    public void setPortProtocol(String portProtocol) {
+        this.portProtocol = portProtocol;
     }
 
     public String getUsername() {
@@ -299,16 +327,7 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * How to perform service lookup. Possible values: client, dns, environment.
-     * <p/>
-     * When using client, then the client queries the kubernetes master to obtain a list
-     * of active pods that provides the service, and then random (or round robin) select a pod.
-     * <p/>
-     * When using dns the service name is resolved as <tt>name.namespace.service.dnsDomain</tt>.
-     * <p/>
-     * When using environment then environment variables are used to lookup the service.
-     * <p/>
-     * By default environment is used.
+     * How to perform service lookup, @see {@link #setLookup(String)}.
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration lookup(String lookup) {
         setLookup(lookup);
@@ -316,10 +335,26 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the DNS domain to use for DNS lookup.
+     * Sets the DNS domain to use for DNS/SNDSRV lookup.
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration dnsDomain(String dnsDomain) {
         setDnsDomain(dnsDomain);
+        return this;
+    }
+
+    /**
+     * Sets Port Name to use for DNS/SNDSRV lookup.
+     */
+    public KubernetesServiceCallServiceDiscoveryConfiguration portName(String portName) {
+        setPortName(portName);
+        return this;
+    }
+
+    /**
+     * Sets Port Protocol to use for DNS/SNDSRV lookup.
+     */
+    public KubernetesServiceCallServiceDiscoveryConfiguration portProtocol(String portProtocol) {
+        setPortProtocol(portProtocol);
         return this;
     }
 

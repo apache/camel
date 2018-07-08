@@ -32,7 +32,6 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_M
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_PREFIX;
 
-
 public abstract class AbstractMicrometerProducer<T extends Meter> extends DefaultProducer {
 
     private static final String HEADER_PATTERN = HEADER_PREFIX + "*";
@@ -102,8 +101,9 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         return in.getHeader(header, defaultValue, Double.class);
     }
 
+    @SuppressWarnings("unchecked")
     protected Iterable<Tag> getTagHeader(Message in, String header, Iterable<Tag> defaultTags) {
-        return (Iterable<Tag>) in.getHeader(header, defaultTags, Iterable.class);
+        return in.getHeader(header, defaultTags, Iterable.class);
     }
 
     protected boolean clearMetricsHeaders(Message in) {

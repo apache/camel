@@ -76,7 +76,7 @@ public final class JcloudsBlobStoreHelper {
     }
 
     /**
-     * Writes {@link Payload} to the the {@link BlobStore}.
+     * Writes {@link Payload} to the {@link BlobStore}.
      */
     public static void writeBlob(BlobStore blobStore, String container, String blobName, Payload payload) {
         if (blobName != null && payload != null) {

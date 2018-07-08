@@ -30,7 +30,7 @@ from("mqseries:Another.Queue").
 ### Options
 
 // dataformat options: START
-The JiBX dataformat supports 3 options which are listed below.
+The JiBX dataformat supports 3 options, which are listed below.
 
 
 

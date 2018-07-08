@@ -43,7 +43,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Component used for transferring data secure and reliable over the internet using the AS2 protocol.
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.20.0", title = "AS2", syntax = "as2:name", consumerClass = AS2Consumer.class, label = "AS2")
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:name", consumerClass = AS2Consumer.class, label = "AS2")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriPath @Metadata(required = "true")
@@ -97,10 +97,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     protected void afterConfigureProperties() {
         // create HTTP connection eagerly, a good way to validate configuration
         switch (apiName) {
-        case SEND:
+        case CLIENT:
             createAS2ClientConnection();
             break;
-        case LISTEN:
+        case SERVER:
             createAS2ServerConnection();
             break;
         default:
@@ -129,10 +129,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     private void createApiProxy(ApiMethod method, Map<String, Object> args) {
         switch (apiName) {
-        case SEND:
+        case CLIENT:
             apiProxy = new AS2ClientManager(getAS2ClientConnection());
             break;
-        case LISTEN:
+        case SERVER:
             apiProxy = new AS2ServerManager(getAS2ServerConnection());
             break;
         default:
