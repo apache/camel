@@ -27,12 +27,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("This test should be executed manually with a proxy set up")
-public class GeoCoderProxyTest extends CamelTestSupport {
+public class GeoCoderProxyTest extends GeoCoderApiKeyTestBase {
 
     @Test
-    public void testGeoCoder() throws Exception {
+    public void testGeoCoderProxyNoAuth() throws Exception {
         GeoCoderEndpoint endpoint = context.getEndpoint(
-            "geocoder:address:current?headersOnly=true&proxyHost=localhost&proxyPort=3128&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy",
+            "geocoder:address:current?headersOnly=true&proxyHost=localhost&proxyPort=8888&apiKey="+getApiKey(),
             GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
@@ -41,4 +41,18 @@ public class GeoCoderProxyTest extends CamelTestSupport {
 
         log.info("Response {}", results);
     }
+
+    @Test
+    public void testGeoCoderWithAuth() throws Exception {
+        GeoCoderEndpoint endpoint = context.getEndpoint(
+                "geocoder:address:current?headersOnly=true&proxyHost=localhost&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey="+getApiKey(),
+                GeoCoderEndpoint.class);
+
+        GeoApiContext context = endpoint.createGeoApiContext();
+        GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));
+        GeocodingResult[] results = geocodingApiRequest.await();
+
+        log.info("Response {}", results);
+    }
+
 }

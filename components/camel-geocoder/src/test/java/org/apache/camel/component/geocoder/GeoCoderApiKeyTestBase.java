@@ -31,6 +31,6 @@ public class GeoCoderApiKeyTestBase extends CamelTestSupport {
     }
 
     protected String getApiKey() {
-        return System.getenv("CAMEL_GEOCODER_APIKEYx");
+        return System.getenv("CAMEL_GEOCODER_APIKEY");
     }
 }
