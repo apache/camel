@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.google.maps</groupId>
       <artifactId>google-maps-services</artifactId>
-      <version>0.2.7</version>
+      <version>${google-maps-services-version}</version>
     </dependency>
     <!-- testing -->
     <dependency>
