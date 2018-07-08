@@ -228,6 +228,7 @@
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
     <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
+    <google-maps-services-version>0.2.9</google-maps-services-version>
     <flatpack-version>3.4.3</flatpack-version>
     <flink-version>1.5.0</flink-version>
     <fop-bundle-version>2.3_1</fop-bundle-version>
@@ -236,7 +237,6 @@
     <freemarker-version>2.3.28</freemarker-version>
     <generex-bundle-version>1.0.1_2</generex-bundle-version>
     <gentlyweb-bundle-version>1.5_1</gentlyweb-bundle-version>
-    <geocoder-java-version>0.16</geocoder-java-version>
     <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
     <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
     <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
