@@ -178,5 +178,29 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {
         getConfiguration().setFailOnUnknownHost(failOnUnknownHost);
     }
+    
+    public String getChannelType() {
+        return getConfiguration().getChannelType();
+    }
+
+    public void setChannelType(String channelType) {
+        getConfiguration().setChannelType(channelType);
+    }
+    
+    public String getShellPrompt() {
+        return getConfiguration().getShellPrompt();
+    }
+
+    public void setShellPrompt(String shellPrompt) {
+        getConfiguration().setShellPrompt(shellPrompt);
+    }
+    
+    public long getSleepForShellPrompt() {
+        return getConfiguration().getSleepForShellPrompt();
+    }
+
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
+    }
 
 }
