@@ -20,7 +20,7 @@ lightweight and embedable key value database. To make using leveldb easy
 there is a https://github.com/fusesource/leveldbjni[leveldbjni] project
 for that.
 
-There os a camel-leveldb component we recommend to use instead of this.
+There is a camel-leveldb component we recommend to use instead of this.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
