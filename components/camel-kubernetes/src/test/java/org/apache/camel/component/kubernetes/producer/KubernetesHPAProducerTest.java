@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerListBuilder;
+import io.fabric8.kubernetes.api.model.PodListBuilder;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,33 +35,27 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerListBuilder;
-import io.fabric8.kubernetes.api.model.PodListBuilder;
-import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
-
 public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
-	@Rule
-	public KubernetesServer server = new KubernetesServer();
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
 
-	@Override
-	protected JndiRegistry createRegistry() throws Exception {
-		JndiRegistry registry = super.createRegistry();
-		registry.bind("kubernetesClient", server.getClient());
-		return registry;
-	}
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("kubernetesClient", server.getClient());
+        return registry;
+    }
 
-	@Test
-	public void listTest() throws Exception {
-		server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers").andReturn(200, new HorizontalPodAutoscalerListBuilder()
-				.addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-		List<HorizontalPodAutoscaler> result = template.requestBody("direct:list", "", List.class);
+    @Test
+    public void listTest() throws Exception {
+        server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers")
+            .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        List<HorizontalPodAutoscaler> result = template.requestBody("direct:list", "", List.class);
 
-		assertEquals(3, result.size());
-	}
-	
+        assertEquals(3, result.size());
+    }
+
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
@@ -75,7 +75,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
         assertEquals(3, result.size());
     }
-    
+
     @Test
     public void getHPATest() throws Exception {
         HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
@@ -96,7 +96,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
         assertEquals("hpa1", result.getMetadata().getName());
     }
-    
+
     @Test
     public void deleteHPATest() throws Exception {
         HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
@@ -116,16 +116,16 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
         assertTrue(podDeleted);
     }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:list").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPA");
-				from("direct:listByLabels").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels");
-				from("direct:getHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=getHPA");
-				from("direct:deleteHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=deleteHPA");
-			}
-		};
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:list").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPA");
+                from("direct:listByLabels").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels");
+                from("direct:getHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=getHPA");
+                from("direct:deleteHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=deleteHPA");
+            }
+        };
+    }
 }

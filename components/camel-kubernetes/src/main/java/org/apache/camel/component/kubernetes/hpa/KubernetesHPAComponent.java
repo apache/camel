@@ -22,7 +22,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 public class KubernetesHPAComponent extends AbstractKubernetesComponent {
 
     protected KubernetesHPAEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
-    	KubernetesHPAEndpoint endpoint = new KubernetesHPAEndpoint(uri, this, config);
+        KubernetesHPAEndpoint endpoint = new KubernetesHPAEndpoint(uri, this, config);
         return endpoint;
     }
 }

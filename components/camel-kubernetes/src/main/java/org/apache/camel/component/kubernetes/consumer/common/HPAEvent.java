@@ -20,29 +20,29 @@ import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.client.Watcher.Action;
 
 public class HPAEvent {
-	private io.fabric8.kubernetes.client.Watcher.Action action;
+    private io.fabric8.kubernetes.client.Watcher.Action action;
 
-	private HorizontalPodAutoscaler hpa;
+    private HorizontalPodAutoscaler hpa;
 
-	public HPAEvent(Action action, HorizontalPodAutoscaler hpa) {
-		this.action = action;
-		this.hpa = hpa;
-	}
+    public HPAEvent(Action action, HorizontalPodAutoscaler hpa) {
+        this.action = action;
+        this.hpa = hpa;
+    }
 
-	public io.fabric8.kubernetes.client.Watcher.Action getAction() {
-		return action;
-	}
+    public io.fabric8.kubernetes.client.Watcher.Action getAction() {
+        return action;
+    }
 
-	public void setAction(io.fabric8.kubernetes.client.Watcher.Action action) {
-		this.action = action;
-	}
+    public void setAction(io.fabric8.kubernetes.client.Watcher.Action action) {
+        this.action = action;
+    }
 
-	public HorizontalPodAutoscaler getHpa() {
-		return hpa;
-	}
+    public HorizontalPodAutoscaler getHpa() {
+        return hpa;
+    }
 
-	public void setHpa(HorizontalPodAutoscaler hpa) {
-		this.hpa = hpa;
-	}
+    public void setHpa(HorizontalPodAutoscaler hpa) {
+        this.hpa = hpa;
+    }
 
 }
