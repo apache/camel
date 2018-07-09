@@ -28,7 +28,7 @@
 
   <artifactId>camel-mongodb</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: MongoDB</name>
+  <name>Camel :: MongoDB (deprecated)</name>
   <description>Camel MongoDB component</description>
 
   <properties>
