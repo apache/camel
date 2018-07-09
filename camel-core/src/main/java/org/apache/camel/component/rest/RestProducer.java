@@ -406,7 +406,7 @@ public class RestProducer extends DefaultAsyncProducer {
                         }
                         String value = inMessage.getHeader(key, String.class);
                         if (value != null) {
-                            params.put(key, value);
+                            params.put(entry.getKey(), value);
                         } else if (!optional) {
                             // value is null and parameter is not optional
                             params.put(entry.getKey(), entry.getValue());
