@@ -1,7 +1,8 @@
-[[mongodb-component]]
-== MongoDB Component
+== MongoDB Component (deprecated)
 
 *Available as of Camel version 2.10*
+*Available as of Camel version 2.10*
+
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
 class of non-relational data stores that break with a long history of
