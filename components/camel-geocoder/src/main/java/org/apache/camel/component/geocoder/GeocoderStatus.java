@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.geocoder.http;
 
-import org.apache.commons.httpclient.HttpClient;
+package org.apache.camel.component.geocoder;
 
-/**
- * A pluggable strategy for configuring the HttpClient used by this component
- *
- * @version 
- */
-public interface HttpClientConfigurer {
+public enum GeocoderStatus {
+    ERROR,
+    INVALID_REQUEST,
+    ACCESS_NOT_CONFIGURED,
+    OK,
+    OVER_QUERY_LIMIT,
+    OVER_DAILY_LIMIT,
+    REQUEST_DENIED,
+    UNKNOWN_ERROR,
+    ZERO_RESULTS;
 
-    /**
-     * Configure the HttpClient such as setting the authentication or proxying details
-     *
-     * @param client the client
-     * @return the client
-     */
-    HttpClient configureHttpClient(HttpClient client);
+    public String value() {
+        return name();
+    }
+
+    public static GeocoderStatus fromValue(String v) {
+        return valueOf(v);
+    }
 }
