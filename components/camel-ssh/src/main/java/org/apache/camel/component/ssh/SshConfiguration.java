@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.StringHelper;
-
+import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
 @UriParams
@@ -54,7 +54,13 @@ public class SshConfiguration implements Cloneable {
     private String knownHostsResource;
     @UriParam(defaultValue = "false")
     private boolean failOnUnknownHost;
-
+    @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
+    private String channelType = Channel.CHANNEL_EXEC;
+    @UriParam(label = "advanced")
+    private String shellPrompt;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private long sleepForShellPrompt;
+    
     public SshConfiguration() {
     }
 
@@ -282,5 +288,52 @@ public class SshConfiguration implements Cloneable {
      */
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {
         this.failOnUnknownHost = failOnUnknownHost;
+    }
+    
+    public String getChannelType() {
+        return channelType;
+    }
+
+    /**
+     * Sets the channel type to pass to the Channel as part of command execution.
+     * Defaults to "exec".
+     *
+     * @param channelType
+     *            String defining the type of Channel to use for command execution.
+     *
+     * @see org.apache.sshd.common.channel.Channel
+     */
+    public void setChannelType(String channelType) {
+        this.channelType = channelType;
+    }
+    
+    public String getShellPrompt() {
+        return shellPrompt;
+    }
+
+    /**
+     * Sets the shellPrompt to be dropped when response is read after command execution
+     *
+     * @param shellPrompt
+     *            String defining ending string of command line which has to be dropped when response is 
+     *            read after command execution.
+     */
+    public void setShellPrompt(String shellPrompt) {
+        this.shellPrompt = shellPrompt;
+    }
+
+    public long getSleepForShellPrompt() {
+        return sleepForShellPrompt;
+    }
+
+    /**
+     * Sets the sleep period in milliseconds to wait reading response from shell prompt.
+     * Defaults to 100 milliseconds.
+     *
+     * @param sleepForShellPrompt
+     *            long milliseconds to wait.
+     */
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        this.sleepForShellPrompt = sleepForShellPrompt;
     }
 }
