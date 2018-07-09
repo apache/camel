@@ -332,6 +332,8 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                 if (redeliveryPossible) {
                     // okay we can redeliver then we need to change the output in the error handler
                     // to use us which we then wrap the call so we can capture before/after for redeliveries as well
+                    Processor currentOutput = ((RedeliveryErrorHandler) errorHandler).getOutput();
+                    instrumentationProcessor.setProcessor(currentOutput);
                     ((RedeliveryErrorHandler) errorHandler).changeOutput(instrumentationProcessor);
                 }
             }
