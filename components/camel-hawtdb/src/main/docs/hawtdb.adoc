@@ -1,6 +1,5 @@
 [[HawtDB-HawtDB]]
-HawtDB
-~~~~~~
+== HawtDB (deprecated)
 
 *Available as of Camel 2.3*
 
@@ -9,31 +8,36 @@ embedable key value database. It allows together with Camel to provide
 persistent support for various Camel features such as
 Aggregator.
 
+Current features it provides:
+
+* HawtDBAggregationRepository
+
 *Deprecated*
 
 The http://hawtdb.fusesource.org/[HawtDB] project is being deprecated
 and replaced by https://code.google.com/p/leveldb/[leveldb] as the
 lightweight and embedable key value database. To make using leveldb easy
 there is a https://github.com/fusesource/leveldbjni[leveldbjni] project
-for that. The Apache ActiveMQ project is planning on using leveldb as
-their primary file based message store in the future, to replace kahadb.
+for that.
 
-There os a camel-leveldb component we recommend to
-use instead of this.
+There os a camel-leveldb component we recommend to use instead of this.
 
-*Issue with HawtDB 1.4 or older*
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
 
-There is a bug in HawtDB 1.4 or older which means the filestore will not
-free unused space. That means the file keeps growing. This has been
-fixed in HawtDB 1.5 which is shipped with Camel 2.5 onwards.
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hawtdb</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
-Current features it provides:
-
-* HawtDBAggregationRepository
 
 [[HawtDB-UsingHawtDBAggregationRepository]]
-Using HawtDBAggregationRepository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== Using HawtDBAggregationRepository
 
 `HawtDBAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
@@ -43,7 +47,7 @@ loose messages, as the default aggregator will use an in memory only
 It has the following options:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Option |Type |Description
 
 |`repositoryName` |String |A mandatory repository name. Allows you to use a shared `HawtDBFile` for
@@ -92,14 +96,13 @@ used then the `maximumRedeliveries` option must also be provided.
 |`optimisticLocking` |`false` |*Camel 2.12:* To turn on optimistic locking, which often would be needed
 in clustered environments where multiple Camel applications shared the
 same HawtDB based aggregation repository.
-|=======================================================================
+|===
 
 The `repositoryName` option must be provided. Then either the
 `persistentFileName` or the `hawtDBFile` must be provided.
 
 [[HawtDB-Whatispreservedwhenpersisting]]
-What is preserved when persisting
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== What is preserved when persisting
 
 `HawtDBAggregationRepository` will only preserve any `Serializable`
 compatible data types. If a data type is not such a type its dropped and
@@ -107,8 +110,7 @@ a `WARN` is logged. And it only persists the `Message` body and the
 `Message` headers. The `Exchange` properties are *not* persisted.
 
 [[HawtDB-Recovery]]
-Recovery
-^^^^^^^^
+==== Recovery
 
 The `HawtDBAggregationRepository` will by default recover any failed
 Exchange. It does this by having a background tasks
@@ -123,14 +125,14 @@ The following headers is set when an Exchange is
 being recovered/redelivered:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Header |Type |Description
 
 |`Exchange.REDELIVERED` |Boolean |Is set to true to indicate the Exchange is being
 redelivered.
 
 |`Exchange.REDELIVERY_COUNTER` |Integer |The redelivery attempt, starting from 1.
-|=======================================================================
+|===
 
 Only when an Exchange has been successfully
 processed it will be marked as complete which happens when the `confirm`
@@ -144,52 +146,4 @@ You must also set the `deadLetterUri` option so Camel knows where to
 send the Exchange when the `maximumRedeliveries` was
 hit.
 
-You can see some examples in the unit tests of camel-hawtdb, for example
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-hawtdb/src/test/java/org/apache/camel/component/hawtdb/HawtDBAggregateRecoverTest.java[this
-test].
-
-[[HawtDB-UsingHawtDBAggregationRepositoryinJavaDSL]]
-Using HawtDBAggregationRepository in Java DSL
-+++++++++++++++++++++++++++++++++++++++++++++
-
-In this example we want to persist aggregated messages in the
-`target/data/hawtdb.dat` file.
-
-[[HawtDB-UsingHawtDBAggregationRepositoryinSpringXML]]
-Using HawtDBAggregationRepository in Spring XML
-+++++++++++++++++++++++++++++++++++++++++++++++
-
-The same example but using Spring XML instead:
-
-[[HawtDB-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
-
-To use HawtDB in your camel routes you need to add the
-a dependency on *camel-hawtdb*.
-
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
-
-[source,xml]
----------------------------------------
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-hawtdb</artifactId>
-  <version>2.3.0</version>
-</dependency>
----------------------------------------
-
-[[HawtDB-SeeAlso]]
-See Also
-^^^^^^^^
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Aggregator
-* Components
-
+You can see some examples in the unit tests of camel-hawtdb
