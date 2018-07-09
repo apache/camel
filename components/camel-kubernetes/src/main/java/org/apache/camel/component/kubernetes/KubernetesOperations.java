@@ -85,6 +85,13 @@ public interface KubernetesOperations {
     String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
     String GET_NODE_OPERATION = "getNode";
     
+    // HPA
+    String LIST_HPA = "listHPA";
+    String LIST_HPA_BY_LABELS_OPERATION = "listHPAByLabels";
+    String GET_HPA_OPERATION = "getHPA";
+    String CREATE_HPA_OPERATION = "createHPA";
+    String DELETE_HPA_OPERATION = "deleteHPA";
+    
     // Deployments
     String LIST_DEPLOYMENTS = "listDeployments";
     String LIST_DEPLOYMENTS_BY_LABELS_OPERATION = "listDeploymentsByLabels";

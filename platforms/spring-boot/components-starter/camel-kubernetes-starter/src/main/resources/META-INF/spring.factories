@@ -32,7 +32,9 @@ org.apache.camel.component.kubernetes.persistent_volumes_claims.springboot.Kuber
 org.apache.camel.component.kubernetes.deployments.springboot.KubernetesDeploymentsComponentAutoConfiguration,\
 org.apache.camel.component.kubernetes.service_accounts.springboot.KubernetesServiceAccountsComponentAutoConfiguration,\
 org.apache.camel.component.openshift.builds.springboot.OpenshiftBuildsComponentAutoConfiguration,\
-org.apache.camel.component.openshift.build_configs.springboot.OpenshiftBuildConfigsComponentAutoConfiguration
+org.apache.camel.component.openshift.build_configs.springboot.OpenshiftBuildConfigsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.hpa.springboot.KubernetesHPAComponentAutoConfiguration
+
 
 
 
