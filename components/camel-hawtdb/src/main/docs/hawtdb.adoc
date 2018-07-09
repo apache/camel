@@ -18,7 +18,7 @@ there is a https://github.com/fusesource/leveldbjni[leveldbjni] project
 for that. The Apache ActiveMQ project is planning on using leveldb as
 their primary file based message store in the future, to replace kahadb.
 
-There os a camel-leveldb component we recommend to
+There is a camel-leveldb component we recommend to
 use instead of this.
 
 *Issue with HawtDB 1.4 or older*
