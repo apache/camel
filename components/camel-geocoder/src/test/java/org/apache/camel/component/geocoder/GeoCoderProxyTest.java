@@ -31,9 +31,10 @@ public class GeoCoderProxyTest extends GeoCoderApiKeyTestBase {
 
     @Test
     public void testGeoCoderProxyNoAuth() throws Exception {
-        GeoCoderEndpoint endpoint = context.getEndpoint(
-            "geocoder:address:current?headersOnly=true&proxyHost=localhost&proxyPort=8888&apiKey="+getApiKey(),
-            GeoCoderEndpoint.class);
+        GeoCoderEndpoint endpoint = context.
+                getEndpoint("geocoder:address:current?headersOnly=true&proxyHost=localhost"
+                        + "&proxyPort=8888&apiKey=" + getApiKey(),
+                             GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
         GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));
@@ -44,9 +45,10 @@ public class GeoCoderProxyTest extends GeoCoderApiKeyTestBase {
 
     @Test
     public void testGeoCoderWithAuth() throws Exception {
-        GeoCoderEndpoint endpoint = context.getEndpoint(
-                "geocoder:address:current?headersOnly=true&proxyHost=localhost&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey="+getApiKey(),
-                GeoCoderEndpoint.class);
+        GeoCoderEndpoint endpoint = context.
+                getEndpoint("geocoder:address:current?headersOnly=true&proxyHost=localhost"
+                       + "&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey=" + getApiKey(),
+                             GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
         GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));

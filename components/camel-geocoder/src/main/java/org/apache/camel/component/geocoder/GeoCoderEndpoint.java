@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.geocoder;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import com.google.maps.GeoApiContext;
 import org.apache.camel.Consumer;
@@ -25,9 +28,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 
 /**
  * The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
@@ -154,6 +154,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return apiKey;
     }
 
+    /**
+     * To use google apiKey
+     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
@@ -252,8 +255,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         AuthenticationMethod auth = getCamelContext().getTypeConverter().convertTo(AuthenticationMethod.class, proxyAuthMethod);
         if (auth == AuthenticationMethod.Basic || auth == AuthenticationMethod.Digest) {
             builder = builder.proxyAuthentication(proxyAuthUsername, proxyAuthPassword);
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Unknown proxyAuthMethod " + proxyAuthMethod);
         }
         return builder;
