@@ -691,6 +691,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-micrometer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-milo</artifactId>
     </dependency>
     <dependency>
@@ -1956,6 +1960,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-metrics-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-micrometer-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
