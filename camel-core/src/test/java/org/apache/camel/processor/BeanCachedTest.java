@@ -16,14 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
@@ -88,10 +85,10 @@ public class BeanCachedTest extends ContextTestSupport {
     }
 
 
-    public static class MyBean implements Processor {
+    public static class MyBean {
         private boolean invoked;
 
-        public void process(Exchange exchange) throws Exception {
+        public void doSomething(Exchange exchange) throws Exception {
             if (invoked) {
                 throw new IllegalStateException("This bean is not supported to be invoked again!");
             } else {
