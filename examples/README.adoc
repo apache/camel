@@ -17,6 +17,8 @@ Number of Examples: 105 (8 deprecated)
 |===
 | Example | Category | Description
 
+| link:camel-example-fhir/README.md[FHIR] (camel-example-fhir) |  | An example running Camel FHIR using Camel CDI 
+
 | link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
@@ -181,8 +183,6 @@ Number of Examples: 105 (8 deprecated)
   
 
 | link:camel-example-swagger-osgi/README.md[Swagger OSGi] (camel-example-swagger-osgi) | OSGi | An example using REST DSL in XML and Swagger API
-
-| link:camel-example-ceylon/ReadMe.md[Ceylon] (camel-example-ceylon) | Other Languages | A Camel route using Ceylon
 
 | link:camel-example-groovy/ReadMe.md[Groovy] (camel-example-groovy) | Other Languages | *deprecated* A Camel route using Groovy DSL
 
