@@ -21,22 +21,19 @@ First compile the example by entering:
 
 ### Install ActiveMQ Artemis
 
-You download and unzip Apache ActiveMQ Artemis from: http://activemq.apache.org/artemis/download.html
+To automate downloading, unpacking and configuration of Apache ActiveMQ Artemis with latest defined version a special profile is added.
+It's necessary to run following Maven command for do this during example install:
 
-After unzipping the download, you can then create a new broker with the name `mybroker`:
-
-    $ cd apache-artemis-2.4.0 
-    $ bin/artemis create mybroker
+    mvn install -P artemis
 
 ### Run ActiveMQ Artemis
 
-You start ActiveMQ in a shell by running:
+To start configured ActiveMQ Artemis instance in a shell use:
 
-    $ cd mybroker
-    $ bin/artemis run
+    $ target/artemis-instance/bin/artemis run
 
-Which startup Artemis in the foreground and keeps it running until you hit <kbd>ctrl</kbd>+<kbd>c</kbd>
-to shutdown Artemis.
+Which startup ActiveMQ Artemis in the foreground and keeps it running until you hit <kbd>ctrl</kbd>+<kbd>c</kbd>
+to shutdown ActiveMQ Artemis.
 
 ### Run Camel
 
