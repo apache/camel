@@ -56,6 +56,7 @@
         <executions>
           <execution>
             <id>add-javadoc</id>
+            <phase>generate-test-resources</phase>
             <goals>
               <goal>jar</goal>
             </goals>
