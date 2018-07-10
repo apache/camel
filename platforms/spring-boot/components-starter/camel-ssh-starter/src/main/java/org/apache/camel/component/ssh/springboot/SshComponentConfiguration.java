@@ -92,6 +92,21 @@ public class SshComponentConfiguration
      */
     private String certResource;
     /**
+     * Sets the channel type to pass to the Channel as part of command
+     * execution. Defaults to exec.
+     */
+    private String channelType;
+    /**
+     * Sets the shellPrompt to be dropped when response is read after command
+     * execution
+     */
+    private String shellPrompt;
+    /**
+     * Sets the sleep period in milliseconds to wait reading response from shell
+     * prompt. Defaults to 100 milliseconds.
+     */
+    private Long sleepForShellPrompt;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -188,6 +203,30 @@ public class SshComponentConfiguration
 
     public void setCertResource(String certResource) {
         this.certResource = certResource;
+    }
+
+    public String getChannelType() {
+        return channelType;
+    }
+
+    public void setChannelType(String channelType) {
+        this.channelType = channelType;
+    }
+
+    public String getShellPrompt() {
+        return shellPrompt;
+    }
+
+    public void setShellPrompt(String shellPrompt) {
+        this.shellPrompt = shellPrompt;
+    }
+
+    public Long getSleepForShellPrompt() {
+        return sleepForShellPrompt;
+    }
+
+    public void setSleepForShellPrompt(Long sleepForShellPrompt) {
+        this.sleepForShellPrompt = sleepForShellPrompt;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
@@ -298,6 +337,32 @@ public class SshComponentConfiguration
          *        should fail
          */
         private Boolean failOnUnknownHost = false;
+        /**
+         * Sets the channel type to pass to the Channel as part of command
+         * execution. Defaults to "exec".
+         * 
+         * @param channelTypeString
+         *            defining the type of Channel to use for command execution.
+         * @seeorg.apache.sshd.common.channel.Channel
+         */
+        private String channelType = "exec";
+        /**
+         * Sets the shellPrompt to be dropped when response is read after
+         * command execution
+         * 
+         * @param shellPromptString
+         *            defining ending string of command line which has to be
+         *            dropped when response is read after command execution.
+         */
+        private String shellPrompt;
+        /**
+         * Sets the sleep period in milliseconds to wait reading response from
+         * shell prompt. Defaults to 100 milliseconds.
+         * 
+         * @param sleepForShellPromptlong
+         *            milliseconds to wait.
+         */
+        private Long sleepForShellPrompt = 100L;
 
         public String getUsername() {
             return username;
@@ -396,6 +461,30 @@ public class SshComponentConfiguration
 
         public void setFailOnUnknownHost(Boolean failOnUnknownHost) {
             this.failOnUnknownHost = failOnUnknownHost;
+        }
+
+        public String getChannelType() {
+            return channelType;
+        }
+
+        public void setChannelType(String channelType) {
+            this.channelType = channelType;
+        }
+
+        public String getShellPrompt() {
+            return shellPrompt;
+        }
+
+        public void setShellPrompt(String shellPrompt) {
+            this.shellPrompt = shellPrompt;
+        }
+
+        public Long getSleepForShellPrompt() {
+            return sleepForShellPrompt;
+        }
+
+        public void setSleepForShellPrompt(Long sleepForShellPrompt) {
+            this.sleepForShellPrompt = sleepForShellPrompt;
         }
     }
 }
