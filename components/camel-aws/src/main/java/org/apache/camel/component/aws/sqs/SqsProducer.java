@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sqs;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -160,6 +161,11 @@ public class SqsProducer extends DefaultProducer {
                     }
                     mav.setDataType(dataType);
                     mav.withStringValue(((Number)value).toString());
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof Date) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String");
+                    mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
