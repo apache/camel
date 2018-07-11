@@ -102,7 +102,7 @@
     <brave-zipkin-version>5.1.2</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
-    <c3p0-bundle-version>0.9.5.2_1</c3p0-bundle-version>
+    <c3p0-bundle-version>0.9.5.2_2</c3p0-bundle-version>
     <caffeine-version>2.6.2</caffeine-version>
     <californium-version>1.0.6</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
