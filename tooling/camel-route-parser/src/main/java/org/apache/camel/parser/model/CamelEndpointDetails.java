@@ -132,7 +132,7 @@ public class CamelEndpointDetails {
         if (lineNumberEnd != null ? !lineNumberEnd.equals(that.lineNumberEnd) : that.lineNumberEnd != null) {
             return false;
         }
-        if (!className.equals(that.className)) {
+        if (className != null ? !className.equals(that.className) : that.className != null) {
             return false;
         }
         if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) {
@@ -141,8 +141,7 @@ public class CamelEndpointDetails {
         if (endpointInstance != null ? !endpointInstance.equals(that.endpointInstance) : that.endpointInstance != null) {
             return false;
         }
-        return endpointUri.equals(that.endpointUri);
-
+        return endpointUri != null ? endpointUri.equals(that.endpointUri) : that.endpointUri != null;
     }
 
     @Override
@@ -150,10 +149,10 @@ public class CamelEndpointDetails {
         int result = fileName.hashCode();
         result = 31 * result + (lineNumber != null ? lineNumber.hashCode() : 0);
         result = 31 * result + (lineNumberEnd != null ? lineNumberEnd.hashCode() : 0);
-        result = 31 * result + className.hashCode();
+        result = 31 * result + (className != null ? className.hashCode() : 0);
         result = 31 * result + (methodName != null ? methodName.hashCode() : 0);
         result = 31 * result + (endpointInstance != null ? endpointInstance.hashCode() : 0);
-        result = 31 * result + endpointUri.hashCode();
+        result = 31 * result + (endpointUri != null ? endpointUri.hashCode() : 0);
         return result;
     }
 
