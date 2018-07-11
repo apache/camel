@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.management.AttributeChangeNotificationFilter;
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
@@ -249,6 +250,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     protected void addNotificationListener() throws Exception {
         JMXEndpoint ep = getEndpoint();
         NotificationFilter nf = ep.getNotificationFilter();
+
+        // if we should observe a single attribute then use filter
+        if (nf == null && ep.getObservedAttribute() != null) {
+            AttributeChangeNotificationFilter acnf = new AttributeChangeNotificationFilter();
+            acnf.enableAttribute(ep.getObservedAttribute());
+            nf = acnf;
+        }
 
         ObjectName objectName = ep.getJMXObjectName();
 

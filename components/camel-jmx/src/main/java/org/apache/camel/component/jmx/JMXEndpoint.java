@@ -79,7 +79,7 @@ public class JMXEndpoint extends DefaultEndpoint {
     private String objectName;
 
     /**
-     * The attribute to observe for the monitor bean (monitor types only).
+     * The attribute to observe for the monitor bean or consumer.
      */
     @UriParam
     private String observedAttribute;
