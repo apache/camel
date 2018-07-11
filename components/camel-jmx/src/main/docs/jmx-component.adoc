@@ -41,11 +41,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *serverURL* | server url comes from the remaining endpoint |  | String
+| *serverURL* | Server url comes from the remaining endpoint. Use platform to connect to local JVM. |  | String
 |===
 
 
-==== Query Parameters (29 parameters):
+==== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,6 +60,7 @@ with the following path and query parameters:
 | *observedAttribute* (consumer) | URI Property: monitor types only The attribute to observe for the monitor bean. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *executorService* (consumer) | To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications. |  | ExecutorService
 | *handback* (advanced) | URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object
 | *notificationFilter* (advanced) | URI Property: Reference to a bean that implements the NotificationFilter. |  | NotificationFilter
 | *objectProperties* (advanced) | URI Property: properties for the object name. These values will be used if the objectName param is not set |  | Map
