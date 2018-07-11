@@ -67,85 +67,97 @@ public class JMXEndpoint extends DefaultEndpoint {
     private String serverURL;
 
     /**
-     * [monitor types only] The attribute to observe for the monitor bean.
+     * The domain for the mbean you're connecting to
+     */
+    @UriParam @Metadata(required = "true")
+    private String objectDomain;
+
+    /**
+     * The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
+     */
+    @UriParam
+    private String objectName;
+
+    /**
+     * The attribute to observe for the monitor bean (monitor types only).
      */
     @UriParam
     private String observedAttribute;
 
     /**
-     * [monitor types only] The frequency to poll the bean to check the monitor.
+     * The frequency to poll the bean to check the monitor (monitor types only).
      */
     @UriParam(defaultValue = "10000")
     private long granularityPeriod = 10000;
 
     /**
-     * [monitor types only] The type of monitor to create. One of string, gauge, counter.
+     * The type of monitor to create. One of string, gauge, counter (monitor types only).
      */
     @UriParam(enums = "counter,gauge,string")
     private String monitorType;
 
     /**
-     * [counter monitor only] Initial threshold for the monitor. The value must exceed this before notifications are fired.
+     * Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor only).
      */
     @UriParam(label = "counter")
     private int initThreshold;
 
     /**
-     * [counter monitor only] The amount to increment the threshold after it's been exceeded.
+     * The amount to increment the threshold after it's been exceeded (counter monitor only).
      */
     @UriParam(label = "counter")
     private int offset;
 
     /**
-     * [counter monitor only] The value at which the counter is reset to zero
+     * The value at which the counter is reset to zero (counter monitor only).
      */
     @UriParam(label = "counter")
     private int modulus;
 
     /**
-     * [counter + gauge monitor only] If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself.
+     * If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself (counter and gauge monitor only).
      */
     @UriParam(label = "counter,gauge")
     private boolean differenceMode;
 
     /**
-     * [gauge monitor only] If true, the gauge will fire a notification when the high threshold is exceeded
+     * If true, the gauge will fire a notification when the high threshold is exceeded (gauge monitor only).
      */
     @UriParam(label = "gauge")
     private boolean notifyHigh;
 
     /**
-     * [gauge monitor only] If true, the gauge will fire a notification when the low threshold is exceeded
+     * If true, the gauge will fire a notification when the low threshold is exceeded (gauge monitor only).
      */
     @UriParam(label = "gauge")
     private boolean notifyLow;
 
     /**
-     * [gauge monitor only] Value for the gauge's high threshold
+     * Value for the gauge's high threshold (gauge monitor only).
      */
     @UriParam(label = "gauge")
     private Double thresholdHigh;
 
     /**
-     * [gauge monitor only] Value for the gauge's low threshold
+     * Value for the gauge's low threshold (gauge monitor only).
      */
     @UriParam(label = "gauge")
     private Double thresholdLow;
 
     /**
-     * [string monitor only] If true, the string monitor will fire a notification when the string attribute differs from the string to compare.
+     * If true, the string monitor will fire a notification when the string attribute differs from the string to compare (string monitor only).
      */
     @UriParam(label = "string")
     private boolean notifyDiffer;
 
     /**
-     * [string monitor only] If true, the string monitor will fire a notification when the string attribute matches the string to compare.
+     * If true, the string monitor will fire a notification when the string attribute matches the string to compare (string monitor only).
      */
     @UriParam(label = "string")
     private boolean notifyMatch;
 
     /**
-     * [string monitor only] Value for the string monitor's string to compare.
+     * Value for the string monitor's string to compare (string monitor only).
      */
     @UriParam(label = "string")
     private String stringToCompare;
@@ -169,18 +181,6 @@ public class JMXEndpoint extends DefaultEndpoint {
     private String password;
 
     /**
-     * The domain for the mbean you're connecting to
-     */
-    @UriParam @Metadata(required = "true")
-    private String objectDomain;
-
-    /**
-     * The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
-     */
-    @UriParam
-    private String objectName;
-
-    /**
      * Reference to a bean that implements the NotificationFilter.
      */
     @UriParam(label = "advanced")
@@ -196,9 +196,8 @@ public class JMXEndpoint extends DefaultEndpoint {
      * If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
      * to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay
      */
-    @UriParam(defaultValue = "true", label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
-    
     
     /**
      * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
@@ -210,7 +209,7 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
      */
-    @UriParam(defaultValue = "10", label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "10")
     private int reconnectDelay = 10;
 
     /**
