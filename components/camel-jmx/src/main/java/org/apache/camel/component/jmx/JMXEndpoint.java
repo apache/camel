@@ -18,6 +18,7 @@ package org.apache.camel.component.jmx;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
@@ -60,7 +61,7 @@ public class JMXEndpoint extends DefaultEndpoint {
     protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
 
     /**
-     * server url comes from the remaining endpoint
+     * Server url comes from the remaining endpoint. Use platform to connect to local JVM.
      */
     @UriPath
     private String serverURL;
@@ -217,6 +218,12 @@ public class JMXEndpoint extends DefaultEndpoint {
      */
     @UriParam(label = "advanced", prefix = "key.", multiValue = true)
     private Map<String, String> objectProperties;
+
+    /**
+     * To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications.
+     */
+    @UriParam(label = "consumer,advanced")
+    private ExecutorService executorService;
 
     /**
      * cached object name that was built from the objectName param or the hashtable
@@ -518,7 +525,15 @@ public class JMXEndpoint extends DefaultEndpoint {
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
-     
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
     private ObjectName buildObjectName() throws MalformedObjectNameException {
         ObjectName objectName;
         if (getObjectProperties() == null) {
