@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sns;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -103,6 +104,11 @@ public class SnsProducer extends DefaultProducer {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("Binary");
                     mav.withBinaryValue((ByteBuffer)value);
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof Date) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String");
+                    mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
