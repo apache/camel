@@ -71,24 +71,19 @@ import org.jboss.forge.roaster.model.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionMessage;
-import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyJavaType;
@@ -2174,54 +2169,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    /*
-    private void writeAdditionalSpringMetaData(String prefix, String type, String name) throws MojoFailureException {
-        String fullQualifiedName = prefix + "." + type + "." + name + "." + "enabled";
-        String fileName = "META-INF/additional-spring-configuration-metadata.json";
-        File target = new File(SpringBootHelper.starterResourceDir(baseDir, project.getArtifactId()), fileName);
-
-        deleteFileOnMainArtifact(target);
-
-        try {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            Map<String, Object> map = null;
-            List<Map<String, Object>> properties = null;
-
-            if (target.exists()) {
-                BufferedReader br = new BufferedReader(new FileReader(target));
-                map = gson.fromJson(br, Map.class);
-
-                properties = (List<Map<String, Object>>)map.get("properties");
-                if (properties != null && properties.stream().anyMatch(m -> fullQualifiedName.equals(m.get("name")))) {
-                    getLog().debug("No changes to existing file: " + target);
-                    return;
-                }
-            }
-
-            Map<String, Object> meta = new HashMap();
-            meta.put("name", fullQualifiedName);
-            meta.put("type", "java.lang.Boolean");
-            meta.put("defaultValue", true);
-            meta.put("description", "Enable " + name + " " + type);
-
-            if (properties == null) {
-                properties = new ArrayList<>(1);
-            }
-
-            if (map == null) {
-                map = new HashMap();
-            }
-
-            properties.add(meta);
-            map.put("properties", properties);
-
-            FileUtils.write(target, gson.toJson(map));
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
-    }
-    */
-
     private void deleteFileOnMainArtifact(File starterFile) {
         if (!DELETE_FILES_ON_MAIN_ARTIFACTS) {
             return;
@@ -2235,52 +2182,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 throw new IllegalStateException("Cannot delete file " + mainArtifactFile);
             }
         }
-    }
-
-    private JavaClassSource createConditionType(JavaClassSource parentClass, String prefix, String type) {
-        parentClass.addImport(ConditionMessage.class);
-        parentClass.addImport(ConditionContext.class);
-        parentClass.addImport(ConditionOutcome.class);
-        parentClass.addImport("org.springframework.boot.context.properties.bind.Bindable");
-        parentClass.addImport("org.springframework.boot.context.properties.bind.Binder");
-        parentClass.addImport(AnnotatedTypeMetadata.class);
-        parentClass.addImport(SpringBootCondition.class);
-
-        JavaClassSource condition = Roaster.create(JavaClassSource.class);
-        condition.setName("Condition");
-        condition.extendSuperType(SpringBootCondition.class);
-        condition.setPublic();
-        condition.setStatic(true);
-
-        condition.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
-
-        String fullQualifiedType = prefix.endsWith(".") ? prefix +  type : prefix + "." + type;
-
-        MethodSource<JavaClassSource> isEnabled = condition.addMethod();
-        isEnabled.setName("isEnabled");
-        isEnabled.setPrivate();
-        isEnabled.addParameter(ConditionContext.class, "context");
-        isEnabled.addParameter(String.class, "prefix");
-        isEnabled.addParameter(boolean.class, "defaultValue");
-        isEnabled.setReturnType(boolean.class);
-        isEnabled.setBody(new StringBuilder()
-            .append("String property = prefix.endsWith(\".\") ? prefix + \"enabled\" : prefix + \".enabled\";\n")
-            .append("return Binder.get(context.getEnvironment()).bind(property, Bindable.of(Boolean.class)).orElse(defaultValue);")
-            .toString()
-        );
-
-        MethodSource<JavaClassSource> matchMethod = condition.getMethod("getMatchOutcome", ConditionContext.class, AnnotatedTypeMetadata.class);
-        matchMethod.setBody(new StringBuilder()
-            .append("boolean groupEnabled = isEnabled(conditionContext, \"").append(prefix).append(".\", true);\n")
-            .append("ConditionMessage.Builder message = ConditionMessage.forCondition(\"").append(fullQualifiedType).append("\");\n")
-            .append("if (isEnabled(conditionContext, \"").append(fullQualifiedType).append(".\", groupEnabled)) {\n")
-            .append("    return ConditionOutcome.match(message.because(\"enabled\"));\n")
-            .append("}\n")
-            .append("return ConditionOutcome.noMatch(message.because(\"not enabled\"));\n")
-            .toString()
-        );
-
-        return condition;
     }
 
 }
