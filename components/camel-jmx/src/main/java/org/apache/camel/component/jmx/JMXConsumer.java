@@ -239,7 +239,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     private ScheduledExecutorService getExecutor() {
         if (this.mScheduledExecutor == null) {
             mScheduledExecutor = mJmxEndpoint.getCamelContext().getExecutorServiceManager()
-                .newSingleThreadScheduledExecutor(this, "connectionExcutor");
+                .newSingleThreadScheduledExecutor(this, "JMXConnectionExecutor");
         }
         return mScheduledExecutor;
     }    
