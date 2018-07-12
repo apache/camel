@@ -17,7 +17,6 @@
 package org.apache.camel.component.jdbc.springboot;
 
 import javax.annotation.Generated;
-import javax.sql.DataSource;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -35,9 +34,9 @@ public class JdbcComponentConfiguration
 
     /**
      * To use the DataSource instance instead of looking up the data source by
-     * name from the registry.
+     * name from the registry. The option is a javax.sql.DataSource type.
      */
-    private DataSource dataSource;
+    private String dataSource;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -45,11 +44,11 @@ public class JdbcComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public DataSource getDataSource() {
+    public String getDataSource() {
         return dataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
 

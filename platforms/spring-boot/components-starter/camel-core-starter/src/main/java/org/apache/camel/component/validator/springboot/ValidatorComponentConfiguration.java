@@ -17,10 +17,8 @@
 package org.apache.camel.component.validator.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.validator.ValidatorResourceResolverFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Validates the payload of a message using XML Schema and JAXP Validation.
@@ -35,10 +33,11 @@ public class ValidatorComponentConfiguration
 
     /**
      * To use a custom LSResourceResolver which depends on a dynamic endpoint
-     * resource URI
+     * resource URI. The option is a
+     * org.apache.camel.component.validator.ValidatorResourceResolverFactory
+     * type.
      */
-    @NestedConfigurationProperty
-    private ValidatorResourceResolverFactory resourceResolverFactory;
+    private String resourceResolverFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -46,12 +45,11 @@ public class ValidatorComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ValidatorResourceResolverFactory getResourceResolverFactory() {
+    public String getResourceResolverFactory() {
         return resourceResolverFactory;
     }
 
-    public void setResourceResolverFactory(
-            ValidatorResourceResolverFactory resourceResolverFactory) {
+    public void setResourceResolverFactory(String resourceResolverFactory) {
         this.resourceResolverFactory = resourceResolverFactory;
     }
 

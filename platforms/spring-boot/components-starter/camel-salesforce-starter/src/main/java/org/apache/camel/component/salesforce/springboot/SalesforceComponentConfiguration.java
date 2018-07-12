@@ -18,7 +18,6 @@ package org.apache.camel.component.salesforce.springboot;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.AuthenticationType;
@@ -33,7 +32,6 @@ import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -87,10 +85,10 @@ public class SalesforceComponentConfiguration
      * only one entry with private key and certificate. Salesforce does not
      * verify the certificate chain, so this can easily be a selfsigned
      * certificate. Make sure that you upload the certificate to the
-     * corresponding connected app.
+     * corresponding connected app. The option is a
+     * org.apache.camel.util.jsse.KeyStoreParameters type.
      */
-    @NestedConfigurationProperty
-    private KeyStoreParameters keystore;
+    private String keystore;
     /**
      * Refresh token already obtained in the refresh token OAuth flow. One needs
      * to setup a web application and configure a callback URL to receive the
@@ -130,21 +128,23 @@ public class SalesforceComponentConfiguration
     /**
      * Used to set any properties that can be configured on the underlying HTTP
      * client. Have a look at properties of SalesforceHttpClient and the Jetty
-     * HttpClient for all available options.
+     * HttpClient for all available options. The option is a
+     * java.util.Map<java.lang.String,java.lang.Object> type.
      */
-    private Map<String, Object> httpClientProperties;
+    private String httpClientProperties;
     /**
      * Used to set any properties that can be configured on the
      * LongPollingTransport used by the BayeuxClient (CometD) used by the
-     * streaming api
+     * streaming api. The option is a
+     * java.util.Map<java.lang.String,java.lang.Object> type.
      */
-    private Map<String, Object> longPollingTransportProperties;
+    private String longPollingTransportProperties;
     /**
      * SSL parameters to use, see SSLContextParameters class for all available
-     * options.
+     * options. The option is a org.apache.camel.util.jsse.SSLContextParameters
+     * type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters
      */
@@ -174,13 +174,15 @@ public class SalesforceComponentConfiguration
      */
     private Boolean isHttpProxySecure = true;
     /**
-     * A list of addresses for which HTTP proxy server should be used.
+     * A list of addresses for which HTTP proxy server should be used. The
+     * option is a java.util.Set<java.lang.String> type.
      */
-    private Set<String> httpProxyIncludedAddresses;
+    private String httpProxyIncludedAddresses;
     /**
-     * A list of addresses for which HTTP proxy server should not be used.
+     * A list of addresses for which HTTP proxy server should not be used. The
+     * option is a java.util.Set<java.lang.String> type.
      */
-    private Set<String> httpProxyExcludedAddresses;
+    private String httpProxyExcludedAddresses;
     /**
      * Used in authentication against the HTTP proxy server, needs to match the
      * URI of the proxy server in order for the httpProxyUsername and
@@ -260,11 +262,11 @@ public class SalesforceComponentConfiguration
         this.clientSecret = clientSecret;
     }
 
-    public KeyStoreParameters getKeystore() {
+    public String getKeystore() {
         return keystore;
     }
 
-    public void setKeystore(KeyStoreParameters keystore) {
+    public void setKeystore(String keystore) {
         this.keystore = keystore;
     }
 
@@ -308,29 +310,28 @@ public class SalesforceComponentConfiguration
         this.config = config;
     }
 
-    public Map<String, Object> getHttpClientProperties() {
+    public String getHttpClientProperties() {
         return httpClientProperties;
     }
 
-    public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
+    public void setHttpClientProperties(String httpClientProperties) {
         this.httpClientProperties = httpClientProperties;
     }
 
-    public Map<String, Object> getLongPollingTransportProperties() {
+    public String getLongPollingTransportProperties() {
         return longPollingTransportProperties;
     }
 
     public void setLongPollingTransportProperties(
-            Map<String, Object> longPollingTransportProperties) {
+            String longPollingTransportProperties) {
         this.longPollingTransportProperties = longPollingTransportProperties;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
@@ -391,21 +392,19 @@ public class SalesforceComponentConfiguration
         this.isHttpProxySecure = isHttpProxySecure;
     }
 
-    public Set<String> getHttpProxyIncludedAddresses() {
+    public String getHttpProxyIncludedAddresses() {
         return httpProxyIncludedAddresses;
     }
 
-    public void setHttpProxyIncludedAddresses(
-            Set<String> httpProxyIncludedAddresses) {
+    public void setHttpProxyIncludedAddresses(String httpProxyIncludedAddresses) {
         this.httpProxyIncludedAddresses = httpProxyIncludedAddresses;
     }
 
-    public Set<String> getHttpProxyExcludedAddresses() {
+    public String getHttpProxyExcludedAddresses() {
         return httpProxyExcludedAddresses;
     }
 
-    public void setHttpProxyExcludedAddresses(
-            Set<String> httpProxyExcludedAddresses) {
+    public void setHttpProxyExcludedAddresses(String httpProxyExcludedAddresses) {
         this.httpProxyExcludedAddresses = httpProxyExcludedAddresses;
     }
 

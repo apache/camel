@@ -17,11 +17,8 @@
 package org.apache.camel.component.service.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.cloud.ServiceRegistry.Selector;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Represents an endpoint which is registered to a Service Registry such as
@@ -36,15 +33,15 @@ public class ServiceComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Inject the service to use.
+     * Inject the service to use. The option is a
+     * org.apache.camel.cloud.ServiceRegistry type.
      */
-    @NestedConfigurationProperty
-    private ServiceRegistry service;
+    private String service;
     /**
      * Inject the service selector used to lookup the ServiceRegistry to use.
+     * The option is a org.apache.camel.cloud.ServiceRegistry.Selector type.
      */
-    @NestedConfigurationProperty
-    private Selector serviceSelector;
+    private String serviceSelector;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -52,19 +49,19 @@ public class ServiceComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ServiceRegistry getService() {
+    public String getService() {
         return service;
     }
 
-    public void setService(ServiceRegistry service) {
+    public void setService(String service) {
         this.service = service;
     }
 
-    public Selector getServiceSelector() {
+    public String getServiceSelector() {
         return serviceSelector;
     }
 
-    public void setServiceSelector(Selector serviceSelector) {
+    public void setServiceSelector(String serviceSelector) {
         this.serviceSelector = serviceSelector;
     }
 

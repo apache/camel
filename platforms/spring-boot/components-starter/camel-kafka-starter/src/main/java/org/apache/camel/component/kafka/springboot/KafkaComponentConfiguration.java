@@ -18,7 +18,6 @@ package org.apache.camel.component.kafka.springboot;
 
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
-import org.apache.camel.component.kafka.KafkaManualCommitFactory;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -55,9 +54,10 @@ public class KafkaComponentConfiguration
      * kafka server has acknowledge the message that was sent to it from
      * KafkaProducer using asynchronous non-blocking processing. If using this
      * option then you must handle the lifecycle of the thread pool to shut the
-     * pool down when no longer needed.
+     * pool down when no longer needed. The option is a
+     * java.util.concurrent.ExecutorService type.
      */
-    private ExecutorService workerPool;
+    private String workerPool;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -84,10 +84,10 @@ public class KafkaComponentConfiguration
      * Factory to use for creating KafkaManualCommit instances. This allows to
      * plugin a custom factory to create custom KafkaManualCommit instances in
      * case special logic is needed when doing manual commits that deviates from
-     * the default implementation that comes out of the box.
+     * the default implementation that comes out of the box. The option is a
+     * org.apache.camel.component.kafka.KafkaManualCommitFactory type.
      */
-    @NestedConfigurationProperty
-    private KafkaManualCommitFactory kafkaManualCommitFactory;
+    private String kafkaManualCommitFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -112,11 +112,11 @@ public class KafkaComponentConfiguration
         this.brokers = brokers;
     }
 
-    public ExecutorService getWorkerPool() {
+    public String getWorkerPool() {
         return workerPool;
     }
 
-    public void setWorkerPool(ExecutorService workerPool) {
+    public void setWorkerPool(String workerPool) {
         this.workerPool = workerPool;
     }
 
@@ -145,12 +145,11 @@ public class KafkaComponentConfiguration
         this.allowManualCommit = allowManualCommit;
     }
 
-    public KafkaManualCommitFactory getKafkaManualCommitFactory() {
+    public String getKafkaManualCommitFactory() {
         return kafkaManualCommitFactory;
     }
 
-    public void setKafkaManualCommitFactory(
-            KafkaManualCommitFactory kafkaManualCommitFactory) {
+    public void setKafkaManualCommitFactory(String kafkaManualCommitFactory) {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;
     }
 

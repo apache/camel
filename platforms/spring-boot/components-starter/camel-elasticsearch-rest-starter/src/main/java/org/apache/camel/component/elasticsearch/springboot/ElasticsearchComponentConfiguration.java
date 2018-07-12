@@ -18,9 +18,7 @@ package org.apache.camel.component.elasticsearch.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.elasticsearch.client.RestClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The elasticsearch component is used for interfacing with ElasticSearch server
@@ -37,10 +35,9 @@ public class ElasticsearchComponentConfiguration
     /**
      * To use an existing configured Elasticsearch client, instead of creating a
      * client per endpoint. This allow to customize the client with specific
-     * settings.
+     * settings. The option is a org.elasticsearch.client.RestClient type.
      */
-    @NestedConfigurationProperty
-    private RestClient client;
+    private String client;
     /**
      * Comma separated list with ip:port formatted remote transport addresses to
      * use. The ip and port options must be left blank for hostAddresses to be
@@ -93,11 +90,11 @@ public class ElasticsearchComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public RestClient getClient() {
+    public String getClient() {
         return client;
     }
 
-    public void setClient(RestClient client) {
+    public void setClient(String client) {
         this.client = client;
     }
 

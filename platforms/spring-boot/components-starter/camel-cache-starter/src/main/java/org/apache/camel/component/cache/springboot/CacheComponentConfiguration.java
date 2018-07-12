@@ -20,7 +20,6 @@ import javax.annotation.Generated;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.camel.component.cache.CacheEventListenerRegistry;
 import org.apache.camel.component.cache.CacheLoaderRegistry;
-import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -40,9 +39,10 @@ public class CacheComponentConfiguration
 
     /**
      * To use the given CacheManagerFactory for creating the CacheManager. By
-     * default the DefaultCacheManagerFactory is used.
+     * default the DefaultCacheManagerFactory is used. The option is a
+     * org.apache.camel.component.cache.CacheManagerFactory type.
      */
-    private CacheManagerFactory cacheManagerFactory;
+    private String cacheManagerFactory;
     /**
      * Sets the Cache configuration
      */
@@ -59,11 +59,11 @@ public class CacheComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public CacheManagerFactory getCacheManagerFactory() {
+    public String getCacheManagerFactory() {
         return cacheManagerFactory;
     }
 
-    public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
+    public void setCacheManagerFactory(String cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 

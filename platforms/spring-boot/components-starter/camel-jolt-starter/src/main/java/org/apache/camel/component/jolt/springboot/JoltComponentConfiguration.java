@@ -17,10 +17,8 @@
 package org.apache.camel.component.jolt.springboot;
 
 import javax.annotation.Generated;
-import com.bazaarvoice.jolt.Transform;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jolt component allows you to process a JSON messages using an JOLT
@@ -36,10 +34,10 @@ public class JoltComponentConfiguration
 
     /**
      * Explicitly sets the Transform to use. If not set a Transform specified by
-     * the transformDsl will be created
+     * the transformDsl will be created. The option is a
+     * com.bazaarvoice.jolt.Transform type.
      */
-    @NestedConfigurationProperty
-    private Transform transform;
+    private String transform;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -47,11 +45,11 @@ public class JoltComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public Transform getTransform() {
+    public String getTransform() {
         return transform;
     }
 
-    public void setTransform(Transform transform) {
+    public void setTransform(String transform) {
         this.transform = transform;
     }
 

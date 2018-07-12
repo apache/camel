@@ -18,9 +18,7 @@ package org.apache.camel.component.lumberjack.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The lumberjack retrieves logs sent over the network using the Lumberjack
@@ -36,10 +34,10 @@ public class LumberjackComponentConfiguration
 
     /**
      * Sets the default SSL configuration to use for all the endpoints. You can
-     * also configure it directly at the endpoint level.
+     * also configure it directly at the endpoint level. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -51,12 +49,11 @@ public class LumberjackComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 

@@ -40,10 +40,10 @@ public class EtcdComponentConfiguration
      */
     private String uris;
     /**
-     * To configure security using SSLContextParameters.
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * The user name to use for basic authentication.
      */
@@ -75,12 +75,11 @@ public class EtcdComponentConfiguration
         this.uris = uris;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 

@@ -51,10 +51,10 @@ public class ConsulComponentConfiguration
     private String datacenter;
     /**
      * SSL configuration using an
-     * org.apache.camel.util.jsse.SSLContextParameters instance.
+     * org.apache.camel.util.jsse.SSLContextParameters instance. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -98,12 +98,11 @@ public class ConsulComponentConfiguration
         this.datacenter = datacenter;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 

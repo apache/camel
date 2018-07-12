@@ -17,10 +17,8 @@
 package org.apache.camel.component.jt400.springboot;
 
 import javax.annotation.Generated;
-import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jt400 component allows you to exchanges messages with an AS/400 system
@@ -35,10 +33,10 @@ public class Jt400ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Returns the default connection pool used by this component.
+     * Returns the default connection pool used by this component. The option is
+     * a com.ibm.as400.access.AS400ConnectionPool type.
      */
-    @NestedConfigurationProperty
-    private AS400ConnectionPool connectionPool;
+    private String connectionPool;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -46,11 +44,11 @@ public class Jt400ComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public AS400ConnectionPool getConnectionPool() {
+    public String getConnectionPool() {
         return connectionPool;
     }
 
-    public void setConnectionPool(AS400ConnectionPool connectionPool) {
+    public void setConnectionPool(String connectionPool) {
         this.connectionPool = connectionPool;
     }
 

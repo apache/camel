@@ -24,7 +24,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.ClientInitializerFactory;
 import org.apache.camel.component.netty4.NettyCamelStateCorrelationManager;
@@ -59,10 +58,10 @@ public class NettyComponentConfiguration
      */
     private NettyConfigurationNestedConfiguration configuration;
     /**
-     * To use the given EventExecutorGroup.
+     * To use the given EventExecutorGroup. The option is a
+     * io.netty.util.concurrent.EventExecutorGroup type.
      */
-    @NestedConfigurationProperty
-    private EventExecutorGroup executorService;
+    private String executorService;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -91,11 +90,11 @@ public class NettyComponentConfiguration
         this.configuration = configuration;
     }
 
-    public EventExecutorGroup getExecutorService() {
+    public String getExecutorService() {
         return executorService;
     }
 
-    public void setExecutorService(EventExecutorGroup executorService) {
+    public void setExecutorService(String executorService) {
         this.executorService = executorService;
     }
 

@@ -18,9 +18,7 @@ package org.apache.camel.component.yql.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.http.conn.HttpClientConnectionManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The YQL (Yahoo! Query Language) platform enables you to query, filter, and
@@ -35,10 +33,10 @@ public class YqlComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom configured HttpClientConnectionManager.
+     * To use a custom configured HttpClientConnectionManager. The option is a
+     * org.apache.http.conn.HttpClientConnectionManager type.
      */
-    @NestedConfigurationProperty
-    private HttpClientConnectionManager connectionManager;
+    private String connectionManager;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -46,12 +44,11 @@ public class YqlComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public HttpClientConnectionManager getConnectionManager() {
+    public String getConnectionManager() {
         return connectionManager;
     }
 
-    public void setConnectionManager(
-            HttpClientConnectionManager connectionManager) {
+    public void setConnectionManager(String connectionManager) {
         this.connectionManager = connectionManager;
     }
 

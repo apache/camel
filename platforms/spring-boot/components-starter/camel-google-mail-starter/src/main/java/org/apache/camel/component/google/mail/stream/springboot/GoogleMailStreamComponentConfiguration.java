@@ -18,10 +18,8 @@ package org.apache.camel.component.google.mail.stream.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
-import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The google-mail component provides access to Google Mail.
@@ -39,10 +37,10 @@ public class GoogleMailStreamComponentConfiguration
      */
     private GoogleMailStreamConfigurationNestedConfiguration configuration;
     /**
-     * The client Factory
+     * The client Factory. The option is a
+     * org.apache.camel.component.google.mail.GoogleMailClientFactory type.
      */
-    @NestedConfigurationProperty
-    private GoogleMailClientFactory clientFactory;
+    private String clientFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -59,11 +57,11 @@ public class GoogleMailStreamComponentConfiguration
         this.configuration = configuration;
     }
 
-    public GoogleMailClientFactory getClientFactory() {
+    public String getClientFactory() {
         return clientFactory;
     }
 
-    public void setClientFactory(GoogleMailClientFactory clientFactory) {
+    public void setClientFactory(String clientFactory) {
         this.clientFactory = clientFactory;
     }
 
