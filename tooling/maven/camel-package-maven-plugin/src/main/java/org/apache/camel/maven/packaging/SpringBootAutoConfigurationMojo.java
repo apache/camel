@@ -721,8 +721,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // generate inner class for non-primitive options
             type = getSimpleJavaType(type);
             JavaClassSource javaClassSource = readJavaType(type);
-            if (isNestedProperty(nestedTypes, javaClassSource)) {
+            boolean isNestedProperty = isNestedProperty(nestedTypes, javaClassSource);
+            if (isNestedProperty) {
                 type = option.getShortJavaType() + INNER_TYPE_SUFFIX;
+            }
+
+            // spring-boot auto configuration does not support complex types (unless they are enum, nested)
+            // and if so then we should use a String type so spring-boot and its tooling support that
+            // as Camel will be able to convert the string value into a lookup of the bean in the registry anyway
+            // and therefore there is no problem, eg camel.component.jdbc.data-source = myDataSource
+            // where the type would have been javax.sql.DataSource
+            boolean complex = isComplexType(option) && !isNestedProperty && Strings.isBlank(option.getEnums());
+            if (complex) {
+                // force to use a string type
+                type = "java.lang.String";
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
@@ -742,7 +754,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
-                prop.getField().getJavaDoc().setFullText(option.getDescription());
+                String desc = option.getDescription();
+                if (complex) {
+                    if (!desc.endsWith(".")) {
+                        desc = desc + ".";
+                    }
+                    desc = desc + " The option is a " + option.getJavaType() + " type.";
+                }
+                prop.getField().getJavaDoc().setFullText(desc);
             }
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getJavaType())) {
@@ -894,6 +913,21 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
 
         writeSourceIfChanged(javaClass, fileName);
+    }
+
+    private boolean isComplexType(ComponentOptionModel option) {
+        // all the object types are complex
+        return "object".equals(option.getType());
+    }
+
+    private boolean isComplexType(DataFormatOptionModel option) {
+        // all the object types are complex
+        return "object".equals(option.getType());
+    }
+
+    private boolean isComplexType(LanguageOptionModel option) {
+        // all the object types are complex
+        return "object".equals(option.getType());
     }
 
     // resolved property type name and property source, Roaster doesn't resolve inner classes correctly
@@ -1070,6 +1104,17 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String type = option.getJavaType();
             type = getSimpleJavaType(type);
 
+            // spring-boot auto configuration does not support complex types (unless they are enum, nested)
+            // and if so then we should use a String type so spring-boot and its tooling support that
+            // as Camel will be able to convert the string value into a lookup of the bean in the registry anyway
+            // and therefore there is no problem, eg camel.component.jdbc.data-source = myDataSource
+            // where the type would have been javax.sql.DataSource
+            boolean complex = isComplexType(option) && Strings.isBlank(option.getEnumValues());
+            if (complex) {
+                // force to use a string type
+                type = "java.lang.String";
+            }
+
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
@@ -1079,7 +1124,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
-                prop.getField().getJavaDoc().setFullText(option.getDescription());
+                String desc = option.getDescription();
+                if (complex) {
+                    if (!desc.endsWith(".")) {
+                        desc = desc + ".";
+                    }
+                    desc = desc + " The option is a " + option.getJavaType() + " type.";
+                }
+                prop.getField().getJavaDoc().setFullText(desc);
             }
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getJavaType())) {
@@ -1165,6 +1217,17 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String type = option.getJavaType();
             type = getSimpleJavaType(type);
 
+            // spring-boot auto configuration does not support complex types (unless they are enum, nested)
+            // and if so then we should use a String type so spring-boot and its tooling support that
+            // as Camel will be able to convert the string value into a lookup of the bean in the registry anyway
+            // and therefore there is no problem, eg camel.component.jdbc.data-source = myDataSource
+            // where the type would have been javax.sql.DataSource
+            boolean complex = isComplexType(option) && Strings.isBlank(option.getEnumValues());
+            if (complex) {
+                // force to use a string type
+                type = "java.lang.String";
+            }
+
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
@@ -1174,7 +1237,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
-                prop.getField().getJavaDoc().setFullText(option.getDescription());
+                String desc = option.getDescription();
+                if (complex) {
+                    if (!desc.endsWith(".")) {
+                        desc = desc + ".";
+                    }
+                    desc = desc + " The option is a " + option.getJavaType() + " type.";
+                }
+                prop.getField().getJavaDoc().setFullText(desc);
             }
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getJavaType())) {
