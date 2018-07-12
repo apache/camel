@@ -75,7 +75,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dataSourceName* | *Required* Name of DataSource to lookup in the Registry. |  | String
+| *dataSourceName* | *Required* Name of DataSource to lookup in the Registry. If the name is dataSource or default, then Camel will attempt to lookup a default DataSource from the registry, meaning if there is a only one instance of DataSource found, then this DataSource will be used. |  | String
 |===
 
 

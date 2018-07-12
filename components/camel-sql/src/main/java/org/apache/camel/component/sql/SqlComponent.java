@@ -26,6 +26,8 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -33,6 +35,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * 
  */
 public class SqlComponent extends UriEndpointComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
 
     private DataSource dataSource;
     @Metadata(label = "advanced", defaultValue = "true")
@@ -83,6 +87,7 @@ public class SqlComponent extends UriEndpointComponent {
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");
         }
+        LOG.debug("Using default DataSource discovered from registry: {}", target);
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
 
