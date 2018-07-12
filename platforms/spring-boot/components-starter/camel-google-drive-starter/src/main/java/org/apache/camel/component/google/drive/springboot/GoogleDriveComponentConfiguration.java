@@ -18,11 +18,9 @@ package org.apache.camel.component.google.drive.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
-import org.apache.camel.component.google.drive.GoogleDriveClientFactory;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The google-drive component provides access to Google Drive file storage
@@ -42,10 +40,10 @@ public class GoogleDriveComponentConfiguration
     private GoogleDriveConfigurationNestedConfiguration configuration;
     /**
      * To use the GoogleCalendarClientFactory as factory for creating the
-     * client. Will by default use BatchGoogleDriveClientFactory
+     * client. Will by default use BatchGoogleDriveClientFactory. The option is
+     * a org.apache.camel.component.google.drive.GoogleDriveClientFactory type.
      */
-    @NestedConfigurationProperty
-    private GoogleDriveClientFactory clientFactory;
+    private String clientFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -62,11 +60,11 @@ public class GoogleDriveComponentConfiguration
         this.configuration = configuration;
     }
 
-    public GoogleDriveClientFactory getClientFactory() {
+    public String getClientFactory() {
         return clientFactory;
     }
 
-    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
+    public void setClientFactory(String clientFactory) {
         this.clientFactory = clientFactory;
     }
 

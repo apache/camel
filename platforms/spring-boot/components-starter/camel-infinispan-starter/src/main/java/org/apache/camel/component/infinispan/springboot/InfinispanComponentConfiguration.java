@@ -28,7 +28,6 @@ import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For reading/writing from/to Infinispan distributed key/value store and data
@@ -47,10 +46,10 @@ public class InfinispanComponentConfiguration
      */
     private InfinispanConfigurationNestedConfiguration configuration;
     /**
-     * The default cache container.
+     * The default cache container. The option is a
+     * org.infinispan.commons.api.BasicCacheContainer type.
      */
-    @NestedConfigurationProperty
-    private BasicCacheContainer cacheContainer;
+    private String cacheContainer;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -67,11 +66,11 @@ public class InfinispanComponentConfiguration
         this.configuration = configuration;
     }
 
-    public BasicCacheContainer getCacheContainer() {
+    public String getCacheContainer() {
         return cacheContainer;
     }
 
-    public void setCacheContainer(BasicCacheContainer cacheContainer) {
+    public void setCacheContainer(String cacheContainer) {
         this.cacheContainer = cacheContainer;
     }
 

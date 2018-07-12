@@ -17,10 +17,8 @@
 package org.apache.camel.component.log.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The log component logs message exchanges to the underlying logging mechanism.
@@ -36,10 +34,10 @@ public class LogComponentConfiguration
     /**
      * Sets a custom ExchangeFormatter to convert the Exchange to a String
      * suitable for logging. If not specified, we default to
-     * DefaultExchangeFormatter.
+     * DefaultExchangeFormatter. The option is a
+     * org.apache.camel.spi.ExchangeFormatter type.
      */
-    @NestedConfigurationProperty
-    private ExchangeFormatter exchangeFormatter;
+    private String exchangeFormatter;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -47,11 +45,11 @@ public class LogComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ExchangeFormatter getExchangeFormatter() {
+    public String getExchangeFormatter() {
         return exchangeFormatter;
     }
 
-    public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
+    public void setExchangeFormatter(String exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
     }
 

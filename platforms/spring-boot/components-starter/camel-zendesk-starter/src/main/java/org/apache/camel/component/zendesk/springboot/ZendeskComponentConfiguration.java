@@ -19,8 +19,6 @@ package org.apache.camel.component.zendesk.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.zendesk.client.v2.Zendesk;
 
 /**
  * Allows producing messages to manage Zendesk ticket, user, organization, etc.
@@ -38,10 +36,10 @@ public class ZendeskComponentConfiguration
      */
     private ZendeskConfigurationNestedConfiguration configuration;
     /**
-     * To use a shared Zendesk instance.
+     * To use a shared Zendesk instance. The option is a
+     * org.zendesk.client.v2.Zendesk type.
      */
-    @NestedConfigurationProperty
-    private Zendesk zendesk;
+    private String zendesk;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -58,11 +56,11 @@ public class ZendeskComponentConfiguration
         this.configuration = configuration;
     }
 
-    public Zendesk getZendesk() {
+    public String getZendesk() {
         return zendesk;
     }
 
-    public void setZendesk(Zendesk zendesk) {
+    public void setZendesk(String zendesk) {
         this.zendesk = zendesk;
     }
 

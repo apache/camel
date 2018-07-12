@@ -17,7 +17,6 @@
 package org.apache.camel.component.sql.springboot;
 
 import javax.annotation.Generated;
-import javax.sql.DataSource;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,9 +32,10 @@ public class SqlComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Sets the DataSource to use to communicate with the database.
+     * Sets the DataSource to use to communicate with the database. The option
+     * is a javax.sql.DataSource type.
      */
-    private DataSource dataSource;
+    private String dataSource;
     /**
      * Sets whether to use placeholder and replace all placeholder characters
      * with sign in the SQL queries. This option is default true
@@ -48,11 +48,11 @@ public class SqlComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public DataSource getDataSource() {
+    public String getDataSource() {
         return dataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
 

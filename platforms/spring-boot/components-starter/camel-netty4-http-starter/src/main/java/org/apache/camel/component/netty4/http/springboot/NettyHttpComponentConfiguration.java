@@ -17,15 +17,11 @@
 package org.apache.camel.component.netty4.http.springboot;
 
 import javax.annotation.Generated;
-import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.component.netty4.http.NettyHttpBinding;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
 import org.apache.camel.component.netty4.http.SecurityConstraint;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Netty HTTP server and client using the Netty 4.x library.
@@ -40,20 +36,19 @@ public class NettyHttpComponentConfiguration
 
     /**
      * To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding
-     * for binding to/from Netty and Camel Message API.
+     * for binding to/from Netty and Camel Message API. The option is a
+     * org.apache.camel.component.netty4.http.NettyHttpBinding type.
      */
-    @NestedConfigurationProperty
-    private NettyHttpBinding nettyHttpBinding;
+    private String nettyHttpBinding;
     /**
      * To use the NettyConfiguration as configuration when creating endpoints.
      */
     private NettyHttpConfigurationNestedConfiguration configuration;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * headers.
+     * headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Refers to a
      * org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration for
@@ -70,10 +65,10 @@ public class NettyHttpComponentConfiguration
      */
     private Integer maximumPoolSize = 16;
     /**
-     * To use the given EventExecutorGroup.
+     * To use the given EventExecutorGroup. The option is a
+     * io.netty.util.concurrent.EventExecutorGroup type.
      */
-    @NestedConfigurationProperty
-    private EventExecutorGroup executorService;
+    private String executorService;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -81,11 +76,11 @@ public class NettyHttpComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public NettyHttpBinding getNettyHttpBinding() {
+    public String getNettyHttpBinding() {
         return nettyHttpBinding;
     }
 
-    public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
+    public void setNettyHttpBinding(String nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
     }
 
@@ -98,12 +93,11 @@ public class NettyHttpComponentConfiguration
         this.configuration = configuration;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
@@ -133,11 +127,11 @@ public class NettyHttpComponentConfiguration
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public EventExecutorGroup getExecutorService() {
+    public String getExecutorService() {
         return executorService;
     }
 
-    public void setExecutorService(EventExecutorGroup executorService) {
+    public void setExecutorService(String executorService) {
         this.executorService = executorService;
     }
 

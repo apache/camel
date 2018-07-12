@@ -28,7 +28,6 @@ import org.ehcache.event.EventFiring;
 import org.ehcache.event.EventOrdering;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The ehcache component enables you to perform caching operations using Ehcache
@@ -47,24 +46,25 @@ public class EhcacheComponentConfiguration
      */
     private EhcacheConfigurationNestedConfiguration configuration;
     /**
-     * The cache manager
+     * The cache manager. The option is a org.ehcache.CacheManager type.
      */
-    @NestedConfigurationProperty
-    private CacheManager cacheManager;
+    private String cacheManager;
     /**
-     * The cache manager configuration
+     * The cache manager configuration. The option is a
+     * org.ehcache.config.Configuration type.
      */
-    @NestedConfigurationProperty
-    private Configuration cacheManagerConfiguration;
+    private String cacheManagerConfiguration;
     /**
-     * The default cache configuration to be used to create caches.
+     * The default cache configuration to be used to create caches. The option
+     * is a org.ehcache.config.CacheConfiguration<?,?> type.
      */
-    @NestedConfigurationProperty
-    private CacheConfiguration<?, ?> cacheConfiguration;
+    private String cacheConfiguration;
     /**
-     * A map of caches configurations to be used to create caches.
+     * A map of caches configurations to be used to create caches. The option is
+     * a java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration<?,
+     * ?>> type.
      */
-    private Map<String, CacheConfiguration<?, ?>> cachesConfigurations;
+    private String cachesConfigurations;
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
@@ -85,38 +85,35 @@ public class EhcacheComponentConfiguration
         this.configuration = configuration;
     }
 
-    public CacheManager getCacheManager() {
+    public String getCacheManager() {
         return cacheManager;
     }
 
-    public void setCacheManager(CacheManager cacheManager) {
+    public void setCacheManager(String cacheManager) {
         this.cacheManager = cacheManager;
     }
 
-    public Configuration getCacheManagerConfiguration() {
+    public String getCacheManagerConfiguration() {
         return cacheManagerConfiguration;
     }
 
-    public void setCacheManagerConfiguration(
-            Configuration cacheManagerConfiguration) {
+    public void setCacheManagerConfiguration(String cacheManagerConfiguration) {
         this.cacheManagerConfiguration = cacheManagerConfiguration;
     }
 
-    public CacheConfiguration<?, ?> getCacheConfiguration() {
+    public String getCacheConfiguration() {
         return cacheConfiguration;
     }
 
-    public void setCacheConfiguration(
-            CacheConfiguration<?, ?> cacheConfiguration) {
+    public void setCacheConfiguration(String cacheConfiguration) {
         this.cacheConfiguration = cacheConfiguration;
     }
 
-    public Map<String, CacheConfiguration<?, ?>> getCachesConfigurations() {
+    public String getCachesConfigurations() {
         return cachesConfigurations;
     }
 
-    public void setCachesConfigurations(
-            Map<String, CacheConfiguration<?, ?>> cachesConfigurations) {
+    public void setCachesConfigurations(String cachesConfigurations) {
         this.cachesConfigurations = cachesConfigurations;
     }
 

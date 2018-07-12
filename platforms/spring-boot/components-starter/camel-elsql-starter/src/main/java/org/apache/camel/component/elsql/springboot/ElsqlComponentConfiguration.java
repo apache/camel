@@ -17,12 +17,9 @@
 package org.apache.camel.component.elsql.springboot;
 
 import javax.annotation.Generated;
-import javax.sql.DataSource;
-import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.component.elsql.ElSqlDatabaseVendor;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The elsql component is an extension to the existing SQL Component that uses
@@ -41,15 +38,16 @@ public class ElsqlComponentConfiguration
      */
     private ElSqlDatabaseVendor databaseVendor;
     /**
-     * Sets the DataSource to use to communicate with the database.
+     * Sets the DataSource to use to communicate with the database. The option
+     * is a javax.sql.DataSource type.
      */
-    private DataSource dataSource;
+    private String dataSource;
     /**
      * To use a specific configured ElSqlConfig. It may be better to use the
-     * databaseVendor option instead.
+     * databaseVendor option instead. The option is a
+     * com.opengamma.elsql.ElSqlConfig type.
      */
-    @NestedConfigurationProperty
-    private ElSqlConfig elSqlConfig;
+    private String elSqlConfig;
     /**
      * The resource file which contains the elsql SQL statements to use. You can
      * specify multiple resources separated by comma. The resources are loaded
@@ -73,19 +71,19 @@ public class ElsqlComponentConfiguration
         this.databaseVendor = databaseVendor;
     }
 
-    public DataSource getDataSource() {
+    public String getDataSource() {
         return dataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
 
-    public ElSqlConfig getElSqlConfig() {
+    public String getElSqlConfig() {
         return elSqlConfig;
     }
 
-    public void setElSqlConfig(ElSqlConfig elSqlConfig) {
+    public void setElSqlConfig(String elSqlConfig) {
         this.elSqlConfig = elSqlConfig;
     }
 

@@ -18,10 +18,7 @@ package org.apache.camel.component.ignite.cache.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The Ignite Cache endpoint is one of camel-ignite endpoints which allows you
@@ -36,20 +33,19 @@ public class IgniteCacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Sets the Ignite instance.
+     * Sets the Ignite instance. The option is a org.apache.ignite.Ignite type.
      */
-    @NestedConfigurationProperty
-    private Ignite ignite;
+    private String ignite;
     /**
      * Sets the resource from where to load the configuration. It can be a: URI,
-     * String (URI) or an InputStream.
+     * String (URI) or an InputStream. The option is a java.lang.Object type.
      */
-    private Object configurationResource;
+    private String configurationResource;
     /**
-     * Allows the user to set a programmatic IgniteConfiguration.
+     * Allows the user to set a programmatic IgniteConfiguration. The option is
+     * a org.apache.ignite.configuration.IgniteConfiguration type.
      */
-    @NestedConfigurationProperty
-    private IgniteConfiguration igniteConfiguration;
+    private String igniteConfiguration;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -57,27 +53,27 @@ public class IgniteCacheComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public Ignite getIgnite() {
+    public String getIgnite() {
         return ignite;
     }
 
-    public void setIgnite(Ignite ignite) {
+    public void setIgnite(String ignite) {
         this.ignite = ignite;
     }
 
-    public Object getConfigurationResource() {
+    public String getConfigurationResource() {
         return configurationResource;
     }
 
-    public void setConfigurationResource(Object configurationResource) {
+    public void setConfigurationResource(String configurationResource) {
         this.configurationResource = configurationResource;
     }
 
-    public IgniteConfiguration getIgniteConfiguration() {
+    public String getIgniteConfiguration() {
         return igniteConfiguration;
     }
 
-    public void setIgniteConfiguration(IgniteConfiguration igniteConfiguration) {
+    public void setIgniteConfiguration(String igniteConfiguration) {
         this.igniteConfiguration = igniteConfiguration;
     }
 

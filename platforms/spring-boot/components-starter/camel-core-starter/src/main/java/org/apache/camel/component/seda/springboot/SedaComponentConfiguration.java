@@ -17,11 +17,8 @@
 package org.apache.camel.component.seda.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.Exchange;
-import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The seda component provides asynchronous call to another endpoint from any
@@ -45,10 +42,11 @@ public class SedaComponentConfiguration
      */
     private Integer concurrentConsumers = 1;
     /**
-     * Sets the default queue factory.
+     * Sets the default queue factory. The option is a
+     * org.apache.camel.component
+     * .seda.BlockingQueueFactory<org.apache.camel.Exchange> type.
      */
-    @NestedConfigurationProperty
-    private BlockingQueueFactory<Exchange> defaultQueueFactory;
+    private String defaultQueueFactory;
     /**
      * Whether a thread that sends messages to a full SEDA queue will block
      * until the queue's capacity is no longer exhausted. By default, an
@@ -88,12 +86,11 @@ public class SedaComponentConfiguration
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    public BlockingQueueFactory<Exchange> getDefaultQueueFactory() {
+    public String getDefaultQueueFactory() {
         return defaultQueueFactory;
     }
 
-    public void setDefaultQueueFactory(
-            BlockingQueueFactory<Exchange> defaultQueueFactory) {
+    public void setDefaultQueueFactory(String defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
     }
 

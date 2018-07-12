@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.jcache.springboot;
 
-import java.util.Properties;
 import javax.annotation.Generated;
-import javax.cache.configuration.Configuration;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -39,14 +37,15 @@ public class JCacheComponentConfiguration
      */
     private String cachingProvider;
     /**
-     * A Configuration for the Cache
+     * A Configuration for the Cache. The option is a
+     * javax.cache.configuration.Configuration type.
      */
-    private Configuration cacheConfiguration;
+    private String cacheConfiguration;
     /**
      * The Properties for the javax.cache.spi.CachingProvider to create the
-     * CacheManager
+     * CacheManager. The option is a java.util.Properties type.
      */
-    private Properties cacheConfigurationProperties;
+    private String cacheConfigurationProperties;
     /**
      * An implementation specific URI for the CacheManager
      */
@@ -66,20 +65,20 @@ public class JCacheComponentConfiguration
         this.cachingProvider = cachingProvider;
     }
 
-    public Configuration getCacheConfiguration() {
+    public String getCacheConfiguration() {
         return cacheConfiguration;
     }
 
-    public void setCacheConfiguration(Configuration cacheConfiguration) {
+    public void setCacheConfiguration(String cacheConfiguration) {
         this.cacheConfiguration = cacheConfiguration;
     }
 
-    public Properties getCacheConfigurationProperties() {
+    public String getCacheConfigurationProperties() {
         return cacheConfigurationProperties;
     }
 
     public void setCacheConfigurationProperties(
-            Properties cacheConfigurationProperties) {
+            String cacheConfigurationProperties) {
         this.cacheConfigurationProperties = cacheConfigurationProperties;
     }
 

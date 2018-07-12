@@ -20,7 +20,6 @@ import java.util.Properties;
 import javax.annotation.Generated;
 import javax.mail.Session;
 import org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver;
-import org.apache.camel.component.mail.ContentTypeResolver;
 import org.apache.camel.component.mail.JavaMailSender;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -43,10 +42,10 @@ public class MailComponentConfiguration
      */
     private MailConfigurationNestedConfiguration configuration;
     /**
-     * Resolver to determine Content-Type for file attachments.
+     * Resolver to determine Content-Type for file attachments. The option is a
+     * org.apache.camel.component.mail.ContentTypeResolver type.
      */
-    @NestedConfigurationProperty
-    private ContentTypeResolver contentTypeResolver;
+    private String contentTypeResolver;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -67,11 +66,11 @@ public class MailComponentConfiguration
         this.configuration = configuration;
     }
 
-    public ContentTypeResolver getContentTypeResolver() {
+    public String getContentTypeResolver() {
         return contentTypeResolver;
     }
 
-    public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+    public void setContentTypeResolver(String contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
     }
 

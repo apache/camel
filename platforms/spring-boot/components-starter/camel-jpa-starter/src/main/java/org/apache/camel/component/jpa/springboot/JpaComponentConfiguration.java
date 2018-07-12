@@ -17,11 +17,8 @@
 package org.apache.camel.component.jpa.springboot;
 
 import javax.annotation.Generated;
-import javax.persistence.EntityManagerFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * The jpa component enables you to store and retrieve Java objects from
@@ -37,14 +34,15 @@ public class JpaComponentConfiguration
 
     /**
      * To use the EntityManagerFactory. This is strongly recommended to
-     * configure.
+     * configure. The option is a javax.persistence.EntityManagerFactory type.
      */
-    private EntityManagerFactory entityManagerFactory;
+    private String entityManagerFactory;
     /**
-     * To use the PlatformTransactionManager for managing transactions.
+     * To use the PlatformTransactionManager for managing transactions. The
+     * option is a org.springframework.transaction.PlatformTransactionManager
+     * type.
      */
-    @NestedConfigurationProperty
-    private PlatformTransactionManager transactionManager;
+    private String transactionManager;
     /**
      * The camel-jpa component will join transaction by default. You can use
      * this option to turn this off, for example if you use LOCAL_RESOURCE and
@@ -66,21 +64,19 @@ public class JpaComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public EntityManagerFactory getEntityManagerFactory() {
+    public String getEntityManagerFactory() {
         return entityManagerFactory;
     }
 
-    public void setEntityManagerFactory(
-            EntityManagerFactory entityManagerFactory) {
+    public void setEntityManagerFactory(String entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    public PlatformTransactionManager getTransactionManager() {
+    public String getTransactionManager() {
         return transactionManager;
     }
 
-    public void setTransactionManager(
-            PlatformTransactionManager transactionManager) {
+    public void setTransactionManager(String transactionManager) {
         this.transactionManager = transactionManager;
     }
 

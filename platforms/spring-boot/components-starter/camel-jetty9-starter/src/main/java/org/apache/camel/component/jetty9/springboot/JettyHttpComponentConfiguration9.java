@@ -16,20 +16,9 @@
  */
 package org.apache.camel.component.jetty9.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
-import org.apache.camel.component.jetty.JettyHttpBinding;
-import org.apache.camel.http.common.HttpBinding;
-import org.apache.camel.http.common.HttpConfiguration;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jetty component provides HTTP-based endpoints for consuming and producing
@@ -61,19 +50,22 @@ public class JettyHttpComponentConfiguration9
      */
     private String keystore;
     /**
-     * This option is used to set the ErrorHandler that Jetty server uses.
+     * This option is used to set the ErrorHandler that Jetty server uses. The
+     * option is a org.eclipse.jetty.server.handler.ErrorHandler type.
      */
-    @NestedConfigurationProperty
-    private ErrorHandler errorHandler;
+    private String errorHandler;
     /**
-     * A map which contains per port number specific SSL connectors.
+     * A map which contains per port number specific SSL connectors. The option
+     * is a java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector>
+     * type.
      */
-    private Map<Integer, Connector> sslSocketConnectors;
+    private String sslSocketConnectors;
     /**
      * A map which contains per port number specific HTTP connectors. Uses the
-     * same principle as sslSocketConnectors.
+     * same principle as sslSocketConnectors. The option is a
+     * java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector> type.
      */
-    private Map<Integer, Connector> socketConnectors;
+    private String socketConnectors;
     /**
      * To set a value for minimum number of threads in HttpClient thread pool.
      * Notice that both a min and max size must be configured.
@@ -96,10 +88,10 @@ public class JettyHttpComponentConfiguration9
     private Integer maxThreads;
     /**
      * To use a custom thread pool for the server. This option should only be
-     * used in special circumstances.
+     * used in special circumstances. The option is a
+     * org.eclipse.jetty.util.thread.ThreadPool type.
      */
-    @NestedConfigurationProperty
-    private ThreadPool threadPool;
+    private String threadPool;
     /**
      * If this option is true, Jetty JMX support will be enabled for this
      * endpoint.
@@ -108,34 +100,36 @@ public class JettyHttpComponentConfiguration9
     /**
      * To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which
      * are used to customize how a response should be written for the producer.
+     * The option is a org.apache.camel.component.jetty.JettyHttpBinding type.
      */
-    @NestedConfigurationProperty
-    private JettyHttpBinding jettyHttpBinding;
+    private String jettyHttpBinding;
     /**
-     * Not to be used - use JettyHttpBinding instead.
+     * Not to be used - use JettyHttpBinding instead. The option is a
+     * org.apache.camel.http.common.HttpBinding type.
      */
-    @NestedConfigurationProperty
-    private HttpBinding httpBinding;
+    private String httpBinding;
     /**
-     * Jetty component does not use HttpConfiguration.
+     * Jetty component does not use HttpConfiguration. The option is a
+     * org.apache.camel.http.common.HttpConfiguration type.
      */
-    @NestedConfigurationProperty
-    private HttpConfiguration httpConfiguration;
+    private String httpConfiguration;
     /**
      * To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX
-     * is enabled that Jetty uses for registering mbeans.
+     * is enabled that Jetty uses for registering mbeans. The option is a
+     * org.eclipse.jetty.jmx.MBeanContainer type.
      */
-    @NestedConfigurationProperty
-    private MBeanContainer mbContainer;
+    private String mbContainer;
     /**
-     * A map which contains general SSL connector properties.
+     * A map which contains general SSL connector properties. The option is a
+     * java.util.Map<java.lang.String,java.lang.Object> type.
      */
-    private Map<String, Object> sslSocketConnectorProperties;
+    private String sslSocketConnectorProperties;
     /**
      * A map which contains general HTTP connector properties. Uses the same
-     * principle as sslSocketConnectorProperties.
+     * principle as sslSocketConnectorProperties. The option is a
+     * java.util.Map<java.lang.String,java.lang.Object> type.
      */
-    private Map<String, Object> socketConnectorProperties;
+    private String socketConnectorProperties;
     /**
      * Allows to set a timeout in millis when using Jetty as consumer (server).
      * By default Jetty uses 30000. You can use a value of = 0 to never expire.
@@ -149,10 +143,10 @@ public class JettyHttpComponentConfiguration9
      */
     private Boolean useContinuation = true;
     /**
-     * To configure security using SSLContextParameters
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters
      */
@@ -206,10 +200,10 @@ public class JettyHttpComponentConfiguration9
     private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -241,28 +235,27 @@ public class JettyHttpComponentConfiguration9
         this.keystore = keystore;
     }
 
-    public ErrorHandler getErrorHandler() {
+    public String getErrorHandler() {
         return errorHandler;
     }
 
-    public void setErrorHandler(ErrorHandler errorHandler) {
+    public void setErrorHandler(String errorHandler) {
         this.errorHandler = errorHandler;
     }
 
-    public Map<Integer, Connector> getSslSocketConnectors() {
+    public String getSslSocketConnectors() {
         return sslSocketConnectors;
     }
 
-    public void setSslSocketConnectors(
-            Map<Integer, Connector> sslSocketConnectors) {
+    public void setSslSocketConnectors(String sslSocketConnectors) {
         this.sslSocketConnectors = sslSocketConnectors;
     }
 
-    public Map<Integer, Connector> getSocketConnectors() {
+    public String getSocketConnectors() {
         return socketConnectors;
     }
 
-    public void setSocketConnectors(Map<Integer, Connector> socketConnectors) {
+    public void setSocketConnectors(String socketConnectors) {
         this.socketConnectors = socketConnectors;
     }
 
@@ -298,11 +291,11 @@ public class JettyHttpComponentConfiguration9
         this.maxThreads = maxThreads;
     }
 
-    public ThreadPool getThreadPool() {
+    public String getThreadPool() {
         return threadPool;
     }
 
-    public void setThreadPool(ThreadPool threadPool) {
+    public void setThreadPool(String threadPool) {
         this.threadPool = threadPool;
     }
 
@@ -314,53 +307,52 @@ public class JettyHttpComponentConfiguration9
         this.enableJmx = enableJmx;
     }
 
-    public JettyHttpBinding getJettyHttpBinding() {
+    public String getJettyHttpBinding() {
         return jettyHttpBinding;
     }
 
-    public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
+    public void setJettyHttpBinding(String jettyHttpBinding) {
         this.jettyHttpBinding = jettyHttpBinding;
     }
 
-    public HttpBinding getHttpBinding() {
+    public String getHttpBinding() {
         return httpBinding;
     }
 
-    public void setHttpBinding(HttpBinding httpBinding) {
+    public void setHttpBinding(String httpBinding) {
         this.httpBinding = httpBinding;
     }
 
-    public HttpConfiguration getHttpConfiguration() {
+    public String getHttpConfiguration() {
         return httpConfiguration;
     }
 
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+    public void setHttpConfiguration(String httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
     }
 
-    public MBeanContainer getMbContainer() {
+    public String getMbContainer() {
         return mbContainer;
     }
 
-    public void setMbContainer(MBeanContainer mbContainer) {
+    public void setMbContainer(String mbContainer) {
         this.mbContainer = mbContainer;
     }
 
-    public Map<String, Object> getSslSocketConnectorProperties() {
+    public String getSslSocketConnectorProperties() {
         return sslSocketConnectorProperties;
     }
 
     public void setSslSocketConnectorProperties(
-            Map<String, Object> sslSocketConnectorProperties) {
+            String sslSocketConnectorProperties) {
         this.sslSocketConnectorProperties = sslSocketConnectorProperties;
     }
 
-    public Map<String, Object> getSocketConnectorProperties() {
+    public String getSocketConnectorProperties() {
         return socketConnectorProperties;
     }
 
-    public void setSocketConnectorProperties(
-            Map<String, Object> socketConnectorProperties) {
+    public void setSocketConnectorProperties(String socketConnectorProperties) {
         this.socketConnectorProperties = socketConnectorProperties;
     }
 
@@ -380,12 +372,11 @@ public class JettyHttpComponentConfiguration9
         this.useContinuation = useContinuation;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
@@ -470,12 +461,11 @@ public class JettyHttpComponentConfiguration9
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

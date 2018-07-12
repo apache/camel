@@ -17,11 +17,8 @@
 package org.apache.camel.component.sjms.batch.springboot;
 
 import javax.annotation.Generated;
-import javax.jms.ConnectionFactory;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The sjms-batch component is a specialized for highly performant,
@@ -36,9 +33,10 @@ public class SjmsBatchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * A ConnectionFactory is required to enable the SjmsBatchComponent.
+     * A ConnectionFactory is required to enable the SjmsBatchComponent. The
+     * option is a javax.jms.ConnectionFactory type.
      */
-    private ConnectionFactory connectionFactory;
+    private String connectionFactory;
     /**
      * Whether to startup the consumer message listener asynchronously, when
      * starting a route. For example if a JmsConsumer cannot get a connection to
@@ -60,10 +58,10 @@ public class SjmsBatchComponentConfiguration
     private Integer recoveryInterval = 5000;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -71,11 +69,11 @@ public class SjmsBatchComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ConnectionFactory getConnectionFactory() {
+    public String getConnectionFactory() {
         return connectionFactory;
     }
 
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+    public void setConnectionFactory(String connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
@@ -95,12 +93,11 @@ public class SjmsBatchComponentConfiguration
         this.recoveryInterval = recoveryInterval;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
