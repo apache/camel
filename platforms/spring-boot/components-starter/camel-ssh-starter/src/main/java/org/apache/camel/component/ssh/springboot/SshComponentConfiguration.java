@@ -21,7 +21,6 @@ import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The ssh component enables access to SSH servers such that you can send an SSH
@@ -65,10 +64,10 @@ public class SshComponentConfiguration
     private String pollCommand;
     /**
      * Sets the KeyPairProvider reference to use when connecting using
-     * Certificates to the remote SSH Server.
+     * Certificates to the remote SSH Server. The option is a
+     * org.apache.sshd.common.keyprovider.KeyPairProvider type.
      */
-    @NestedConfigurationProperty
-    private KeyPairProvider keyPairProvider;
+    private String keyPairProvider;
     /**
      * Sets the key type to pass to the KeyPairProvider as part of
      * authentication. KeyPairProvider.loadKey(...) will be passed this value.
@@ -162,11 +161,11 @@ public class SshComponentConfiguration
         this.pollCommand = pollCommand;
     }
 
-    public KeyPairProvider getKeyPairProvider() {
+    public String getKeyPairProvider() {
         return keyPairProvider;
     }
 
-    public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+    public void setKeyPairProvider(String keyPairProvider) {
         this.keyPairProvider = keyPairProvider;
     }
 

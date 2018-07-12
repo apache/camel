@@ -17,11 +17,8 @@
 package org.apache.camel.component.spark.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.spark.RddCallback;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.spark.api.java.JavaRDDLike;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The spark component can be used to send RDD or DataFrame jobs to Apache Spark
@@ -36,15 +33,15 @@ public class SparkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * RDD to compute against.
+     * RDD to compute against. The option is a
+     * org.apache.spark.api.java.JavaRDDLike type.
      */
-    @NestedConfigurationProperty
-    private JavaRDDLike rdd;
+    private String rdd;
     /**
-     * Function performing action against an RDD.
+     * Function performing action against an RDD. The option is a
+     * org.apache.camel.component.spark.RddCallback type.
      */
-    @NestedConfigurationProperty
-    private RddCallback rddCallback;
+    private String rddCallback;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -52,19 +49,19 @@ public class SparkComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public JavaRDDLike getRdd() {
+    public String getRdd() {
         return rdd;
     }
 
-    public void setRdd(JavaRDDLike rdd) {
+    public void setRdd(String rdd) {
         this.rdd = rdd;
     }
 
-    public RddCallback getRddCallback() {
+    public String getRddCallback() {
         return rddCallback;
     }
 
-    public void setRddCallback(RddCallback rddCallback) {
+    public void setRddCallback(String rddCallback) {
         this.rddCallback = rddCallback;
     }
 

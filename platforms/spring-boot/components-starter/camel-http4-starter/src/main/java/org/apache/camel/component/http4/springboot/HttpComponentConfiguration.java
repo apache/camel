@@ -17,18 +17,8 @@
 package org.apache.camel.component.http4.springboot;
 
 import javax.annotation.Generated;
-import javax.net.ssl.HostnameVerifier;
-import org.apache.camel.component.http4.HttpClientConfigurer;
-import org.apache.camel.http.common.HttpBinding;
-import org.apache.camel.http.common.HttpConfiguration;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.http.client.CookieStore;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.protocol.HttpContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
@@ -43,40 +33,40 @@ public class HttpComponentConfiguration
 
     /**
      * To use the custom HttpClientConfigurer to perform configuration of the
-     * HttpClient that will be used.
+     * HttpClient that will be used. The option is a
+     * org.apache.camel.component.http4.HttpClientConfigurer type.
      */
-    @NestedConfigurationProperty
-    private HttpClientConfigurer httpClientConfigurer;
+    private String httpClientConfigurer;
     /**
      * To use a custom and shared HttpClientConnectionManager to manage
      * connections. If this has been configured then this is always used for all
-     * endpoints created by this component.
+     * endpoints created by this component. The option is a
+     * org.apache.http.conn.HttpClientConnectionManager type.
      */
-    @NestedConfigurationProperty
-    private HttpClientConnectionManager clientConnectionManager;
+    private String clientConnectionManager;
     /**
      * To use a custom org.apache.http.protocol.HttpContext when executing
-     * requests.
+     * requests. The option is a org.apache.http.protocol.HttpContext type.
      */
-    @NestedConfigurationProperty
-    private HttpContext httpContext;
+    private String httpContext;
     /**
      * To configure security using SSLContextParameters. Important: Only one
      * instance of org.apache.camel.util.jsse.SSLContextParameters is supported
      * per HttpComponent. If you need to use 2 or more different instances, you
-     * need to define a new HttpComponent per instance you need.
+     * need to define a new HttpComponent per instance you need. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
      * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or
-     * org.apache.http.conn.ssl.NoopHostnameVerifier.
+     * org.apache.http.conn.ssl.NoopHostnameVerifier. The option is a
+     * javax.net.ssl.HostnameVerifier type.
      */
-    private HostnameVerifier x509HostnameVerifier;
+    private String x509HostnameVerifier;
     /**
      * The maximum number of connections.
      */
@@ -95,10 +85,10 @@ public class HttpComponentConfiguration
      * org.apache.http.impl.client.BasicCookieStore is used which is an
      * in-memory only cookie store. Notice if bridgeEndpoint=true then the
      * cookie store is forced to be a noop cookie store as cookie shouldn't be
-     * stored as we are just bridging (eg acting as a proxy).
+     * stored as we are just bridging (eg acting as a proxy). The option is a
+     * org.apache.http.client.CookieStore type.
      */
-    @NestedConfigurationProperty
-    private CookieStore cookieStore;
+    private String cookieStore;
     /**
      * The timeout in milliseconds used when requesting a connection from the
      * connection manager. A timeout value of zero is interpreted as an infinite
@@ -124,15 +114,15 @@ public class HttpComponentConfiguration
     private Integer socketTimeout = -1;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
-     * and HttpClient.
+     * and HttpClient. The option is a org.apache.camel.http.common.HttpBinding
+     * type.
      */
-    @NestedConfigurationProperty
-    private HttpBinding httpBinding;
+    private String httpBinding;
     /**
-     * To use the shared HttpConfiguration as base configuration.
+     * To use the shared HttpConfiguration as base configuration. The option is
+     * a org.apache.camel.http.common.HttpConfiguration type.
      */
-    @NestedConfigurationProperty
-    private HttpConfiguration httpConfiguration;
+    private String httpConfiguration;
     /**
      * Whether to allow java serialization when a request uses
      * context-type=application/x-java-serialized-object. This is by default
@@ -143,10 +133,10 @@ public class HttpComponentConfiguration
     private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -154,38 +144,35 @@ public class HttpComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public HttpClientConfigurer getHttpClientConfigurer() {
+    public String getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
 
-    public void setHttpClientConfigurer(
-            HttpClientConfigurer httpClientConfigurer) {
+    public void setHttpClientConfigurer(String httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
-    public HttpClientConnectionManager getClientConnectionManager() {
+    public String getClientConnectionManager() {
         return clientConnectionManager;
     }
 
-    public void setClientConnectionManager(
-            HttpClientConnectionManager clientConnectionManager) {
+    public void setClientConnectionManager(String clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
 
-    public HttpContext getHttpContext() {
+    public String getHttpContext() {
         return httpContext;
     }
 
-    public void setHttpContext(HttpContext httpContext) {
+    public void setHttpContext(String httpContext) {
         this.httpContext = httpContext;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
@@ -198,11 +185,11 @@ public class HttpComponentConfiguration
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public HostnameVerifier getX509HostnameVerifier() {
+    public String getX509HostnameVerifier() {
         return x509HostnameVerifier;
     }
 
-    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
+    public void setX509HostnameVerifier(String x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
@@ -230,11 +217,11 @@ public class HttpComponentConfiguration
         this.connectionTimeToLive = connectionTimeToLive;
     }
 
-    public CookieStore getCookieStore() {
+    public String getCookieStore() {
         return cookieStore;
     }
 
-    public void setCookieStore(CookieStore cookieStore) {
+    public void setCookieStore(String cookieStore) {
         this.cookieStore = cookieStore;
     }
 
@@ -262,19 +249,19 @@ public class HttpComponentConfiguration
         this.socketTimeout = socketTimeout;
     }
 
-    public HttpBinding getHttpBinding() {
+    public String getHttpBinding() {
         return httpBinding;
     }
 
-    public void setHttpBinding(HttpBinding httpBinding) {
+    public void setHttpBinding(String httpBinding) {
         this.httpBinding = httpBinding;
     }
 
-    public HttpConfiguration getHttpConfiguration() {
+    public String getHttpConfiguration() {
         return httpConfiguration;
     }
 
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+    public void setHttpConfiguration(String httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
     }
 
@@ -286,12 +273,11 @@ public class HttpComponentConfiguration
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

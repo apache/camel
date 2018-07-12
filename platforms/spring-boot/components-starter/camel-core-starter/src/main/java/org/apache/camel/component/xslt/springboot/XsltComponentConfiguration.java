@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.xslt.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
-import org.apache.camel.component.xslt.XsltUriResolverFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a XSLT template.
@@ -44,15 +40,16 @@ public class XsltComponentConfiguration
     private XmlConverterNestedConfiguration xmlConverter;
     /**
      * To use a custom UriResolver which depends on a dynamic endpoint resource
-     * URI. Should not be used together with the option 'uriResolver'.
+     * URI. Should not be used together with the option 'uriResolver'. The
+     * option is a org.apache.camel.component.xslt.XsltUriResolverFactory type.
      */
-    @NestedConfigurationProperty
-    private XsltUriResolverFactory uriResolverFactory;
+    private String uriResolverFactory;
     /**
      * To use a custom UriResolver. Should not be used together with the option
-     * 'uriResolverFactory'.
+     * 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver
+     * type.
      */
-    private URIResolver uriResolver;
+    private String uriResolver;
     /**
      * Cache for the resource content (the stylesheet file) when it is loaded.
      * If set to false Camel will reload the stylesheet file on each message
@@ -75,13 +72,15 @@ public class XsltComponentConfiguration
      */
     private String saxonExtensionFunctions;
     /**
-     * To use a custom Saxon configuration
+     * To use a custom Saxon configuration. The option is a java.lang.Object
+     * type.
      */
-    private Object saxonConfiguration;
+    private String saxonConfiguration;
     /**
-     * To set custom Saxon configuration properties
+     * To set custom Saxon configuration properties. The option is a
+     * java.util.Map<java.lang.String,java.lang.Object> type.
      */
-    private Map<String, Object> saxonConfigurationProperties;
+    private String saxonConfigurationProperties;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -97,19 +96,19 @@ public class XsltComponentConfiguration
         this.xmlConverter = xmlConverter;
     }
 
-    public XsltUriResolverFactory getUriResolverFactory() {
+    public String getUriResolverFactory() {
         return uriResolverFactory;
     }
 
-    public void setUriResolverFactory(XsltUriResolverFactory uriResolverFactory) {
+    public void setUriResolverFactory(String uriResolverFactory) {
         this.uriResolverFactory = uriResolverFactory;
     }
 
-    public URIResolver getUriResolver() {
+    public String getUriResolver() {
         return uriResolver;
     }
 
-    public void setUriResolver(URIResolver uriResolver) {
+    public void setUriResolver(String uriResolver) {
         this.uriResolver = uriResolver;
     }
 
@@ -137,20 +136,20 @@ public class XsltComponentConfiguration
         this.saxonExtensionFunctions = saxonExtensionFunctions;
     }
 
-    public Object getSaxonConfiguration() {
+    public String getSaxonConfiguration() {
         return saxonConfiguration;
     }
 
-    public void setSaxonConfiguration(Object saxonConfiguration) {
+    public void setSaxonConfiguration(String saxonConfiguration) {
         this.saxonConfiguration = saxonConfiguration;
     }
 
-    public Map<String, Object> getSaxonConfigurationProperties() {
+    public String getSaxonConfigurationProperties() {
         return saxonConfigurationProperties;
     }
 
     public void setSaxonConfigurationProperties(
-            Map<String, Object> saxonConfigurationProperties) {
+            String saxonConfigurationProperties) {
         this.saxonConfigurationProperties = saxonConfigurationProperties;
     }
 

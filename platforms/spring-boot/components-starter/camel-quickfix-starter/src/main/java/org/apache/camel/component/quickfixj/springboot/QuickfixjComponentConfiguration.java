@@ -16,15 +16,9 @@
  */
 package org.apache.camel.component.quickfixj.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
-import org.apache.camel.component.quickfixj.QuickfixjConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import quickfix.LogFactory;
-import quickfix.MessageFactory;
-import quickfix.MessageStoreFactory;
 
 /**
  * The quickfix component allows to send Financial Interchange (FIX) messages to
@@ -39,25 +33,26 @@ public class QuickfixjComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the given MessageFactory
+     * To use the given MessageFactory. The option is a quickfix.MessageFactory
+     * type.
      */
-    @NestedConfigurationProperty
-    private MessageFactory messageFactory;
+    private String messageFactory;
     /**
-     * To use the given LogFactory
+     * To use the given LogFactory. The option is a quickfix.LogFactory type.
      */
-    @NestedConfigurationProperty
-    private LogFactory logFactory;
+    private String logFactory;
     /**
-     * To use the given MessageStoreFactory
+     * To use the given MessageStoreFactory. The option is a
+     * quickfix.MessageStoreFactory type.
      */
-    @NestedConfigurationProperty
-    private MessageStoreFactory messageStoreFactory;
+    private String messageStoreFactory;
     /**
      * To use the given map of pre configured QuickFix configurations mapped to
-     * the key
+     * the key. The option is a
+     * java.util.Map<java.lang.String,org.apache.camel.component
+     * .quickfixj.QuickfixjConfiguration> type.
      */
-    private Map<String, QuickfixjConfiguration> configurations;
+    private String configurations;
     /**
      * If set to true, the engines will be created and started when needed (when
      * first message is send)
@@ -70,36 +65,35 @@ public class QuickfixjComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public MessageFactory getMessageFactory() {
+    public String getMessageFactory() {
         return messageFactory;
     }
 
-    public void setMessageFactory(MessageFactory messageFactory) {
+    public void setMessageFactory(String messageFactory) {
         this.messageFactory = messageFactory;
     }
 
-    public LogFactory getLogFactory() {
+    public String getLogFactory() {
         return logFactory;
     }
 
-    public void setLogFactory(LogFactory logFactory) {
+    public void setLogFactory(String logFactory) {
         this.logFactory = logFactory;
     }
 
-    public MessageStoreFactory getMessageStoreFactory() {
+    public String getMessageStoreFactory() {
         return messageStoreFactory;
     }
 
-    public void setMessageStoreFactory(MessageStoreFactory messageStoreFactory) {
+    public void setMessageStoreFactory(String messageStoreFactory) {
         this.messageStoreFactory = messageStoreFactory;
     }
 
-    public Map<String, QuickfixjConfiguration> getConfigurations() {
+    public String getConfigurations() {
         return configurations;
     }
 
-    public void setConfigurations(
-            Map<String, QuickfixjConfiguration> configurations) {
+    public void setConfigurations(String configurations) {
         this.configurations = configurations;
     }
 

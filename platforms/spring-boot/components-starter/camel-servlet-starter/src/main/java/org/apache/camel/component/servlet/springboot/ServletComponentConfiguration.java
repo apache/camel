@@ -17,13 +17,8 @@
 package org.apache.camel.component.servlet.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.servlet.HttpRegistry;
-import org.apache.camel.http.common.HttpBinding;
-import org.apache.camel.http.common.HttpConfiguration;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To use a HTTP Servlet as entry for Camel routes when running in a servlet
@@ -42,10 +37,10 @@ public class ServletComponentConfiguration
      */
     private String servletName;
     /**
-     * To use a custom org.apache.camel.component.servlet.HttpRegistry.
+     * To use a custom org.apache.camel.component.servlet.HttpRegistry. The
+     * option is a org.apache.camel.component.servlet.HttpRegistry type.
      */
-    @NestedConfigurationProperty
-    private HttpRegistry httpRegistry;
+    private String httpRegistry;
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel
      * Exchange. The options attachmentMultipartBinding=true and
@@ -57,15 +52,15 @@ public class ServletComponentConfiguration
     private Boolean attachmentMultipartBinding = false;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
-     * and HttpClient.
+     * and HttpClient. The option is a org.apache.camel.http.common.HttpBinding
+     * type.
      */
-    @NestedConfigurationProperty
-    private HttpBinding httpBinding;
+    private String httpBinding;
     /**
-     * To use the shared HttpConfiguration as base configuration.
+     * To use the shared HttpConfiguration as base configuration. The option is
+     * a org.apache.camel.http.common.HttpConfiguration type.
      */
-    @NestedConfigurationProperty
-    private HttpConfiguration httpConfiguration;
+    private String httpConfiguration;
     /**
      * Whether to allow java serialization when a request uses
      * context-type=application/x-java-serialized-object. This is by default
@@ -76,10 +71,10 @@ public class ServletComponentConfiguration
     private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -95,11 +90,11 @@ public class ServletComponentConfiguration
         this.servletName = servletName;
     }
 
-    public HttpRegistry getHttpRegistry() {
+    public String getHttpRegistry() {
         return httpRegistry;
     }
 
-    public void setHttpRegistry(HttpRegistry httpRegistry) {
+    public void setHttpRegistry(String httpRegistry) {
         this.httpRegistry = httpRegistry;
     }
 
@@ -111,19 +106,19 @@ public class ServletComponentConfiguration
         this.attachmentMultipartBinding = attachmentMultipartBinding;
     }
 
-    public HttpBinding getHttpBinding() {
+    public String getHttpBinding() {
         return httpBinding;
     }
 
-    public void setHttpBinding(HttpBinding httpBinding) {
+    public void setHttpBinding(String httpBinding) {
         this.httpBinding = httpBinding;
     }
 
-    public HttpConfiguration getHttpConfiguration() {
+    public String getHttpConfiguration() {
         return httpConfiguration;
     }
 
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+    public void setHttpConfiguration(String httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
     }
 
@@ -135,12 +130,11 @@ public class ServletComponentConfiguration
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

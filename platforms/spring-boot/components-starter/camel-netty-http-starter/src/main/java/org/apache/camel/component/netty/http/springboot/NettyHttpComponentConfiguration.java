@@ -18,13 +18,10 @@ package org.apache.camel.component.netty.http.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.component.netty.http.NettyHttpBinding;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.component.netty.http.SecurityConstraint;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Netty HTTP server and client using the Netty 3.x library.
@@ -39,20 +36,19 @@ public class NettyHttpComponentConfiguration
 
     /**
      * To use a custom org.apache.camel.component.netty.http.NettyHttpBinding
-     * for binding to/from Netty and Camel Message API.
+     * for binding to/from Netty and Camel Message API. The option is a
+     * org.apache.camel.component.netty.http.NettyHttpBinding type.
      */
-    @NestedConfigurationProperty
-    private NettyHttpBinding nettyHttpBinding;
+    private String nettyHttpBinding;
     /**
      * To use the NettyConfiguration as configuration when creating endpoints.
      */
     private NettyHttpConfigurationNestedConfiguration configuration;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * headers.
+     * headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Refers to a
      * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for
@@ -75,11 +71,11 @@ public class NettyHttpComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public NettyHttpBinding getNettyHttpBinding() {
+    public String getNettyHttpBinding() {
         return nettyHttpBinding;
     }
 
-    public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
+    public void setNettyHttpBinding(String nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
     }
 
@@ -92,12 +88,11 @@ public class NettyHttpComponentConfiguration
         this.configuration = configuration;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
