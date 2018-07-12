@@ -253,9 +253,9 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
 
         // if we should observe a single attribute then use filter
         if (nf == null && ep.getObservedAttribute() != null) {
-            AttributeChangeNotificationFilter acnf = new AttributeChangeNotificationFilter();
-            acnf.enableAttribute(ep.getObservedAttribute());
-            nf = acnf;
+            LOG.debug("Observing attribute: {}", ep.getObservedAttribute());
+            boolean match = !ep.isNotifyDiffer();
+            nf = new JMXConsumerNotificationFilter(ep.getObservedAttribute(), ep.getStringToCompare(), match);
         }
 
         ObjectName objectName = ep.getJMXObjectName();
