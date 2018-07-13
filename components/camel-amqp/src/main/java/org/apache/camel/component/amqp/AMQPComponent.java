@@ -56,7 +56,9 @@ public class AMQPComponent extends JmsComponent {
         if (connectionDetails.size() == 1) {
             AMQPConnectionDetails details = connectionDetails.iterator().next();
             JmsConnectionFactory connectionFactory = new JmsConnectionFactory(details.username(), details.password(), details.uri());
-            connectionFactory.setTopicPrefix("topic://");
+            if (details.setTopicPrefix()) {
+                connectionFactory.setTopicPrefix("topic://");
+            }
             setConnectionFactory(connectionFactory);
         }
         super.doStart();
