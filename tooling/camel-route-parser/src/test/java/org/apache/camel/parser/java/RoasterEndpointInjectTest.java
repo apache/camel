@@ -47,12 +47,20 @@ public class RoasterEndpointInjectTest {
 
         Assert.assertEquals("timer:foo?period=4999", details.get(0).getEndpointUri());
         Assert.assertEquals("28", details.get(0).getLineNumber());
+        Assert.assertEquals("28", details.get(0).getLineNumberEnd());
 
         Assert.assertEquals("log:a", details.get(1).getEndpointUri());
         Assert.assertEquals("32", details.get(1).getLineNumber());
+        Assert.assertEquals("32", details.get(1).getLineNumberEnd());
 
         Assert.assertEquals("netty4-http:http:someserver:80/hello", details.get(2).getEndpointUri());
         Assert.assertEquals("36", details.get(2).getLineNumber());
+        Assert.assertEquals("36", details.get(2).getLineNumberEnd());
+
+        // spans 2 lines
+        Assert.assertEquals("mock:foo?retainFirst=1", details.get(5).getEndpointUri());
+        Assert.assertEquals("45", details.get(5).getLineNumber());
+        Assert.assertEquals("46", details.get(5).getLineNumberEnd());
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
@@ -64,9 +72,9 @@ public class RoasterEndpointInjectTest {
         for (ParserResult result : list) {
             LOG.info("Producer: " + result.getElement());
         }
-        Assert.assertEquals(2, list.size());
+        Assert.assertEquals(3, list.size());
 
-        Assert.assertEquals(5, details.size());
+        Assert.assertEquals(6, details.size());
         Assert.assertEquals("log:a", details.get(3).getEndpointUri());
     }
 
