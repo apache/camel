@@ -330,7 +330,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         }
 
         Action action = getEndpoint().getDigitalOceanClient().changeDropletKernel(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
-        LOG.trace("Rename Droplet {} : [{}] ", dropletId, action);
+        LOG.trace("Change Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
 

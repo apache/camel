@@ -352,7 +352,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         try {
             if (replyManager != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Stopping JmsReplyManager: {} from processing replies from: {}", replyManager,
+                    log.debug("Stopping RabbitMQReplyManager: {} from processing replies from: {}", replyManager,
                                     getEndpoint().getReplyTo() != null ? getEndpoint().getReplyTo() : "temporary queue");
                 }
                 ServiceHelper.stopService(replyManager);
