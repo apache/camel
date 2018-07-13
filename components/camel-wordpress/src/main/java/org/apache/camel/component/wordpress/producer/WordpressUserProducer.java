@@ -37,7 +37,7 @@ public class WordpressUserProducer extends AbstractWordpressProducer<User> {
     }
 
     protected User processUpdate(Exchange exchange) {
-        LOG.debug("Trying to update the post {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
+        LOG.debug("Trying to update the user {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
         return serviceUsers.update(getConfiguration().getId(), exchange.getIn().getBody(User.class));
     }
 

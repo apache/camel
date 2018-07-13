@@ -177,7 +177,7 @@ public class ConsumerCache extends ServiceSupport {
                 throw new FailedToCreateConsumerException(endpoint, e);
             }
             if (pooled && answer instanceof ServicePoolAware) {
-                LOG.debug("Adding to producer service pool with key: {} for producer: {}", endpoint, answer);
+                LOG.debug("Adding to consumer service pool with key: {} for consumer: {}", endpoint, answer);
                 answer = pool.addAndAcquire(endpoint, answer);
             } else {
                 boolean singleton = false;

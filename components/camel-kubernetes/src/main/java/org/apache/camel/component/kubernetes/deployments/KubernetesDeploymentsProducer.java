@@ -149,11 +149,11 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         DeploymentSpec deSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_SPEC, DeploymentSpec.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Create a specific Deployment require specify a Deployment name");
-            throw new IllegalArgumentException("Create a specific pod require specify a pod name");
+            throw new IllegalArgumentException("Create a specific Deployment require specify a pod name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific pod require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific pod require specify a namespace name");
+            LOG.error("Create a specific Deployment require specify a namespace name");
+            throw new IllegalArgumentException("Create a specific Deployment require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(deSpec)) {
             LOG.error("Create a specific Deployment require specify a Deployment spec bean");
