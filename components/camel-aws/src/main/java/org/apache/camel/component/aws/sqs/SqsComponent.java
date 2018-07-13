@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sqs;
 
 import java.util.Map;
 
+import com.amazonaws.regions.Regions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -60,7 +61,7 @@ public class SqsComponent extends DefaultComponent {
             if (parts.length != 6 || !parts[2].equals("sqs")) {
                 throw new IllegalArgumentException("Queue arn must be in format arn:aws:sqs:region:account:name.");
             }
-            configuration.setRegion(parts[3]);
+            configuration.setRegion(Regions.fromName(parts[3]).toString());
             configuration.setQueueOwnerAWSAccountId(parts[4]);
             configuration.setQueueName(parts[5]);
         } else {
