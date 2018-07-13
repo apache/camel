@@ -73,9 +73,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mock);
         SqsComponent component = new SqsComponent(context);
-        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://arn:aws:sqs:region:account:MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy");
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://arn:aws:sqs:us-east-1:account:MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy");
 
-        assertEquals("region", endpoint.getConfiguration().getRegion());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals("account", endpoint.getConfiguration().getQueueOwnerAWSAccountId());
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
