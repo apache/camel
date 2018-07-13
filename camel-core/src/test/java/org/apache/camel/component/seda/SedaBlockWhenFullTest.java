@@ -46,9 +46,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
             }
         };
     }
-    
-    
-   
+
     public void testSedaOfferTimeoutWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(SEDA_WITH_OFFER_TIMEOUT_URI, SedaEndpoint.class);
@@ -56,8 +54,8 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
 
             sendTwoOverCapacity(SEDA_WITH_OFFER_TIMEOUT_URI, QUEUE_SIZE);
 
-            fail("Fails to insert element into queue, "
-                    + "after timeout of"  + seda.getOfferTimeout() + "milliseconds");
+            fail("Failed to insert element into queue, "
+                    + "after timeout of " + seda.getOfferTimeout() + " milliseconds");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalStateException.class, e.getCause());
         }
