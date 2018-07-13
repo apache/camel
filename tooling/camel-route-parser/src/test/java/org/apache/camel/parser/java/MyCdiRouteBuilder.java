@@ -41,6 +41,8 @@ public class MyCdiRouteBuilder extends RouteBuilder {
         from(inputEndpoint)
             .log("I was here")
             .to(loga)
-            .to(mynetty);
+            .to(mynetty)
+            .to("mock:foo"
+                + "?retainFirst=1");
     }
 }
