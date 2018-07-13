@@ -268,7 +268,9 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
                     reconnect();
                     connected = true;
                 } catch (IOException | TimeoutException e) {
-                    log.warn("Unable to obtain a RabbitMQ channel. Will try again." + " Caused by: " + e.getMessage());
+                    log.warn("Unable to obtain a RabbitMQ channel. Will try again. Caused by: " + e.getMessage() + ". Stacktrace logged at DEBUG logging level.");
+                    // include stacktrace in DEBUG logging
+                    log.debug(e.getMessage(), e);
 
                     Integer networkRecoveryInterval = consumer.getEndpoint().getNetworkRecoveryInterval();
                     final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0
