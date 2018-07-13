@@ -126,7 +126,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 // and could not return a response. We should count down to stop waiting for a response
                 String address = configuration.getAddress();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Channel closed but no message received from address: {}", address);
+                    LOG.debug("Channel is inactive but no message received from address: {}", address);
                 }
                 // don't fail the exchange if we actually specify to disconnect
                 if (!configuration.isDisconnect()) {
