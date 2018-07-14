@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.URISupport;
@@ -43,6 +44,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 
 public class KafkaProducer extends DefaultAsyncProducer {
@@ -176,8 +178,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         final boolean hasMessageKey = messageKey != null;
 
         // extracting headers which need to be propagated
-        HeaderFilterStrategy headerFilterStrategy = endpoint.getConfiguration().getHeaderFilterStrategy();
-        List<Header> propagatedHeaders = getPropagatedHeaders(exchange, headerFilterStrategy);
+        List<Header> propagatedHeaders = getPropagatedHeaders(exchange, endpoint.getConfiguration());
 
         Object msg = exchange.getIn().getBody();
 
@@ -233,10 +234,12 @@ public class KafkaProducer extends DefaultAsyncProducer {
         return Collections.singletonList(record).iterator();
     }
 
-    private List<Header> getPropagatedHeaders(Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+    private List<Header> getPropagatedHeaders(Exchange exchange, KafkaConfiguration getConfiguration) {
+        HeaderFilterStrategy headerFilterStrategy = getConfiguration.getHeaderFilterStrategy();
+        KafkaHeaderSerializer headerSerializer = getConfiguration.getKafkaHeaderSerializer();
         return exchange.getIn().getHeaders().entrySet().stream()
                 .filter(entry -> shouldBeFiltered(entry, exchange, headerFilterStrategy))
-                .map(this::getRecordHeader)
+                .map(entry -> getRecordHeader(entry, headerSerializer))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -245,35 +248,12 @@ public class KafkaProducer extends DefaultAsyncProducer {
         return !headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange);
     }
 
-    private RecordHeader getRecordHeader(Map.Entry<String, Object> entry) {
-        byte[] headerValue = getHeaderValue(entry.getValue());
+    private RecordHeader getRecordHeader(Map.Entry<String, Object> entry, KafkaHeaderSerializer headerSerializer) {
+        byte[] headerValue = headerSerializer.serialize(entry.getKey(), entry.getValue());
         if (headerValue == null) {
             return null;
         }
         return new RecordHeader(entry.getKey(), headerValue);
-    }
-
-    private byte[] getHeaderValue(Object value) {
-        if (value instanceof String) {
-            return ((String) value).getBytes();
-        } else if (value instanceof Long) {
-            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-            buffer.putLong((Long) value);
-            return buffer.array();
-        } else if (value instanceof Integer) {
-            ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-            buffer.putInt((Integer) value);
-            return buffer.array();
-        } else if (value instanceof Double) {
-            ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
-            buffer.putDouble((Double) value);
-            return buffer.array();
-        } else if (value instanceof byte[]) {
-            return (byte[]) value;
-        }
-        log.debug("Cannot propagate header value of type[{}], skipping... "
-                + "Supported types: String, Integer, Long, Double, byte[].", value != null ? value.getClass() : "null");
-        return null;
     }
 
     @Override

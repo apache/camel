@@ -19,6 +19,8 @@ package org.apache.camel.component.kafka.springboot;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 import org.apache.camel.component.kafka.KafkaManualCommitFactory;
+import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -757,6 +759,22 @@ public class KafkaComponentConfiguration
          * Camel message.
          */
         private HeaderFilterStrategy headerFilterStrategy;
+        /**
+         * Sets custom KafkaHeaderDeserializer for deserialization kafka headers
+         * values to camel headers values.
+         * 
+         * @param kafkaHeaderDeserializer
+         *            custom kafka header deserializer to be used
+         */
+        private KafkaHeaderDeserializer kafkaHeaderDeserializer;
+        /**
+         * Sets custom KafkaHeaderDeserializer for serialization camel headers
+         * values to kafka headers values.
+         * 
+         * @param kafkaHeaderSerializer
+         *            custom kafka header serializer to be used
+         */
+        private KafkaHeaderSerializer kafkaHeaderSerializer;
 
         public Boolean getTopicIsPattern() {
             return topicIsPattern;
@@ -1466,6 +1484,24 @@ public class KafkaComponentConfiguration
         public void setHeaderFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             this.headerFilterStrategy = headerFilterStrategy;
+        }
+
+        public KafkaHeaderDeserializer getKafkaHeaderDeserializer() {
+            return kafkaHeaderDeserializer;
+        }
+
+        public void setKafkaHeaderDeserializer(
+                KafkaHeaderDeserializer kafkaHeaderDeserializer) {
+            this.kafkaHeaderDeserializer = kafkaHeaderDeserializer;
+        }
+
+        public KafkaHeaderSerializer getKafkaHeaderSerializer() {
+            return kafkaHeaderSerializer;
+        }
+
+        public void setKafkaHeaderSerializer(
+                KafkaHeaderSerializer kafkaHeaderSerializer) {
+            this.kafkaHeaderSerializer = kafkaHeaderSerializer;
         }
     }
 }

@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
+import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -66,6 +70,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
+    @UriParam(label = "consumer", description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
+    private KafkaHeaderDeserializer kafkaHeaderDeserializer = new DefaultKafkaHeaderDeserializer();
 
     //interceptor.classes
     @UriParam(label = "common,monitoring")
@@ -221,6 +227,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     //reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "false")
     private boolean enableIdempotence;
+    @UriParam(label = "producer", description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
+    private KafkaHeaderSerializer kafkaHeaderSerializer = new DefaultKafkaHeaderSerializer();
+
     //reconnect.backoff.max.ms
     @UriParam(label = "common", defaultValue = "1000")
     private Integer reconnectBackoffMaxMs = 1000;
@@ -1612,6 +1621,32 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public KafkaHeaderDeserializer getKafkaHeaderDeserializer() {
+        return kafkaHeaderDeserializer;
+    }
+
+    /**
+     * Sets custom KafkaHeaderDeserializer for deserialization kafka headers values to camel headers values.
+     *
+     * @param kafkaHeaderDeserializer custom kafka header deserializer to be used
+     */
+    public void setKafkaHeaderDeserializer(final KafkaHeaderDeserializer kafkaHeaderDeserializer) {
+        this.kafkaHeaderDeserializer = kafkaHeaderDeserializer;
+    }
+
+    public KafkaHeaderSerializer getKafkaHeaderSerializer() {
+        return kafkaHeaderSerializer;
+    }
+
+    /**
+     * Sets custom KafkaHeaderDeserializer for serialization camel headers values to kafka headers values.
+     *
+     * @param kafkaHeaderSerializer custom kafka header serializer to be used
+     */
+    public void setKafkaHeaderSerializer(final KafkaHeaderSerializer kafkaHeaderSerializer) {
+        this.kafkaHeaderSerializer = kafkaHeaderSerializer;
     }
 
 }

@@ -36,6 +36,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.JndiRegistry;
@@ -102,6 +104,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myStrategy", new MyHeaderFilterStrategy());
+        jndi.bind("myHeaderSerializer", new MyKafkaHeadersSerializer());
         return jndi;
     }
 
@@ -317,13 +320,19 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         String propagatedBytesHeaderKey = "PROPAGATED_BYTES_HEADER";
         byte[] propagatedBytesHeaderValue = new byte[]{121, 34, 34, 54, 5, 3, 54, -34};
 
+        String propagatedBooleanHeaderKey = "PROPAGATED_BOOLEAN_HEADER";
+        Boolean propagatedBooleanHeaderValue = Boolean.TRUE;
+
         Map<String, Object> camelHeaders = new HashMap<>();
         camelHeaders.put(propagatedStringHeaderKey, propagatedStringHeaderValue);
         camelHeaders.put(propagatedIntegerHeaderKey, propagatedIntegerHeaderValue);
         camelHeaders.put(propagatedLongHeaderKey, propagatedLongHeaderValue);
         camelHeaders.put(propagatedDoubleHeaderKey, propagatedDoubleHeaderValue);
         camelHeaders.put(propagatedBytesHeaderKey, propagatedBytesHeaderValue);
+        camelHeaders.put(propagatedBooleanHeaderKey, propagatedBooleanHeaderValue);
+
         camelHeaders.put("CustomObjectHeader", new Object());
+        camelHeaders.put("CustomNullObjectHeader", null);
         camelHeaders.put("CamelFilteredHeader", "CamelFilteredHeader value");
 
         CountDownLatch messagesLatch = new CountDownLatch(1);
@@ -337,8 +346,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         ConsumerRecord<String, String> record = records.get(0);
         Headers headers = record.headers();
         assertNotNull("Kafka Headers should not be null.", headers);
-        // we have 5 headers and 1 header with breadcrumbId
-        assertEquals("Six propagated headers are expected.", 6, headers.toArray().length);
+        // we have 6 headers and 1 header with breadcrumbId
+        assertEquals("Seven propagated header is expected.", 7, headers.toArray().length);
         assertEquals("Propagated string value received", propagatedStringHeaderValue,
                 new String(getHeaderValue(propagatedStringHeaderKey, headers)));
         assertEquals("Propagated integer value received", propagatedIntegerHeaderValue,
@@ -348,12 +357,22 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         assertEquals("Propagated double value received", propagatedDoubleHeaderValue,
                 new Double(ByteBuffer.wrap(getHeaderValue(propagatedDoubleHeaderKey, headers)).getDouble()));
         assertArrayEquals("Propagated byte array value received", propagatedBytesHeaderValue, getHeaderValue(propagatedBytesHeaderKey, headers));
+        assertEquals("Propagated boolean value received", propagatedBooleanHeaderValue,
+                Boolean.valueOf(new String(getHeaderValue(propagatedBooleanHeaderKey, headers))));
     }
 
     @Test
     public void headerFilterStrategyCouldBeOverridden() {
-        KafkaEndpoint kafkaEndpoint = context.getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?headerFilterStrategy=#myStrategy", KafkaEndpoint.class);
+        KafkaEndpoint kafkaEndpoint = context.getEndpoint(
+                "kafka:TOPIC_PROPAGATED_HEADERS?headerFilterStrategy=#myStrategy", KafkaEndpoint.class);
         assertIsInstanceOf(MyHeaderFilterStrategy.class, kafkaEndpoint.getConfiguration().getHeaderFilterStrategy());
+    }
+
+    @Test
+    public void headerSerializerCouldBeOverridden() {
+        KafkaEndpoint kafkaEndpoint = context.getEndpoint(
+                "kafka:TOPIC_PROPAGATED_HEADERS?kafkaHeaderSerializer=#myHeaderSerializer", KafkaEndpoint.class);
+        assertIsInstanceOf(MyKafkaHeadersSerializer.class, kafkaEndpoint.getConfiguration().getKafkaHeaderSerializer());
     }
 
     private byte[] getHeaderValue(String headerKey, Headers headers) {
@@ -436,6 +455,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     private static class MyHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+    }
+
+    private static class MyKafkaHeadersSerializer extends DefaultKafkaHeaderSerializer {
     }
 
 }
