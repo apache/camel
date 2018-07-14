@@ -31,6 +31,7 @@ import java.util.stream.StreamSupport;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
@@ -283,7 +284,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                 }
                                 Exchange exchange = endpoint.createKafkaExchange(record);
 
-                                propagateHeaders(record, exchange, endpoint.getConfiguration().getHeaderFilterStrategy());
+                                propagateHeaders(record, exchange, endpoint.getConfiguration());
 
                                 // if not auto commit then we have additional information on the exchange
                                 if (!isAutoCommitEnabled()) {
@@ -428,10 +429,12 @@ public class KafkaConsumer extends DefaultConsumer {
         }
     }
 
-    private void propagateHeaders(ConsumerRecord<Object, Object> record, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+    private void propagateHeaders(ConsumerRecord<Object, Object> record, Exchange exchange, KafkaConfiguration kafkaConfiguration) {
+        HeaderFilterStrategy headerFilterStrategy = kafkaConfiguration.getHeaderFilterStrategy();
+        KafkaHeaderDeserializer headerDeserializer = kafkaConfiguration.getKafkaHeaderDeserializer();
         StreamSupport.stream(record.headers().spliterator(), false)
                 .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
-                .forEach(header -> exchange.getIn().setHeader(header.key(), header.value()));
+                .forEach(header -> exchange.getIn().setHeader(header.key(), headerDeserializer.deserialize(header.key(), header.value())));
     }
 
     private boolean shouldBeFiltered(Header header, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
