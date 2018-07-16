@@ -266,11 +266,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         try {
             Object answer;
 
-            XMLStreamReader xmlReader;
+            final XMLStreamReader xmlReader;
             if (needFiltering(exchange)) {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, createNonXmlFilterReader(exchange, stream));
+                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, stream));
             } else {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
+                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, stream);
             }
             String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
             if (partialClass != null || partClassFromHeader != null) {
