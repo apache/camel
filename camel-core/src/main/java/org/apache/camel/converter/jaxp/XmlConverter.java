@@ -132,8 +132,8 @@ public class XmlConverter {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperties(outputProperties);
-        if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY) 
-        		&& (source instanceof StAXSource)) {
+        if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY)
+            && (source instanceof StAXSource)) {
             //external xalan can't handle StAXSource, so convert StAXSource to SAXSource.
             source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
         }
