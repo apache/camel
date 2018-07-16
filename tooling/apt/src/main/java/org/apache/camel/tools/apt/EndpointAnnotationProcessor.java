@@ -70,7 +70,6 @@ import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
  * Processes all Camel {@link UriEndpoint}s and generate json schema documentation for the endpoint/component.
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EndpointAnnotationProcessor extends AbstractProcessor {
 
     // CHECKSTYLE:OFF
@@ -92,6 +91,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @UriEndpoint", e);
         }
         return true;
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latest();
     }
 
     private void processEndpointClass(final RoundEnvironment roundEnv, final TypeElement classElement) {

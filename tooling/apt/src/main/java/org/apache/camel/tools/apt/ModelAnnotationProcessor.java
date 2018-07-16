@@ -33,11 +33,10 @@ import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
  * APT compiler plugin to generate JSon Schema for all EIP models and camel-spring's <camelContext> types.
  */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ModelAnnotationProcessor extends AbstractProcessor {
 
-    private CoreEipAnnotationProcessor coreProcessor = new CoreEipAnnotationProcessor();
-    private SpringAnnotationProcessor springProcessor = new SpringAnnotationProcessor();
+    private CoreEipAnnotationProcessorHelper coreProcessor = new CoreEipAnnotationProcessorHelper();
+    private SpringAnnotationProcessorHelper springProcessor = new SpringAnnotationProcessorHelper();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -68,4 +67,8 @@ public class ModelAnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latest();
+    }
 }
