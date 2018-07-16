@@ -171,6 +171,11 @@ public final class RouteBuilderParser {
                     if (endLine > -1) {
                         detail.setLineNumberEnd("" + endLine);
                     }
+                    detail.setAbsolutePosition(pos);
+                    int linePos = findLinePosition(clazz.toUnformattedString(), pos);
+                    if (linePos > -1) {
+                        detail.setLinePosition(linePos);
+                    }
                 }
                 // we do not know if this field is used as consumer or producer only, but we try
                 // to find out by scanning the route in the configure method below
@@ -226,6 +231,11 @@ public final class RouteBuilderParser {
                         if (lineEnd > -1) {
                             detail.setLineNumberEnd("" + lineEnd);
                         }
+                        detail.setAbsolutePosition(result.getPosition());
+                        int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
+                        if (linePos > -1) {
+                            detail.setLinePosition(linePos);
+                        }
                         detail.setEndpointComponentName(endpointComponentName(result.getElement()));
                         detail.setConsumerOnly(true);
                         detail.setProducerOnly(false);
@@ -273,6 +283,11 @@ public final class RouteBuilderParser {
                     if (endLine > -1) {
                         detail.setLineNumberEnd("" + endLine);
                     }
+                    detail.setAbsolutePosition(result.getPosition());
+                    int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
+                    if (linePos > -1) {
+                        detail.setLinePosition(linePos);
+                    }
                     detail.setEndpointComponentName(endpointComponentName(result.getElement()));
                     detail.setConsumerOnly(false);
                     detail.setProducerOnly(true);
@@ -314,6 +329,11 @@ public final class RouteBuilderParser {
                     int endLine = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
                     if (endLine > -1) {
                         detail.setLineNumberEnd("" + endLine);
+                    }
+                    detail.setAbsolutePosition(result.getPosition());
+                    int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
+                    if (linePos > -1) {
+                        detail.setLinePosition(linePos);
                     }
                     detail.setSimple(result.getElement());
 
@@ -391,6 +411,33 @@ public final class RouteBuilderParser {
                     current += line.length() + 1; // add 1 for line feed
                     if (current >= position) {
                         return lines;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+            return -1;
+        }
+
+        return lines;
+    }
+
+    private static int findLinePosition(String content, int position) {
+        int lines = 0;
+
+        try {
+            int current = 0;
+            try (BufferedReader br = new BufferedReader(new StringReader(content))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    lines++;
+                    current += line.length() + 1; // add 1 for line feed
+                    if (current >= position) {
+                        int prev = current - (line.length() + 1);
+                        // find relative position now
+                        int rel = position - prev;
+                        // add +1
+                        return rel + 1;
                     }
                 }
             }
