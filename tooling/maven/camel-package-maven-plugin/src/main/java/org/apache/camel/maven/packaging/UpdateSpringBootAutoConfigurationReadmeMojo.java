@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -99,16 +100,29 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
         // only if there is components we should update the documentation files
         if (jsonFile.exists()) {
-            getLog().info("Processing file: " + jsonFile);
+            getLog().debug("Processing Spring Boot auto-configuration file: " + jsonFile);
             Object js = Jsoner.deserialize(new FileReader(jsonFile));
             if (js != null) {
                 String name = starter.getName();
+
+                if (!isValidStarter(name)) {
+                    return;
+                }
+
                 // skip camel-  and -starter in the end
                 String componentName = name.substring(6, name.length() - 8);
                 getLog().debug("Camel component: " + componentName);
                 File docFolder = new File(componentsDir, "camel-" + componentName + "/src/main/docs/");
                 // update all adoc files (as it may be component, language, data-format or just other kind)
-                File[] docFiles = docFolder.listFiles((f) -> f.getName().startsWith(componentName) && f.getName().endsWith(".adoc"));
+                File[] docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+
+                // maybe its one of those that has a sub-folder
+                if (docFiles == null || docFiles.length == 0) {
+                    docFolder = new File(componentsDir, "camel-" + componentName + "/camel-" + componentName + "-component/src/main/docs/");
+                    // update all adoc files (as it may be component, language, data-format or just other kind)
+                    docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+                }
+
                 if (docFiles != null && docFiles.length > 0) {
                     boolean onlyOther = docFiles.length == 1 && docFiles[0].getName().equals(componentName + ".adoc");
                     List models = parseSpringBootAutoConfigreModels(jsonFile);
@@ -124,15 +138,68 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                         } else {
                             getLog().debug("No changes to doc file: " + docFile);
                         }
-                        if (isFailFast()) {
-                            throw new MojoExecutionException("Failed build due failFast=true");
-                        }
                     }
                 } else {
                     getLog().warn("No component docs found in folder: " + docFolder);
+                    if (isFailFast()) {
+                        throw new MojoExecutionException("Failed build due failFast=true");
+                    }
                 }
             }
         }
+    }
+
+    private static final class ComponentDocFilter implements FileFilter {
+
+        private final String componentName;
+
+        public ComponentDocFilter(String componentName) {
+            this.componentName = asComponentName(componentName);
+        }
+
+        @Override
+        public boolean accept(File pathname) {
+            String name = pathname.getName();
+
+            // skip empty placeholder files
+            if ("aws.adoc".equals(name) || "azure.adoc".equals(name) || "hazelcast.adoc".equals(name)
+                || "ignite.adoc".equals(name) || "kubernetes.adoc".equals(name)) {
+                return false;
+            }
+
+            return name.startsWith(componentName) && name.endsWith(".adoc");
+        }
+    }
+
+    private static String asComponentName(String componentName) {
+        if ("fastjson".equals(componentName)) {
+            return "json-fastjson";
+        } else if ("gson".equals(componentName)) {
+            return "json-gson";
+        } else if ("jackson".equals(componentName)) {
+            return "json-jackson";
+        } else if ("johnzon".equals(componentName)) {
+            return "json-johnzon";
+        } else if ("cassandraql".equals(componentName)) {
+            return "cql";
+        } else if ("josql".equals(componentName)) {
+            return "sql";
+        } else if ("jetty9".equals(componentName)) {
+            return "jetty";
+        } else if ("juel".equals(componentName)) {
+            return "el";
+        } else if ("jsch".equals(componentName)) {
+            return "scp";
+        }
+        return componentName;
+    }
+
+    private static boolean isValidStarter(String name) {
+        // skip these
+        if ("camel-core-starter".equals(name) || "camel-spring-boot-starter".equals(name)) {
+            return false;
+        }
+        return true;
     }
 
     private List parseSpringBootAutoConfigreModels(File file) throws IOException, DeserializationException {

@@ -21,6 +21,19 @@ for this component:
 </dependency>
 ----
 
+=== URI format
+
+[source]
+----
+as2://apiName/methodName
+----
+
+apiName can be one of:
+
+* client
+* server
+
+
 === AS2 Options
 
 
@@ -70,18 +83,76 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
-=== URI format
 
-[source]
-----
-as2://apiName/methodName
-----
+The component supports 24 options, which are listed below.
 
-apiName can be one of:
 
-* client
-* server
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.as2.configuration.api-name* | What kind of operation to perform
+ 
+ @param apiName
+            - the API Name to set |  | AS2ApiName
+| *camel.component.as2.configuration.as2-from* |  |  | String
+| *camel.component.as2.configuration.as2-message-structure* |  |  | AS2MessageStructure
+| *camel.component.as2.configuration.as2-to* |  |  | String
+| *camel.component.as2.configuration.as2-version* | The version of the AS2 protocol.
+ 
+ @param as2Version
+            - the version of the AS2 protocol. |  | String
+| *camel.component.as2.configuration.client-fqdn* | The Client Fully Qualified Domain Name (FQDN).
+ <p>
+ Used in message ids sent by endpoint.
+ 
+ @param clientFqdn
+            - the FQDN of client. |  | String
+| *camel.component.as2.configuration.disposition-notification-to* |  |  | String
+| *camel.component.as2.configuration.edi-message-transfer-encoding* |  |  | String
+| *camel.component.as2.configuration.from* |  |  | String
+| *camel.component.as2.configuration.method-name* | What sub operation to use for the selected operation
+ 
+ @param methodName
+            - the methodName to set |  | String
+| *camel.component.as2.configuration.request-uri* |  |  | String
+| *camel.component.as2.configuration.server* | The value included in the <code>Server</code> message header
+ identifying the AS2 Server.
+ 
+ @param server
+            - AS2 server identification string. |  | String
+| *camel.component.as2.configuration.server-fqdn* | The Server Fully Qualified Domain Name (FQDN).
+ <p>
+ Used in message ids sent by endpoint.
+ 
+ @param clientFqdn
+            - the FQDN of server. |  | String
+| *camel.component.as2.configuration.server-port-number* |  |  | Integer
+| *camel.component.as2.configuration.signed-receipt-mic-algorithms* |  |  | String[]
+| *camel.component.as2.configuration.signing-algorithm-name* |  |  | String
+| *camel.component.as2.configuration.signing-certificate-chain* |  |  | Certificate[]
+| *camel.component.as2.configuration.signing-private-key* |  |  | PrivateKey
+| *camel.component.as2.configuration.subject* |  |  | String
+| *camel.component.as2.configuration.target-hostname* | The host name (IP or DNS name) of target host.
+ 
+ @param targetHostname
+            - the target host name (IP or DNS name). |  | String
+| *camel.component.as2.configuration.target-port-number* |  |  | Integer
+| *camel.component.as2.configuration.user-agent* | The value included in the <code>User-Agent</code> message header
+ identifying the AS2 user agent.
+ 
+ @param userAgent
+            - AS2 user agent identification string. |  | String
+| *camel.component.as2.enabled* |  |  | Boolean
+| *camel.component.as2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 === Client Endpoints:
 
