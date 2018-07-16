@@ -16,11 +16,9 @@
  */
 package org.apache.camel.example.springboot.geocoder;
 
-
+import com.google.maps.model.GeocodingResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
-
-import com.google.maps.model.GeocodingResult;
 
 import static org.apache.camel.model.rest.RestParamType.query;
 
