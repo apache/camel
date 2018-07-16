@@ -25,6 +25,32 @@ The Zip File dataformat supports 4 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.zipfile.allow-empty-directory* | If the zip file has more then one entry, setting this option to true,
+ allows to get the iterator even if the directory is empty | false | boolean
+| *camel.dataformat.zipfile.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | boolean
+| *camel.dataformat.zipfile.enabled* | Enable zipfile dataformat | true | boolean
+| *camel.dataformat.zipfile.preserve-path-elements* | If the file name contains path elements, setting this option to true,
+ allows the path to be maintained in the zip file. | false | boolean
+| *camel.dataformat.zipfile.using-iterator* | If the zip file has more then one entry, the setting this option to true,
+ allows to work with the splitter EIP, to split the data using an iterator
+ in a streaming mode. | false | boolean
+|===
+// spring-boot-auto-configure options: END
+ND
 
 === Marshal
 

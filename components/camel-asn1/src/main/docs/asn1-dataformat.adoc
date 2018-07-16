@@ -20,6 +20,29 @@ The ASN.1 File dataformat supports 3 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.asn1.clazz-name* | Name of class to use when unmarshalling |  | String
+| *camel.dataformat.asn1.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | boolean
+| *camel.dataformat.asn1.enabled* | null |  | boolean
+| *camel.dataformat.asn1.using-iterator* | If the asn1 file has more then one entry, the setting this option to
+ true, allows to work with the splitter EIP, to split the data using an
+ iterator in a streaming mode. | false | boolean
+|===
+// spring-boot-auto-configure options: END
+ND
 
 ### Unmarshal
 

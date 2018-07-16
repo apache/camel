@@ -44,6 +44,29 @@ The Barcode dataformat supports 5 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.barcode.barcode-format* | Barcode format such as QR-Code |  | String
+| *camel.dataformat.barcode.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | boolean
+| *camel.dataformat.barcode.enabled* | Enable barcode dataformat | true | boolean
+| *camel.dataformat.barcode.height* | Height of the barcode |  | int
+| *camel.dataformat.barcode.image-type* | Image type of the barcode such as png |  | String
+| *camel.dataformat.barcode.width* | Width of the barcode |  | int
+|===
+// spring-boot-auto-configure options: END
+ND
 
 ### Using the Java DSL
 

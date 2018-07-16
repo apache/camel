@@ -26,6 +26,26 @@ The LZF Deflate Compression dataformat supports 2 options, which are listed belo
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.lzf.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | boolean
+| *camel.dataformat.lzf.enabled* | Enable lzf dataformat | true | boolean
+| *camel.dataformat.lzf.using-parallel-compression* | Enable encoding (compress) using multiple processing cores. | false | boolean
+|===
+// spring-boot-auto-configure options: END
+ND
 
 ### Marshal
 

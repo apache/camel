@@ -36,6 +36,30 @@ The Protobuf dataformat supports 3 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.protobuf.content-type-format* | Defines a content type format in which protobuf message will be
+ serialized/deserialized from(to) the Java been. The format can either be
+ native or json for either native protobuf or json fields representation.
+ The default value is native. | native | String
+| *camel.dataformat.protobuf.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | boolean
+| *camel.dataformat.protobuf.enabled* | Enable protobuf dataformat | true | boolean
+| *camel.dataformat.protobuf.instance-class* | Name of class to use when unarmshalling |  | String
+|===
+// spring-boot-auto-configure options: END
+ND
 
 ### Content type format (starting from *Camel 2.19*)
 
