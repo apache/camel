@@ -79,12 +79,9 @@ public class SpringBootAutoConfigureOptionModel {
             text = text.substring(pos + 1);
         }
 
-        // favour using simple types for known java.lang wrapper types
-        if (javaType.startsWith("java.lang.") && !"String".equals(text)) {
-            text = text.toLowerCase(Locale.US);
-            if ("integer".equals(text)) {
-                text = "int";
-            }
+        // if its some kind of custom java object then lets wrap it as its long
+        if (!javaType.startsWith("java.")) {
+            text = wrapCamelCaseWords(text, watermark, " ");
         }
 
         return text;

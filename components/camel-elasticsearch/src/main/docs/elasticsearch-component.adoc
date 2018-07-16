@@ -100,10 +100,10 @@ The component supports 3 options, which are listed below.
 | *camel.component.elasticsearch.client* | To use an existing configured Elasticsearch client, instead of creating a
  client per endpoint. The option is a org.elasticsearch.client.Client
  type. |  | String
-| *camel.component.elasticsearch.enabled* | Enable elasticsearch component | true | boolean
+| *camel.component.elasticsearch.enabled* | Enable elasticsearch component | true | Boolean
 | *camel.component.elasticsearch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

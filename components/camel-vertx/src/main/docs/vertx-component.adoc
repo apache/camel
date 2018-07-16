@@ -100,14 +100,14 @@ The component supports 8 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.vertx.enabled* | Enable vertx component | true | boolean
+| *camel.component.vertx.enabled* | Enable vertx component | true | Boolean
 | *camel.component.vertx.host* | Hostname for creating an embedded clustered EventBus |  | String
-| *camel.component.vertx.port* | Port for creating an embedded clustered EventBus |  | int
+| *camel.component.vertx.port* | Port for creating an embedded clustered EventBus |  | Integer
 | *camel.component.vertx.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.vertx.timeout* | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The
- default value is 60. | 60 | int
+ default value is 60. | 60 | Integer
 | *camel.component.vertx.vertx* | To use the given vertx EventBus instead of creating a new embedded
  EventBus. The option is a io.vertx.core.Vertx type. |  | String
 | *camel.component.vertx.vertx-factory* | To use a custom VertxFactory implementation. The option is a

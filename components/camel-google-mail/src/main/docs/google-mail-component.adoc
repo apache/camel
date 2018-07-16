@@ -134,8 +134,8 @@ The component supports 24 options, which are listed below.
 | *camel.component.google-mail-stream.configuration.client-secret* | Client secret of the mail application |  | String
 | *camel.component.google-mail-stream.configuration.index* | Specifies an index for the endpoint |  | String
 | *camel.component.google-mail-stream.configuration.labels* | Comma separated list of labels to take into account |  | String
-| *camel.component.google-mail-stream.configuration.mark-as-read* | Mark the message as read once it has been consumed | false | boolean
-| *camel.component.google-mail-stream.configuration.max-results* | Max results to be returned | 10 | long
+| *camel.component.google-mail-stream.configuration.mark-as-read* | Mark the message as read once it has been consumed | false | Boolean
+| *camel.component.google-mail-stream.configuration.max-results* | Max results to be returned | 10 | Long
 | *camel.component.google-mail-stream.configuration.query* | The query to execute on gmail box | is:unread | String
 | *camel.component.google-mail-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can
  obtain a new accessToken whenever the current one expires - a
@@ -143,10 +143,10 @@ The component supports 24 options, which are listed below.
 | *camel.component.google-mail-stream.configuration.scopes* | Specifies the level of permissions you want a mail application to
  have to a user account. See
  https://developers.google.com/gmail/api/auth/scopes for more info. |  | List
-| *camel.component.google-mail-stream.enabled* | null |  | boolean
+| *camel.component.google-mail-stream.enabled* |  |  | Boolean
 | *camel.component.google-mail-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.google-mail.client-factory* | To use the GoogleCalendarClientFactory as factory for creating the
  client. Will by default use BatchGoogleMailClientFactory. The option is a
  org.apache.camel.component.google.mail.GoogleMailClientFactory type. |  | String
@@ -161,10 +161,10 @@ The component supports 24 options, which are listed below.
 | *camel.component.google-mail.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can
  obtain a new accessToken whenever the current one expires - a
  necessity if the application is long-lived. |  | String
-| *camel.component.google-mail.enabled* | Enable google-mail component | true | boolean
+| *camel.component.google-mail.enabled* | Enable google-mail component | true | Boolean
 | *camel.component.google-mail.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

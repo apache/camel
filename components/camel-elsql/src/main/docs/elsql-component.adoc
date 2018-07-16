@@ -157,10 +157,10 @@ The component supports 6 options, which are listed below.
 | *camel.component.elsql.el-sql-config* | To use a specific configured ElSqlConfig. It may be better to use the
  databaseVendor option instead. The option is a
  com.opengamma.elsql.ElSqlConfig type. |  | String
-| *camel.component.elsql.enabled* | Enable elsql component | true | boolean
+| *camel.component.elsql.enabled* | Enable elsql component | true | Boolean
 | *camel.component.elsql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.elsql.resource-uri* | The resource file which contains the elsql SQL statements to use. You can
  specify multiple resources separated by comma. The resources are loaded
  on the classpath by default, you can prefix with file: to load from file

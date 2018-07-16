@@ -140,9 +140,9 @@ The component supports 7 options, which are listed below.
  the key. The option is a
  java.util.Map<java.lang.String,org.apache.camel.component
  .quickfixj.QuickfixjConfiguration> type. |  | String
-| *camel.component.quickfix.enabled* | Enable quickfix component | true | boolean
+| *camel.component.quickfix.enabled* | Enable quickfix component | true | Boolean
 | *camel.component.quickfix.lazy-create-engines* | If set to true, the engines will be created and started when needed (when
- first message is send) | false | boolean
+ first message is send) | false | Boolean
 | *camel.component.quickfix.log-factory* | To use the given LogFactory. The option is a quickfix.LogFactory type. |  | String
 | *camel.component.quickfix.message-factory* | To use the given MessageFactory. The option is a quickfix.MessageFactory
  type. |  | String
@@ -150,7 +150,7 @@ The component supports 7 options, which are listed below.
  quickfix.MessageStoreFactory type. |  | String
 | *camel.component.quickfix.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

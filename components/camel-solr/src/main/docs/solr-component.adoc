@@ -91,10 +91,10 @@ The component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.solr.enabled* | Enable solr component | true | boolean
+| *camel.component.solr.enabled* | Enable solr component | true | Boolean
 | *camel.component.solr.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

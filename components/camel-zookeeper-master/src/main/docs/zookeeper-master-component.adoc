@@ -99,11 +99,11 @@ The component supports 8 options, which are listed below.
 | *camel.component.zookeeper-master.curator* | To use a custom configured CuratorFramework as connection to zookeeper
  ensemble. The option is a org.apache.curator.framework.CuratorFramework
  type. |  | String
-| *camel.component.zookeeper-master.enabled* | Enable zookeeper-master component | true | boolean
-| *camel.component.zookeeper-master.maximum-connection-timeout* | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
+| *camel.component.zookeeper-master.enabled* | Enable zookeeper-master component | true | Boolean
+| *camel.component.zookeeper-master.maximum-connection-timeout* | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | Integer
 | *camel.component.zookeeper-master.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.zookeeper-master.zk-root* | The root path to use in zookeeper where information is stored which nodes
  are master/slave etc. Will by default use:
  /camel/zookeepermaster/clusters/master | /camel/zookeepermaster/clusters/master | String

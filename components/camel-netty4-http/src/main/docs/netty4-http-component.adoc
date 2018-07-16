@@ -223,18 +223,18 @@ The component supports 32 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.netty4-http.configuration.allow-default-codec* | null |  | boolean
+| *camel.component.netty4-http.configuration.allow-default-codec* |  |  | Boolean
 | *camel.component.netty4-http.configuration.bridge-endpoint* | If the option is true, the producer will ignore the Exchange.HTTP_URI
  header, and use the endpoint's URI for request. You may also set the
  throwExceptionOnFailure to be false to let the producer send all the
  fault response back. The consumer working in the bridge mode will
  skip the gzip compression and WWW URL form encoding (by adding the
  Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
- headers to the consumed exchange). | false | boolean
+ headers to the consumed exchange). | false | Boolean
 | *camel.component.netty4-http.configuration.chunked-max-content-length* | Value in bytes the max content length per chunked frame received on
- the Netty HTTP server. | 1048576 | int
+ the Netty HTTP server. | 1048576 | Integer
 | *camel.component.netty4-http.configuration.compression* | Allow using gzip/deflate for compression on the Netty HTTP server if
- the client supports it from the HTTP headers. | false | boolean
+ the client supports it from the HTTP headers. | false | Boolean
 | *camel.component.netty4-http.configuration.disable-stream-cache* | Determines whether or not the raw input stream from Netty
  HttpRequest#getContent() or HttpResponset#getContent() is cached or
  not (Camel will read the stream into a in light-weight memory based
@@ -250,7 +250,7 @@ The component supports 32 options, which are listed below.
  processing, which means that if the asynchronous routing engine is in
  use then any asynchronous thread that may continue routing the
  {@link org.apache.camel.Exchange} may not be able to read the Netty
- stream, because Netty has closed it. | false | boolean
+ stream, because Netty has closed it. | false | Boolean
 | *camel.component.netty4-http.configuration.host* | The local hostname such as localhost, or 0.0.0.0 when being a
  consumer. The remote HTTP server hostname when using producer. |  | String
 | *camel.component.netty4-http.configuration.map-headers* | If this option is enabled, then during binding from Netty to Camel
@@ -259,12 +259,12 @@ The component supports 32 options, which are listed below.
  disable this. The headers can still be accessed from the
  org.apache.camel.component.netty.http.NettyHttpMessage message with
  the method getHttpRequest() that returns the Netty HTTP request
- io.netty.handler.codec.http.HttpRequest instance. | true | boolean
+ io.netty.handler.codec.http.HttpRequest instance. | true | Boolean
 | *camel.component.netty4-http.configuration.match-on-uri-prefix* | Whether or not Camel should try to find a target consumer by matching
- the URI prefix if no exact match is found. | false | boolean
+ the URI prefix if no exact match is found. | false | Boolean
 | *camel.component.netty4-http.configuration.max-header-size* | The maximum length of all headers. If the sum of the length of each
  header exceeds this value, a
- {@link io.netty.handler.codec.TooLongFrameException} will be raised. | 8192 | int
+ {@link io.netty.handler.codec.TooLongFrameException} will be raised. | 8192 | Integer
 | *camel.component.netty4-http.configuration.ok-status-code-range* | The status codes which are considered a success response. The values
  are inclusive. Multiple ranges can be defined, separated by comma,
  e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number
@@ -272,14 +272,14 @@ The component supports 32 options, which are listed below.
  <p/>
  The default range is <tt>200-299</tt> | 200-299 | String
 | *camel.component.netty4-http.configuration.path* | Resource path |  | String
-| *camel.component.netty4-http.configuration.port* | The port number. Is default 80 for http and 443 for https. |  | int
+| *camel.component.netty4-http.configuration.port* | The port number. Is default 80 for http and 443 for https. |  | Integer
 | *camel.component.netty4-http.configuration.protocol* | The protocol to use which is either http or https |  | String
 | *camel.component.netty4-http.configuration.send503when-suspended* | Whether to send back HTTP status code 503 when the consumer has been
  suspended. If the option is false then the Netty Acceptor is unbound
- when the consumer is suspended, so clients cannot connect anymore. | true | boolean
+ when the consumer is suspended, so clients cannot connect anymore. | true | Boolean
 | *camel.component.netty4-http.configuration.throw-exception-on-failure* | Option to disable throwing the HttpOperationFailedException in case
  of failed responses from the remote server. This allows you to get
- all responses regardless of the HTTP status code. | true | boolean
+ all responses regardless of the HTTP status code. | true | Boolean
 | *camel.component.netty4-http.configuration.transfer-exception* | If enabled and an Exchange failed processing on the consumer side,
  and if the caused Exception was send back serialized in the response
  as a application/x-java-serialized-object content type. On the
@@ -289,31 +289,31 @@ The component supports 32 options, which are listed below.
  <p/>
  This is by default turned off. If you enable this then be aware that
  Java will deserialize the incoming data from the request to Java and
- that can be a potential security risk. | false | boolean
+ that can be a potential security risk. | false | Boolean
 | *camel.component.netty4-http.configuration.url-decode-headers* | If this option is enabled, then during binding from Netty to Camel
  Message then the header values will be URL decoded (eg %20 will be a
  space character. Notice this option is used by the default
  org.apache.camel.component.netty.http.NettyHttpBinding and therefore
  if you implement a custom
  org.apache.camel.component.netty4.http.NettyHttpBinding then you
- would need to decode the headers accordingly to this option. | false | boolean
-| *camel.component.netty4-http.configuration.use-relative-path* | Sets whether to use a relative path in HTTP requests. | false | boolean
-| *camel.component.netty4-http.enabled* | Enable netty4-http component | true | boolean
+ would need to decode the headers accordingly to this option. | false | Boolean
+| *camel.component.netty4-http.configuration.use-relative-path* | Sets whether to use a relative path in HTTP requests. | false | Boolean
+| *camel.component.netty4-http.enabled* | Enable netty4-http component | true | Boolean
 | *camel.component.netty4-http.executor-service* | To use the given EventExecutorGroup. The option is a
  io.netty.util.concurrent.EventExecutorGroup type. |  | String
 | *camel.component.netty4-http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
  headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.netty4-http.maximum-pool-size* | The thread pool size for the EventExecutorGroup if its in use. The
- default value is 16. | 16 | int
+ default value is 16. | 16 | Integer
 | *camel.component.netty4-http.netty-http-binding* | To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding
  for binding to/from Netty and Camel Message API. The option is a
  org.apache.camel.component.netty4.http.NettyHttpBinding type. |  | String
 | *camel.component.netty4-http.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.netty4-http.security-configuration.authenticate* | Whether to enable authentication
  <p/>
- This is by default enabled. |  | boolean
+ This is by default enabled. |  | Boolean
 | *camel.component.netty4-http.security-configuration.constraint* | The supported restricted.
  <p/>
  Currently only Basic is supported. |  | String
@@ -322,7 +322,7 @@ The component supports 32 options, which are listed below.
  <p/>
  This level is by default DEBUG. |  | LoggingLevel
 | *camel.component.netty4-http.security-configuration.realm* | Sets the name of the realm to use. |  | String
-| *camel.component.netty4-http.security-configuration.role-class-name* | null |  | String
+| *camel.component.netty4-http.security-configuration.role-class-name* |  |  | String
 | *camel.component.netty4-http.security-configuration.security-authenticator* | Sets the {@link SecurityAuthenticator} to use for authenticating the
  {@link HttpPrincipal} . |  | SecurityAuthenticator
 | *camel.component.netty4-http.security-configuration.security-constraint* | Sets a {@link SecurityConstraint} to use for checking if a web
@@ -330,7 +330,7 @@ The component supports 32 options, which are listed below.
  <p/>
  By default this is <tt>null</tt>, which means all resources is
  restricted. |  | SecurityConstraint
-| *camel.component.netty4-http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | boolean
+| *camel.component.netty4-http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

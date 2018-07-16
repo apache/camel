@@ -151,10 +151,10 @@ The component supports 11 options, which are listed below.
 | *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to
  have to a user account. See
  https://developers.google.com/drive/web/scopes for more info. |  | List
-| *camel.component.google-drive.enabled* | Enable google-drive component | true | boolean
+| *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
 | *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

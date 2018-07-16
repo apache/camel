@@ -108,14 +108,14 @@ The component supports 10 options, which are listed below.
 | *camel.zipkin.include-message-body* | Whether to include the Camel message body in the zipkin traces.
 
  This is not recommended for production usage, or when having big payloads.
- You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | boolean
+ You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | Boolean
 | *camel.zipkin.include-message-body-streams* | Whether to include message bodies that are stream based in the zipkin traces.
 
  This is not recommended for production usage, or when having big payloads.
- You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | boolean
-| *camel.zipkin.port* | Sets the port if sending spans to a remote zipkin scribe (thrift RPC) collector. | 0 | int
+ You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | Boolean
+| *camel.zipkin.port* | Sets the port if sending spans to a remote zipkin scribe (thrift RPC) collector. | 0 | Integer
 | *camel.zipkin.rate* | Configures a rate that decides how many events should be traced by zipkin.
- The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%). | 1 | float
+ The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%). | 1 | Float
 | *camel.zipkin.server-service-mappings* | Sets server service mapping(s) that matches Camel events to the given zipkin service name.
  The key is the pattern, the value is the service name. |  | Map
 | *camel.zipkin.service-name* | To use a global service name that matches all Camel events |  | String

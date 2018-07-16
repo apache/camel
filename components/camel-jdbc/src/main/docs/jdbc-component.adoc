@@ -111,10 +111,10 @@ The component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.jdbc.data-source* | To use the DataSource instance instead of looking up the data source by
  name from the registry. The option is a javax.sql.DataSource type. |  | String
-| *camel.component.jdbc.enabled* | Enable jdbc component | true | boolean
+| *camel.component.jdbc.enabled* | Enable jdbc component | true | Boolean
 | *camel.component.jdbc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

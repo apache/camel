@@ -126,10 +126,10 @@ The component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.jt400.connection-pool* | Returns the default connection pool used by this component. The option is
  a com.ibm.as400.access.AS400ConnectionPool type. |  | String
-| *camel.component.jt400.enabled* | Enable jt400 component | true | boolean
+| *camel.component.jt400.enabled* | Enable jt400 component | true | Boolean
 | *camel.component.jt400.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -80,10 +80,10 @@ The component supports 6 options, which are listed below.
  CacheManager. The option is a java.util.Properties type. |  | String
 | *camel.component.jcache.caching-provider* | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
 | *camel.component.jcache.configuration-uri* | An implementation specific URI for the CacheManager |  | String
-| *camel.component.jcache.enabled* | Enable jcache component | true | boolean
+| *camel.component.jcache.enabled* | Enable jcache component | true | Boolean
 | *camel.component.jcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

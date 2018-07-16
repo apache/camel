@@ -135,14 +135,14 @@ The component supports 9 options, which are listed below.
  context-type=application/x-java-serialized-object. This is by default
  turned off. If you enable this then be aware that Java will deserialize
  the incoming data from the request to Java and that can be a potential
- security risk. | false | boolean
+ security risk. | false | Boolean
 | *camel.component.atmosphere-websocket.attachment-multipart-binding* | Whether to automatic bind multipart/form-data as attachments on the Camel
  Exchange. The options attachmentMultipartBinding=true and
  disableStreamCache=false cannot work together. Remove disableStreamCache
  to use AttachmentMultipartBinding. This is turn off by default as this
  may require servlet specific configuration to enable this when using
- Servlet's. | false | boolean
-| *camel.component.atmosphere-websocket.enabled* | Enable atmosphere-websocket component | true | boolean
+ Servlet's. | false | Boolean
+| *camel.component.atmosphere-websocket.enabled* | Enable atmosphere-websocket component | true | Boolean
 | *camel.component.atmosphere-websocket.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
  header to and from Camel message. The option is a
  org.apache.camel.spi.HeaderFilterStrategy type. |  | String
@@ -155,7 +155,7 @@ The component supports 9 options, which are listed below.
  option is a org.apache.camel.component.servlet.HttpRegistry type. |  | String
 | *camel.component.atmosphere-websocket.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.atmosphere-websocket.servlet-name* | Default name of servlet to use. The default name is CamelServlet. |  | String
 |===
 // spring-boot-auto-configure options: END

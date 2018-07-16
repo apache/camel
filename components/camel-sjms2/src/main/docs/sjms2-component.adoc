@@ -195,13 +195,13 @@ The component supports 16 options, which are listed below.
 | *camel.component.sjms2.connection-client-id* | The client ID to use when creating javax.jms.Connection when using the
  default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
 | *camel.component.sjms2.connection-count* | The maximum number of connections available to endpoints started under
- this component | 1 | int
+ this component | 1 | Integer
 | *camel.component.sjms2.connection-factory* | A ConnectionFactory is required to enable the SjmsComponent. It can be
  set directly or set set as part of a ConnectionResource. The option is a
  javax.jms.ConnectionFactory type. |  | String
 | *camel.component.sjms2.connection-max-wait* | The max wait time in millis to block and wait on free connection when the
  pool is exhausted when using the default
- org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | long
+ org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | Long
 | *camel.component.sjms2.connection-password* | The password to use when creating javax.jms.Connection when using the
  default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
 | *camel.component.sjms2.connection-resource* | A ConnectionResource is an interface that allows for customization and
@@ -211,12 +211,12 @@ The component supports 16 options, which are listed below.
 | *camel.component.sjms2.connection-test-on-borrow* | When using the default
  org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should
  each javax.jms.Connection be tested (calling start) before returned from
- the pool. | true | boolean
+ the pool. | true | Boolean
 | *camel.component.sjms2.connection-username* | The username to use when creating javax.jms.Connection when using the
  default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
 | *camel.component.sjms2.destination-creation-strategy* | To use a custom DestinationCreationStrategy. The option is a
  org.apache.camel.component.sjms.jms.DestinationCreationStrategy type. |  | String
-| *camel.component.sjms2.enabled* | Enable sjms2 component | true | boolean
+| *camel.component.sjms2.enabled* | Enable sjms2 component | true | Boolean
 | *camel.component.sjms2.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
  header to and from Camel message. The option is a
  org.apache.camel.spi.HeaderFilterStrategy type. |  | String
@@ -235,7 +235,7 @@ The component supports 16 options, which are listed below.
  org.apache.camel.component.sjms.jms.MessageCreatedStrategy type. |  | String
 | *camel.component.sjms2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.sjms2.timed-task-manager* | To use a custom TimedTaskManager. The option is a
  org.apache.camel.component.sjms.taskmanager.TimedTaskManager type. |  | String
 | *camel.component.sjms2.transaction-commit-strategy* | To configure which kind of commit strategy to use. Camel provides two

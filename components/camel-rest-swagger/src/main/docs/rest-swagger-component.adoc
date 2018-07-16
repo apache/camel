@@ -158,7 +158,7 @@ The component supports 8 options, which are listed below.
  application/xml; q=0.5 according to the RFC7231. This equates to the
  value of Accept HTTP header. If set overrides any value found in the
  Swagger specification. Can be overriden in endpoint configuration |  | String
-| *camel.component.rest-swagger.enabled* | Enable rest-swagger component | true | boolean
+| *camel.component.rest-swagger.enabled* | Enable rest-swagger component | true | Boolean
 | *camel.component.rest-swagger.host* | Scheme hostname and port to direct the HTTP requests to in the form of
  https://hostname:port. Can be configured at the endpoint, component or in
  the correspoding REST configuration in the Camel Context. If you give
@@ -172,7 +172,7 @@ The component supports 8 options, which are listed below.
  Swagger specification. Can be overriden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.rest-swagger.specification-uri* | Path to the Swagger specification file. The scheme, host base path are
  taken from this specification, but these can be overriden with properties
  on the component or endpoint level. If not given the component tries to

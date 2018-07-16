@@ -122,10 +122,10 @@ The component supports 5 options, which are listed below.
 | *camel.component.paho.client-id* | MQTT client identifier. |  | String
 | *camel.component.paho.connect-options* | Client connection options. The option is a
  org.eclipse.paho.client.mqttv3.MqttConnectOptions type. |  | String
-| *camel.component.paho.enabled* | Enable paho component | true | boolean
+| *camel.component.paho.enabled* | Enable paho component | true | Boolean
 | *camel.component.paho.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -87,10 +87,10 @@ The component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.cmis.enabled* | Enable cmis component | true | boolean
+| *camel.component.cmis.enabled* | Enable cmis component | true | Boolean
 | *camel.component.cmis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.cmis.session-facade-factory* | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade
  instances. The option is a
  org.apache.camel.component.cmis.CMISSessionFacadeFactory type. |  | String

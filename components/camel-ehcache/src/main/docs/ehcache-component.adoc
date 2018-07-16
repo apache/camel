@@ -130,24 +130,24 @@ The component supports 25 options, which are listed below.
  @deprecated use {@link #setConfigurationUri(String)} instead |  | String
 | *camel.component.ehcache.configuration.configuration* | The default cache configuration to be used to create caches. |  | CacheConfiguration
 | *camel.component.ehcache.configuration.configuration-uri* | URI pointing to the Ehcache XML configuration file's location |  | String
-| *camel.component.ehcache.configuration.configurations* | null |  | Map
+| *camel.component.ehcache.configuration.configurations* |  |  | Map
 | *camel.component.ehcache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be
- pre-configured. | true | boolean
-| *camel.component.ehcache.configuration.event-firing* | null |  | EventFiring
-| *camel.component.ehcache.configuration.event-ordering* | null |  | EventOrdering
-| *camel.component.ehcache.configuration.event-types* | null |  | Set
+ pre-configured. | true | Boolean
+| *camel.component.ehcache.configuration.event-firing* |  |  | EventFiring
+| *camel.component.ehcache.configuration.event-ordering* |  |  | EventOrdering
+| *camel.component.ehcache.configuration.event-types* |  |  | Set
 | *camel.component.ehcache.configuration.key* | To configure the default action key. If a key is set in the message
- header, then the key from the header takes precedence. |  | object
+ header, then the key from the header takes precedence. |  | Object
 | *camel.component.ehcache.configuration.key-type* | The cache key type, default "java.lang.Object" | java.lang.Object | String
 | *camel.component.ehcache.configuration.value-type* | The cache value type, default "java.lang.Object" | java.lang.Object | String
-| *camel.component.ehcache.customizer.cache-configuration.enabled* | Enable or disable the cache-configuration customizer. | true | boolean
-| *camel.component.ehcache.customizer.cache-configuration.mode* | Configure if the cache configurations have be added or they have to replace those already configured on the component. |  | CacheConfigurationCustomizerConfiguration$Mode
-| *camel.component.ehcache.customizer.cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.ehcache.enabled* | Enable ehcache component | true | boolean
+| *camel.component.ehcache.customizer.cache-configuration.enabled* | Enable or disable the cache-configuration customizer. | true | Boolean
+| *camel.component.ehcache.customizer.cache-configuration.mode* | Configure if the cache configurations have be added or they have to replace those already configured on the component. |  | CacheConfiguration CustomizerConfiguration$ Mode
+| *camel.component.ehcache.customizer.cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.ehcache.enabled* | Enable ehcache component | true | Boolean
 | *camel.component.ehcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

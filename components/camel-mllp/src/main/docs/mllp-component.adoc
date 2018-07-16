@@ -134,19 +134,19 @@ The component supports 31 options, which are listed below.
  TCP Server Only
  
  @param acceptTimeout
-            timeout in milliseconds | 60000 | int
+            timeout in milliseconds | 60000 | Integer
 | *camel.component.mllp.configuration.auto-ack* | Enable/Disable the automatic generation of a MLLP Acknowledgement
  MLLP Consumers only
  
  @param autoAck
-            enabled if true, otherwise disabled | true | boolean
+            enabled if true, otherwise disabled | true | Boolean
 | *camel.component.mllp.configuration.backlog* | The maximum queue length for incoming connection indications (a
  request to connect) is set to the backlog parameter. If a connection
- indication arrives when the queue is full, the connection is refused. | 5 | int
+ indication arrives when the queue is full, the connection is refused. | 5 | Integer
 | *camel.component.mllp.configuration.bind-retry-interval* | TCP Server Only - The number of milliseconds to wait between bind
- attempts | 5000 | int
+ attempts | 5000 | Integer
 | *camel.component.mllp.configuration.bind-timeout* | TCP Server Only - The number of milliseconds to retry binding to a
- server port | 30000 | int
+ server port | 30000 | Integer
 | *camel.component.mllp.configuration.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler,
  which mean any exceptions occurred while the consumer is trying to
  receive incoming messages, or the likes, will now be processed as a
@@ -154,13 +154,13 @@ The component supports 31 options, which are listed below.
  consumer will use the org.apache.camel.spi.ExceptionHandler to deal
  with exceptions by logging them at WARN or ERROR level and ignored.
  
- @param bridgeErrorHandler | true | boolean
+ @param bridgeErrorHandler | true | Boolean
 | *camel.component.mllp.configuration.buffer-writes* | Enable/Disable the buffering of HL7 payloads before writing to the
  socket.
  
  @deprecated the parameter will be ignored
  @param bufferWrites
-            enabled if true, otherwise disabled | false | boolean
+            enabled if true, otherwise disabled | false | Boolean
 | *camel.component.mllp.configuration.charset-name* | Set the CamelCharsetName property on the exchange
  
  @param charsetName
@@ -170,7 +170,7 @@ The component supports 31 options, which are listed below.
  TCP Client only
  
  @param connectTimeout
-            timeout in milliseconds | 30000 | int
+            timeout in milliseconds | 30000 | Integer
 | *camel.component.mllp.configuration.exchange-pattern* | Sets the exchange pattern when the consumer creates an exchange.
  
  @param exchangePattern |  | ExchangePattern
@@ -178,25 +178,25 @@ The component supports 31 options, which are listed below.
  HL7 Message MLLP Consumers only
  
  @param hl7Headers
-            enabled if true, otherwise disabled | true | boolean
+            enabled if true, otherwise disabled | true | Boolean
 | *camel.component.mllp.configuration.idle-timeout* | The approximate idle time allowed before the Client TCP Connection
  will be reset. A null value or a value less than or equal to zero
  will disable the idle timeout.
  
  @param idleTimeout
-            timeout in milliseconds |  | int
+            timeout in milliseconds |  | Integer
 | *camel.component.mllp.configuration.keep-alive* | Enable/disable the SO_KEEPALIVE socket option.
  
  @param keepAlive
             enable SO_KEEPALIVE when true; disable SO_KEEPALIVE when
-            false; use system default when null | true | boolean
+            false; use system default when null | true | Boolean
 | *camel.component.mllp.configuration.lenient-bind* | TCP Server Only - Allow the endpoint to start before the TCP
  ServerSocket is bound. In some environments, it may be desirable to
  allow the endpoint to start before the TCP ServerSocket is bound.
  
  @param lenientBind
             if true, the ServerSocket will be bound asynchronously;
-            otherwise the ServerSocket will be bound synchronously. | false | boolean
+            otherwise the ServerSocket will be bound synchronously. | false | Boolean
 | *camel.component.mllp.configuration.max-concurrent-consumers* | The maximum number of concurrent MLLP Consumer connections that will
  be allowed. If a new connection is received and the maximum is number
  are already established, the new connection will be reset
@@ -204,7 +204,7 @@ The component supports 31 options, which are listed below.
  
  @param maxConcurrentConsumers
             the maximum number of concurrent consumer connections
-            allowed | 5 | int
+            allowed | 5 | Integer
 | *camel.component.mllp.configuration.max-receive-timeouts* | The maximum number of timeouts (specified by receiveTimeout) allowed
  before the TCP Connection will be reset.
  
@@ -214,22 +214,22 @@ The component supports 31 options, which are listed below.
              compibility, setting this parameter will result in an
              idle timeout of maxReceiveTimeouts * receiveTimeout. If
              idleTimeout is also specified, this parameter will be
-             ignored. |  | int
+             ignored. |  | Integer
 | *camel.component.mllp.configuration.read-timeout* | The SO_TIMEOUT value (in milliseconds) used after the start of an
  MLLP frame has been received
  
  @param readTimeout
-            timeout in milliseconds | 5000 | int
+            timeout in milliseconds | 5000 | Integer
 | *camel.component.mllp.configuration.receive-buffer-size* | Sets the SO_RCVBUF option to the specified value (in bytes)
  
  @param receiveBufferSize
             the SO_RCVBUF option value. If null, the system default is
-            used | 8192 | int
+            used | 8192 | Integer
 | *camel.component.mllp.configuration.receive-timeout* | The SO_TIMEOUT value (in milliseconds) used when waiting for the
  start of an MLLP frame
  
  @param receiveTimeout
-            timeout in milliseconds | 15000 | int
+            timeout in milliseconds | 15000 | Integer
 | *camel.component.mllp.configuration.require-end-of-data* | Enable/Disable strict compliance to the MLLP standard. The MLLP
  standard specifies [START_OF_BLOCK]hl7
  payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
@@ -238,17 +238,17 @@ The component supports 31 options, which are listed below.
  
  @param requireEndOfData
             the trailing END_OF_DATA byte is required if true;
-            optional otherwise | true | boolean
+            optional otherwise | true | Boolean
 | *camel.component.mllp.configuration.reuse-address* | Enable/disable the SO_REUSEADDR socket option.
  
  @param reuseAddress
             enable SO_REUSEADDR when true; disable SO_REUSEADDR when
-            false; use system default when null | false | boolean
+            false; use system default when null | false | Boolean
 | *camel.component.mllp.configuration.send-buffer-size* | Sets the SO_SNDBUF option to the specified value (in bytes)
  
  @param sendBufferSize
             the SO_SNDBUF option value. If null, the system default is
-            used | 8192 | int
+            used | 8192 | Integer
 | *camel.component.mllp.configuration.string-payload* | Enable/Disable converting the payload to a String. If enabled, HL7
  Payloads received from external systems will be validated converted
  to a String. If the charsetName property is set, that character set
@@ -258,16 +258,16 @@ The component supports 31 options, which are listed below.
  character set will be use.
  
  @param stringPayload
-            enabled if true, otherwise disabled | true | boolean
+            enabled if true, otherwise disabled | true | Boolean
 | *camel.component.mllp.configuration.synchronous* | Sets whether synchronous processing should be strictly used (this
  component only supports synchronous operations).
  
- @param synchronous | true | boolean
+ @param synchronous | true | Boolean
 | *camel.component.mllp.configuration.tcp-no-delay* | Enable/disable the TCP_NODELAY socket option.
  
  @param tcpNoDelay
             enable TCP_NODELAY when true; disable TCP_NODELAY when
-            false; use system default when null | true | boolean
+            false; use system default when null | true | Boolean
 | *camel.component.mllp.configuration.validate-payload* | Enable/Disable the validation of HL7 Payloads If enabled, HL7
  Payloads received from external systems will be validated (see
  Hl7Util.generateInvalidPayloadExceptionMessage for details on the
@@ -276,15 +276,15 @@ The component supports 31 options, which are listed below.
  MllpInvalidAcknowledgementException will be thrown.
  
  @param validatePayload
-            enabled if true, otherwise disabled | false | boolean
+            enabled if true, otherwise disabled | false | Boolean
 | *camel.component.mllp.default-charset* | Set the default character set to use for byte to/from String conversions. | ISO-8859-1 | String
-| *camel.component.mllp.enabled* | Enable mllp component | true | boolean
-| *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | boolean
+| *camel.component.mllp.enabled* | Enable mllp component | true | Boolean
+| *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
 | *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log
- entry. | 5120 | int
+ entry. | 5120 | Integer
 | *camel.component.mllp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

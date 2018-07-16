@@ -134,10 +134,10 @@ The component supports 14 options, which are listed below.
  info. | https://www.googleapis.com/auth/calendar | String
 | *camel.component.google-calendar.configuration.user* | The email address of the user the application is trying to
  impersonate in the service account flow |  | String
-| *camel.component.google-calendar.enabled* | Enable google-calendar component | true | boolean
+| *camel.component.google-calendar.enabled* | Enable google-calendar component | true | Boolean
 | *camel.component.google-calendar.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

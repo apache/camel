@@ -321,29 +321,29 @@ The component supports 64 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.xmlsecurity.enabled* | Enable xmlsecurity component | true | boolean
+| *camel.component.xmlsecurity.enabled* | Enable xmlsecurity component | true | Boolean
 | *camel.component.xmlsecurity.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.add-key-info-reference* | In order to protect the KeyInfo element from tampering you can add a
  reference to the signed info element so that it is protected via the
  signature value. The default value is <tt>true</tt>.
  <p>
  Only relevant when a KeyInfo is returned by {@link KeyAccessor} . and
- {@link KeyInfo#getId()} is not <code>null</code>. | true | boolean
+ {@link KeyInfo#getId()} is not <code>null</code>. | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.base-uri* | You can set a base URI which is used in the URI dereferencing.
  Relative URIs are then concatenated with the base URI.
  
  @seeXMLCryptoContext#setBaseURI(String) |  | String
-| *camel.component.xmlsecurity.signer-configuration.camel-context* | null |  | CamelContext
+| *camel.component.xmlsecurity.signer-configuration.camel-context* |  |  | CamelContext
 | *camel.component.xmlsecurity.signer-configuration.canonicalization-method* | Canonicalization method used to canonicalize the SignedInfo element
  before the digest is calculated. You can use the helper methods
  XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
  getCanonicalizationMethod(String algorithm, List<String>
  inclusiveNamespacePrefixes) to create a canonicalization method. |  | AlgorithmMethod
-| *camel.component.xmlsecurity.signer-configuration.canonicalization-method-name* | null |  | String
+| *camel.component.xmlsecurity.signer-configuration.canonicalization-method-name* |  |  | String
 | *camel.component.xmlsecurity.signer-configuration.clear-headers* | Determines if the XML signature specific headers be cleared after
- signing and verification. Defaults to true. | true | boolean
+ signing and verification. Defaults to true. | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.content-object-id* | Sets the content object Id attribute value. By default a UUID is
  generated. If you set the <code>null</code> value, then a new UUID
  will be generated. Only used in the enveloping case. |  | String
@@ -379,18 +379,18 @@ The component supports 64 options, which are listed below.
  
  @param disallowDoctypeDecl
             if set to {@link Boolean#FALSE} then DOCTYPE declaration
-            is allowed, otherwise not | true | boolean
+            is allowed, otherwise not | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.key-accessor* | For the signing process, a private key is necessary. You specify a
  key accessor bean which provides this private key. The key accessor
  bean must implement the KeyAccessor interface. The package
  org.apache.camel.component.xmlsecurity.api contains the default
  implementation class DefaultKeyAccessor which reads the private key
  from a Java keystore. |  | KeyAccessor
-| *camel.component.xmlsecurity.signer-configuration.key-accessor-name* | null |  | String
+| *camel.component.xmlsecurity.signer-configuration.key-accessor-name* |  |  | String
 | *camel.component.xmlsecurity.signer-configuration.omit-xml-declaration* | Indicator whether the XML declaration in the outgoing message body
  should be omitted. Default value is <code>false</code>. Can be
  overwritten by the header
- {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION} . | false | boolean
+ {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION} . | false | Boolean
 | *camel.component.xmlsecurity.signer-configuration.output-xml-encoding* | The character encoding of the resulting signed XML document. If
  <code>null</code> then the encoding of the original XML document is
  used. |  | String
@@ -428,11 +428,11 @@ The component supports 64 options, which are listed below.
  
  @param parentXpath
             xpath to the parent node, if the xpath returns several
-            values then the first Element node is used |  | XPathFilterParameterSpec
+            values then the first Element node is used |  | XPathFilterParameter Spec
 | *camel.component.xmlsecurity.signer-configuration.plain-text* | Indicator whether the message body contains plain text. The default
  value is <code>false</code>, indicating that the message body
  contains XML. The value can be overwritten by the header
- {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT} . | false | boolean
+ {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT} . | false | Boolean
 | *camel.component.xmlsecurity.signer-configuration.plain-text-encoding* | Encoding of the plain text. Only relevant if the message body is
  plain text (see parameter {@link #plainText} . Default value is
  "UTF-8". | UTF-8 | String
@@ -449,7 +449,7 @@ The component supports 64 options, which are listed below.
 | *camel.component.xmlsecurity.signer-configuration.properties* | For adding additional References and Objects to the XML signature
  which contain additional properties, you can provide a bean which
  implements the XmlSignatureProperties interface. |  | XmlSignatureProperties
-| *camel.component.xmlsecurity.signer-configuration.properties-name* | null |  | String
+| *camel.component.xmlsecurity.signer-configuration.properties-name* |  |  | String
 | *camel.component.xmlsecurity.signer-configuration.schema-resource-uri* | Classpath to the XML Schema. Must be specified in the detached XML
  Signature case for determining the ID attributes, might be set in the
  enveloped and enveloping case. If set, then the XML document is
@@ -468,7 +468,7 @@ The component supports 64 options, which are listed below.
  http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at
  position 0 of the list. Use methods in XmlSignatureHelper to create
  the transform methods. |  | List
-| *camel.component.xmlsecurity.signer-configuration.transform-methods-name* | null |  | String
+| *camel.component.xmlsecurity.signer-configuration.transform-methods-name* |  |  | String
 | *camel.component.xmlsecurity.signer-configuration.uri-dereferencer* | If you want to restrict the remote access via reference URIs, you can
  set an own dereferencer. Optional parameter. If not set the provider
  default dereferencer is used which can resolve URI fragments, HTTP,
@@ -496,9 +496,9 @@ The component supports 64 options, which are listed below.
  Relative URIs are then concatenated with the base URI.
  
  @seeXMLCryptoContext#setBaseURI(String) |  | String
-| *camel.component.xmlsecurity.verifier-configuration.camel-context* | null |  | CamelContext
+| *camel.component.xmlsecurity.verifier-configuration.camel-context* |  |  | CamelContext
 | *camel.component.xmlsecurity.verifier-configuration.clear-headers* | Determines if the XML signature specific headers be cleared after
- signing and verification. Defaults to true. | true | boolean
+ signing and verification. Defaults to true. | true | Boolean
 | *camel.component.xmlsecurity.verifier-configuration.crypto-context-properties* | Sets the crypto context properties. See
  {@link XMLCryptoContext#setProperty(String,Object)} . Possible
  properties are defined in {@link XMLSignContext} an
@@ -517,16 +517,16 @@ The component supports 64 options, which are listed below.
  
  @param disallowDoctypeDecl
             if set to {@link Boolean#FALSE} then DOCTYPE declaration
-            is allowed, otherwise not | true | boolean
+            is allowed, otherwise not | true | Boolean
 | *camel.component.xmlsecurity.verifier-configuration.key-selector* | Provides the key for validating the XML signature. |  | KeySelector
 | *camel.component.xmlsecurity.verifier-configuration.omit-xml-declaration* | Indicator whether the XML declaration in the outgoing message body
  should be omitted. Default value is <code>false</code>. Can be
  overwritten by the header
- {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION} . | false | boolean
+ {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION} . | false | Boolean
 | *camel.component.xmlsecurity.verifier-configuration.output-node-search* | Sets the output node search value for determining the node from the
  XML signature document which shall be set to the output message body.
  The class of the value depends on the type of the output node search.
- The output node search is forwarded to {@link XmlSignature2Message} . |  | object
+ The output node search is forwarded to {@link XmlSignature2Message} . |  | Object
 | *camel.component.xmlsecurity.verifier-configuration.output-node-search-type* | Determines the search type for determining the output node which is
  serialized into the output message bodyF. See
  {@link #setOutputNodeSearch(Object)} . The supported default search
@@ -544,14 +544,14 @@ The component supports 64 options, which are listed below.
  <p>
  This indicator has no effect if the output node search is of type
  {@link DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT}
- .F | false | boolean
+ .F | false | Boolean
 | *camel.component.xmlsecurity.verifier-configuration.schema-resource-uri* | Classpath to the XML Schema. Must be specified in the detached XML
  Signature case for determining the ID attributes, might be set in the
  enveloped and enveloping case. If set, then the XML document is
  validated with the specified XML schema. The schema resource URI can
  be overwritten by the header
  {@link XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI} . |  | String
-| *camel.component.xmlsecurity.verifier-configuration.secure-validation* | Enables secure validation. If true then secure validation is enabled. | true | boolean
+| *camel.component.xmlsecurity.verifier-configuration.secure-validation* | Enables secure validation. If true then secure validation is enabled. | true | Boolean
 | *camel.component.xmlsecurity.verifier-configuration.uri-dereferencer* | If you want to restrict the remote access via reference URIs, you can
  set an own dereferencer. Optional parameter. If not set the provider
  default dereferencer is used which can resolve URI fragments, HTTP,
@@ -597,15 +597,15 @@ The component supports 64 options, which are listed below.
  explained in more detail in chapter
  "Output Node Determination in Enveloping XML Signature Case". |  | XmlSignature2Message
 | *camel.dataformat.securexml.add-key-value-for-encrypted-key* | Whether to add the public key used to encrypt the session key as a
- KeyValue in the EncryptedKey structure or not. | true | boolean
+ KeyValue in the EncryptedKey structure or not. | true | Boolean
 | *camel.dataformat.securexml.content-type-header* | Whether the data format should set the Content-Type header with the type
  from the data format if the data format is capable of doing so. For
  example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | boolean
+ application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.securexml.digest-algorithm* | The digest algorithm to use with the RSA OAEP algorithm. The available
  choices are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default
  value is XMLCipher.SHA1 | SHA1 | String
-| *camel.dataformat.securexml.enabled* | Enable securexml dataformat | true | boolean
+| *camel.dataformat.securexml.enabled* | Enable securexml dataformat | true | Boolean
 | *camel.dataformat.securexml.key-cipher-algorithm* | The cipher algorithm to be used for encryption/decryption of the
  asymmetric key. The available choices are: XMLCipher.RSA_v1dot5
  XMLCipher.RSA_OAEP XMLCipher.RSA_OAEP_11 The default value is
@@ -632,7 +632,7 @@ The component supports 64 options, which are listed below.
  encrypted/decrypted. |  | String
 | *camel.dataformat.securexml.secure-tag-contents* | A boolean value to specify whether the XML Element is to be encrypted or
  the contents of the XML Element false = Element Level true = Element
- Content Level | false | boolean
+ Content Level | false | Boolean
 | *camel.dataformat.securexml.xml-cipher-algorithm* | The cipher algorithm to be used for encryption/decryption of the XML
  message content. The available choices are: XMLCipher.TRIPLEDES
  XMLCipher.AES_128 XMLCipher.AES_128_GCM XMLCipher.AES_192

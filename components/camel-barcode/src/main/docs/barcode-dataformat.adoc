@@ -59,11 +59,11 @@ The component supports 6 options, which are listed below.
 | *camel.dataformat.barcode.content-type-header* | Whether the data format should set the Content-Type header with the type
  from the data format if the data format is capable of doing so. For
  example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | boolean
-| *camel.dataformat.barcode.enabled* | Enable barcode dataformat | true | boolean
-| *camel.dataformat.barcode.height* | Height of the barcode |  | int
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.barcode.enabled* | Enable barcode dataformat | true | Boolean
+| *camel.dataformat.barcode.height* | Height of the barcode |  | Integer
 | *camel.dataformat.barcode.image-type* | Image type of the barcode such as png |  | String
-| *camel.dataformat.barcode.width* | Width of the barcode |  | int
+| *camel.dataformat.barcode.width* | Width of the barcode |  | Integer
 |===
 // spring-boot-auto-configure options: END
 ND

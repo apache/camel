@@ -215,97 +215,97 @@ The component supports 50 options, which are listed below.
  message ttl argument:
  http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
  The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
-| *camel.component.rabbitmq.auto-ack* | If messages should be auto acknowledged | true | boolean
-| *camel.component.rabbitmq.auto-delete* | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
+| *camel.component.rabbitmq.auto-ack* | If messages should be auto acknowledged | true | Boolean
+| *camel.component.rabbitmq.auto-delete* | If it is true, the exchange will be deleted when it is no longer in use | true | Boolean
 | *camel.component.rabbitmq.auto-detect-connection-factory* | Whether to auto-detect looking up RabbitMQ connection factory from the
  registry. When enabled and a single instance of the connection factory is
  found then it will be used. An explicit connection factory can be
- configured on the component or endpoint level which takes precedence. | true | boolean
+ configured on the component or endpoint level which takes precedence. | true | Boolean
 | *camel.component.rabbitmq.automatic-recovery-enabled* | Enables connection automatic recovery (uses connection implementation
  that performs automatic recovery when connection shutdown is not
- initiated by the application) |  | boolean
-| *camel.component.rabbitmq.channel-pool-max-size* | Get maximum number of opened channel in pool | 10 | int
+ initiated by the application) |  | Boolean
+| *camel.component.rabbitmq.channel-pool-max-size* | Get maximum number of opened channel in pool | 10 | Integer
 | *camel.component.rabbitmq.channel-pool-max-wait* | Set the maximum number of milliseconds to wait for a channel from the
- pool | 1000 | long
+ pool | 1000 | Long
 | *camel.component.rabbitmq.client-properties* | Connection client properties (client info used in negotiating with the
  server). The option is a java.util.Map<java.lang.String,java.lang.Object>
  type. |  | String
 | *camel.component.rabbitmq.connection-factory* | To use a custom RabbitMQ connection factory. When this option is set, all
  connection options (connectionTimeout, requestedChannelMax...) set on URI
  are not used. The option is a com.rabbitmq.client.ConnectionFactory type. |  | String
-| *camel.component.rabbitmq.connection-timeout* | Connection timeout | 60000 | int
+| *camel.component.rabbitmq.connection-timeout* | Connection timeout | 60000 | Integer
 | *camel.component.rabbitmq.dead-letter-exchange* | The name of the dead letter exchange |  | String
 | *camel.component.rabbitmq.dead-letter-exchange-type* | The type of the dead letter exchange | direct | String
 | *camel.component.rabbitmq.dead-letter-queue* | The name of the dead letter queue |  | String
 | *camel.component.rabbitmq.dead-letter-routing-key* | The routing key for the dead letter exchange |  | String
 | *camel.component.rabbitmq.declare* | If the option is true, camel declare the exchange and queue name and bind
  them together. If the option is false, camel won't declare the exchange
- and queue name on the server. | true | boolean
+ and queue name on the server. | true | Boolean
 | *camel.component.rabbitmq.durable* | If we are declaring a durable exchange (the exchange will survive a
- server restart) | true | boolean
-| *camel.component.rabbitmq.enabled* | Enable rabbitmq component | true | boolean
+ server restart) | true | Boolean
+| *camel.component.rabbitmq.enabled* | Enable rabbitmq component | true | Boolean
 | *camel.component.rabbitmq.exclusive* | Exclusive queues may only be accessed by the current connection, and are
- deleted when that connection closes. | false | boolean
+ deleted when that connection closes. | false | Boolean
 | *camel.component.rabbitmq.exclusive-consumer* | Request exclusive access to the queue (meaning only this consumer can
  access the queue). This is useful when you want a long-lived shared queue
- to be temporarily accessible by just one consumer. | false | boolean
+ to be temporarily accessible by just one consumer. | false | Boolean
 | *camel.component.rabbitmq.guaranteed-deliveries* | When true, an exception will be thrown when the message cannot be
  delivered (basic.return) and the message is marked as mandatory.
  PublisherAcknowledgement will also be activated in this case. See also
- publisher acknowledgements - When will messages be confirmed. | false | boolean
+ publisher acknowledgements - When will messages be confirmed. | false | Boolean
 | *camel.component.rabbitmq.hostname* | The hostname of the running rabbitmq instance or cluster. |  | String
 | *camel.component.rabbitmq.immediate* | This flag tells the server how to react if the message cannot be routed
  to a queue consumer immediately. If this flag is set, the server will
  return an undeliverable message with a Return method. If this flag is
  zero, the server will queue the message, but with no guarantee that it
  will ever be consumed. If the header is present rabbitmq.IMMEDIATE it
- will override this option. | false | boolean
+ will override this option. | false | Boolean
 | *camel.component.rabbitmq.mandatory* | This flag tells the server how to react if the message cannot be routed
  to a queue. If this flag is set, the server will return an unroutable
  message with a Return method. If this flag is zero, the server silently
  drops the message. If the header is present rabbitmq.MANDATORY it will
- override this option. | false | boolean
+ override this option. | false | Boolean
 | *camel.component.rabbitmq.network-recovery-interval* | Network recovery interval in milliseconds (interval used when recovering
- from network failure) | 5000 | int
-| *camel.component.rabbitmq.passive* | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
+ from network failure) | 5000 | Integer
+| *camel.component.rabbitmq.passive* | Passive queues depend on the queue already to be available at RabbitMQ. | false | Boolean
 | *camel.component.rabbitmq.password* | Password for authenticated access | guest | String
-| *camel.component.rabbitmq.port-number* | Port number for the host with the running rabbitmq instance or cluster. | 5672 | int
+| *camel.component.rabbitmq.port-number* | Port number for the host with the running rabbitmq instance or cluster. | 5672 | Integer
 | *camel.component.rabbitmq.prefetch-count* | The maximum number of messages that the server will deliver, 0 if
  unlimited. You need to specify the option of prefetchSize, prefetchCount,
- prefetchGlobal at the same time |  | int
+ prefetchGlobal at the same time |  | Integer
 | *camel.component.rabbitmq.prefetch-enabled* | Enables the quality of service on the RabbitMQConsumer side. You need to
  specify the option of prefetchSize, prefetchCount, prefetchGlobal at the
- same time | false | boolean
+ same time | false | Boolean
 | *camel.component.rabbitmq.prefetch-global* | If the settings should be applied to the entire channel rather than each
  consumer You need to specify the option of prefetchSize, prefetchCount,
- prefetchGlobal at the same time | false | boolean
+ prefetchGlobal at the same time | false | Boolean
 | *camel.component.rabbitmq.prefetch-size* | The maximum amount of content (measured in octets) that the server will
  deliver, 0 if unlimited. You need to specify the option of prefetchSize,
- prefetchCount, prefetchGlobal at the same time |  | int
+ prefetchCount, prefetchGlobal at the same time |  | Integer
 | *camel.component.rabbitmq.publisher-acknowledgements* | When true, the message will be published with publisher acknowledgements
- turned on | false | boolean
+ turned on | false | Boolean
 | *camel.component.rabbitmq.publisher-acknowledgements-timeout* | The amount of time in milliseconds to wait for a basic.ack response from
- RabbitMQ server |  | long
+ RabbitMQ server |  | Long
 | *camel.component.rabbitmq.request-timeout* | Set timeout for waiting for a reply when using the InOut Exchange Pattern
- (in milliseconds) | 20000 | long
-| *camel.component.rabbitmq.request-timeout-checker-interval* | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | long
-| *camel.component.rabbitmq.requested-channel-max* | Connection requested channel max (max number of channels offered) | 2047 | int
-| *camel.component.rabbitmq.requested-frame-max* | Connection requested frame max (max size of frame offered) | 0 | int
-| *camel.component.rabbitmq.requested-heartbeat* | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
+ (in milliseconds) | 20000 | Long
+| *camel.component.rabbitmq.request-timeout-checker-interval* | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | Long
+| *camel.component.rabbitmq.requested-channel-max* | Connection requested channel max (max number of channels offered) | 2047 | Integer
+| *camel.component.rabbitmq.requested-frame-max* | Connection requested frame max (max size of frame offered) | 0 | Integer
+| *camel.component.rabbitmq.requested-heartbeat* | Connection requested heartbeat (heart-beat in seconds offered) | 60 | Integer
 | *camel.component.rabbitmq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.rabbitmq.skip-exchange-declare* | This can be used if we need to declare the queue but not the exchange | false | boolean
-| *camel.component.rabbitmq.skip-queue-bind* | If true the queue will not be bound to the exchange after declaring it | false | boolean
+ placeholders. | true | Boolean
+| *camel.component.rabbitmq.skip-exchange-declare* | This can be used if we need to declare the queue but not the exchange | false | Boolean
+| *camel.component.rabbitmq.skip-queue-bind* | If true the queue will not be bound to the exchange after declaring it | false | Boolean
 | *camel.component.rabbitmq.skip-queue-declare* | If true the producer will not declare and bind a queue. This can be used
- for directing messages via an existing routing key. | false | boolean
+ for directing messages via an existing routing key. | false | Boolean
 | *camel.component.rabbitmq.ssl-protocol* | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
 | *camel.component.rabbitmq.thread-pool-size* | The consumer uses a Thread Pool Executor with a fixed number of threads.
- This setting allows you to set that number of threads. | 10 | int
+ This setting allows you to set that number of threads. | 10 | Integer
 | *camel.component.rabbitmq.topology-recovery-enabled* | Enables connection topology recovery (should topology recovery be
- performed) |  | boolean
+ performed) |  | Boolean
 | *camel.component.rabbitmq.transfer-exception* | When true and an inOut Exchange failed on the consumer side send the
- caused Exception back in the response | false | boolean
+ caused Exception back in the response | false | Boolean
 | *camel.component.rabbitmq.trust-manager* | Configure SSL trust manager, SSL should be enabled for this option to be
  effective. The option is a javax.net.ssl.TrustManager type. |  | String
 | *camel.component.rabbitmq.username* | Username in case of authenticated access | guest | String

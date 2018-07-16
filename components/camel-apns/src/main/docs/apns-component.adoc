@@ -128,10 +128,10 @@ The component supports 3 options, which are listed below.
 | *camel.component.apns.apns-service* | The ApnsService to use. The
  org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to
  build a ApnsService. The option is a com.notnoop.apns.ApnsService type. |  | String
-| *camel.component.apns.enabled* | Enable apns component | true | boolean
+| *camel.component.apns.enabled* | Enable apns component | true | Boolean
 | *camel.component.apns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

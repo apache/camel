@@ -73,9 +73,9 @@ The component supports 69 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.hazelcast-atomicvalue.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-atomicvalue.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-atomicvalue.enabled* | Enable hazelcast-atomicvalue component | true | boolean
+| *camel.component.hazelcast-atomicvalue.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-atomicvalue.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-atomicvalue.enabled* | Enable hazelcast-atomicvalue component | true | Boolean
 | *camel.component.hazelcast-atomicvalue.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -84,8 +84,8 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-atomicvalue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-instance.enabled* | Enable hazelcast-instance component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-instance.enabled* | Enable hazelcast-instance component | true | Boolean
 | *camel.component.hazelcast-instance.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -94,10 +94,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-instance.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-list.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-list.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-list.enabled* | Enable hazelcast-list component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-list.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-list.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-list.enabled* | Enable hazelcast-list component | true | Boolean
 | *camel.component.hazelcast-list.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -106,10 +106,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-list.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-map.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-map.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-map.enabled* | Enable hazelcast-map component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-map.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-map.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-map.enabled* | Enable hazelcast-map component | true | Boolean
 | *camel.component.hazelcast-map.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -118,10 +118,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-map.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-multimap.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-multimap.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-multimap.enabled* | Enable hazelcast-multimap component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-multimap.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-multimap.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-multimap.enabled* | Enable hazelcast-multimap component | true | Boolean
 | *camel.component.hazelcast-multimap.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -130,10 +130,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-multimap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-queue.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-queue.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-queue.enabled* | Enable hazelcast-queue component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-queue.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-queue.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-queue.enabled* | Enable hazelcast-queue component | true | Boolean
 | *camel.component.hazelcast-queue.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -142,10 +142,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-replicatedmap.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-replicatedmap.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-replicatedmap.enabled* | Enable hazelcast-replicatedmap component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-replicatedmap.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-replicatedmap.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-replicatedmap.enabled* | Enable hazelcast-replicatedmap component | true | Boolean
 | *camel.component.hazelcast-replicatedmap.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -154,10 +154,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-replicatedmap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-ringbuffer.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-ringbuffer.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-ringbuffer.enabled* | Enable hazelcast-ringbuffer component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-ringbuffer.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-ringbuffer.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-ringbuffer.enabled* | Enable hazelcast-ringbuffer component | true | Boolean
 | *camel.component.hazelcast-ringbuffer.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -166,10 +166,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-ringbuffer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-seda.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-seda.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-seda.enabled* | Enable hazelcast-seda component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-seda.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-seda.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-seda.enabled* | Enable hazelcast-seda component | true | Boolean
 | *camel.component.hazelcast-seda.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -178,10 +178,10 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-seda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-set.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-set.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-set.enabled* | Enable hazelcast-set component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-set.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-set.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-set.enabled* | Enable hazelcast-set component | true | Boolean
 | *camel.component.hazelcast-set.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -190,12 +190,12 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast-topic.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-topic.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | boolean
-| *camel.component.hazelcast-topic.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-topic.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | boolean
-| *camel.component.hazelcast-topic.enabled* | Enable hazelcast-topic component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-topic.enabled* | Enable hazelcast-topic component | true | Boolean
 | *camel.component.hazelcast-topic.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
  endpoint. If you don't specify the instance reference, camel use the
  default hazelcast instance from the camel-hazelcast instance. The option
@@ -204,13 +204,13 @@ The component supports 69 options, which are listed below.
  you don't specify the mode, then the node mode will be the default. | node | String
 | *camel.component.hazelcast-topic.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.hazelcast.enabled* | Enable hazelcast component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.hazelcast.enabled* | Enable hazelcast component | true | Boolean
 | *camel.component.hazelcast.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If
  you don't specify the mode then the node mode will be the default. | node | String
 | *camel.component.hazelcast.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -221,8 +221,8 @@ The component supports 9 options, which are listed below.
  context-type=application/x-java-serialized-object This is by default
  turned off. If you enable this then be aware that Java will deserialize
  the incoming data from the request to Java and that can be a potential
- security risk. | false | boolean
-| *camel.component.http.enabled* | Enable http component | true | boolean
+ security risk. | false | Boolean
+| *camel.component.http.enabled* | Enable http component | true | Boolean
 | *camel.component.http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
  header to and from Camel message. The option is a
  org.apache.camel.spi.HeaderFilterStrategy type. |  | String
@@ -238,8 +238,8 @@ The component supports 9 options, which are listed below.
  is a org.apache.commons.httpclient.HttpConnectionManager type. |  | String
 | *camel.component.http.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | boolean
+ placeholders. | true | Boolean
+| *camel.component.http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

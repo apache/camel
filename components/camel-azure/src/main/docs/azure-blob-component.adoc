@@ -105,14 +105,14 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.azure-blob.enabled* | Enable azure-blob component | true | boolean
+| *camel.component.azure-blob.enabled* | Enable azure-blob component | true | Boolean
 | *camel.component.azure-blob.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.azure-queue.enabled* | Enable azure-queue component | true | boolean
+ placeholders. | true | Boolean
+| *camel.component.azure-queue.enabled* | Enable azure-queue component | true | Boolean
 | *camel.component.azure-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

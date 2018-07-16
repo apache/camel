@@ -51,8 +51,8 @@ The component supports 54 options, which are listed below.
  signing and verifying exchanges. This value can be provided at
  runtime via the message header
  {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS} |  | String
-| *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | int
-| *camel.component.crypto.configuration.camel-context* | null |  | CamelContext
+| *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
+| *camel.component.crypto.configuration.camel-context* |  |  | CamelContext
 | *camel.component.crypto.configuration.certificate* | Set the Certificate that should be used to verify the signature in
  the exchange based on its payload. |  | Certificate
 | *camel.component.crypto.configuration.certificate-name* | Sets the reference name for a PrivateKey that can be fond in the
@@ -60,13 +60,13 @@ The component supports 54 options, which are listed below.
 | *camel.component.crypto.configuration.clear-headers* | Determines if the Signature specific headers be cleared after signing
  and verification. Defaults to true, and should only be made otherwise
  at your extreme peril as vital private information such as Keys and
- passwords may escape if unset. | true | boolean
-| *camel.component.crypto.configuration.crypto-operation* | null |  | CryptoOperation
-| *camel.component.crypto.configuration.key-store-parameters.camel-context* | null |  | CamelContext
-| *camel.component.crypto.configuration.key-store-parameters.password* | null |  | String
-| *camel.component.crypto.configuration.key-store-parameters.provider* | null |  | String
-| *camel.component.crypto.configuration.key-store-parameters.resource* | null |  | String
-| *camel.component.crypto.configuration.key-store-parameters.type* | null |  | String
+ passwords may escape if unset. | true | Boolean
+| *camel.component.crypto.configuration.crypto-operation* |  |  | CryptoOperation
+| *camel.component.crypto.configuration.key-store-parameters.camel-context* |  |  | CamelContext
+| *camel.component.crypto.configuration.key-store-parameters.password* |  |  | String
+| *camel.component.crypto.configuration.key-store-parameters.provider* |  |  | String
+| *camel.component.crypto.configuration.key-store-parameters.resource* |  |  | String
+| *camel.component.crypto.configuration.key-store-parameters.type* |  |  | String
 | *camel.component.crypto.configuration.keystore* | Sets the KeyStore that can contain keys and Certficates for use in
  signing and verifying exchanges. A {@link KeyStore} is typically used
  with an alias, either one supplied in the Route definition or
@@ -77,7 +77,7 @@ The component supports 54 options, which are listed below.
  registry. |  | String
 | *camel.component.crypto.configuration.name* | The logical name of this operation. |  | String
 | *camel.component.crypto.configuration.password* | Sets the password used to access an aliased {@link PrivateKey} in the
- KeyStore. |  | character[]
+ KeyStore. |  | Character[]
 | *camel.component.crypto.configuration.private-key* | Set the PrivateKey that should be used to sign the exchange
  
  @param privateKey
@@ -101,51 +101,51 @@ The component supports 54 options, which are listed below.
  registry. |  | String
 | *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the
  base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *camel.component.crypto.enabled* | Enable crypto component | true | boolean
+| *camel.component.crypto.enabled* | Enable crypto component | true | Boolean
 | *camel.component.crypto.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will
  be used. Is by default DES/CBC/PKCS5Padding. | DES/CBC/PKCS5Padding | String
 | *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup
  the type using the given name as a
  java.security.spec.AlgorithmParameterSpec type. |  | String
-| *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | int
+| *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer
 | *camel.dataformat.crypto.content-type-header* | Whether the data format should set the Content-Type header with the type
  from the data format if the data format is capable of doing so. For
  example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | boolean
+ application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.crypto.crypto-provider* | The name of the JCE Security Provider that should be used. |  | String
-| *camel.dataformat.crypto.enabled* | Enable crypto dataformat | true | boolean
+| *camel.dataformat.crypto.enabled* | Enable crypto dataformat | true | Boolean
 | *camel.dataformat.crypto.init-vector-ref* | Refers to a byte array containing the Initialization Vector that will be
  used to initialize the Cipher. |  | String
 | *camel.dataformat.crypto.inline* | Flag indicating that the configured IV should be inlined into the
- encrypted data stream. Is by default false. | false | boolean
+ encrypted data stream. Is by default false. | false | Boolean
 | *camel.dataformat.crypto.key-ref* | Refers to the secret key to lookup from the register to use. |  | String
 | *camel.dataformat.crypto.mac-algorithm* | The JCE algorithm name indicating the Message Authentication algorithm. | HmacSHA1 | String
 | *camel.dataformat.crypto.should-append-h-m-a-c* | Flag indicating that a Message Authentication Code should be calculated
- and appended to the encrypted data. | false | boolean
+ and appended to the encrypted data. | false | Boolean
 | *camel.dataformat.pgp.algorithm* | Symmetric key encryption algorithm; possible values are defined in
  org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE
  DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only
- relevant for encrypting. |  | int
+ relevant for encrypting. |  | Integer
 | *camel.dataformat.pgp.armored* | This option will cause PGP to base64 encode the encrypted text, making it
- available for copy/paste, etc. | false | boolean
+ available for copy/paste, etc. | false | Boolean
 | *camel.dataformat.pgp.compression-algorithm* | Compression algorithm; possible values are defined in
  org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (=
  UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for
- encrypting. |  | int
+ encrypting. |  | Integer
 | *camel.dataformat.pgp.content-type-header* | Whether the data format should set the Content-Type header with the type
  from the data format if the data format is capable of doing so. For
  example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | boolean
-| *camel.dataformat.pgp.enabled* | Enable pgp dataformat | true | boolean
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.pgp.enabled* | Enable pgp dataformat | true | Boolean
 | *camel.dataformat.pgp.hash-algorithm* | Signature hash algorithm; possible values are defined in
  org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (= SHA1), 8 (=
  SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for
- signing. |  | int
+ signing. |  | Integer
 | *camel.dataformat.pgp.integrity* | Adds an integrity check/sign into the encryption file. The default value
- is true. | true | boolean
+ is true. | true | Boolean
 | *camel.dataformat.pgp.key-file-name* | Filename of the keyring; must be accessible as a classpath resource (but
  you can specify a location in the file system by using the file: prefix). |  | String
 | *camel.dataformat.pgp.key-userid* | The user ID of the key in the PGP keyring used during encryption. Can

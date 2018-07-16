@@ -112,17 +112,17 @@ The component supports 14 options, which are listed below.
 | *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
 | *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, @see java.util.logging.Level |  | Level
 | *camel.component.braintree.configuration.http-log-name* | Set log category to use to log http calls, default "Braintree" |  | String
-| *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | int
+| *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | Integer
 | *camel.component.braintree.configuration.merchant-id* | The merchant id provided by Braintree. |  | String
 | *camel.component.braintree.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.braintree.configuration.private-key* | The private key provided by Braintree. |  | String
 | *camel.component.braintree.configuration.proxy-host* | The proxy host |  | String
-| *camel.component.braintree.configuration.proxy-port* | The proxy port |  | int
+| *camel.component.braintree.configuration.proxy-port* | The proxy port |  | Integer
 | *camel.component.braintree.configuration.public-key* | The public key provided by Braintree. |  | String
-| *camel.component.braintree.enabled* | Enable braintree component | true | boolean
+| *camel.component.braintree.enabled* | Enable braintree component | true | Boolean
 | *camel.component.braintree.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

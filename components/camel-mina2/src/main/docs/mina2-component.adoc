@@ -156,21 +156,21 @@ The component supports 42 options, which are listed below.
  the mina component from installing a default codec as the first
  element in the filter chain. This is useful in scenarios where
  another filter must be the first in the filter chain, like the SSL
- filter. | true | boolean
-| *camel.component.mina2.configuration.auto-start-tls* | Whether to auto start SSL handshake. | true | boolean
+ filter. | true | Boolean
+| *camel.component.mina2.configuration.auto-start-tls* | Whether to auto start SSL handshake. | true | Boolean
 | *camel.component.mina2.configuration.cached-address* | Whether to create the InetAddress once and reuse. Setting this to
- false allows to pickup DNS changes in the network. | true | boolean
+ false allows to pickup DNS changes in the network. | true | Boolean
 | *camel.component.mina2.configuration.client-mode* | If the clientMode is true, mina consumer will connect the address as
- a TCP client. | false | boolean
+ a TCP client. | false | Boolean
 | *camel.component.mina2.configuration.codec* | To use a custom minda codec implementation. |  | ProtocolCodecFactory
 | *camel.component.mina2.configuration.decoder-max-line-length* | To set the textline protocol decoder max line length. By default the
- default value of Mina itself is used which are 1024. | 1024 | int
+ default value of Mina itself is used which are 1024. | 1024 | Integer
 | *camel.component.mina2.configuration.disconnect* | Whether or not to disconnect(close) from Mina session right after
- use. Can be used for both consumer and producer. | false | boolean
+ use. Can be used for both consumer and producer. | false | Boolean
 | *camel.component.mina2.configuration.disconnect-on-no-reply* | If sync is enabled then this option dictates MinaConsumer if it
- should disconnect where there is no reply to send back. | true | boolean
+ should disconnect where there is no reply to send back. | true | Boolean
 | *camel.component.mina2.configuration.encoder-max-line-length* | To set the textline protocol encoder max line length. By default the
- default value of Mina itself is used which are Integer.MAX_VALUE. | -1 | int
+ default value of Mina itself is used which are Integer.MAX_VALUE. | -1 | Integer
 | *camel.component.mina2.configuration.encoding* | You can configure the encoding (a charset name) to use for the TCP
  textline codec and the UDP protocol. If not provided, Camel will use
  the JVM default Charset |  | String
@@ -179,53 +179,53 @@ The component supports 42 options, which are listed below.
  consumer. For producer use the hostname or ip address of the remote
  server. |  | String
 | *camel.component.mina2.configuration.lazy-session-creation* | Sessions can be lazily created to avoid exceptions, if the remote
- server is not up and running when the Camel producer is started. | true | boolean
-| *camel.component.mina2.configuration.maximum-pool-size* | Number of worker threads in the worker pool for TCP and UDP | 16 | int
+ server is not up and running when the Camel producer is started. | true | Boolean
+| *camel.component.mina2.configuration.maximum-pool-size* | Number of worker threads in the worker pool for TCP and UDP | 16 | Integer
 | *camel.component.mina2.configuration.mina-logger* | You can enable the Apache MINA logging filter. Apache MINA uses slf4j
- logging at INFO level to log all input and output. | false | boolean
+ logging at INFO level to log all input and output. | false | Boolean
 | *camel.component.mina2.configuration.no-reply-log-level* | If sync is enabled this option dictates MinaConsumer which logging
  level to use when logging a there is no reply to send back. |  | LoggingLevel
 | *camel.component.mina2.configuration.ordered-thread-pool-executor* | Whether to use ordered thread pool, to ensure events are processed
- orderly on the same channel. | true | boolean
-| *camel.component.mina2.configuration.port* | Port number |  | int
+ orderly on the same channel. | true | Boolean
+| *camel.component.mina2.configuration.port* | Port number |  | Integer
 | *camel.component.mina2.configuration.protocol* | Protocol to use |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.camel-context* | null |  | CamelContext
-| *camel.component.mina2.configuration.ssl-context-parameters.cert-alias* | null |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.cipher-suites* | null |  | CipherSuitesParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.cipher-suites-filter* | null |  | FilterParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.client-parameters* | null |  | SSLContextClientParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.key-managers* | null |  | KeyManagersParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.provider* | null |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-random* | null |  | SecureRandomParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocol* | null |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocols* | null |  | SecureSocketProtocolsParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocols-filter* | null |  | FilterParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.server-parameters* | null |  | SSLContextServerParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.session-timeout* | null |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.trust-managers* | null |  | TrustManagersParameters
-| *camel.component.mina2.configuration.sync* | Setting to set endpoint as one-way or request-response. | true | boolean
+| *camel.component.mina2.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
+| *camel.component.mina2.configuration.ssl-context-parameters.cert-alias* |  |  | String
+| *camel.component.mina2.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
+| *camel.component.mina2.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
+| *camel.component.mina2.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
+| *camel.component.mina2.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
+| *camel.component.mina2.configuration.ssl-context-parameters.provider* |  |  | String
+| *camel.component.mina2.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
+| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
+| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
+| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
+| *camel.component.mina2.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
+| *camel.component.mina2.configuration.ssl-context-parameters.session-timeout* |  |  | String
+| *camel.component.mina2.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.mina2.configuration.sync* | Setting to set endpoint as one-way or request-response. | true | Boolean
 | *camel.component.mina2.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to
  indicate a text line based codec; if not specified or the value is
- false, then Object Serialization is assumed over TCP. | false | boolean
+ false, then Object Serialization is assumed over TCP. | false | Boolean
 | *camel.component.mina2.configuration.textline-delimiter* | Only used for TCP and if textline=true. Sets the text line delimiter
  to use. If none provided, Camel will use DEFAULT. This delimiter is
  used to mark the end of text. |  | Mina2TextLineDelimiter
 | *camel.component.mina2.configuration.timeout* | You can configure the timeout that specifies how long to wait for a
  response from a remote server. The timeout unit is in milliseconds,
- so 60000 is 60 seconds. | 30000 | long
+ so 60000 is 60 seconds. | 30000 | Long
 | *camel.component.mina2.configuration.transfer-exchange* | Only used for TCP. You can transfer the exchange over the wire
  instead of just the body. The following fields are transferred: In
  body, Out body, fault body, In headers, Out headers, fault headers,
  exchange properties, exchange exception. This requires that the
  objects are serializable. Camel will exclude any non-serializable
- objects and log it at WARN level. | false | boolean
+ objects and log it at WARN level. | false | Boolean
 | *camel.component.mina2.configuration.write-timeout* | Maximum amount of time it should take to send data to the MINA
- session. Default is 10000 milliseconds. | 10000 | long
-| *camel.component.mina2.enabled* | Enable mina2 component | true | boolean
+ session. Default is 10000 milliseconds. | 10000 | Long
+| *camel.component.mina2.enabled* | Enable mina2 component | true | Boolean
 | *camel.component.mina2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
-| *camel.component.mina2.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | boolean
+ placeholders. | true | Boolean
+| *camel.component.mina2.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

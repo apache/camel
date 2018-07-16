@@ -76,67 +76,67 @@ The component supports 35 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.ignite-cache.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-cache.enabled* | Enable ignite-cache component | true | boolean
+| *camel.component.ignite-cache.enabled* | Enable ignite-cache component | true | Boolean
 | *camel.component.ignite-cache.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-cache.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ignite-compute.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-compute.enabled* | Enable ignite-compute component | true | boolean
+| *camel.component.ignite-compute.enabled* | Enable ignite-compute component | true | Boolean
 | *camel.component.ignite-compute.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-compute.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-compute.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ignite-events.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-events.enabled* | Enable ignite-events component | true | boolean
+| *camel.component.ignite-events.enabled* | Enable ignite-events component | true | Boolean
 | *camel.component.ignite-events.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-events.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-events.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ignite-idgen.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-idgen.enabled* | Enable ignite-idgen component | true | boolean
+| *camel.component.ignite-idgen.enabled* | Enable ignite-idgen component | true | Boolean
 | *camel.component.ignite-idgen.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-idgen.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-idgen.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ignite-messaging.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-messaging.enabled* | Enable ignite-messaging component | true | boolean
+| *camel.component.ignite-messaging.enabled* | Enable ignite-messaging component | true | Boolean
 | *camel.component.ignite-messaging.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-messaging.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-messaging.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ignite-queue.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-queue.enabled* | Enable ignite-queue component | true | boolean
+| *camel.component.ignite-queue.enabled* | Enable ignite-queue component | true | Boolean
 | *camel.component.ignite-queue.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-queue.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ignite-set.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI,
  String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
-| *camel.component.ignite-set.enabled* | Enable ignite-set component | true | boolean
+| *camel.component.ignite-set.enabled* | Enable ignite-set component | true | Boolean
 | *camel.component.ignite-set.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-set.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is
  a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
 | *camel.component.ignite-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

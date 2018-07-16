@@ -119,10 +119,10 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.msv.enabled* | Enable msv component | true | boolean
+| *camel.component.msv.enabled* | Enable msv component | true | Boolean
 | *camel.component.msv.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.msv.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint
  resource URI. The option is a
  org.apache.camel.component.validator.ValidatorResourceResolverFactory

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,8 +39,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
- * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory
- * to include spring boot auto configuration options.
+ * For all the Camel components that has Spring Boot starter JAR, their documentation
+ * .adoc files in their component directory is updated to include spring boot auto configuration options.
  *
  * @goal update-spring-boot-auto-configuration-readme
  */
@@ -146,8 +146,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 JsonObject row = (JsonObject) e;
                 String name = row.getString("name");
                 String javaType = row.getString("type");
-                String desc = row.getString("description");
-                String defaultValue = row.getString("defaultValue");
+                String desc = row.getStringOrDefault("description", "");
+                String defaultValue = row.getStringOrDefault("defaultValue", "");
 
                 // skip this special option
                 boolean skip = name.endsWith("customizer.enabled");

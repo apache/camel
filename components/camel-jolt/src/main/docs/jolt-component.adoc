@@ -102,10 +102,10 @@ The component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.jolt.enabled* | Enable jolt component | true | boolean
+| *camel.component.jolt.enabled* | Enable jolt component | true | Boolean
 | *camel.component.jolt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.jolt.transform* | Explicitly sets the Transform to use. If not set a Transform specified by
  the transformDsl will be created. The option is a
  com.bazaarvoice.jolt.Transform type. |  | String

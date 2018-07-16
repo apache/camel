@@ -227,62 +227,62 @@ The component supports 50 options, which are listed below.
 | *camel.component.twitter-directmessage.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-directmessage.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-directmessage.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter-directmessage.enabled* | null |  | boolean
+| *camel.component.twitter-directmessage.enabled* |  |  | Boolean
 | *camel.component.twitter-directmessage.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-directmessage.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
-| *camel.component.twitter-directmessage.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | int
+| *camel.component.twitter-directmessage.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-directmessage.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-directmessage.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.twitter-search.access-token* | The access token |  | String
 | *camel.component.twitter-search.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-search.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-search.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter-search.enabled* | null |  | boolean
+| *camel.component.twitter-search.enabled* |  |  | Boolean
 | *camel.component.twitter-search.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-search.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
-| *camel.component.twitter-search.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | int
+| *camel.component.twitter-search.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-search.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-search.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.twitter-streaming.access-token* | The access token |  | String
 | *camel.component.twitter-streaming.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-streaming.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-streaming.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter-streaming.enabled* | null |  | boolean
+| *camel.component.twitter-streaming.enabled* |  |  | Boolean
 | *camel.component.twitter-streaming.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-streaming.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
-| *camel.component.twitter-streaming.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | int
+| *camel.component.twitter-streaming.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-streaming.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-streaming.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.twitter-timeline.access-token* | The access token |  | String
 | *camel.component.twitter-timeline.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-timeline.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-timeline.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter-timeline.enabled* | null |  | boolean
+| *camel.component.twitter-timeline.enabled* |  |  | Boolean
 | *camel.component.twitter-timeline.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-timeline.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
-| *camel.component.twitter-timeline.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | int
+| *camel.component.twitter-timeline.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-timeline.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-timeline.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.twitter.access-token* | The access token |  | String
 | *camel.component.twitter.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter.consumer-key* | The consumer key |  | String
 | *camel.component.twitter.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter.enabled* | Enable twitter component | true | boolean
+| *camel.component.twitter.enabled* | Enable twitter component | true | Boolean
 | *camel.component.twitter.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
-| *camel.component.twitter.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | int
+| *camel.component.twitter.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
 | *camel.component.twitter.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

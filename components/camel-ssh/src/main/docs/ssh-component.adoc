@@ -153,7 +153,7 @@ The component supports 30 options, which are listed below.
  This value is only checked when the property knownHosts is set.
  
  @param boolean boolean flag, whether a connection to an unknown host
-        should fail | false | boolean
+        should fail | false | Boolean
 | *camel.component.ssh.configuration.host* | Sets the hostname of the remote SSH server.
  
  @param hostString
@@ -191,7 +191,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.ssh.configuration.port* | Sets the port number for the remote SSH server.
  
  @param portint
-            representing port number on remote host. Defaults to 22. | 22 | int
+            representing port number on remote host. Defaults to 22. | 22 | Integer
 | *camel.component.ssh.configuration.shell-prompt* | Sets the shellPrompt to be dropped when response is read after
  command execution
  
@@ -202,17 +202,17 @@ The component supports 30 options, which are listed below.
  shell prompt. Defaults to 100 milliseconds.
  
  @param sleepForShellPromptlong
-            milliseconds to wait. | 100 | long
+            milliseconds to wait. | 100 | Long
 | *camel.component.ssh.configuration.timeout* | Sets the timeout in milliseconds to wait in establishing the remote
  SSH server connection. Defaults to 30000 milliseconds.
  
  @param timeoutlong
-            milliseconds to wait. | 30000 | long
+            milliseconds to wait. | 30000 | Long
 | *camel.component.ssh.configuration.username* | Sets the username to use in logging into the remote SSH server.
  
  @param usernameString
             representing login username. |  | String
-| *camel.component.ssh.enabled* | Enable ssh component | true | boolean
+| *camel.component.ssh.enabled* | Enable ssh component | true | Boolean
 | *camel.component.ssh.host* | Sets the hostname of the remote SSH server. |  | String
 | *camel.component.ssh.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using
  Certificates to the remote SSH Server. The option is a
@@ -226,16 +226,16 @@ The component supports 30 options, which are listed below.
  poll cycle. Only works with camel-ssh component being used as a consumer,
  i.e. from(ssh://...). You may need to end your command with a newline,
  and that must be URL encoded %0A |  | String
-| *camel.component.ssh.port* | Sets the port number for the remote SSH server. |  | int
+| *camel.component.ssh.port* | Sets the port number for the remote SSH server. |  | Integer
 | *camel.component.ssh.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 | *camel.component.ssh.shell-prompt* | Sets the shellPrompt to be dropped when response is read after command
  execution |  | String
 | *camel.component.ssh.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell
- prompt. Defaults to 100 milliseconds. |  | long
+ prompt. Defaults to 100 milliseconds. |  | Long
 | *camel.component.ssh.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH
- server connection. Defaults to 30000 milliseconds. |  | long
+ server connection. Defaults to 30000 milliseconds. |  | Long
 | *camel.component.ssh.username* | Sets the username to use in logging into the remote SSH server. |  | String
 |===
 // spring-boot-auto-configure options: END

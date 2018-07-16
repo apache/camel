@@ -128,7 +128,7 @@ The component supports 31 options, which are listed below.
 | *camel.component.web3j.configuration.filter-id* | The filter id to use. |  | BigInteger
 | *camel.component.web3j.configuration.from-address* | The address the transaction is send from |  | String
 | *camel.component.web3j.configuration.full-transaction-objects* | If true it returns the full transaction objects, if false only the
- hashes of the transactions. | false | boolean
+ hashes of the transactions. | false | Boolean
 | *camel.component.web3j.configuration.gas-limit* | The maximum gas allowed in this block. |  | BigInteger
 | *camel.component.web3j.configuration.gas-price* | Gas price used for each paid gas. |  | BigInteger
 | *camel.component.web3j.configuration.hashrate* | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
@@ -154,10 +154,10 @@ The component supports 31 options, which are listed below.
 | *camel.component.web3j.configuration.ttl* | The time to live in seconds of a whisper message. |  | BigInteger
 | *camel.component.web3j.configuration.value* | The value sent within a transaction. |  | BigInteger
 | *camel.component.web3j.configuration.web3j* | The preconfigured Web3j object. |  | Web3j
-| *camel.component.web3j.enabled* | Enable web3j component | true | boolean
+| *camel.component.web3j.enabled* | Enable web3j component | true | Boolean
 | *camel.component.web3j.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
- placeholders. | true | boolean
+ placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
