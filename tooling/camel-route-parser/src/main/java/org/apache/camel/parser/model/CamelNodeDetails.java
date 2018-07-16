@@ -25,6 +25,7 @@ public class CamelNodeDetails {
     private String fileName;
     private String lineNumber;
     private String lineNumberEnd;
+    private int linePosition;
 
     // java source code details
     private String className;
@@ -116,6 +117,14 @@ public class CamelNodeDetails {
 
     public void setLineNumberEnd(String lineNumberEnd) {
         this.lineNumberEnd = lineNumberEnd;
+    }
+
+    public int getLinePosition() {
+        return linePosition;
+    }
+
+    public void setLinePosition(int linePosition) {
+        this.linePosition = linePosition;
     }
 
     public String getClassName() {

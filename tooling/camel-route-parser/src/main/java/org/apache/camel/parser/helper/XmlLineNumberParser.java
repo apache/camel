@@ -44,6 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *   String columnNumber = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
  *   String columnNumberEnd = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER_END);
  * </pre>
+ * Mind that start and end numbers are the same for single-level XML tags.
  */
 public final class XmlLineNumberParser {
 
@@ -137,8 +138,10 @@ public final class XmlLineNumberParser {
                         el.setAttribute(attributes.getQName(i), attributes.getValue(i));
                     }
 
-                    el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);
-                    el.setUserData(COLUMN_NUMBER, String.valueOf(this.locator.getColumnNumber()), null);
+                    String ln = String.valueOf(this.locator.getLineNumber());
+                    String cn = String.valueOf(this.locator.getColumnNumber());
+                    el.setUserData(LINE_NUMBER, ln, null);
+                    el.setUserData(COLUMN_NUMBER, cn, null);
                     elementStack.push(el);
                 }
             }
@@ -161,8 +164,10 @@ public final class XmlLineNumberParser {
                         parentEl.appendChild(closedEl);
                     }
 
-                    closedEl.setUserData(LINE_NUMBER_END, String.valueOf(this.locator.getLineNumber()), null);
-                    closedEl.setUserData(COLUMN_NUMBER_END, String.valueOf(this.locator.getColumnNumber()), null);
+                    String ln = String.valueOf(this.locator.getLineNumber());
+                    String cn = String.valueOf(this.locator.getColumnNumber());
+                    closedEl.setUserData(LINE_NUMBER_END, ln, null);
+                    closedEl.setUserData(COLUMN_NUMBER_END, cn, null);
                 }
             }
 

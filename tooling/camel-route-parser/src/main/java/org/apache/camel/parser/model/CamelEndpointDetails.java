@@ -24,6 +24,8 @@ public class CamelEndpointDetails {
     private String fileName;
     private String lineNumber;
     private String lineNumberEnd;
+    private int absolutePosition;
+    private int linePosition;
     private String className;
     private String methodName;
     private String endpointComponentName;
@@ -54,6 +56,28 @@ public class CamelEndpointDetails {
 
     public void setLineNumberEnd(String lineNumberEnd) {
         this.lineNumberEnd = lineNumberEnd;
+    }
+
+    public int getAbsolutePosition() {
+        return absolutePosition;
+    }
+
+    /**
+     * The absolute position where 0 is the beginning of the file. This is only available for Java DSL.
+     */
+    public void setAbsolutePosition(int absolutePosition) {
+        this.absolutePosition = absolutePosition;
+    }
+
+    public int getLinePosition() {
+        return linePosition;
+    }
+
+    /**
+     * The relative position in the line number (start line).
+     */
+    public void setLinePosition(int linePosition) {
+        this.linePosition = linePosition;
     }
 
     public String getClassName() {
