@@ -24,9 +24,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -56,9 +53,7 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 /**
  * Process camel-spring's <camelContext> and generate json schema documentation
  */
-@SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
-public class SpringAnnotationProcessor {
+public class SpringAnnotationProcessorHelper {
 
     protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement) {
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());

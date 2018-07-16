@@ -59,7 +59,7 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
  */
-public class CoreEipAnnotationProcessor {
+public class CoreEipAnnotationProcessorHelper {
 
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
