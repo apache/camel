@@ -85,3 +85,99 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 62 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.atomix-map.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+ type. |  | String
+| *camel.component.atomix-map.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-map.configuration.default-action* | The default action. |  | AtomixMap$Action
+| *camel.component.atomix-map.configuration.key* | The key to use if none is set in the header or to listen for events
+ for a specific key. |  | object
+| *camel.component.atomix-map.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-map.configuration.ttl* | The resource ttl. |  | long
+| *camel.component.atomix-map.enabled* | null |  | boolean
+| *camel.component.atomix-map.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-map.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.atomix-messaging.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+ type. |  | String
+| *camel.component.atomix-messaging.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-messaging.configuration.broadcast-type* | The broadcast type. |  | AtomixMessaging$BroadcastType
+| *camel.component.atomix-messaging.configuration.channel-name* | The messaging channel name |  | String
+| *camel.component.atomix-messaging.configuration.default-action* | The default action. |  | AtomixMessaging$Action
+| *camel.component.atomix-messaging.configuration.member-name* | The Atomix Group member name |  | String
+| *camel.component.atomix-messaging.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-messaging.enabled* | null |  | boolean
+| *camel.component.atomix-messaging.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-messaging.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.atomix-multimap.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+ type. |  | String
+| *camel.component.atomix-multimap.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-multimap.configuration.default-action* | The default action. |  | AtomixMultiMap$Action
+| *camel.component.atomix-multimap.configuration.key* | The key to use if none is set in the header or to listen for events
+ for a specific key. |  | object
+| *camel.component.atomix-multimap.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-multimap.configuration.ttl* | The resource ttl. |  | long
+| *camel.component.atomix-multimap.enabled* | null |  | boolean
+| *camel.component.atomix-multimap.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-multimap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.atomix-queue.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+ type. |  | String
+| *camel.component.atomix-queue.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-queue.configuration.default-action* | The default action. |  | AtomixQueue$Action
+| *camel.component.atomix-queue.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-queue.enabled* | null |  | boolean
+| *camel.component.atomix-queue.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.atomix-set.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+ type. |  | String
+| *camel.component.atomix-set.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-set.configuration.default-action* | The default action. |  | AtomixSet$Action
+| *camel.component.atomix-set.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-set.configuration.ttl* | The resource ttl. |  | long
+| *camel.component.atomix-set.enabled* | null |  | boolean
+| *camel.component.atomix-set.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.atomix-value.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+ type. |  | String
+| *camel.component.atomix-value.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-value.configuration.default-action* | The default action. |  | AtomixValue$Action
+| *camel.component.atomix-value.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-value.configuration.ttl* | The resource ttl. |  | long
+| *camel.component.atomix-value.enabled* | null |  | boolean
+| *camel.component.atomix-value.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-value.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.atomix.cluster.service.address* | The address of the node - node only. |  | String
+| *camel.component.atomix.cluster.service.attributes* | Custom service attributes. |  | Map
+| *camel.component.atomix.cluster.service.configuration-uri* | The Atomix configuration uri. |  | String
+| *camel.component.atomix.cluster.service.enabled* | Sets if the atomix cluster service should be enabled or not, default is false. | false | boolean
+| *camel.component.atomix.cluster.service.ephemeral* | Sets if the local member should join groups as PersistentMember or not (node only). |  | boolean
+| *camel.component.atomix.cluster.service.id* | The cluster id. |  | String
+| *camel.component.atomix.cluster.service.mode* | Sets the cluster mode. |  | AtomixClusterServiceConfiguration$Mode
+| *camel.component.atomix.cluster.service.nodes* | The address of the nodes composing the cluster. |  | Set
+| *camel.component.atomix.cluster.service.order* | Service lookup order/priority. |  | int
+| *camel.component.atomix.cluster.service.storage-level* | The storage mode - node only. |  | StorageLevel
+| *camel.component.atomix.cluster.service.storage-path* | The storage directory - node only. |  | String
+|===
+// spring-boot-auto-configure options: END
+

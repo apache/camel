@@ -89,3 +89,51 @@ with the following path and query parameters:
 | *userName* (security) | The user name to use for basic authentication. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 31 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.etcd.configuration.camel-context* | null |  | CamelContext
+| *camel.component.etcd.configuration.from-index* | The index to watch from | 0 | long
+| *camel.component.etcd.configuration.password* | The password to use for basic authentication. |  | String
+| *camel.component.etcd.configuration.recursive* | To apply an action recursively. | false | boolean
+| *camel.component.etcd.configuration.send-empty-exchange-on-timeout* | To send an empty message in case of timeout watching for a key. | false | boolean
+| *camel.component.etcd.configuration.service-path* | The path to look for for service discovery | /services/ | String
+| *camel.component.etcd.configuration.ssl-context-parameters.camel-context* | null |  | CamelContext
+| *camel.component.etcd.configuration.ssl-context-parameters.cert-alias* | null |  | String
+| *camel.component.etcd.configuration.ssl-context-parameters.cipher-suites* | null |  | CipherSuitesParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.cipher-suites-filter* | null |  | FilterParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.client-parameters* | null |  | SSLContextClientParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.key-managers* | null |  | KeyManagersParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.provider* | null |  | String
+| *camel.component.etcd.configuration.ssl-context-parameters.secure-random* | null |  | SecureRandomParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.secure-socket-protocol* | null |  | String
+| *camel.component.etcd.configuration.ssl-context-parameters.secure-socket-protocols* | null |  | SecureSocketProtocolsParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.secure-socket-protocols-filter* | null |  | FilterParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.server-parameters* | null |  | SSLContextServerParameters
+| *camel.component.etcd.configuration.ssl-context-parameters.session-timeout* | null |  | String
+| *camel.component.etcd.configuration.ssl-context-parameters.trust-managers* | null |  | TrustManagersParameters
+| *camel.component.etcd.configuration.time-to-live* | To set the lifespan of a key in milliseconds. |  | int
+| *camel.component.etcd.configuration.timeout* | To set the maximum time an action could take to complete. |  | long
+| *camel.component.etcd.configuration.uris* | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String
+| *camel.component.etcd.configuration.user-name* | The user name to use for basic authentication. |  | String
+| *camel.component.etcd.enabled* | Enable etcd component | true | boolean
+| *camel.component.etcd.password* | The password to use for basic authentication. |  | String
+| *camel.component.etcd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.etcd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a
+ org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.etcd.uris* | To set the URIs the client connects. |  | String
+| *camel.component.etcd.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | boolean
+| *camel.component.etcd.user-name* | The user name to use for basic authentication. |  | String
+|===
+// spring-boot-auto-configure options: END
+

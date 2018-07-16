@@ -123,6 +123,403 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 281 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-cw.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-cw.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-cw.configuration.amazon-cw-client* | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *camel.component.aws-cw.configuration.name* | The metric name |  | String
+| *camel.component.aws-cw.configuration.namespace* | The metric namespace |  | String
+| *camel.component.aws-cw.configuration.proxy-host* | null |  | String
+| *camel.component.aws-cw.configuration.proxy-port* | null |  | int
+| *camel.component.aws-cw.configuration.region* | null |  | String
+| *camel.component.aws-cw.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-cw.configuration.timestamp* | The metric timestamp |  | Date
+| *camel.component.aws-cw.configuration.unit* | The metric unit |  | String
+| *camel.component.aws-cw.configuration.value* | The metric value |  | double
+| *camel.component.aws-cw.enabled* | Enable aws-cw component | true | boolean
+| *camel.component.aws-cw.region* | The region in which CW client needs to work |  | String
+| *camel.component.aws-cw.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-cw.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ddb.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddb.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddb.configuration.amazon-d-d-b-client* | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
+| *camel.component.aws-ddb.configuration.consistent-read* | Determines whether or not strong consistency should be enforced when
+ data is read. | false | boolean
+| *camel.component.aws-ddb.configuration.key-attribute-name* | Attribute name when creating table |  | String
+| *camel.component.aws-ddb.configuration.key-attribute-type* | Attribute type when creating table |  | String
+| *camel.component.aws-ddb.configuration.operation* | What operation to perform |  | DdbOperations
+| *camel.component.aws-ddb.configuration.proxy-host* | null |  | String
+| *camel.component.aws-ddb.configuration.proxy-port* | null |  | int
+| *camel.component.aws-ddb.configuration.read-capacity* | The provisioned throughput to reserve for reading resources from your
+ table |  | long
+| *camel.component.aws-ddb.configuration.region* | null |  | String
+| *camel.component.aws-ddb.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ddb.configuration.table-name* | The name of the table currently worked with. |  | String
+| *camel.component.aws-ddb.configuration.write-capacity* | The provisioned throughput to reserved for writing resources to your
+ table |  | long
+| *camel.component.aws-ddb.enabled* | Enable aws-ddb component | true | boolean
+| *camel.component.aws-ddb.region* | The region in which DDB client needs to work |  | String
+| *camel.component.aws-ddb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-ddb.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ddbstream.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddbstream.configuration.access-key* | null |  | String
+| *camel.component.aws-ddbstream.configuration.amazon-dynamo-db-streams-client* | null |  | AmazonDynamoDBStreams
+| *camel.component.aws-ddbstream.configuration.iterator-type* | null |  | ShardIteratorType
+| *camel.component.aws-ddbstream.configuration.max-results-per-request* | null |  | int
+| *camel.component.aws-ddbstream.configuration.proxy-host* | null |  | String
+| *camel.component.aws-ddbstream.configuration.proxy-port* | null |  | int
+| *camel.component.aws-ddbstream.configuration.region* | null |  | String
+| *camel.component.aws-ddbstream.configuration.secret-key* | null |  | String
+| *camel.component.aws-ddbstream.configuration.sequence-number-provider* | null |  | SequenceNumberProvider
+| *camel.component.aws-ddbstream.configuration.table-name* | null |  | String
+| *camel.component.aws-ddbstream.enabled* | Enable aws-ddbstream component | true | boolean
+| *camel.component.aws-ddbstream.region* | Amazon AWS Region |  | String
+| *camel.component.aws-ddbstream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-ddbstream.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ec2.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ec2.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ec2.configuration.amazon-ec2-client.signer-region-override* | null |  | String
+| *camel.component.aws-ec2.configuration.amazon-ec2-client.time-offset* | null |  | int
+| *camel.component.aws-ec2.configuration.operation* | The operation to perform. It can be createAndRunInstances,
+ startInstances, stopInstances, terminateInstances, describeInstances,
+ describeInstancesStatus, rebootInstances, monitorInstances,
+ unmonitorInstances, createTags or deleteTags |  | EC2Operations
+| *camel.component.aws-ec2.configuration.proxy-host* | null |  | String
+| *camel.component.aws-ec2.configuration.proxy-port* | null |  | int
+| *camel.component.aws-ec2.configuration.region* | null |  | String
+| *camel.component.aws-ec2.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ec2.enabled* | Enable aws-ec2 component | true | boolean
+| *camel.component.aws-ec2.region* | The region in which EC2 client needs to work |  | String
+| *camel.component.aws-ec2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-ec2.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-kinesis-firehose.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kinesis-firehose.configuration.access-key* | null |  | String
+| *camel.component.aws-kinesis-firehose.configuration.amazon-kinesis-firehose-client* | null |  | AmazonKinesisFirehose
+| *camel.component.aws-kinesis-firehose.configuration.proxy-host* | null |  | String
+| *camel.component.aws-kinesis-firehose.configuration.proxy-port* | null |  | int
+| *camel.component.aws-kinesis-firehose.configuration.region* | null |  | String
+| *camel.component.aws-kinesis-firehose.configuration.secret-key* | null |  | String
+| *camel.component.aws-kinesis-firehose.configuration.stream-name* | null |  | String
+| *camel.component.aws-kinesis-firehose.enabled* | Enable aws-kinesis-firehose component | true | boolean
+| *camel.component.aws-kinesis-firehose.region* | Amazon AWS Region |  | String
+| *camel.component.aws-kinesis-firehose.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-kinesis-firehose.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-kinesis.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kinesis.configuration.access-key* | null |  | String
+| *camel.component.aws-kinesis.configuration.amazon-kinesis-client* | null |  | AmazonKinesis
+| *camel.component.aws-kinesis.configuration.iterator-type* | null |  | ShardIteratorType
+| *camel.component.aws-kinesis.configuration.max-results-per-request* | null | 1 | int
+| *camel.component.aws-kinesis.configuration.proxy-host* | null |  | String
+| *camel.component.aws-kinesis.configuration.proxy-port* | null |  | int
+| *camel.component.aws-kinesis.configuration.region* | null |  | String
+| *camel.component.aws-kinesis.configuration.secret-key* | null |  | String
+| *camel.component.aws-kinesis.configuration.sequence-number* | null |  | String
+| *camel.component.aws-kinesis.configuration.shard-closed* | null |  | KinesisShardClosedStrategyEnum
+| *camel.component.aws-kinesis.configuration.shard-id* | null |  | String
+| *camel.component.aws-kinesis.configuration.stream-name* | null |  | String
+| *camel.component.aws-kinesis.enabled* | Enable aws-kinesis component | true | boolean
+| *camel.component.aws-kinesis.region* | Amazon AWS Region |  | String
+| *camel.component.aws-kinesis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-kinesis.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-kms.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kms.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kms.configuration.kms-client* | To use a existing configured AWS KMS as client |  | AWSKMS
+| *camel.component.aws-kms.configuration.operation* | The operation to perform |  | KMSOperations
+| *camel.component.aws-kms.configuration.proxy-host* | null |  | String
+| *camel.component.aws-kms.configuration.proxy-port* | null |  | int
+| *camel.component.aws-kms.configuration.region* | null |  | String
+| *camel.component.aws-kms.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-kms.enabled* | null |  | boolean
+| *camel.component.aws-kms.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-kms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-kms.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-lambda.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-lambda.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-lambda.configuration.aws-lambda-client* | To use a existing configured AwsLambdaClient as client |  | AWSLambda
+| *camel.component.aws-lambda.configuration.function* | Name of the Lambda function. |  | String
+| *camel.component.aws-lambda.configuration.operation* | The operation to perform. It can be listFunctions, getFunction,
+ createFunction, deleteFunction or invokeFunction |  | LambdaOperations
+| *camel.component.aws-lambda.configuration.proxy-host* | null |  | String
+| *camel.component.aws-lambda.configuration.proxy-port* | null |  | int
+| *camel.component.aws-lambda.configuration.region* | Amazon AWS Region |  | String
+| *camel.component.aws-lambda.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-lambda.enabled* | null |  | boolean
+| *camel.component.aws-lambda.region* | Amazon AWS Region |  | String
+| *camel.component.aws-lambda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-lambda.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-mq.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-mq.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-mq.configuration.amazon-mq-client* | To use a existing configured AmazonMQClient as client |  | AmazonMQ
+| *camel.component.aws-mq.configuration.operation* | The operation to perform. It can be
+ listBrokers,createBroker,deleteBroker |  | MQOperations
+| *camel.component.aws-mq.configuration.proxy-host* | null |  | String
+| *camel.component.aws-mq.configuration.proxy-port* | null |  | int
+| *camel.component.aws-mq.configuration.region* | null |  | String
+| *camel.component.aws-mq.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-mq.enabled* | null |  | boolean
+| *camel.component.aws-mq.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-mq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-mq.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-s3.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-s3.configuration.accelerate-mode-enabled* | Define if Accelerate Mode enabled is true or false | false | boolean
+| *camel.component.aws-s3.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-s3.configuration.amazon-s3-client* | Reference to a `com.amazonaws.services.sqs.AmazonS3` in the
+ link:registry.html[Registry]. |  | AmazonS3
+| *camel.component.aws-s3.configuration.autoclose-body* | If this option is true and includeBody is true, then the
+ S3Object.close() method will be called on exchange completion. This
+ option is strongly related to includeBody option. In case of setting
+ includeBody to true and autocloseBody to false, it will be up to the
+ caller to close the S3Object stream. Setting autocloseBody to true,
+ will close the S3Object stream automatically. | true | boolean
+| *camel.component.aws-s3.configuration.aws-k-m-s-key-id* | Define the id of KMS key to use in case KMS is enabled |  | String
+| *camel.component.aws-s3.configuration.bucket-name* | Name of the bucket. The bucket will be created if it doesn't already
+ exists. |  | String
+| *camel.component.aws-s3.configuration.chunked-encoding-disabled* | Define if disabled Chunked Encoding is true or false | false | boolean
+| *camel.component.aws-s3.configuration.delete-after-read* | Delete objects from S3 after they have been retrieved. The delete is
+ only performed if the Exchange is committed. If a rollback occurs,
+ the object is not deleted.
+ <p/>
+ If this option is false, then the same objects will be retrieve over
+ and over again on the polls. Therefore you need to use the Idempotent
+ Consumer EIP in the route to filter out duplicates. You can filter
+ using the {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY}
+ headers, or only the {@link S3Constants#KEY} header. | true | boolean
+| *camel.component.aws-s3.configuration.delete-after-write* | Delete file object after the S3 file has been uploaded | false | boolean
+| *camel.component.aws-s3.configuration.dualstack-enabled* | Define if Dualstack enabled is true or false | false | boolean
+| *camel.component.aws-s3.configuration.encryption-materials.materials-description* | null |  | Map
+| *camel.component.aws-s3.configuration.file-name* | To get the object from the bucket with the given file name |  | String
+| *camel.component.aws-s3.configuration.force-global-bucket-access-enabled* | Define if Force Global Bucket Access enabled is true or false | false | boolean
+| *camel.component.aws-s3.configuration.include-body* | If it is true, the exchange body will be set to a stream to the
+ contents of the file. If false, the headers will be set with the S3
+ object metadata, but the body will be null. This option is strongly
+ related to autocloseBody option. In case of setting includeBody to
+ true and autocloseBody to false, it will be up to the caller to close
+ the S3Object stream. Setting autocloseBody to true, will close the
+ S3Object stream automatically. | true | boolean
+| *camel.component.aws-s3.configuration.multi-part-upload* | If it is true, camel will upload the file with multi part format, the
+ part size is decided by the option of `partSize` | false | boolean
+| *camel.component.aws-s3.configuration.operation* | The operation to do in case the user don't want to do only an upload |  | S3Operations
+| *camel.component.aws-s3.configuration.part-size* | Setup the partSize which is used in multi part upload, the default
+ size is 25M. | 26214400 | long
+| *camel.component.aws-s3.configuration.path-style-access* | Whether or not the S3 client should use path style access | false | boolean
+| *camel.component.aws-s3.configuration.payload-signing-enabled* | Define if Payload Signing enabled is true or false | false | boolean
+| *camel.component.aws-s3.configuration.policy* | The policy for this queue to set in the
+ `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method. |  | String
+| *camel.component.aws-s3.configuration.prefix* | The prefix which is used in the
+ com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+ objects we are interested in. |  | String
+| *camel.component.aws-s3.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
+| *camel.component.aws-s3.configuration.proxy-port* | Specify a proxy port to be used inside the client definition. |  | int
+| *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work |  | String
+| *camel.component.aws-s3.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-s3.configuration.server-side-encryption* | Sets the server-side encryption algorithm when encrypting the object
+ using AWS-managed keys. For example use <tt>AES256</tt>. |  | String
+| *camel.component.aws-s3.configuration.storage-class* | The storage class to set in the
+ `com.amazonaws.services.s3.model.PutObjectRequest` request. |  | String
+| *camel.component.aws-s3.configuration.use-aws-k-m-s* | Define if KMS must be used or not | false | boolean
+| *camel.component.aws-s3.configuration.use-encryption* | Define if encryption must be used or not | false | boolean
+| *camel.component.aws-s3.enabled* | Enable aws-s3 component | true | boolean
+| *camel.component.aws-s3.region* | The region where the bucket is located. This option is used in the
+ com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
+| *camel.component.aws-s3.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-s3.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sdb.enabled* | Enable aws-sdb component | true | boolean
+| *camel.component.aws-sdb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-ses.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.configuration.amazon-s-e-s-client* | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmailService
+| *camel.component.aws-ses.configuration.from* | The sender's email address. |  | String
+| *camel.component.aws-ses.configuration.proxy-host* | null |  | String
+| *camel.component.aws-ses.configuration.proxy-port* | null |  | int
+| *camel.component.aws-ses.configuration.region* | null |  | String
+| *camel.component.aws-ses.configuration.reply-to-addresses* | List of reply-to email address(es) for the message, override it using
+ 'CamelAwsSesReplyToAddresses' header. |  | List
+| *camel.component.aws-ses.configuration.return-path* | The email address to which bounce notifications are to be forwarded,
+ override it using 'CamelAwsSesReturnPath' header. |  | String
+| *camel.component.aws-ses.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ses.configuration.subject* | The subject which is used if the message header 'CamelAwsSesSubject'
+ is not present. |  | String
+| *camel.component.aws-ses.configuration.to* | List of destination email address. Can be overriden with
+ 'CamelAwsSesTo' header. |  | List
+| *camel.component.aws-ses.enabled* | Enable aws-ses component | true | boolean
+| *camel.component.aws-ses.region* | The region in which SES client needs to work |  | String
+| *camel.component.aws-ses.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-ses.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sns.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sns.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sns.configuration.amazon-s-n-s-client* | To use the AmazonSNS as the client |  | AmazonSNS
+| *camel.component.aws-sns.configuration.message-structure* | The message structure to use such as json |  | String
+| *camel.component.aws-sns.configuration.policy* | The policy for this queue |  | String
+| *camel.component.aws-sns.configuration.proxy-host* | null |  | String
+| *camel.component.aws-sns.configuration.proxy-port* | null |  | int
+| *camel.component.aws-sns.configuration.region* | null |  | String
+| *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject'
+ is not present. |  | String
+| *camel.component.aws-sns.configuration.topic-arn* | The Amazon Resource Name (ARN) assigned to the created topic. |  | String
+| *camel.component.aws-sns.configuration.topic-name* | The name of the topic |  | String
+| *camel.component.aws-sns.enabled* | Enable aws-sns component | true | boolean
+| *camel.component.aws-sns.region* | The region in which SNS client needs to work |  | String
+| *camel.component.aws-sns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-sns.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sqs.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sqs.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sqs.configuration.amazon-a-w-s-host* | The hostname of the Amazon AWS cloud. | amazonaws.com | String
+| *camel.component.aws-sqs.configuration.amazon-s-q-s-client* | To use the AmazonSQS as client |  | AmazonSQS
+| *camel.component.aws-sqs.configuration.attribute-names* | A list of attribute names to receive when consuming. Multiple names
+ can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.concurrent-consumers* | null | 1 | int
+| *camel.component.aws-sqs.configuration.default-visibility-timeout* | The default visibility timeout (in seconds) |  | int
+| *camel.component.aws-sqs.configuration.delay-seconds* | Delay sending messages for a number of seconds. |  | int
+| *camel.component.aws-sqs.configuration.delete-after-read* | Delete message from SQS after it has been read | true | boolean
+| *camel.component.aws-sqs.configuration.delete-if-filtered* | Whether or not to send the DeleteMessage to the SQS queue if an
+ exchange fails to get through a filter. If 'false' and exchange does
+ not make it through a Camel filter upstream in the route, then don't
+ send DeleteMessage. | true | boolean
+| *camel.component.aws-sqs.configuration.extend-message-visibility* | If enabled then a scheduled background task will keep extending the
+ message visibility on SQS. This is needed if it takes a long time to
+ process the message. If set to true defaultVisibilityTimeout must be
+ set. See details at Amazon docs. | false | boolean
+| *camel.component.aws-sqs.configuration.maximum-message-size* | The maximumMessageSize (in bytes) an SQS message can contain for this
+ queue. |  | int
+| *camel.component.aws-sqs.configuration.message-attribute-names* | A list of message attribute names to receive when consuming. Multiple
+ names can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.message-retention-period* | The messageRetentionPeriod (in seconds) a message will be retained by
+ SQS for this queue. |  | int
+| *camel.component.aws-sqs.configuration.policy* | The policy for this queue |  | String
+| *camel.component.aws-sqs.configuration.proxy-host* | null |  | String
+| *camel.component.aws-sqs.configuration.proxy-port* | null |  | int
+| *camel.component.aws-sqs.configuration.queue-name* | Name of queue. The queue will be created if they don't already
+ exists. |  | String
+| *camel.component.aws-sqs.configuration.queue-owner-a-w-s-account-id* | Specify the queue owner aws account id when you need to connect the
+ queue with different account owner. |  | String
+| *camel.component.aws-sqs.configuration.queue-url* | null |  | String
+| *camel.component.aws-sqs.configuration.receive-message-wait-time-seconds* | If you do not specify WaitTimeSeconds in the request, the queue
+ attribute ReceiveMessageWaitTimeSeconds is used to determine how long
+ to wait. |  | int
+| *camel.component.aws-sqs.configuration.redrive-policy* | Specify the policy that send message to DeadLetter queue. See detail
+ at Amazon docs. |  | String
+| *camel.component.aws-sqs.configuration.region* | Specify the queue region which could be used with
+ queueOwnerAWSAccountId to build the service URL. |  | String
+| *camel.component.aws-sqs.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sqs.configuration.visibility-timeout* | The duration (in seconds) that the received messages are hidden from
+ subsequent retrieve requests after being retrieved by a
+ ReceiveMessage request to set in the
+ com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only
+ make sense if its different from defaultVisibilityTimeout. It changes
+ the queue visibility timeout attribute permanently. |  | int
+| *camel.component.aws-sqs.configuration.wait-time-seconds* | Duration in seconds (0 to 20) that the ReceiveMessage action call
+ will wait until a message is in the queue to include in the response. |  | int
+| *camel.component.aws-sqs.enabled* | Enable aws-sqs component | true | boolean
+| *camel.component.aws-sqs.region* | Specify the queue region which could be used with queueOwnerAWSAccountId
+ to build the service URL. |  | String
+| *camel.component.aws-sqs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-sqs.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-swf.access-key* | Amazon AWS Access Key. |  | String
+| *camel.component.aws-swf.configuration.access-key* | Amazon AWS Access Key. |  | String
+| *camel.component.aws-swf.configuration.activity-list* | The list name to consume activities from. |  | String
+| *camel.component.aws-swf.configuration.activity-scheduling-options.heartbeat-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-scheduling-options.schedule-to-close-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-scheduling-options.schedule-to-start-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-scheduling-options.start-to-close-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-scheduling-options.task-list* | null |  | String
+| *camel.component.aws-swf.configuration.activity-scheduling-options.task-priority* | null |  | int
+| *camel.component.aws-swf.configuration.activity-thread-pool-size* | Maximum number of threads in work pool for activity. | 100 | int
+| *camel.component.aws-swf.configuration.activity-type-execution-options.do-not-retry-task-failed* | null |  | boolean
+| *camel.component.aws-swf.configuration.activity-type-execution-options.manual-activity-completion* | null |  | boolean
+| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-backoff-coefficient* | null |  | double
+| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-maximum-retries* | null |  | int
+| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-retry-initial-interval* | null |  | long
+| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-retry-maximum-interval* | null |  | long
+| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-heartbeat-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-list* | null |  | String
+| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-priority* | null |  | int
+| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-schedule-to-close-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-schedule-to-start-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-start-to-close-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.activity-type-registration-options.description* | null |  | String
+| *camel.component.aws-swf.configuration.amazon-s-w-client.signer-region-override* | null |  | String
+| *camel.component.aws-swf.configuration.amazon-s-w-client.time-offset* | null |  | int
+| *camel.component.aws-swf.configuration.child-policy* | The policy to use on child workflows when terminating a workflow. |  | String
+| *camel.component.aws-swf.configuration.client-configuration-parameters* | To configure the ClientConfiguration using the key/values from the
+ Map. |  | Map
+| *camel.component.aws-swf.configuration.data-converter* | An instance of
+ com.amazonaws.services.simpleworkflow.flow.DataConverter to use for
+ serializing/deserializing the data. |  | DataConverter
+| *camel.component.aws-swf.configuration.domain-name* | The workflow domain to use. |  | String
+| *camel.component.aws-swf.configuration.event-name* | The workflow or activity event name to use. |  | String
+| *camel.component.aws-swf.configuration.execution-start-to-close-timeout* | null | 3600 | String
+| *camel.component.aws-swf.configuration.operation* | Workflow operation | START | String
+| *camel.component.aws-swf.configuration.region* | Amazon AWS Region. |  | String
+| *camel.component.aws-swf.configuration.s-w-client-parameters* | To configure the AmazonSimpleWorkflowClient using the key/values from
+ the Map. |  | Map
+| *camel.component.aws-swf.configuration.secret-key* | Amazon AWS Secret Key. |  | String
+| *camel.component.aws-swf.configuration.signal-name* | The name of the signal to send to the workflow. |  | String
+| *camel.component.aws-swf.configuration.start-workflow-options-parameters* | To configure the StartWorkflowOptions using the key/values from the
+ Map.
+ 
+ @param startWorkflowOptionsParameters |  | Map
+| *camel.component.aws-swf.configuration.state-result-type* | The type of the result when a workflow state is queried. |  | String
+| *camel.component.aws-swf.configuration.task-start-to-close-timeout* | null | 600 | String
+| *camel.component.aws-swf.configuration.termination-details* | Details for terminating a workflow. |  | String
+| *camel.component.aws-swf.configuration.termination-reason* | The reason for terminating a workflow. |  | String
+| *camel.component.aws-swf.configuration.type* | Activity or workflow |  | String
+| *camel.component.aws-swf.configuration.version* | The workflow or activity event version to use. |  | String
+| *camel.component.aws-swf.configuration.workflow-list* | The list name to consume workflows from. |  | String
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-child-policy* | null |  | ChildPolicy
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-execution-start-to-close-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-lambda-role* | null |  | String
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-task-list* | null |  | String
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-task-priority* | null |  | int
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-task-start-to-close-timeout-seconds* | null |  | long
+| *camel.component.aws-swf.configuration.workflow-type-registration-options.description* | null |  | String
+| *camel.component.aws-swf.enabled* | Enable aws-swf component | true | boolean
+| *camel.component.aws-swf.region* | Amazon AWS Region. |  | String
+| *camel.component.aws-swf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.aws-swf.secret-key* | Amazon AWS Secret Key. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

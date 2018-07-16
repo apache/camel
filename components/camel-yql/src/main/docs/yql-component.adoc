@@ -82,6 +82,26 @@ with the following path and query parameters:
 | *https* (security) | Option to use HTTPS to communicate with YQL. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.yql.connection-manager* | To use a custom configured HttpClientConnectionManager. The option is a
+ org.apache.http.conn.HttpClientConnectionManager type. |  | String
+| *camel.component.yql.enabled* | null |  | boolean
+| *camel.component.yql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 === Exchange data format
 

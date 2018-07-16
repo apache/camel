@@ -90,6 +90,24 @@ with the following path and query parameters:
 | *user* (security) | User name (without server name). If not specified, anonymous login will be attempted. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xmpp.enabled* | Enable xmpp component | true | boolean
+| *camel.component.xmpp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Headers and setting Subject or Language

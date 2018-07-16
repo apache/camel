@@ -91,6 +91,28 @@ with the following path and query parameters:
 | *user* (authentication) | User for authenticate against the cluster. Requires transport_client role for accessing the cluster. Require XPack client jar on the classpath |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.elasticsearch5.client* | To use an existing configured Elasticsearch client, instead of creating a
+ client per endpoint. This allow to customize the client with specific
+ settings. The option is a
+ org.elasticsearch.client.transport.TransportClient type. |  | String
+| *camel.component.elasticsearch5.enabled* | Enable elasticsearch5 component | true | boolean
+| *camel.component.elasticsearch5.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Message Operations

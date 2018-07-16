@@ -63,6 +63,30 @@ with the following path and query parameters:
 | *lookupProviders* (advanced) | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi. | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jcache.cache-configuration* | A Configuration for the Cache. The option is a
+ javax.cache.configuration.Configuration type. |  | String
+| *camel.component.jcache.cache-configuration-properties* | The Properties for the javax.cache.spi.CachingProvider to create the
+ CacheManager. The option is a java.util.Properties type. |  | String
+| *camel.component.jcache.caching-provider* | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
+| *camel.component.jcache.configuration-uri* | An implementation specific URI for the CacheManager |  | String
+| *camel.component.jcache.enabled* | Enable jcache component | true | boolean
+| *camel.component.jcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

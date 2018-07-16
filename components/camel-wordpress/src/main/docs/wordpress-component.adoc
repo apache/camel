@@ -61,6 +61,37 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 15 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.wordpress.configuration.api-version* | null | 2 | String
+| *camel.component.wordpress.configuration.criteria-properties* | null |  | Map
+| *camel.component.wordpress.configuration.force* | null | false | boolean
+| *camel.component.wordpress.configuration.id* | null |  | int
+| *camel.component.wordpress.configuration.password* | null |  | String
+| *camel.component.wordpress.configuration.search-criteria.exclude* | null |  | List
+| *camel.component.wordpress.configuration.search-criteria.include* | null |  | List
+| *camel.component.wordpress.configuration.search-criteria.order* | null |  | Order
+| *camel.component.wordpress.configuration.search-criteria.page* | null |  | int
+| *camel.component.wordpress.configuration.search-criteria.per-page* | null |  | int
+| *camel.component.wordpress.configuration.search-criteria.search* | null |  | String
+| *camel.component.wordpress.configuration.url* | null |  | String
+| *camel.component.wordpress.configuration.user* | null |  | String
+| *camel.component.wordpress.enabled* | null |  | boolean
+| *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 Most of parameters needed when performing a read operation mirrors from the official https://developer.wordpress.org/rest-api/reference/[API]. When performing searches operations, the `criteria.` suffix is needed. Take the following `Consumer` as example:

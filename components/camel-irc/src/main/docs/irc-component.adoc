@@ -105,6 +105,25 @@ with the following path and query parameters:
 | *username* (security) | The IRC server user name. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.irc.enabled* | Enable irc component | true | boolean
+| *camel.component.irc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.irc.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

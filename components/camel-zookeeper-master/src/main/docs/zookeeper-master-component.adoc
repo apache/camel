@@ -83,6 +83,35 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.zookeeper-master.container-id-factory* | To use a custom ContainerIdFactory for creating container ids. The option
+ is a org.apache.camel.component.zookeepermaster.ContainerIdFactory type. |  | String
+| *camel.component.zookeeper-master.curator* | To use a custom configured CuratorFramework as connection to zookeeper
+ ensemble. The option is a org.apache.curator.framework.CuratorFramework
+ type. |  | String
+| *camel.component.zookeeper-master.enabled* | Enable zookeeper-master component | true | boolean
+| *camel.component.zookeeper-master.maximum-connection-timeout* | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
+| *camel.component.zookeeper-master.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.zookeeper-master.zk-root* | The root path to use in zookeeper where information is stored which nodes
+ are master/slave etc. Will by default use:
+ /camel/zookeepermaster/clusters/master | /camel/zookeepermaster/clusters/master | String
+| *camel.component.zookeeper-master.zoo-keeper-password* | The password to use when connecting to the zookeeper ensemble |  | String
+| *camel.component.zookeeper-master.zoo-keeper-url* | The url for the zookeeper ensemble | localhost:2181 | String
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Example
 

@@ -71,6 +71,37 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.twilio.account-sid* | The account SID to use. |  | String
+| *camel.component.twilio.configuration.api-name* | What kind of operation to perform
+ 
+ @param apiNamethe
+            API Name to set |  | TwilioApiName
+| *camel.component.twilio.configuration.method-name* | What sub operation to use for the selected operation
+ 
+ @param methodNamethe
+            methodName to set |  | String
+| *camel.component.twilio.enabled* | Enable twilio component | true | boolean
+| *camel.component.twilio.password* | Auth token for the account. |  | String
+| *camel.component.twilio.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.twilio.rest-client* | To use the shared REST client. The option is a
+ com.twilio.http.TwilioRestClient type. |  | String
+| *camel.component.twilio.username* | The account to use. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### URI format

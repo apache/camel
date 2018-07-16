@@ -146,6 +146,30 @@ with the following path and query parameters:
 | *basicUserName* (security) | The user name for basic authentication. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xmlrpc.enabled* | Enable xmlrpc component | true | boolean
+| *camel.component.xmlrpc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.dataformat.xmlrpc.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | boolean
+| *camel.dataformat.xmlrpc.enabled* | Enable xmlrpc dataformat | true | boolean
+| *camel.dataformat.xmlrpc.request* | Whether to marshal/unmarshal request or response Is by default false | false | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Message Headers

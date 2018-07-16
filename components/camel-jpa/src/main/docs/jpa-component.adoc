@@ -186,6 +186,37 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jpa.enabled* | Enable jpa component | true | boolean
+| *camel.component.jpa.entity-manager-factory* | To use the EntityManagerFactory. This is strongly recommended to
+ configure. The option is a javax.persistence.EntityManagerFactory type. |  | String
+| *camel.component.jpa.join-transaction* | The camel-jpa component will join transaction by default. You can use
+ this option to turn this off, for example if you use LOCAL_RESOURCE and
+ join transaction doesn't work with your JPA provider. This option can
+ also be set globally on the JpaComponent, instead of having to set it on
+ all endpoints. | true | boolean
+| *camel.component.jpa.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.jpa.shared-entity-manager* | Whether to use Spring's SharedEntityManager for the consumer/producer.
+ Note in most cases joinTransaction should be set to false as this is not
+ an EXTENDED EntityManager. | false | boolean
+| *camel.component.jpa.transaction-manager* | To use the PlatformTransactionManager for managing transactions. The
+ option is a org.springframework.transaction.PlatformTransactionManager
+ type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

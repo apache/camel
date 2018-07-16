@@ -72,6 +72,32 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.flink.data-set* | DataSet to compute against. The option is a
+ org.apache.flink.api.java.DataSet type. |  | String
+| *camel.component.flink.data-set-callback* | Function performing action against a DataSet. The option is a
+ org.apache.camel.component.flink.DataSetCallback type. |  | String
+| *camel.component.flink.data-stream* | DataStream to compute against. The option is a
+ org.apache.flink.streaming.api.datastream.DataStream type. |  | String
+| *camel.component.flink.data-stream-callback* | Function performing action against a DataStream. The option is a
+ org.apache.camel.component.flink.DataStreamCallback type. |  | String
+| *camel.component.flink.enabled* | Enable flink component | true | boolean
+| *camel.component.flink.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

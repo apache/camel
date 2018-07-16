@@ -126,6 +126,29 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.beanstalk.connection-settings-factory* | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory
+ to use to make connections to Beanstalkd. Especially useful for unit
+ testing without beanstalkd daemon (you can mock ConnectionSettings). The
+ option is a
+ org.apache.camel.component.beanstalk.ConnectionSettingsFactory type. |  | String
+| *camel.component.beanstalk.enabled* | Enable beanstalk component | true | boolean
+| *camel.component.beanstalk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 Producer behavior is affected by the `command` parameter which tells

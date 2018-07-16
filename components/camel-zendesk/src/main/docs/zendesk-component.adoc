@@ -72,6 +72,50 @@ with the following path and query parameters:
 | *username* (security) | The user name. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.zendesk.configuration.method-name* | What operation to use
+ 
+ @param methodNamethe
+            methodName to set |  | String
+| *camel.component.zendesk.configuration.oauth-token* | The OAuth token.
+ 
+ @param token
+            OAuth token |  | String
+| *camel.component.zendesk.configuration.password* | The password.
+ 
+ @param password
+            password |  | String
+| *camel.component.zendesk.configuration.server-url* | The server URL to connect.
+ 
+ @param url
+            server URL |  | String
+| *camel.component.zendesk.configuration.token* | The security token.
+ 
+ @param token
+            security token |  | String
+| *camel.component.zendesk.configuration.username* | The user name.
+ 
+ @param user
+            user name |  | String
+| *camel.component.zendesk.enabled* | Enable zendesk component | true | boolean
+| *camel.component.zendesk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.zendesk.zendesk* | To use a shared Zendesk instance. The option is a
+ org.zendesk.client.v2.Zendesk type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 ### URI format
 

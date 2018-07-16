@@ -113,6 +113,26 @@ with the following path and query parameters:
 | *secured* (security) | Whether connections to AS/400 are secured with SSL. | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jt400.connection-pool* | Returns the default connection pool used by this component. The option is
+ a com.ibm.as400.access.AS400ConnectionPool type. |  | String
+| *camel.component.jt400.enabled* | Enable jt400 component | true | boolean
+| *camel.component.jt400.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Usage

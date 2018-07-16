@@ -117,6 +117,24 @@ with the following path and query parameters:
 | *proxyPort* (proxy) | The proxy port number |  | Integer
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.weather.enabled* | Enable weather component | true | boolean
+| *camel.component.weather.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 You can append query options to the URI in the following format,

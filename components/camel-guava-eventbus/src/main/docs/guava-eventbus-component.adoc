@@ -96,6 +96,31 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.guava-eventbus.enabled* | Enable guava-eventbus component | true | boolean
+| *camel.component.guava-eventbus.event-bus* | To use the given Guava EventBus instance. The option is a
+ com.google.common.eventbus.EventBus type. |  | String
+| *camel.component.guava-eventbus.listener-interface* | The interface with method(s) marked with the Subscribe annotation.
+ Dynamic proxy will be created over the interface so it could be
+ registered as the EventBus listener. Particularly useful when creating
+ multi-event listeners and for handling DeadEvent properly. This option
+ cannot be used together with eventClass option. |  | class
+| *camel.component.guava-eventbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

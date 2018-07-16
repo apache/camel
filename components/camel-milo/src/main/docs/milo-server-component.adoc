@@ -106,6 +106,82 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 46 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.milo-client.application-name* | Default application name |  | String
+| *camel.component.milo-client.application-uri* | Default application URI |  | String
+| *camel.component.milo-client.default-configuration.allowed-security-policies* | A set of allowed security policy URIs. Default is to accept all and
+ use the highest. |  | Set
+| *camel.component.milo-client.default-configuration.application-name* | The application name | Apache Camel adapter for Eclipse Milo | String
+| *camel.component.milo-client.default-configuration.application-uri* | The application URI | http://camel.apache.org/EclipseMilo/Client | String
+| *camel.component.milo-client.default-configuration.channel-lifetime* | Channel lifetime in milliseconds |  | long
+| *camel.component.milo-client.default-configuration.client-id* | A virtual client id to force the creation of a new connection
+ instance |  | String
+| *camel.component.milo-client.default-configuration.discovery-endpoint-suffix* | A suffix for endpoint URI when discovering |  | String
+| *camel.component.milo-client.default-configuration.discovery-endpoint-uri* | An alternative discovery URI |  | String
+| *camel.component.milo-client.default-configuration.endpoint-uri* | null |  | String
+| *camel.component.milo-client.default-configuration.key-alias* | The name of the key in the keystore file |  | String
+| *camel.component.milo-client.default-configuration.key-password* | The key password |  | String
+| *camel.component.milo-client.default-configuration.key-store-password* | The keystore password |  | String
+| *camel.component.milo-client.default-configuration.key-store-type* | The key store type |  | String
+| *camel.component.milo-client.default-configuration.max-pending-publish-requests* | The maximum number of pending publish requests |  | long
+| *camel.component.milo-client.default-configuration.max-response-message-size* | The maximum number of bytes a response message may have |  | long
+| *camel.component.milo-client.default-configuration.override-host* | Override the server reported endpoint host with the host from the
+ endpoint URI. | false | boolean
+| *camel.component.milo-client.default-configuration.product-uri* | The product URI | http://camel.apache.org/EclipseMilo | String
+| *camel.component.milo-client.default-configuration.request-timeout* | Request timeout in milliseconds |  | long
+| *camel.component.milo-client.default-configuration.session-name* | Session name |  | String
+| *camel.component.milo-client.default-configuration.session-timeout* | Session timeout in milliseconds |  | long
+| *camel.component.milo-client.enabled* | Enable milo-client component | true | boolean
+| *camel.component.milo-client.product-uri* | Default product URI |  | String
+| *camel.component.milo-client.reconnect-timeout* | Default reconnect timeout |  | long
+| *camel.component.milo-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.milo-server.application-name* | The application name |  | String
+| *camel.component.milo-server.application-uri* | The application URI |  | String
+| *camel.component.milo-server.bind-addresses* | Set the addresses of the local addresses the server should bind to |  | String
+| *camel.component.milo-server.bind-port* | The TCP port the server binds to |  | int
+| *camel.component.milo-server.build-info* | Server build info. The option is a
+ org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo type. |  | String
+| *camel.component.milo-server.certificate-manager* | Server certificate manager. The option is a
+ org.eclipse.milo.opcua.stack.core.application.CertificateManager type. |  | String
+| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a
+ java.util.function.Supplier
+ <org.eclipse.milo.opcua.stack.core.application.CertificateValidator>
+ type. |  | String
+| *camel.component.milo-server.default-certificate-validator* | Validator for client certificates using default file based approach |  | File
+| *camel.component.milo-server.enable-anonymous-authentication* | Enable anonymous authentication, disabled by default | false | boolean
+| *camel.component.milo-server.enabled* | Enable milo-server component | true | boolean
+| *camel.component.milo-server.hostname* | Server hostname |  | String
+| *camel.component.milo-server.namespace-uri* | The URI of the namespace, defaults to urn:org:apache:camel |  | String
+| *camel.component.milo-server.product-uri* | The product URI |  | String
+| *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.milo-server.security-policies* | Security policies. The option is a
+ java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy>
+ type. |  | String
+| *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | String>
+| *camel.component.milo-server.server-certificate* | Server certificate. The option is a
+ org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String
+| *camel.component.milo-server.server-name* | Server name |  | String
+| *camel.component.milo-server.strict-endpoint-urls-enabled* | Set whether strict endpoint URLs are enforced | false | boolean
+| *camel.component.milo-server.user-authentication-credentials* | Set user password combinations in the form of user1:pwd1,user2:pwd2
+ Usernames and passwords will be URL decoded |  | String
+| *camel.component.milo-server.username-security-policy-uri* | Set the UserTokenPolicy used when |  | SecurityPolicy
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

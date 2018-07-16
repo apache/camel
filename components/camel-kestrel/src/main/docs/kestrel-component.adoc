@@ -119,6 +119,27 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.kestrel.configuration.addresses* | The addresses |  | string[]
+| *camel.component.kestrel.configuration.concurrent-consumers* | The number of concurrent consumers | 1 | int
+| *camel.component.kestrel.configuration.wait-time-ms* | The wait time in milliseconds | 100 | int
+| *camel.component.kestrel.enabled* | Enable kestrel component | true | boolean
+| *camel.component.kestrel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

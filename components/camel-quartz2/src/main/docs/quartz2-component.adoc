@@ -118,6 +118,46 @@ with the following path and query parameters:
 | *triggerStartDelay* (scheduler) | In case of scheduler has already started, we want the trigger start slightly after current time to ensure endpoint is fully started before the job kicks in. | 500 | long
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.quartz2.auto-start-scheduler* | Whether or not the scheduler should be auto started. This options is
+ default true | true | boolean
+| *camel.component.quartz2.enable-jmx* | Whether to enable Quartz JMX which allows to manage the Quartz scheduler
+ from JMX. This options is default true | true | boolean
+| *camel.component.quartz2.enabled* | Enable quartz2 component | true | boolean
+| *camel.component.quartz2.interrupt-jobs-on-shutdown* | Whether to interrupt jobs on shutdown which forces the scheduler to
+ shutdown quicker and attempt to interrupt any running jobs. If this is
+ enabled then any running jobs can fail due to being interrupted. | false | boolean
+| *camel.component.quartz2.prefix-instance-name* | Whether to prefix the Quartz Scheduler instance name with the
+ CamelContext name. This is enabled by default, to let each CamelContext
+ use its own Quartz scheduler instance by default. You can set this option
+ to false to reuse Quartz scheduler instances between multiple
+ CamelContext's. | true | boolean
+| *camel.component.quartz2.prefix-job-name-with-endpoint-id* | Whether to prefix the quartz job with the endpoint id. This option is
+ default false. | false | boolean
+| *camel.component.quartz2.properties* | Properties to configure the Quartz scheduler. The option is a
+ java.util.Properties type. |  | String
+| *camel.component.quartz2.properties-file* | File name of the properties to load from the classpath |  | String
+| *camel.component.quartz2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | boolean
+| *camel.component.quartz2.scheduler* | To use the custom configured Quartz scheduler, instead of creating a new
+ Scheduler. The option is a org.quartz.Scheduler type. |  | String
+| *camel.component.quartz2.scheduler-factory* | To use the custom SchedulerFactory which is used to create the Scheduler.
+ The option is a org.quartz.SchedulerFactory type. |  | String
+| *camel.component.quartz2.start-delayed-seconds* | Seconds to wait before starting the quartz scheduler. |  | int
+|===
+// spring-boot-auto-configure options: END
+
 
 
 For example, the following routing rule will fire two timer events to
