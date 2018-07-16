@@ -110,7 +110,12 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 // update all adoc files (as it may be component, language, data-format or just other kind)
                 File[] docFiles = docFolder.listFiles((f) -> f.getName().startsWith(componentName) && f.getName().endsWith(".adoc"));
                 if (docFiles != null && docFiles.length > 0) {
+                    boolean onlyOther = docFiles.length == 1 && docFiles[0].getName().equals(componentName + ".adoc");
                     List models = parseSpringBootAutoConfigreModels(jsonFile);
+                    if (models.isEmpty() && onlyOther) {
+                        // there are no spring-boot auto configuration for this other kind of JAR so lets just ignore this
+                        return;
+                    }
                     String options = templateAutoConfigurationOptions(models);
                     for (File docFile : docFiles) {
                         boolean updated = updateAutoConfigureOptions(docFile, options);

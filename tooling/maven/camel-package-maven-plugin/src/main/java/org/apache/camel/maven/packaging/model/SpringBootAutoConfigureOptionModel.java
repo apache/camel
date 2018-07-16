@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import java.util.Locale;
+
 import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
 
 public class SpringBootAutoConfigureOptionModel {
@@ -77,13 +79,12 @@ public class SpringBootAutoConfigureOptionModel {
             text = text.substring(pos + 1);
         }
 
-        // use non wrapped types
-        if ("Boolean".equals(text)) {
-            text = "boolean";
-        } else if ("Long".equals(text)) {
-            text = "long";
-        } else if ("Integer".equals(text)) {
-            text = "int";
+        // favour using simple types for known java.lang wrapper types
+        if (javaType.startsWith("java.lang.") && !"String".equals(text)) {
+            text = text.toLowerCase(Locale.US);
+            if ("integer".equals(text)) {
+                text = "int";
+            }
         }
 
         return text;
