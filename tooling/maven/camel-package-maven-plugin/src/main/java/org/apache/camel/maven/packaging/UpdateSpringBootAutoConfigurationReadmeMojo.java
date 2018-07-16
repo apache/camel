@@ -174,6 +174,17 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             String text = loadText(new FileInputStream(file));
 
             String existing = StringHelper.between(text, "// spring-boot-auto-configure options: START", "// spring-boot-auto-configure options: END");
+            if (existing == null) {
+                // attach to the end of the endpoint options
+                int pos = text.indexOf("// endpoint options: END");
+                if (pos != -1) {
+                    String before = text.substring(0, pos);
+                    String after = text.substring(pos + 24);
+                    text = before + "// endpoint options: END\n// spring-boot-auto-configure options: START\n// spring-boot-auto-configure options: END\n" + after;
+                    writeText(file, text);
+                    existing = StringHelper.between(text, "// spring-boot-auto-configure options: START", "// spring-boot-auto-configure options: END");
+                }
+            }
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
