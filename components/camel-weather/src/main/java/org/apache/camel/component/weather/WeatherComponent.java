@@ -42,7 +42,6 @@ public class WeatherComponent extends UriEndpointComponent {
     private String geolocationAccessKey;
     private String geolocationRequestHostIP;
 
-
     public WeatherComponent() {
         super(WeatherEndpoint.class);
     }
@@ -53,7 +52,7 @@ public class WeatherComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-    	WeatherConfiguration configuration = new WeatherConfiguration(this);
+        WeatherConfiguration configuration = new WeatherConfiguration(this);
 
         // and then override from parameters
         setProperties(configuration, parameters);
@@ -73,8 +72,7 @@ public class WeatherComponent extends UriEndpointComponent {
         HttpClient httpClient = new HttpClient(connectionManager);
 
         if (configuration.getProxyHost() != null && configuration.getProxyPort() != null) {
-            httpClient.getHostConfiguration().setProxy(configuration.getProxyHost(),
-                    configuration.getProxyPort());
+            httpClient.getHostConfiguration().setProxy(configuration.getProxyHost(), configuration.getProxyPort());
         }
 
         if (configuration.getProxyAuthUsername() != null && configuration.getProxyAuthMethod() == null) {
@@ -83,12 +81,8 @@ public class WeatherComponent extends UriEndpointComponent {
 
         CompositeHttpConfigurer configurer = new CompositeHttpConfigurer();
         if (configuration.getProxyAuthMethod() != null) {
-            configureProxyAuth(configurer,
-                    configuration.getProxyAuthMethod(),
-                    configuration.getProxyAuthUsername(),
-                    configuration.getProxyAuthPassword(),
-                    configuration.getProxyAuthDomain(),
-                    configuration.getProxyAuthHost());
+            configureProxyAuth(configurer, configuration.getProxyAuthMethod(), configuration.getProxyAuthUsername(), configuration.getProxyAuthPassword(),
+                               configuration.getProxyAuthDomain(), configuration.getProxyAuthHost());
         }
 
         configurer.configureHttpClient(httpClient);
@@ -96,12 +90,7 @@ public class WeatherComponent extends UriEndpointComponent {
         return httpClient;
     }
 
-    private HttpClientConfigurer configureProxyAuth(CompositeHttpConfigurer configurer,
-                                    String authMethod,
-                                    String username,
-                                    String password,
-                                    String domain,
-                                    String host) {
+    private HttpClientConfigurer configureProxyAuth(CompositeHttpConfigurer configurer, String authMethod, String username, String password, String domain, String host) {
         // no proxy auth is in use
         if (username == null && authMethod == null) {
             return configurer;
@@ -136,27 +125,27 @@ public class WeatherComponent extends UriEndpointComponent {
         return httpClient;
     }
 
-	public String getGeolocationAccessKey() {
-		return geolocationAccessKey;
-	}
-	
+    public String getGeolocationAccessKey() {
+        return geolocationAccessKey;
+    }
+
     /**
      * The geolocation service now needs an accessKey to be used
      */
-	public void setGeolocationAccessKey(String geolocationAccessKey) {
-		this.geolocationAccessKey = geolocationAccessKey;
-	}
+    public void setGeolocationAccessKey(String geolocationAccessKey) {
+        this.geolocationAccessKey = geolocationAccessKey;
+    }
 
-	public String getGeolocationRequestHostIP() {
-		return geolocationRequestHostIP;
-	}
+    public String getGeolocationRequestHostIP() {
+        return geolocationRequestHostIP;
+    }
 
     /**
-     * The geolocation service now needs to specify the IP associated to the accessKey you're using
+     * The geolocation service now needs to specify the IP associated to the
+     * accessKey you're using
      */
-	public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
-		this.geolocationRequestHostIP = geolocationRequestHostIP;
-	}
-	
+    public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+        this.geolocationRequestHostIP = geolocationRequestHostIP;
+    }
 
 }
