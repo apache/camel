@@ -42,7 +42,17 @@ definition of the weather endpoint using the appid param !
 
 
 // component options: START
-The Weather component has no options.
+The Weather component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *geolocationAccessKey* (common) | The geolocation service now needs an accessKey to be used |  | String
+| *geolocationRequestHost IP* (common) | The geolocation service now needs to specify the IP associated to the accessKey you're using |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -66,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (43 parameters):
+==== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -115,6 +125,7 @@ with the following path and query parameters:
 | *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
 | *proxyHost* (proxy) | The proxy host name |  | String
 | *proxyPort* (proxy) | The proxy port number |  | Integer
+| *geolocationAccessKey* (security) | The geolocation service now needs an accessKey to be used |  | String
 |===
 // endpoint options: END
 
