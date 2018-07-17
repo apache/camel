@@ -37,9 +37,7 @@
     <schemeName>fhir</schemeName>
     <componentPackage>org.apache.camel.component.fhir</componentPackage>
     <outPackage>org.apache.camel.component.fhir.internal</outPackage>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.fhir.*
-    </camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.dynamic>
       org.hl7.fhir.*
     </camel.osgi.dynamic>
