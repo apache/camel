@@ -22,7 +22,9 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.SpringBootAutoConfigureOptionModel;
 import org.apache.maven.plugin.AbstractMojo;
@@ -124,19 +126,30 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 }
 
                 if (docFiles != null && docFiles.length > 0) {
-                    boolean onlyOther = docFiles.length == 1 && docFiles[0].getName().equals(componentName + ".adoc");
-                    List models = parseSpringBootAutoConfigreModels(jsonFile);
-                    if (models.isEmpty() && onlyOther) {
-                        // there are no spring-boot auto configuration for this other kind of JAR so lets just ignore this
-                        return;
+                    List<File> files = Arrays.asList(docFiles);
+
+                    boolean hasComponentDataFormatOrLanguage = files.stream().anyMatch(
+                        (f) -> f.getName().endsWith("-component.adoc") || f.getName().endsWith("-dataformat.adoc") || f.getName().endsWith("-language.adoc"));
+
+                    if (hasComponentDataFormatOrLanguage) {
+                        files = Arrays.stream(docFiles).filter((f) -> !f.getName().equals(componentName + ".adoc")).collect(Collectors.toList());
                     }
-                    String options = templateAutoConfigurationOptions(models);
-                    for (File docFile : docFiles) {
-                        boolean updated = updateAutoConfigureOptions(docFile, options);
-                        if (updated) {
-                            getLog().info("Updated doc file: " + docFile);
-                        } else {
-                            getLog().debug("No changes to doc file: " + docFile);
+
+                    if (files.size() > 0) {
+                        boolean onlyOther = files.size() == 1 && !hasComponentDataFormatOrLanguage;
+                        List models = parseSpringBootAutoConfigreModels(jsonFile);
+                        if (models.isEmpty() && onlyOther) {
+                            // there are no spring-boot auto configuration for this other kind of JAR so lets just ignore this
+                            return;
+                        }
+                        String options = templateAutoConfigurationOptions(models);
+                        for (File docFile : files) {
+                            boolean updated = updateAutoConfigureOptions(docFile, options);
+                            if (updated) {
+                                getLog().info("Updated doc file: " + docFile);
+                            } else {
+                                getLog().debug("No changes to doc file: " + docFile);
+                            }
                         }
                     }
                 } else {
@@ -160,13 +173,6 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             String name = pathname.getName();
-
-            // skip empty placeholder files
-            if ("aws.adoc".equals(name) || "azure.adoc".equals(name) || "hazelcast.adoc".equals(name)
-                || "ignite.adoc".equals(name) || "kubernetes.adoc".equals(name)) {
-                return false;
-            }
-
             return name.startsWith(componentName) && name.endsWith(".adoc");
         }
     }
@@ -180,6 +186,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "json-jackson";
         } else if ("johnzon".equals(componentName)) {
             return "json-johnzon";
+        } else if ("snakeyaml".equals(componentName)) {
+            return "yaml-snakeyaml";
         } else if ("cassandraql".equals(componentName)) {
             return "cql";
         } else if ("josql".equals(componentName)) {
@@ -190,6 +198,20 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "el";
         } else if ("jsch".equals(componentName)) {
             return "scp";
+        } else if ("printer".equals(componentName)) {
+            return "lpr";
+        } else if ("saxon".equals(componentName)) {
+            return "xquery";
+        } else if ("script".equals(componentName)) {
+            return "javaScript";
+        } else if ("stringtemplate".equals(componentName)) {
+            return "string-template";
+        } else if ("tagsoup".equals(componentName)) {
+            return "tidyMarkup";
+        } else if ("univocity-parsers".equals(componentName)) {
+            return "univocity-csv";
+        } else if ("xmlbeans".equals(componentName)) {
+            return "xmlBeans";
         }
         return componentName;
     }
