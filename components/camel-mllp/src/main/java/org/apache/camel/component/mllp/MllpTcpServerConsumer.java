@@ -664,7 +664,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
 
         private void populateHl7DataHeaders(Exchange exchange, Message message, byte[] hl7MessageBytes) {
-            if (hl7MessageBytes == null ||  hl7MessageBytes.length < 8) {
+            if (!endpoint.hl7Headers || hl7MessageBytes == null ||  hl7MessageBytes.length < 8) {
                 // Not enough data to populate anything - just return
                 return;
             }
@@ -689,8 +689,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             String messageBodyForDebugging = new String(hl7MessageBytes);
             if (-1 == endOfMSH) {
                 // TODO:  May want to throw some sort of an Exception here
-                log.error("Population of message headers failed - unable to find the end of the MSH segment");
-            } else if (endpoint.hl7Headers) {
+                log.warn("Population of message headers failed - unable to find the end of the MSH segment");
+            } else {
                 log.debug("Populating the HL7 message headers");
                 Charset charset = Charset.forName(IOHelper.getCharsetName(exchange));
 
@@ -757,8 +757,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         }
                     }
                 }
-            } else {
-                log.trace("HL7 Message headers disabled");
             }
 
         }
