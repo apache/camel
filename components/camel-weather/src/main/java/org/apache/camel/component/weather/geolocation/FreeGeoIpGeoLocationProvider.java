@@ -45,11 +45,8 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
             throw new IllegalStateException("The geolocation service requires a mandatory geolocationRequestHostIP");
         }
         GetMethod getMethod = new GetMethod("http://api.ipstack.com/" + component.getGeolocationRequestHostIP());
-        getMethod.setQueryString(new NameValuePair[] { 
-        	    new NameValuePair("access_key", component.getGeolocationAccessKey()),
-        	    new NameValuePair("legacy", "1"),
-        	    new NameValuePair("output", "json")
-        	}); 
+        getMethod.setQueryString(new NameValuePair[] {new NameValuePair("access_key", component.getGeolocationAccessKey()), new NameValuePair("legacy", "1"),
+                                                      new NameValuePair("output", "json")});
         try {
             int statusCode = httpClient.executeMethod(getMethod);
             if (statusCode != HttpStatus.SC_OK) {
