@@ -38,6 +38,12 @@ Since the 9th of October, an Api Key is required to access the
 openweather service. This key is passed as parameter to the URI
 definition of the weather endpoint using the appid param !
 
+### Geolocation provider
+
+Since July 2018 FreegeoIP is no longer available. The camel-weather component was using this API.
+We switch to https://github.com/apilayer/freegeoip#readme[IPstack] so you'll need to specify and Access Key and the IP 
+from where you're using the API now on.
+
 ### Options
 
 
