@@ -89,7 +89,7 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
                 
                 /* The Camel Route uses the apache-camel appid to access the openweathermap service */
                 from("direct:start")
-                    .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38")
+                    .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test")
                     .to("mock:result");
             }
         };

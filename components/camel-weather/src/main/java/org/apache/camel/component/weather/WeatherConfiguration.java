@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -90,11 +91,15 @@ public class WeatherConfiguration {
     private String proxyAuthHost;
     @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
+    @UriParam(label = "security")
+    private String geolocationAccessKey;
+    @Metadata(label = "security")
+    private String geolocationRequestHostIP;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
         weatherQuery = new WeatherQuery(this);
-        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(component);
+        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(component, geolocationAccessKey);
         weatherQuery.setGeoLocationProvider(geoLocationProvider);
     }
 
@@ -407,4 +412,27 @@ public class WeatherConfiguration {
     public void setWeatherApi(WeatherApi weatherApi) {
         this.weatherApi = weatherApi;
     }
+
+	public String getGeolocationAccessKey() {
+		return geolocationAccessKey;
+	}
+
+
+    /**
+     * The geolocation service now needs an accessKey to be used
+     */
+	public void setGeolocationAccessKey(String geolocationAccessKey) {
+		this.geolocationAccessKey = geolocationAccessKey;
+	}
+
+	public String getGeolocationRequestHostIP() {
+		return geolocationRequestHostIP;
+	}
+	
+    /**
+     * The geolocation service now needs to specify the IP associated to the accessKey you're using
+     */
+	public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+		this.geolocationRequestHostIP = geolocationRequestHostIP;
+	}
 }

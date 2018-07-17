@@ -25,6 +25,7 @@ import org.apache.camel.component.weather.http.AuthenticationMethod;
 import org.apache.camel.component.weather.http.CompositeHttpConfigurer;
 import org.apache.camel.component.weather.http.HttpClientConfigurer;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -38,6 +39,9 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 public class WeatherComponent extends UriEndpointComponent {
 
     private HttpClient httpClient;
+    private String geolocationAccessKey;
+    private String geolocationRequestHostIP;
+
 
     public WeatherComponent() {
         super(WeatherEndpoint.class);
@@ -49,12 +53,14 @@ public class WeatherComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        WeatherConfiguration configuration = new WeatherConfiguration(this);
+    	WeatherConfiguration configuration = new WeatherConfiguration(this);
 
         // and then override from parameters
         setProperties(configuration, parameters);
 
         httpClient = createHttpClient(configuration);
+        geolocationAccessKey = configuration.getGeolocationAccessKey();
+        geolocationRequestHostIP = configuration.getGeolocationRequestHostIP();
         WeatherEndpoint endpoint = new WeatherEndpoint(uri, this, configuration);
         return endpoint;
     }
@@ -129,4 +135,28 @@ public class WeatherComponent extends UriEndpointComponent {
     public HttpClient getHttpClient() {
         return httpClient;
     }
+
+	public String getGeolocationAccessKey() {
+		return geolocationAccessKey;
+	}
+	
+    /**
+     * The geolocation service now needs an accessKey to be used
+     */
+	public void setGeolocationAccessKey(String geolocationAccessKey) {
+		this.geolocationAccessKey = geolocationAccessKey;
+	}
+
+	public String getGeolocationRequestHostIP() {
+		return geolocationRequestHostIP;
+	}
+
+    /**
+     * The geolocation service now needs to specify the IP associated to the accessKey you're using
+     */
+	public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+		this.geolocationRequestHostIP = geolocationRequestHostIP;
+	}
+	
+
 }
