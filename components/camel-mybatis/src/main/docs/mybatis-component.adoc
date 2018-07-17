@@ -116,21 +116,13 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 8 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.mybatis-bean.configuration-uri* | Location of MyBatis xml configuration file. The default value is:
- SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
-| *camel.component.mybatis-bean.enabled* |  |  | Boolean
-| *camel.component.mybatis-bean.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.mybatis-bean.sql-session-factory* | To use the SqlSessionFactory. The option is a
- org.apache.ibatis.session.SqlSessionFactory type. |  | String
 | *camel.component.mybatis.configuration-uri* | Location of MyBatis xml configuration file. The default value is:
  SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
 | *camel.component.mybatis.enabled* | Enable mybatis component | true | Boolean

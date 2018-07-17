@@ -72,6 +72,50 @@ The uniVocity Fixed Length dataformat supports 17 options, which are listed belo
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.univocity-fixed.as-map* | Whether the unmarshalling should produce maps for the lines values
+ instead of lists. It requires to have header (either defined or
+ collected). The default value is false | false | Boolean
+| *camel.dataformat.univocity-fixed.comment* | The comment symbol. The default value is | # | String
+| *camel.dataformat.univocity-fixed.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.univocity-fixed.empty-value* | The String representation of an empty value |  | String
+| *camel.dataformat.univocity-fixed.enabled* | Enable univocity-fixed dataformat | true | Boolean
+| *camel.dataformat.univocity-fixed.header-extraction-enabled* | Whether or not the header must be read in the first line of the test
+ document The default value is false | false | Boolean
+| *camel.dataformat.univocity-fixed.headers-disabled* | Whether or not the headers are disabled. When defined, this option
+ explicitly sets the headers as null which indicates that there is no
+ header. The default value is false | false | Boolean
+| *camel.dataformat.univocity-fixed.ignore-leading-whitespaces* | Whether or not the leading white spaces must be ignored. The default
+ value is true | true | Boolean
+| *camel.dataformat.univocity-fixed.ignore-trailing-whitespaces* | Whether or not the trailing white spaces must ignored. The default value
+ is true | true | Boolean
+| *camel.dataformat.univocity-fixed.lazy-load* | Whether the unmarshalling should produce an iterator that reads the lines
+ on the fly or if all the lines must be read at one. The default value is
+ false | false | Boolean
+| *camel.dataformat.univocity-fixed.line-separator* | The line separator of the files The default value is to use the JVM
+ platform line separator |  | String
+| *camel.dataformat.univocity-fixed.normalized-line-separator* | The normalized line separator of the files The default value is a new
+ line character. |  | String
+| *camel.dataformat.univocity-fixed.null-value* | The string representation of a null value. The default value is null |  | String
+| *camel.dataformat.univocity-fixed.number-of-records-to-read* | The maximum number of record to read. |  | Integer
+| *camel.dataformat.univocity-fixed.padding* | The padding character. The default value is a space |  | String
+| *camel.dataformat.univocity-fixed.record-ends-on-newline* | Whether or not the record ends on new line. The default value is false | false | Boolean
+| *camel.dataformat.univocity-fixed.skip-empty-lines* | Whether or not the empty lines must be ignored. The default value is true | true | Boolean
+| *camel.dataformat.univocity-fixed.skip-trailing-chars-until-newline* | Whether or not the trailing characters until new line must be ignored.
+ The default value is false | false | Boolean
+|===
 // spring-boot-auto-configure options: END
 
 

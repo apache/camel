@@ -132,25 +132,13 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 9 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.cxf.allow-streaming* | This option controls whether the CXF component, when running in PAYLOAD
- mode, will DOM parse the incoming messages into DOM Elements or keep the
- payload as a javax.xml.transform.Source object that would allow streaming
- in some cases. |  | Boolean
-| *camel.component.cxf.enabled* | Enable cxf component | true | Boolean
-| *camel.component.cxf.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
- header to and from Camel message. The option is a
- org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.cxf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.cxf.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.cxfrs.enabled* | Enable cxfrs component | true | Boolean
 | *camel.component.cxfrs.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
  header to and from Camel message. The option is a

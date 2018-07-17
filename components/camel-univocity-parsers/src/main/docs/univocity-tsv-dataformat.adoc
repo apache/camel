@@ -70,6 +70,47 @@ The uniVocity TSV dataformat supports 15 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.univocity-tsv.as-map* | Whether the unmarshalling should produce maps for the lines values
+ instead of lists. It requires to have header (either defined or
+ collected). The default value is false | false | Boolean
+| *camel.dataformat.univocity-tsv.comment* | The comment symbol. The default value is | # | String
+| *camel.dataformat.univocity-tsv.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.univocity-tsv.empty-value* | The String representation of an empty value |  | String
+| *camel.dataformat.univocity-tsv.enabled* | Enable univocity-tsv dataformat | true | Boolean
+| *camel.dataformat.univocity-tsv.escape-char* | The escape character. | \ | String
+| *camel.dataformat.univocity-tsv.header-extraction-enabled* | Whether or not the header must be read in the first line of the test
+ document The default value is false | false | Boolean
+| *camel.dataformat.univocity-tsv.headers-disabled* | Whether or not the headers are disabled. When defined, this option
+ explicitly sets the headers as null which indicates that there is no
+ header. The default value is false | false | Boolean
+| *camel.dataformat.univocity-tsv.ignore-leading-whitespaces* | Whether or not the leading white spaces must be ignored. The default
+ value is true | true | Boolean
+| *camel.dataformat.univocity-tsv.ignore-trailing-whitespaces* | Whether or not the trailing white spaces must ignored. The default value
+ is true | true | Boolean
+| *camel.dataformat.univocity-tsv.lazy-load* | Whether the unmarshalling should produce an iterator that reads the lines
+ on the fly or if all the lines must be read at one. The default value is
+ false | false | Boolean
+| *camel.dataformat.univocity-tsv.line-separator* | The line separator of the files The default value is to use the JVM
+ platform line separator |  | String
+| *camel.dataformat.univocity-tsv.normalized-line-separator* | The normalized line separator of the files The default value is a new
+ line character. |  | String
+| *camel.dataformat.univocity-tsv.null-value* | The string representation of a null value. The default value is null |  | String
+| *camel.dataformat.univocity-tsv.number-of-records-to-read* | The maximum number of record to read. |  | Integer
+| *camel.dataformat.univocity-tsv.skip-empty-lines* | Whether or not the empty lines must be ignored. The default value is true | true | Boolean
+|===
 // spring-boot-auto-configure options: END
 
 

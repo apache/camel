@@ -37,7 +37,7 @@ The Crypto (Java Cryptographic Extension) dataformat supports 10 options, which 
 === Spring Boot Auto-Configuration
 
 
-The component supports 54 options, which are listed below.
+The component supports 38 options, which are listed below.
 
 
 
@@ -125,63 +125,6 @@ The component supports 54 options, which are listed below.
 | *camel.dataformat.crypto.mac-algorithm* | The JCE algorithm name indicating the Message Authentication algorithm. | HmacSHA1 | String
 | *camel.dataformat.crypto.should-append-h-m-a-c* | Flag indicating that a Message Authentication Code should be calculated
  and appended to the encrypted data. | false | Boolean
-| *camel.dataformat.pgp.algorithm* | Symmetric key encryption algorithm; possible values are defined in
- org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE
- DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only
- relevant for encrypting. |  | Integer
-| *camel.dataformat.pgp.armored* | This option will cause PGP to base64 encode the encrypted text, making it
- available for copy/paste, etc. | false | Boolean
-| *camel.dataformat.pgp.compression-algorithm* | Compression algorithm; possible values are defined in
- org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (=
- UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for
- encrypting. |  | Integer
-| *camel.dataformat.pgp.content-type-header* | Whether the data format should set the Content-Type header with the type
- from the data format if the data format is capable of doing so. For
- example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.pgp.enabled* | Enable pgp dataformat | true | Boolean
-| *camel.dataformat.pgp.hash-algorithm* | Signature hash algorithm; possible values are defined in
- org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (= SHA1), 8 (=
- SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for
- signing. |  | Integer
-| *camel.dataformat.pgp.integrity* | Adds an integrity check/sign into the encryption file. The default value
- is true. | true | Boolean
-| *camel.dataformat.pgp.key-file-name* | Filename of the keyring; must be accessible as a classpath resource (but
- you can specify a location in the file system by using the file: prefix). |  | String
-| *camel.dataformat.pgp.key-userid* | The user ID of the key in the PGP keyring used during encryption. Can
- also be only a part of a user ID. For example, if the user ID is Test
- User then you can use the part Test User or to address the user ID. |  | String
-| *camel.dataformat.pgp.password* | Password used when opening the private key (not used for encryption). |  | String
-| *camel.dataformat.pgp.provider* | Java Cryptography Extension (JCE) provider, default is Bouncy Castle
- (BC). Alternatively you can use, for example, the IAIK JCE provider; in
- this case the provider must be registered beforehand and the Bouncy
- Castle provider must not be registered beforehand. The Sun JCE provider
- does not work. |  | String
-| *camel.dataformat.pgp.signature-key-file-name* | Filename of the keyring to use for signing (during encryption) or for
- signature verification (during decryption); must be accessible as a
- classpath resource (but you can specify a location in the file system by
- using the file: prefix). |  | String
-| *camel.dataformat.pgp.signature-key-ring* | Keyring used for signing/verifying as byte array. You can not set the
- signatureKeyFileName and signatureKeyRing at the same time. |  | String
-| *camel.dataformat.pgp.signature-key-userid* | User ID of the key in the PGP keyring used for signing (during
- encryption) or signature verification (during decryption). During the
- signature verification process the specified User ID restricts the public
- keys from the public keyring which can be used for the verification. If
- no User ID is specified for the signature verficiation then any public
- key in the public keyring can be used for the verification. Can also be
- only a part of a user ID. For example, if the user ID is Test User then
- you can use the part Test User or to address the User ID. |  | String
-| *camel.dataformat.pgp.signature-password* | Password used when opening the private key used for signing (during
- encryption). |  | String
-| *camel.dataformat.pgp.signature-verification-option* | Controls the behavior for verifying the signature during unmarshaling.
- There are 4 values possible: optional: The PGP message may or may not
- contain signatures; if it does contain signatures, then a signature
- verification is executed. required: The PGP message must contain at least
- one signature; if this is not the case an exception (PGPException) is
- thrown. A signature verification is executed. ignore: Contained
- signatures in the PGP message are ignored; no signature verification is
- executed. no_signature_allowed: The PGP message must not contain a
- signature; otherwise an exception (PGPException) is thrown. |  | String
 |===
 // spring-boot-auto-configure options: END
 ND

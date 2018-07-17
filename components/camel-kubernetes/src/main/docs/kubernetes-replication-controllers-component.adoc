@@ -77,90 +77,15 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 46 options, which are listed below.
+The component supports 2 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.kubernetes-config-maps.enabled* |  |  | Boolean
-| *camel.component.kubernetes-config-maps.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-deployments.enabled* |  |  | Boolean
-| *camel.component.kubernetes-deployments.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-hpa.enabled* |  |  | Boolean
-| *camel.component.kubernetes-hpa.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-namespaces.enabled* |  |  | Boolean
-| *camel.component.kubernetes-namespaces.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-nodes.enabled* |  |  | Boolean
-| *camel.component.kubernetes-nodes.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-persistent-volumes-claims.enabled* |  |  | Boolean
-| *camel.component.kubernetes-persistent-volumes-claims.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-persistent-volumes.enabled* |  |  | Boolean
-| *camel.component.kubernetes-persistent-volumes.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-pods.enabled* |  |  | Boolean
-| *camel.component.kubernetes-pods.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
 | *camel.component.kubernetes-replication-controllers.enabled* |  |  | Boolean
 | *camel.component.kubernetes-replication-controllers.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-resources-quota.enabled* |  |  | Boolean
-| *camel.component.kubernetes-resources-quota.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-secrets.enabled* |  |  | Boolean
-| *camel.component.kubernetes-secrets.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-service-accounts.enabled* |  |  | Boolean
-| *camel.component.kubernetes-service-accounts.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes-services.enabled* |  |  | Boolean
-| *camel.component.kubernetes-services.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.kubernetes.cluster.service.attributes* | Custom service attributes. |  | Map
-| *camel.component.kubernetes.cluster.service.cluster-labels* | Set the labels used to identify the pods composing the cluster. |  | Map
-| *camel.component.kubernetes.cluster.service.config-map-name* | Set the name of the ConfigMap used to do optimistic locking (defaults to 'leaders'). |  | String
-| *camel.component.kubernetes.cluster.service.connection-timeout-millis* | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
-| *camel.component.kubernetes.cluster.service.enabled* | Sets if the Kubernetes cluster service should be enabled or not, default is false. | false | Boolean
-| *camel.component.kubernetes.cluster.service.id* | Cluster Service ID |  | String
-| *camel.component.kubernetes.cluster.service.jitter-factor* | A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant. |  | Double
-| *camel.component.kubernetes.cluster.service.kubernetes-namespace* | Set the name of the Kubernetes namespace containing the pods and the configmap (autodetected by default) |  | String
-| *camel.component.kubernetes.cluster.service.lease-duration-millis* | The default duration of the lease for the current leader. |  | Long
-| *camel.component.kubernetes.cluster.service.master-url* | Set the URL of the Kubernetes master (read from Kubernetes client properties by default). |  | String
-| *camel.component.kubernetes.cluster.service.order* | Service lookup order/priority. |  | Integer
-| *camel.component.kubernetes.cluster.service.pod-name* | Set the name of the current pod (autodetected from container host name by default). |  | String
-| *camel.component.kubernetes.cluster.service.renew-deadline-millis* | The deadline after which the leader must stop its services because it may have lost the leadership. |  | Long
-| *camel.component.kubernetes.cluster.service.retry-period-millis* | The time between two subsequent attempts to check and acquire the leadership.
- It is randomized using the jitter factor. |  | Long
-| *camel.component.kubernetes.enabled* |  |  | Boolean
-| *camel.component.kubernetes.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.openshift-build-configs.enabled* |  |  | Boolean
-| *camel.component.openshift-build-configs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.openshift-builds.enabled* |  |  | Boolean
-| *camel.component.openshift-builds.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean
 |===

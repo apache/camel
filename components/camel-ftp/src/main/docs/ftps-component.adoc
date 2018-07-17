@@ -192,26 +192,18 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 7 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.ftp.enabled* | Enable ftp component | true | Boolean
-| *camel.component.ftp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
 | *camel.component.ftps.enabled* | Enable ftps component | true | Boolean
 | *camel.component.ftps.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean
 | *camel.component.ftps.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
-| *camel.component.sftp.enabled* | Enable sftp component | true | Boolean
-| *camel.component.sftp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

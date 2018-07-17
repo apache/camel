@@ -97,7 +97,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 34 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -126,30 +126,6 @@ The component supports 34 options, which are listed below.
 | *camel.component.caffeine-cache.configuration.value-type* | The cache value type, default "java.lang.Object" | java.lang.Object | String
 | *camel.component.caffeine-cache.enabled* |  |  | Boolean
 | *camel.component.caffeine-cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.caffeine-loadcache.configuration.action* | To configure the default cache action. If an action is set in the
- message header, then the operation from the header takes precedence. |  | String
-| *camel.component.caffeine-loadcache.configuration.cache* | To configure the default an already instantianted cache to be used |  | Cache
-| *camel.component.caffeine-loadcache.configuration.cache-loader* | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
-| *camel.component.caffeine-loadcache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be
- pre-configured. | true | Boolean
-| *camel.component.caffeine-loadcache.configuration.eviction-type* | Set the eviction Type for this cache |  | EvictionType
-| *camel.component.caffeine-loadcache.configuration.expire-after-access-time* | Set the expire After Access Time in case of time based Eviction (in
- seconds) | 300 | Integer
-| *camel.component.caffeine-loadcache.configuration.expire-after-write-time* | Set the expire After Access Write in case of time based Eviction (in
- seconds) | 300 | Integer
-| *camel.component.caffeine-loadcache.configuration.initial-capacity* | Set the initial Capacity for the cache | 10000 | Integer
-| *camel.component.caffeine-loadcache.configuration.key* | To configure the default action key. If a key is set in the message
- header, then the key from the header takes precedence. |  | Object
-| *camel.component.caffeine-loadcache.configuration.key-type* | The cache key type, default "java.lang.Object" | java.lang.Object | String
-| *camel.component.caffeine-loadcache.configuration.maximum-size* | Set the maximum size for the cache | 10000 | Integer
-| *camel.component.caffeine-loadcache.configuration.removal-listener* | Set a specific removal Listener for the cache |  | RemovalListener
-| *camel.component.caffeine-loadcache.configuration.stats-counter* | Set a specific Stats Counter for the cache stats |  | StatsCounter
-| *camel.component.caffeine-loadcache.configuration.stats-enabled* | To enable stats on the cache | false | Boolean
-| *camel.component.caffeine-loadcache.configuration.value-type* | The cache value type, default "java.lang.Object" | java.lang.Object | String
-| *camel.component.caffeine-loadcache.enabled* |  |  | Boolean
-| *camel.component.caffeine-loadcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean
 |===

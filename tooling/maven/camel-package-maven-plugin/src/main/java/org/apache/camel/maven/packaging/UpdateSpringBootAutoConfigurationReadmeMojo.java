@@ -49,9 +49,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
  */
 public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
-    // TODO: camel-aws filter out options per component name in the doc file
-    // TODO: some dataformats same issue like univocity
-
     /**
      * The maven project.
      *
@@ -124,6 +121,11 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                     componentName = "spring-boot";
                     docFolder = new File(compDir, "/src/main/docs/");
                     docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+                } else if ("camel-univocity-parsers-starter".equals(name)) {
+                    // special for univocity-parsers
+                    componentName = "univocity";
+                    docFolder = new File(compDir, "camel-univocity-parsers/src/main/docs/");
+                    docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
                 } else {
                     // skip camel-  and -starter in the end
                     componentName = name.substring(6, name.length() - 8);
@@ -150,8 +152,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                         files = Arrays.stream(docFiles).filter((f) -> !f.getName().equals(componentName + ".adoc")).collect(Collectors.toList());
                     }
 
-                    if (files.size() > 0) {
-                        List models = parseSpringBootAutoConfigureModels(jsonFile);
+                    if (files.size() == 1) {
+                        List models = parseSpringBootAutoConfigureModels(jsonFile, null);
 
                         // special for other kind of JARs that is not a regular Camel component,dataformat,language
                         boolean onlyOther = files.size() == 1 && !hasComponentDataFormatOrLanguage;
@@ -159,8 +161,23 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                             // there are no spring-boot auto configuration for this other kind of JAR so lets just ignore this
                             return;
                         }
+                        File docFile = files.get(0);
                         String options = templateAutoConfigurationOptions(models);
+                        boolean updated = updateAutoConfigureOptions(docFile, options);
+                        if (updated) {
+                            getLog().info("Updated doc file: " + docFile);
+                        } else {
+                            getLog().debug("No changes to doc file: " + docFile);
+                        }
+                    } else if (files.size() > 1) {
+                        // when we have 2 or more files we need to filter the model options accordingly
                         for (File docFile : files) {
+                            String docName = docFile.getName();
+                            int pos = docName.lastIndexOf("-");
+                            String prefix = pos > 0 ? docName.substring(0, pos) : null;
+
+                            List models = parseSpringBootAutoConfigureModels(jsonFile, prefix);
+                            String options = templateAutoConfigurationOptions(models);
                             boolean updated = updateAutoConfigureOptions(docFile, options);
                             if (updated) {
                                 getLog().info("Updated doc file: " + docFile);
@@ -234,8 +251,6 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "string-template";
         } else if ("tagsoup".equals(componentName)) {
             return "tidyMarkup";
-        } else if ("univocity-parsers".equals(componentName)) {
-            return "univocity-csv";
         } else if ("xmlbeans".equals(componentName)) {
             return "xmlBeans";
         }
@@ -250,7 +265,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
         return true;
     }
 
-    private List parseSpringBootAutoConfigureModels(File file) throws IOException, DeserializationException {
+    private List parseSpringBootAutoConfigureModels(File file, String include) throws IOException, DeserializationException {
+        getLog().debug("Parsing Spring Boot AutoConfigureModel using include: " + include);
         List<SpringBootAutoConfigureOptionModel> answer = new ArrayList<>();
 
         JsonObject obj = (JsonObject) Jsoner.deserialize(new FileReader(file));
@@ -264,8 +280,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 String desc = row.getStringOrDefault("description", "");
                 String defaultValue = row.getStringOrDefault("defaultValue", "");
 
-                // skip this special option
-                boolean skip = name.endsWith("customizer.enabled");
+                // skip this special option and also if not matching the filter
+                boolean skip = name.endsWith("customizer.enabled") || include != null && !name.contains("." + include + ".");
                 if (!skip) {
                     SpringBootAutoConfigureOptionModel model = new SpringBootAutoConfigureOptionModel();
                     model.setName(name);
