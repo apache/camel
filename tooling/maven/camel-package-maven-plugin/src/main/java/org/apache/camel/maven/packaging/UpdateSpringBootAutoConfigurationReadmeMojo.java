@@ -81,6 +81,13 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
     protected Boolean failFast;
 
     /**
+     * Whether to fail if an option has no documentation.
+     *
+     * @parameter
+     */
+    protected Boolean failOnMissingDescription;
+
+    /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
      *
@@ -178,7 +185,20 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                             // spring-boot use lower cased keys
                             String prefix = pos > 0 ? docName.substring(0, pos).toLowerCase(Locale.US) : null;
 
-                            List models = parseSpringBootAutoConfigureModels(jsonFile, prefix);
+                            List<SpringBootAutoConfigureOptionModel> models = parseSpringBootAutoConfigureModels(jsonFile, prefix);
+
+                            // check for missing description on options
+                            boolean noDescription = false;
+                            for (SpringBootAutoConfigureOptionModel o : models) {
+                                if (StringHelper.isEmpty(o.getDescription())) {
+                                    noDescription = true;
+                                    getLog().warn("Option " + o.getName() + " has no description");
+                                }
+                            }
+                            if (noDescription && isFailOnNoDescription()) {
+                                throw new MojoExecutionException("Failed build due failOnMissingDescription=true");
+                            }
+
                             String options = templateAutoConfigurationOptions(models);
                             boolean updated = updateAutoConfigureOptions(docFile, options);
                             if (updated) {
@@ -267,7 +287,7 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
         return true;
     }
 
-    private List parseSpringBootAutoConfigureModels(File file, String include) throws IOException, DeserializationException {
+    private List<SpringBootAutoConfigureOptionModel> parseSpringBootAutoConfigureModels(File file, String include) throws IOException, DeserializationException {
         getLog().debug("Parsing Spring Boot AutoConfigureModel using include: " + include);
         List<SpringBootAutoConfigureOptionModel> answer = new ArrayList<>();
 
@@ -347,6 +367,10 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
     private boolean isFailFast() {
         return failFast != null && failFast;
+    }
+
+    private boolean isFailOnNoDescription() {
+        return failOnMissingDescription != null && failOnMissingDescription;
     }
 
 }
