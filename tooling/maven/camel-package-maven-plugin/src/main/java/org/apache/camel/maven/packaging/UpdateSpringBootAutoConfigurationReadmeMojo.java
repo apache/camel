@@ -129,13 +129,11 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                     componentName = name.substring(6, name.length() - 8);
                     getLog().debug("Camel component: " + componentName);
                     docFolder = new File(compDir, "camel-" + componentName + "/src/main/docs/");
-                    // update all adoc files (as it may be component, language, data-format or just other kind)
                     docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
 
-                    // maybe its one of those that has a sub-folder
+                    // maybe its one of those component that has subfolders with -api and -component
                     if (docFiles == null || docFiles.length == 0) {
                         docFolder = new File(compDir, "camel-" + componentName + "/camel-" + componentName + "-component/src/main/docs/");
-                        // update all adoc files (as it may be component, language, data-format or just other kind)
                         docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
                     }
                 }
@@ -143,16 +141,20 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 if (docFiles != null && docFiles.length > 0) {
                     List<File> files = Arrays.asList(docFiles);
 
+                    // find out if the JAR has a Camel component, dataformat, or language
                     boolean hasComponentDataFormatOrLanguage = files.stream().anyMatch(
                         (f) -> f.getName().endsWith("-component.adoc") || f.getName().endsWith("-dataformat.adoc") || f.getName().endsWith("-language.adoc"));
 
+                    // if so then skip the root adoc file as its just a introduction to the others
                     if (hasComponentDataFormatOrLanguage) {
                         files = Arrays.stream(docFiles).filter((f) -> !f.getName().equals(componentName + ".adoc")).collect(Collectors.toList());
                     }
 
                     if (files.size() > 0) {
+                        List models = parseSpringBootAutoConfigureModels(jsonFile);
+
+                        // special for other kind of JARs that is not a regular Camel component,dataformat,language
                         boolean onlyOther = files.size() == 1 && !hasComponentDataFormatOrLanguage;
-                        List models = parseSpringBootAutoConfigreModels(jsonFile);
                         if (models.isEmpty() && onlyOther) {
                             // there are no spring-boot auto configuration for this other kind of JAR so lets just ignore this
                             return;
@@ -248,7 +250,7 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
         return true;
     }
 
-    private List parseSpringBootAutoConfigreModels(File file) throws IOException, DeserializationException {
+    private List parseSpringBootAutoConfigureModels(File file) throws IOException, DeserializationException {
         List<SpringBootAutoConfigureOptionModel> answer = new ArrayList<>();
 
         JsonObject obj = (JsonObject) Jsoner.deserialize(new FileReader(file));
