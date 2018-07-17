@@ -27,5 +27,19 @@ The FHIR XML dataformat supports 2 options, which are listed below.
 === Spring Boot Auto-Configuration
 
 
-The component has no Spring Boot auto configuration options.
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.fhirxml.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.fhirxml.enabled* |  |  | Boolean
+| *camel.dataformat.fhirxml.fhir-version* | The version of FHIR to use. Possible values are:
+ DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4 | DSTU3 | String
+|===
 // spring-boot-auto-configure options: END

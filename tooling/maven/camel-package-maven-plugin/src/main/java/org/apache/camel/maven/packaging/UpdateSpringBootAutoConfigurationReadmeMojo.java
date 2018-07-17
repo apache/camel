@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.SpringBootAutoConfigureOptionModel;
@@ -174,7 +175,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                         for (File docFile : files) {
                             String docName = docFile.getName();
                             int pos = docName.lastIndexOf("-");
-                            String prefix = pos > 0 ? docName.substring(0, pos) : null;
+                            // spring-boot use lower cased keys
+                            String prefix = pos > 0 ? docName.substring(0, pos).toLowerCase(Locale.US) : null;
 
                             List models = parseSpringBootAutoConfigureModels(jsonFile, prefix);
                             String options = templateAutoConfigurationOptions(models);
