@@ -49,6 +49,9 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
  */
 public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
+    // TODO: camel-aws filter out options per component name in the doc file
+    // TODO: some dataformats same issue like univocity
+
     /**
      * The maven project.
      *
@@ -111,18 +114,30 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                     return;
                 }
 
-                // skip camel-  and -starter in the end
-                String componentName = name.substring(6, name.length() - 8);
-                getLog().debug("Camel component: " + componentName);
-                File docFolder = new File(componentsDir, "camel-" + componentName + "/src/main/docs/");
-                // update all adoc files (as it may be component, language, data-format or just other kind)
-                File[] docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+                File compDir = getComponentsDir(name);
 
-                // maybe its one of those that has a sub-folder
-                if (docFiles == null || docFiles.length == 0) {
-                    docFolder = new File(componentsDir, "camel-" + componentName + "/camel-" + componentName + "-component/src/main/docs/");
+                File[] docFiles;
+                File docFolder;
+                String componentName;
+                if ("camel-spring-boot".equals(name)) {
+                    // special for camel-spring-boot where we also want to auto-generate the options in the adoc file
+                    componentName = "spring-boot";
+                    docFolder = new File(compDir, "/src/main/docs/");
+                    docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+                } else {
+                    // skip camel-  and -starter in the end
+                    componentName = name.substring(6, name.length() - 8);
+                    getLog().debug("Camel component: " + componentName);
+                    docFolder = new File(compDir, "camel-" + componentName + "/src/main/docs/");
                     // update all adoc files (as it may be component, language, data-format or just other kind)
                     docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+
+                    // maybe its one of those that has a sub-folder
+                    if (docFiles == null || docFiles.length == 0) {
+                        docFolder = new File(compDir, "camel-" + componentName + "/camel-" + componentName + "-component/src/main/docs/");
+                        // update all adoc files (as it may be component, language, data-format or just other kind)
+                        docFiles = docFolder.listFiles(new ComponentDocFilter(componentName));
+                    }
                 }
 
                 if (docFiles != null && docFiles.length > 0) {
@@ -159,6 +174,15 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                     }
                 }
             }
+        }
+    }
+
+    private File getComponentsDir(String name) {
+        if ("camel-spring-boot".equals(name)) {
+            // special for camel-spring-boot
+            return project.getBasedir();
+        } else {
+            return componentsDir;
         }
     }
 
