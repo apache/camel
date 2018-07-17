@@ -675,8 +675,10 @@
   <feature name='camel-fhir' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${hapi-fhir-version}'>hapi-fhir</feature>
+    <feature version='${hapi-fhir-version}'>hapi-fhir-client</feature>
     <feature version='${hapi-fhir-version}'>hapi-fhir-dstu2</feature>
     <feature version='${hapi-fhir-version}'>hapi-fhir-dstu3</feature>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-fhir-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fhir/${project.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
