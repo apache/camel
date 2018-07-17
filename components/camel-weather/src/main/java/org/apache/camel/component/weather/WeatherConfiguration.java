@@ -94,8 +94,10 @@ public class WeatherConfiguration {
     @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
     @UriParam(label = "security")
+    @Metadata(required = "true")
     private String geolocationAccessKey;
-    @Metadata(label = "security")
+    @UriParam(label = "security")
+    @Metadata(required = "true")
     private String geolocationRequestHostIP;
 
     public WeatherConfiguration(WeatherComponent component) {

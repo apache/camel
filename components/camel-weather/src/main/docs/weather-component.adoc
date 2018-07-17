@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+==== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -125,7 +125,8 @@ with the following path and query parameters:
 | *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
 | *proxyHost* (proxy) | The proxy host name |  | String
 | *proxyPort* (proxy) | The proxy port number |  | Integer
-| *geolocationAccessKey* (security) | The geolocation service now needs an accessKey to be used |  | String
+| *geolocationAccessKey* (security) | *Required* The geolocation service now needs an accessKey to be used |  | String
+| *geolocationRequestHostIP* (security) | *Required* The geolocation service now needs to specify the IP associated to the accessKey you're using |  | String
 |===
 // endpoint options: END
 
