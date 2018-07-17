@@ -140,7 +140,7 @@
         <version>${project.version}</version>
         <configuration>
           <!-- set to true to make build fail fast if missing documentation in docs files -->
-          <failFast>true</failFast>
+          <failFast>false</failFast>
         </configuration>
         <executions>
           <execution>
