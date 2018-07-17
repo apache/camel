@@ -17,8 +17,10 @@
  * under the License.
  */
 
+def BUILD_WEBSITE = !'false'.equalsIgnoreCase(env.BUILD_WEBSITE)
 def LOCAL_REPOSITORY = env.LOCAL_REPOSITORY ?: '/home/jenkins/jenkins-slave/maven-repositories/0'
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
+def WEBSITE_AGENT_LABEL = env.WEBSITE_AGENT_LABEL ?: 'git-websites'
 def JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
@@ -42,10 +44,53 @@ pipeline {
 
     stages {
 
-        stage('Build & Deploy') {
+        stage('Website') {
             when {
-                branch 'master'
+                beforeAgent true
+                expression { BUILD_WEBSITE }
+                anyOf {
+                    changeset '**/*.adoc'
+                    changeset 'camel-website/**'
+                }
             }
+
+            agent {
+                node {
+                    label WEBSITE_AGENT_LABEL 
+                }
+            }
+
+            options {
+                skipDefaultCheckout()
+            }
+
+            steps {
+                dir('camel') {
+                    checkout scm
+                    sh "./mvnw -U -B -V -f camel-website"
+                }
+
+                dir('site') {
+/*                    checkout [ branches: [name: 'asf-site'] ]
+                    sh "cp -R ../camel/camel-website/public/* ."
+                    sh "git add ."*/
+                }
+            }
+        }
+
+        stage('Build & Deploy') {
+
+            when {
+                beforeAgent true
+                branch 'master'
+                not {
+                    anyOf {
+                        changeset '**/*.adoc'
+                        changeset 'camel-website/**'
+                    }
+                }
+            }
+
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
             }
@@ -53,16 +98,34 @@ pipeline {
 
         stage('Build') {
             when {
+                beforeAgent true
                 not {
-                    branch 'master'
+                    allOf {
+                        branch 'master'
+                        anyOf {
+                            changeset '**/*.adoc'
+                            changeset 'camel-website/**'
+                        }
+                    }
                 }
             }
+
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"
             }
         }
 
         stage('Checks') {
+            when {
+                beforeAgent true
+                not {
+                    anyOf {
+                        changeset '**/*.adoc'
+                        changeset 'camel-website/**'
+                    }
+                }
+            }
+
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
@@ -74,6 +137,16 @@ pipeline {
         }
 
         stage('Test') {
+            when {
+                beforeAgent true
+                not {
+                    anyOf {
+                        changeset '**/*.adoc'
+                        changeset 'camel-website/**'
+                    }
+                }
+            }
+
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test"
             }
