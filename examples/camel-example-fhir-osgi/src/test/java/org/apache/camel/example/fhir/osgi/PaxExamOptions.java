@@ -56,9 +56,8 @@ public enum PaxExamOptions {
                 .type("xml")
                 .classifier("features")
                 .versionAsInProject(),
-            "camel-blueprint","camel-fhir", "camel-hl7")
-    ),
-    ;
+                "camel-blueprint", "camel-fhir", "camel-hl7")
+    );
 
     private final Option[] options;
 
