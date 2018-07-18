@@ -111,7 +111,26 @@ with the following path and query parameters:
 | *ciphers* (security) | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.scp.enabled* | Enable scp component | true | Boolean
+| *camel.component.scp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.scp.verbose-logging* | JSCH is verbose logging out of the box. Therefore we turn the logging
+ down to DEBUG logging by default. But setting this option to true turns
+ on the verbose logging again. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 
 

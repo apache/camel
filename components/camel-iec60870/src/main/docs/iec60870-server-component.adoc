@@ -101,3 +101,36 @@ with the following path and query parameters:
 | *connectionId* (id) | An identifier grouping connection instances |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.iec60870-server.default-connection-options.background-scan-period* | The period in "ms" between background transmission cycles.
+ <p>
+ If this is set to zero or less, background transmissions will be
+ disabled.
+ </p> |  | Integer
+| *camel.component.iec60870-server.default-connection-options.booleans-with-timestamp* | Send booleans with timestamps |  | Boolean
+| *camel.component.iec60870-server.default-connection-options.buffering-period* | A time period in "ms" the protocol layer will buffer change events in
+ order to send out aggregated change messages |  | Integer
+| *camel.component.iec60870-server.default-connection-options.floats-with-timestamp* | Send floats with timestamps |  | Boolean
+| *camel.component.iec60870-server.default-connection-options.spontaneous-duplicates* | Number of spontaneous events to keep in the buffer.
+ <p>
+ When there are more than this number of spontaneous in events in the
+ buffer, then events will be dropped in order to maintain the buffer
+ size.
+ </p> |  | Integer
+| *camel.component.iec60870-server.enabled* |  |  | Boolean
+| *camel.component.iec60870-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

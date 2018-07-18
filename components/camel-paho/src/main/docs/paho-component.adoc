@@ -107,6 +107,28 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.paho.broker-url* | The URL of the MQTT broker. |  | String
+| *camel.component.paho.client-id* | MQTT client identifier. |  | String
+| *camel.component.paho.connect-options* | Client connection options. The option is a
+ org.eclipse.paho.client.mqttv3.MqttConnectOptions type. |  | String
+| *camel.component.paho.enabled* | Enable paho component | true | Boolean
+| *camel.component.paho.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 === Headers

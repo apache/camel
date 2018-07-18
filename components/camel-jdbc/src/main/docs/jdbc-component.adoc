@@ -12,35 +12,32 @@ spring-jdbc.
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-[source,java]
-------------------------------------------------------------
+[source,xml]
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jdbc</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 This component can only be used to define producer endpoints, which
 means that you cannot use the JDBC component in a `from()` statement.
 
-### URI format
+=== URI format
 
-[source,java]
------------------------------
+[source,text]
+----
 jdbc:dataSourceName[?options]
------------------------------
+----
 
 This component only supports producer endpoints.
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
-
-
-
+=== Options
 
 // component options: START
 The JDBC component supports 2 options, which are listed below.
@@ -101,9 +98,27 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
 
-### Result
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jdbc.data-source* | To use the DataSource instance instead of looking up the data source by
+ name from the registry. The option is a javax.sql.DataSource type. |  | String
+| *camel.component.jdbc.enabled* | Enable jdbc component | true | Boolean
+| *camel.component.jdbc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Result
 
 By default the result is returned in the OUT body as an
 `ArrayList<HashMap<String, Object>>`. The `List` object contains the
@@ -114,10 +129,10 @@ the result.
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 
-#### Message Headers
+==== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Header |Description
 
 |`CamelJdbcRowCount` |If the query is a `SELECT`, query the row count is returned in this OUT
@@ -136,9 +151,9 @@ type.
 
 |`CamelJdbcParametes` |*Camel 2.12:* A `java.util.Map` which has the headers to be used if
 `useHeadersAsParameters` has been enabled.
-|=======================================================================
+|===
 
-### Generated keys
+=== Generated keys
 
 *Available as of Camel 2.10*
 
@@ -155,7 +170,7 @@ test].
 
 Using generated keys does not work with together with named parameters.
 
-### Using named parameters
+=== Using named parameters
 
 *Available as of Camel 2.12*
 
@@ -167,18 +182,18 @@ Notice in the example above we set two headers with constant value +
  for the named parameters:
 
 [source,java]
-----------------------------------------------------------------------------------------
+----
   from("direct:projects")
      .setHeader("lic", constant("ASF"))
      .setHeader("min", constant(123))
      .setBody("select * from projects where license = :?lic and id > :?min order by id")
      .to("jdbc:myDataSource?useHeadersAsParameters=true")
-----------------------------------------------------------------------------------------
+----
 
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
 
-### Samples
+=== Samples
 
 In the following example, we fetch the rows from the customer table.
 
@@ -198,12 +213,8 @@ If you want to work on the rows one by one instead of the entire
 ResultSet at once you need to use the Splitter EIP
 such as:
 
-In Camel 2.13.x or older
-
-In Camel 2.14.x or newer
-
 [source,java]
--------------------------------------------------------------------------------------------------
+----
 from("direct:hello")
 // here we split the data from the testdb into new messages one by one
 // so the mock endpoint will receive a message per row in the table
@@ -212,9 +223,9 @@ from("direct:hello")
 .to("jdbc:testdb?outputType=StreamList")
   .split(body()).streaming()
   .to("mock:result");
--------------------------------------------------------------------------------------------------
+----
 
-### Sample - Polling the database every minute
+=== Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
 combine it with a polling scheduler such as the <<timer-component,Timer>>
@@ -222,11 +233,14 @@ or <<quartz-component,Quartz>> etc. In the following example, we retrieve
 data from the database every 60 seconds:
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------
-from("timer://foo?period=60000").setBody(constant("select * from customer")).to("jdbc:testdb").to("activemq:queue:customers");
-------------------------------------------------------------------------------------------------------------------------------
+----
+from("timer://foo?period=60000")
+  .setBody(constant("select * from customer"))
+  .to("jdbc:testdb")
+  .to("activemq:queue:customers");
+----
 
-### Sample - Move Data Between Data Sources +
+=== Sample - Move Data Between Data Sources
 
 A common use case is to query for data, process it and move it to
 another data source (ETL operations). In the following example, we
@@ -234,7 +248,7 @@ retrieve new customer records from the source table every hour,
 filter/transform them and move them to a destination table:
 
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 from("timer://MoveNewCustomersEveryHour?period=3600000")
     .setBody(constant("select * from customer where create_time > (sysdate-1/24)"))
     .to("jdbc:testdb")
@@ -242,15 +256,5 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .process(new MyCustomerProcessor()) //filter/transform results as needed
         .setBody(simple("insert into processed_customer values('${body[ID]}','${body[NAME]}')"))
         .to("jdbc:testdb");
-------------------------------------------------------------------------------------------------
+----
 
- 
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<sql-component,SQL>>

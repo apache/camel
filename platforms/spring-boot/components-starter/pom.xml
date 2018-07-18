@@ -77,6 +77,26 @@
           <failIfNoTests>false</failIfNoTests>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- set to true to make build fail fast if missing documentation in docs files -->
+          <failFast>false</failFast>
+          <!-- set to true to make build fail if an option has no description -->
+          <failOnMissingDescription>false</failOnMissingDescription>
+        </configuration>
+        <executions>
+          <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-spring-boot-auto-configuration-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <!-- WARNING: do not edit the modules section, it is update automatically by the camel-package plugin -->

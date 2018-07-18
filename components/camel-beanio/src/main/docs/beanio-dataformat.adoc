@@ -33,6 +33,42 @@ The BeanIO dataformat supports 9 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.beanio.bean-reader-error-handler-type* | To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as
+ error handler while parsing. Configure the fully qualified class name of
+ the error handler. Notice the options ignoreUnidentifiedRecords,
+ ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when
+ you use a custom error handler. |  | String
+| *camel.dataformat.beanio.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.beanio.enabled* | Enable beanio dataformat | true | Boolean
+| *camel.dataformat.beanio.encoding* | The charset to use. Is by default the JVM platform default charset. |  | String
+| *camel.dataformat.beanio.ignore-invalid-records* | Whether to ignore invalid records. | false | Boolean
+| *camel.dataformat.beanio.ignore-unexpected-records* | Whether to ignore unexpected records. | false | Boolean
+| *camel.dataformat.beanio.ignore-unidentified-records* | Whether to ignore unidentified records. | false | Boolean
+| *camel.dataformat.beanio.mapping* | The BeanIO mapping file. Is by default loaded from the classpath. You can
+ prefix with file:, http:, or classpath: to denote from where to load the
+ mapping file. |  | String
+| *camel.dataformat.beanio.stream-name* | The name of the stream to use. |  | String
+| *camel.dataformat.beanio.unmarshal-single-object* | This options controls whether to unmarshal as a list of objects or as a
+ single object only. The former is the default mode, and the latter is
+ only intended in special use-cases where beanio maps the Camel message to
+ a single POJO bean. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+ND
 
 ### Usage
 

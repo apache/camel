@@ -105,6 +105,39 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 17 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-kinesis.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kinesis.configuration.access-key* |  |  | String
+| *camel.component.aws-kinesis.configuration.amazon-kinesis-client* |  |  | AmazonKinesis
+| *camel.component.aws-kinesis.configuration.iterator-type* |  |  | ShardIteratorType
+| *camel.component.aws-kinesis.configuration.max-results-per-request* |  | 1 | Integer
+| *camel.component.aws-kinesis.configuration.proxy-host* |  |  | String
+| *camel.component.aws-kinesis.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-kinesis.configuration.region* |  |  | String
+| *camel.component.aws-kinesis.configuration.secret-key* |  |  | String
+| *camel.component.aws-kinesis.configuration.sequence-number* |  |  | String
+| *camel.component.aws-kinesis.configuration.shard-closed* |  |  | KinesisShardClosed StrategyEnum
+| *camel.component.aws-kinesis.configuration.shard-id* |  |  | String
+| *camel.component.aws-kinesis.configuration.stream-name* |  |  | String
+| *camel.component.aws-kinesis.enabled* | Enable aws-kinesis component | true | Boolean
+| *camel.component.aws-kinesis.region* | Amazon AWS Region |  | String
+| *camel.component.aws-kinesis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.aws-kinesis.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

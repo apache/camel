@@ -90,6 +90,32 @@ with the following path and query parameters:
 | *verifySignaturesOfAll Signers* (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | Boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.crypto-cms.enabled* |  |  | Boolean
+| *camel.component.crypto-cms.enveloped-data-decryptor-configuration* | To configure the shared EnvelopedDataDecryptorConfiguration, which
+ determines the uri parameters for the decrypt operation. The option is a
+ org.apache.camel.component.crypto.cms.crypt.
+ EnvelopedDataDecryptorConfiguration type. |  | String
+| *camel.component.crypto-cms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.crypto-cms.signed-data-verifier-configuration* | To configure the shared SignedDataVerifierConfiguration, which determines
+ the uri parameters for the verify operation. The option is a
+ org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration
+ type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Enveloped Data
 

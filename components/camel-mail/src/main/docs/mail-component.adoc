@@ -187,6 +187,156 @@ with the following path and query parameters:
 | *username* (security) | The username for login |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 61 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mail.configuration.additional-java-mail-properties* | Sets additional java mail properties, that will append/override any
+ default properties that is set based on all the other options. This
+ is useful if you need to add some special options but want to keep
+ the others as is. |  | Properties
+| *camel.component.mail.configuration.alternative-body-header* | Specifies the key to an IN message header that contains an
+ alternative email body. For example, if you send emails in text/html
+ format and want to provide an alternative mail body for non-HTML
+ email clients, set the alternative mail body with this key as a
+ header. | CamelMailAlternativeBody | String
+| *camel.component.mail.configuration.attachments-content-transfer-encoding-resolver* | To use a custom AttachmentsContentTransferEncodingResolver to resolve
+ what content-type-encoding to use for attachments. |  | AttachmentsContent TransferEncoding Resolver
+| *camel.component.mail.configuration.bcc* | Sets the BCC email address. Separate multiple email addresses with
+ comma. |  | String
+| *camel.component.mail.configuration.cc* | Sets the CC email address. Separate multiple email addresses with
+ comma. |  | String
+| *camel.component.mail.configuration.close-folder* | Whether the consumer should close the folder after polling. Setting
+ this option to false and having disconnect=false as well, then the
+ consumer keep the folder open between polls. | true | Boolean
+| *camel.component.mail.configuration.connection-timeout* | The connection timeout in milliseconds. | 30000 | Integer
+| *camel.component.mail.configuration.content-type* | The mail message content type. Use text/html for HTML mails. | text/plain | String
+| *camel.component.mail.configuration.copy-to* | After processing a mail message, it can be copied to a mail folder
+ with the given name. You can override this configuration value, with
+ a header with the key copyTo, allowing you to copy messages to folder
+ names configured at runtime. |  | String
+| *camel.component.mail.configuration.debug-mode* | Enable debug mode on the underlying mail framework. The SUN Mail
+ framework logs the debug messages to System.out by default. | false | Boolean
+| *camel.component.mail.configuration.delete* | Deletes the messages after they have been processed. This is done by
+ setting the DELETED flag on the mail message. If false, the SEEN flag
+ is set instead. As of Camel 2.10 you can override this configuration
+ option by setting a header with the key delete to determine if the
+ mail should be deleted or not. | false | Boolean
+| *camel.component.mail.configuration.disconnect* | Whether the consumer should disconnect after polling. If enabled this
+ forces Camel to connect on each poll. | false | Boolean
+| *camel.component.mail.configuration.dummy-trust-manager* | To use a dummy security setting for trusting all certificates. Should
+ only be used for development mode, and not production. | false | Boolean
+| *camel.component.mail.configuration.fetch-size* | Sets the maximum number of messages to consume during a poll. This
+ can be used to avoid overloading a mail server, if a mailbox folder
+ contains a lot of messages. Default value of -1 means no fetch size
+ and all messages will be consumed. Setting the value to 0 is a
+ special corner case, where Camel will not consume any messages at
+ all. | -1 | Integer
+| *camel.component.mail.configuration.folder-name* | The folder to poll. | INBOX | String
+| *camel.component.mail.configuration.from* | The from email address | camel@localhost | String
+| *camel.component.mail.configuration.handle-failed-message* | If the mail consumer cannot retrieve a given mail message, then this
+ option allows to handle the caused exception by the consumer's error
+ handler. By enable the bridge error handler on the consumer, then the
+ Camel routing error handler can handle the exception instead.
+ <p/>
+ The default behavior would be the consumer throws an exception and no
+ mails from the batch would be able to be routed by Camel. | false | Boolean
+| *camel.component.mail.configuration.host* | The mail server host name |  | String
+| *camel.component.mail.configuration.ignore-unsupported-charset* | Option to let Camel ignore unsupported charset in the local JVM when
+ sending mails. If the charset is unsupported then charset=XXX (where
+ XXX represents the unsupported charset) is removed from the
+ content-type and it relies on the platform default instead. | false | Boolean
+| *camel.component.mail.configuration.ignore-uri-scheme* | Option to let Camel ignore unsupported charset in the local JVM when
+ sending mails. If the charset is unsupported then charset=XXX (where
+ XXX represents the unsupported charset) is removed from the
+ content-type and it relies on the platform default instead. | false | Boolean
+| *camel.component.mail.configuration.java-mail-properties* | Sets the java mail options. Will clear any default properties and
+ only use the properties provided for this method. |  | Properties
+| *camel.component.mail.configuration.java-mail-sender* | To use a custom
+ {@link org.apache.camel.component.mail.JavaMailSender} for sending
+ emails. |  | JavaMailSender
+| *camel.component.mail.configuration.map-mail-message* | Specifies whether Camel should map the received mail message to Camel
+ body/headers. If set to true, the body of the mail message is mapped
+ to the body of the Camel IN message and the mail headers are mapped
+ to IN headers. If this option is set to false then the IN message
+ contains a raw javax.mail.Message. You can retrieve this raw message
+ by calling exchange.getIn().getBody(javax.mail.Message.class). | true | Boolean
+| *camel.component.mail.configuration.mime-decode-headers* | This option enables transparent MIME decoding and unfolding for mail
+ headers. | false | Boolean
+| *camel.component.mail.configuration.password* | The password for login |  | String
+| *camel.component.mail.configuration.peek* | Will mark the javax.mail.Message as peeked before processing the mail
+ message. This applies to IMAPMessage messages types only. By using
+ peek the mail will not be eager marked as SEEN on the mail server,
+ which allows us to rollback the mail message if there is an error
+ processing in Camel. | true | Boolean
+| *camel.component.mail.configuration.port* | The port number of the mail server |  | Integer
+| *camel.component.mail.configuration.protocol* | The protocol for communicating with the mail server |  | String
+| *camel.component.mail.configuration.reply-to* | The Reply-To recipients (the receivers of the response mail).
+ Separate multiple email addresses with a comma. |  | String
+| *camel.component.mail.configuration.session* | Specifies the mail session that camel should use for all mail
+ interactions. Useful in scenarios where mail sessions are created and
+ managed by some other resource, such as a JavaEE container. If this
+ is not specified, Camel automatically creates the mail session for
+ you. |  | Session
+| *camel.component.mail.configuration.skip-failed-message* | If the mail consumer cannot retrieve a given mail message, then this
+ option allows to skip the message and move on to retrieve the next
+ mail message.
+ <p/>
+ The default behavior would be the consumer throws an exception and no
+ mails from the batch would be able to be routed by Camel. | false | Boolean
+| *camel.component.mail.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
+| *camel.component.mail.configuration.ssl-context-parameters.cert-alias* |  |  | String
+| *camel.component.mail.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
+| *camel.component.mail.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
+| *camel.component.mail.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
+| *camel.component.mail.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
+| *camel.component.mail.configuration.ssl-context-parameters.provider* |  |  | String
+| *camel.component.mail.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
+| *camel.component.mail.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
+| *camel.component.mail.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
+| *camel.component.mail.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
+| *camel.component.mail.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
+| *camel.component.mail.configuration.ssl-context-parameters.session-timeout* |  |  | String
+| *camel.component.mail.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.mail.configuration.subject* | The Subject of the message being sent. Note: Setting the subject in
+ the header takes precedence over this option. |  | String
+| *camel.component.mail.configuration.to* | Sets the To email address. Separate multiple email addresses with
+ comma. |  | String
+| *camel.component.mail.configuration.unseen* | Whether to limit by unseen mails only. | true | Boolean
+| *camel.component.mail.configuration.use-inline-attachments* | Whether to use disposition inline or attachment. | false | Boolean
+| *camel.component.mail.configuration.username* | The username for login |  | String
+| *camel.component.mail.content-type-resolver* | Resolver to determine Content-Type for file attachments. The option is a
+ org.apache.camel.component.mail.ContentTypeResolver type. |  | String
+| *camel.component.mail.enabled* | Enable mail component | true | Boolean
+| *camel.component.mail.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.mail.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.dataformat.mime-multipart.binary-content* | Defines whether the content of binary parts in the MIME multipart is
+ binary (true) or Base-64 encoded (false) Default is false. | false | Boolean
+| *camel.dataformat.mime-multipart.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.mime-multipart.enabled* | Enable mime-multipart dataformat | true | Boolean
+| *camel.dataformat.mime-multipart.headers-inline* | Defines whether the MIME-Multipart headers are part of the message body
+ (true) or are set as Camel headers (false). Default is false. | false | Boolean
+| *camel.dataformat.mime-multipart.include-headers* | A regex that defines which Camel headers are also included as MIME
+ headers into the MIME multipart. This will only work if headersInline is
+ set to true. Default is to include no headers |  | String
+| *camel.dataformat.mime-multipart.multipart-sub-type* | Specify the subtype of the MIME Multipart. Default is mixed. | mixed | String
+| *camel.dataformat.mime-multipart.multipart-without-attachment* | Defines whether a message without attachment is also marshaled into a
+ MIME Multipart (with only one body part). Default is false. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

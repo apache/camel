@@ -123,6 +123,75 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 30 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-sqs.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sqs.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sqs.configuration.amazon-a-w-s-host* | The hostname of the Amazon AWS cloud. | amazonaws.com | String
+| *camel.component.aws-sqs.configuration.amazon-s-q-s-client* | To use the AmazonSQS as client |  | AmazonSQS
+| *camel.component.aws-sqs.configuration.attribute-names* | A list of attribute names to receive when consuming. Multiple names
+ can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.concurrent-consumers* |  | 1 | Integer
+| *camel.component.aws-sqs.configuration.default-visibility-timeout* | The default visibility timeout (in seconds) |  | Integer
+| *camel.component.aws-sqs.configuration.delay-seconds* | Delay sending messages for a number of seconds. |  | Integer
+| *camel.component.aws-sqs.configuration.delete-after-read* | Delete message from SQS after it has been read | true | Boolean
+| *camel.component.aws-sqs.configuration.delete-if-filtered* | Whether or not to send the DeleteMessage to the SQS queue if an
+ exchange fails to get through a filter. If 'false' and exchange does
+ not make it through a Camel filter upstream in the route, then don't
+ send DeleteMessage. | true | Boolean
+| *camel.component.aws-sqs.configuration.extend-message-visibility* | If enabled then a scheduled background task will keep extending the
+ message visibility on SQS. This is needed if it takes a long time to
+ process the message. If set to true defaultVisibilityTimeout must be
+ set. See details at Amazon docs. | false | Boolean
+| *camel.component.aws-sqs.configuration.maximum-message-size* | The maximumMessageSize (in bytes) an SQS message can contain for this
+ queue. |  | Integer
+| *camel.component.aws-sqs.configuration.message-attribute-names* | A list of message attribute names to receive when consuming. Multiple
+ names can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.message-retention-period* | The messageRetentionPeriod (in seconds) a message will be retained by
+ SQS for this queue. |  | Integer
+| *camel.component.aws-sqs.configuration.policy* | The policy for this queue |  | String
+| *camel.component.aws-sqs.configuration.proxy-host* |  |  | String
+| *camel.component.aws-sqs.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-sqs.configuration.queue-name* | Name of queue. The queue will be created if they don't already
+ exists. |  | String
+| *camel.component.aws-sqs.configuration.queue-owner-a-w-s-account-id* | Specify the queue owner aws account id when you need to connect the
+ queue with different account owner. |  | String
+| *camel.component.aws-sqs.configuration.queue-url* |  |  | String
+| *camel.component.aws-sqs.configuration.receive-message-wait-time-seconds* | If you do not specify WaitTimeSeconds in the request, the queue
+ attribute ReceiveMessageWaitTimeSeconds is used to determine how long
+ to wait. |  | Integer
+| *camel.component.aws-sqs.configuration.redrive-policy* | Specify the policy that send message to DeadLetter queue. See detail
+ at Amazon docs. |  | String
+| *camel.component.aws-sqs.configuration.region* | Specify the queue region which could be used with
+ queueOwnerAWSAccountId to build the service URL. |  | String
+| *camel.component.aws-sqs.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sqs.configuration.visibility-timeout* | The duration (in seconds) that the received messages are hidden from
+ subsequent retrieve requests after being retrieved by a
+ ReceiveMessage request to set in the
+ com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only
+ make sense if its different from defaultVisibilityTimeout. It changes
+ the queue visibility timeout attribute permanently. |  | Integer
+| *camel.component.aws-sqs.configuration.wait-time-seconds* | Duration in seconds (0 to 20) that the ReceiveMessage action call
+ will wait until a message is in the queue to include in the response. |  | Integer
+| *camel.component.aws-sqs.enabled* | Enable aws-sqs component | true | Boolean
+| *camel.component.aws-sqs.region* | Specify the queue region which could be used with queueOwnerAWSAccountId
+ to build the service URL. |  | String
+| *camel.component.aws-sqs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.aws-sqs.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

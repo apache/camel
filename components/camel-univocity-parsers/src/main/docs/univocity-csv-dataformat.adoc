@@ -72,6 +72,52 @@ The uniVocity CSV dataformat supports 18 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 19 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.univocity-csv.as-map* | Whether the unmarshalling should produce maps for the lines values
+ instead of lists. It requires to have header (either defined or
+ collected). The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.comment* | The comment symbol. The default value is | # | String
+| *camel.dataformat.univocity-csv.content-type-header* | Whether the data format should set the Content-Type header with the type
+ from the data format if the data format is capable of doing so. For
+ example application/xml for data formats marshalling to XML, or
+ application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.univocity-csv.delimiter* | The delimiter of values | , | String
+| *camel.dataformat.univocity-csv.empty-value* | The String representation of an empty value |  | String
+| *camel.dataformat.univocity-csv.enabled* | Enable univocity-csv dataformat | true | Boolean
+| *camel.dataformat.univocity-csv.header-extraction-enabled* | Whether or not the header must be read in the first line of the test
+ document The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.headers-disabled* | Whether or not the headers are disabled. When defined, this option
+ explicitly sets the headers as null which indicates that there is no
+ header. The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.ignore-leading-whitespaces* | Whether or not the leading white spaces must be ignored. The default
+ value is true | true | Boolean
+| *camel.dataformat.univocity-csv.ignore-trailing-whitespaces* | Whether or not the trailing white spaces must ignored. The default value
+ is true | true | Boolean
+| *camel.dataformat.univocity-csv.lazy-load* | Whether the unmarshalling should produce an iterator that reads the lines
+ on the fly or if all the lines must be read at one. The default value is
+ false | false | Boolean
+| *camel.dataformat.univocity-csv.line-separator* | The line separator of the files The default value is to use the JVM
+ platform line separator |  | String
+| *camel.dataformat.univocity-csv.normalized-line-separator* | The normalized line separator of the files The default value is a new
+ line character. |  | String
+| *camel.dataformat.univocity-csv.null-value* | The string representation of a null value. The default value is null |  | String
+| *camel.dataformat.univocity-csv.number-of-records-to-read* | The maximum number of record to read. |  | Integer
+| *camel.dataformat.univocity-csv.quote* | The quote symbol. | " | String
+| *camel.dataformat.univocity-csv.quote-all-fields* | Whether or not all values must be quoted when writing them. | false | Boolean
+| *camel.dataformat.univocity-csv.quote-escape* | The quote escape symbol | " | String
+| *camel.dataformat.univocity-csv.skip-empty-lines* | Whether or not the empty lines must be ignored. The default value is true | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 
 

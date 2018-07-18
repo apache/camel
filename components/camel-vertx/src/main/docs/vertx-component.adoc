@@ -89,6 +89,34 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.vertx.enabled* | Enable vertx component | true | Boolean
+| *camel.component.vertx.host* | Hostname for creating an embedded clustered EventBus |  | String
+| *camel.component.vertx.port* | Port for creating an embedded clustered EventBus |  | Integer
+| *camel.component.vertx.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.vertx.timeout* | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The
+ default value is 60. | 60 | Integer
+| *camel.component.vertx.vertx* | To use the given vertx EventBus instead of creating a new embedded
+ EventBus. The option is a io.vertx.core.Vertx type. |  | String
+| *camel.component.vertx.vertx-factory* | To use a custom VertxFactory implementation. The option is a
+ io.vertx.core.spi.VertxFactory type. |  | String
+| *camel.component.vertx.vertx-options* | Options to use for creating vertx. The option is a
+ io.vertx.core.VertxOptions type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 *Camel 2.12.3:* Whether to use publish/subscribe instead of point to

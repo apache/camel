@@ -121,6 +121,28 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mqtt.enabled* | Enable mqtt component | true | Boolean
+| *camel.component.mqtt.host* | The URI of the MQTT broker to connect too - this component also supports
+ SSL - e.g. ssl://127.0.0.1:8883 |  | String
+| *camel.component.mqtt.password* | Password to be used for authentication against the MQTT broker |  | String
+| *camel.component.mqtt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.mqtt.user-name* | Username to be used for authentication against the MQTT broker |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

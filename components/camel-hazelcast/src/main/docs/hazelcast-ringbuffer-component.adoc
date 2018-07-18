@@ -61,6 +61,32 @@ with the following path and query parameters:
 | *transferExchange* (seda) | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped. | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hazelcast-ringbuffer.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-ringbuffer.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-ringbuffer.enabled* | Enable hazelcast-ringbuffer component | true | Boolean
+| *camel.component.hazelcast-ringbuffer.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
+ endpoint. If you don't specify the instance reference, camel use the
+ default hazelcast instance from the camel-hazelcast instance. The option
+ is a com.hazelcast.core.HazelcastInstance type. |  | String
+| *camel.component.hazelcast-ringbuffer.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If
+ you don't specify the mode, then the node mode will be the default. | node | String
+| *camel.component.hazelcast-ringbuffer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
