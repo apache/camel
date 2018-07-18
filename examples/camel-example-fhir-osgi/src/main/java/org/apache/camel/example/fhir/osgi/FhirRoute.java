@@ -31,7 +31,8 @@ public class FhirRoute extends RouteBuilder {
         from("file:{{input}}").routeId("fhir-example-osgi")
             .onException(ProtocolException.class)
                 .handled(true)
-                .log(LoggingLevel.ERROR, "Error connecting to FHIR server with URL:{{serverUrl}}, please check the org.apache.camel.example.fhir.osgi.configuration.cfg configuration file ${exception.message}")
+                .log(LoggingLevel.ERROR, "Error connecting to FHIR server with URL:{{serverUrl}}, "
+                        + "please check the org.apache.camel.example.fhir.osgi.configuration.cfg configuration file ${exception.message}")
                 .end()
             .onException(HL7Exception.class)
                 .handled(true)
