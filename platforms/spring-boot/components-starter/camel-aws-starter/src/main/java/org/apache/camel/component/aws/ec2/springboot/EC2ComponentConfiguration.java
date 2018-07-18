@@ -21,7 +21,6 @@ import com.amazonaws.services.ec2.AmazonEC2Client;
 import org.apache.camel.component.aws.ec2.EC2Operations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The aws-ec2 is used for managing Amazon EC2 instances.
@@ -109,7 +108,6 @@ public class EC2ComponentConfiguration
         /**
          * To use a existing configured AmazonEC2Client as client
          */
-        @NestedConfigurationProperty
         private AmazonEC2Client amazonEc2Client;
         /**
          * Amazon AWS Access Key

@@ -122,7 +122,6 @@ public class Olingo2ComponentConfiguration
         /**
          * HTTP proxy server configuration
          */
-        @NestedConfigurationProperty
         private HttpHost proxy;
         /**
          * To configure security using SSLContextParameters
@@ -135,7 +134,6 @@ public class Olingo2ComponentConfiguration
          * sslContext. Note that a socketTimeout MUST be specified in the
          * builder, otherwise OData requests could block indefinitely
          */
-        @NestedConfigurationProperty
         private HttpAsyncClientBuilder httpAsyncClientBuilder;
         /**
          * Custom HTTP client builder for more complex HTTP client
@@ -143,7 +141,6 @@ public class Olingo2ComponentConfiguration
          * sslContext. Note that a socketTimeout MUST be specified in the
          * builder, otherwise OData requests could block indefinitely
          */
-        @NestedConfigurationProperty
         private HttpClientBuilder httpClientBuilder;
 
         public Olingo2ApiName getApiName() {

@@ -24,7 +24,6 @@ import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.http.entity.ContentType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Component used for transferring data secure and reliable over the internet
@@ -139,7 +138,6 @@ public class AS2ComponentConfiguration
         private String clientFqdn;
         private Integer serverPortNumber;
         private String requestUri;
-        @NestedConfigurationProperty
         private ContentType ediMessageType;
         private String ediMessageTransferEncoding;
         private AS2MessageStructure as2MessageStructure;

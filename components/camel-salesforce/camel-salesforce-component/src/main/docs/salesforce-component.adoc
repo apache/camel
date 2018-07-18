@@ -756,7 +756,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 148 options, which are listed below.
+The component supports 140 options, which are listed below.
 
 
 
@@ -877,15 +877,8 @@ The component supports 148 options, which are listed below.
 | *camel.component.salesforce.config.notify-for-operation-update* | Notify for update operation, defaults to false (API version >= 29.0) |  | Boolean
 | *camel.component.salesforce.config.notify-for-operations* | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
  version < 29.0) |  | NotifyForOperations Enum
-| *camel.component.salesforce.config.object-mapper.date-format* |  |  | DateFormat
-| *camel.component.salesforce.config.object-mapper.injectable-values* |  |  | InjectableValues
-| *camel.component.salesforce.config.object-mapper.node-factory* |  |  | JsonNodeFactory
-| *camel.component.salesforce.config.object-mapper.property-naming-strategy* |  |  | PropertyNamingStrategy
-| *camel.component.salesforce.config.object-mapper.registered-module-ids* |  |  | Set
-| *camel.component.salesforce.config.object-mapper.serializer-factory* |  |  | SerializerFactory
-| *camel.component.salesforce.config.object-mapper.subtype-resolver* |  |  | SubtypeResolver
-| *camel.component.salesforce.config.object-mapper.type-factory* |  |  | TypeFactory
-| *camel.component.salesforce.config.object-mapper.visibility-checker* |  |  | VisibilityChecker<?>
+| *camel.component.salesforce.config.object-mapper* | Custom Jackson ObjectMapper to use when serializing/deserializing
+ Salesforce objects. |  | ObjectMapper
 | *camel.component.salesforce.config.raw-payload* | Use raw payload {@link String} for request and response (either JSON
  or XML depending on {@code format} ), instead of DTOs, false by
  default | false | Boolean

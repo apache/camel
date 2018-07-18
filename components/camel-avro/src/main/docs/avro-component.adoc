@@ -233,7 +233,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 19 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
@@ -243,13 +243,9 @@ The component supports 19 options, which are listed below.
 | *camel.component.avro.configuration.host* | Hostname to use |  | String
 | *camel.component.avro.configuration.message-name* | The name of the message to send. |  | String
 | *camel.component.avro.configuration.port* | Port number to use |  | Integer
+| *camel.component.avro.configuration.protocol* | Avro protocol to use |  | Protocol
 | *camel.component.avro.configuration.protocol-class-name* | Avro protocol to use defined by the FQN class name |  | String
 | *camel.component.avro.configuration.protocol-location* | Avro protocol location |  | String
-| *camel.component.avro.configuration.protocol.json-props* |  |  | Map
-| *camel.component.avro.configuration.protocol.messages* |  |  | Map
-| *camel.component.avro.configuration.protocol.object-props* |  |  | Map
-| *camel.component.avro.configuration.protocol.props* |  |  | Map
-| *camel.component.avro.configuration.protocol.types* |  |  | Schema>
 | *camel.component.avro.configuration.reflection-protocol* | If protocol object provided is reflection protocol. Should be used
  only with protocol parameter because for protocolClassName protocol
  type will be auto detected | false | Boolean

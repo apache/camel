@@ -364,7 +364,6 @@ public class ServiceNowComponentConfiguration
         /**
          * Sets Jackson's ObjectMapper to use for request/reply
          */
-        @NestedConfigurationProperty
         private ObjectMapper mapper;
         /**
          * The ServiceNow release to target, default to Helsinki See
@@ -384,12 +383,10 @@ public class ServiceNowComponentConfiguration
         /**
          * To configure http-client
          */
-        @NestedConfigurationProperty
         private HTTPClientPolicy httpClientPolicy;
         /**
          * To configure proxy authentication
          */
-        @NestedConfigurationProperty
         private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
         /**
          * The proxy host name

@@ -23,7 +23,6 @@ import org.apache.camel.component.nagios.NagiosEncryptionMethod;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To send passive checks to Nagios using JSendNSCA.
@@ -72,7 +71,6 @@ public class NagiosComponentConfiguration
 
     public static class NagiosConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.nagios.NagiosConfiguration.class;
-        @NestedConfigurationProperty
         private NagiosSettings nagiosSettings;
         /**
          * This is the address of the Nagios host where checks should be send.

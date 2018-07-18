@@ -95,7 +95,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 102 options, which are listed below.
+The component supports 103 options, which are listed below.
 
 
 
@@ -134,6 +134,7 @@ The component supports 102 options, which are listed below.
 | *camel.component.consul.configuration.block-seconds* | The second to wait for a watch event, default 10 seconds |  | Integer
 | *camel.component.consul.configuration.connect-timeout-millis* | Connect timeout for OkHttpClient |  | Long
 | *camel.component.consul.configuration.consistency-mode* | The consistencyMode used for queries, default ConsistencyMode.DEFAULT |  | ConsistencyMode
+| *camel.component.consul.configuration.consul-client* | Reference to a `com.orbitz.consul.Consul` in the registry. |  | Consul
 | *camel.component.consul.configuration.datacenter* | The data center |  | String
 | *camel.component.consul.configuration.dc* | The data center
  

@@ -61,7 +61,6 @@ import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.Type;
-import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -114,9 +113,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static final String INNER_TYPE_SUFFIX = "NestedConfiguration";
 
     /**
-     * Classes to exclude when adding {@link NestedConfigurationProperty} annotations.
+     * Classes to include when adding {@link NestedConfigurationProperty} annotations.
      */
-    private static final Pattern EXCLUDE_INNER_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)|(org\\.springframework\\.context\\.ApplicationContext)|(freemarker\\.template\\.Configuration)).*");
+    private static final Pattern INCLUDE_INNER_PATTERN = Pattern.compile("org\\.apache\\.camel\\..*");
 
     private static final Map<String, String> PRIMITIVEMAP;
 
@@ -747,7 +746,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if (!type.endsWith(INNER_TYPE_SUFFIX)
                 && type.indexOf('[') == -1
-                && !EXCLUDE_INNER_PATTERN.matcher(type).matches()
+                && INCLUDE_INNER_PATTERN.matcher(type).matches()
                 && Strings.isBlank(option.getEnums())
                 && (javaClassSource == null || (javaClassSource.isClass() && !javaClassSource.isAbstract()))) {
                 // add nested configuration annotation for complex properties
@@ -821,7 +820,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
 
                 // add nested configuration annotation for complex properties
-                if (!EXCLUDE_INNER_PATTERN.matcher(optionType).matches()
+                if (INCLUDE_INNER_PATTERN.matcher(optionType).matches()
                     && !propType.isArray()
                     && !anEnum
                     && optionClass != null

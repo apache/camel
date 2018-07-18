@@ -22,7 +22,6 @@ import com.amazonaws.services.s3.model.EncryptionMaterials;
 import org.apache.camel.component.aws.s3.S3Operations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The aws-s3 component is used for storing and retrieving objecct from Amazon
@@ -221,7 +220,6 @@ public class S3ComponentConfiguration
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage
          */
-        @NestedConfigurationProperty
         private EncryptionMaterials encryptionMaterials;
         /**
          * Define if encryption must be used or not

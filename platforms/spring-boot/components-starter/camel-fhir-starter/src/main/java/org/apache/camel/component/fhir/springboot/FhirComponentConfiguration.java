@@ -23,7 +23,6 @@ import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
 import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Represents a FHIR endpoint.
@@ -82,7 +81,6 @@ public class FhirComponentConfiguration
          * What sub operation to use for the selected operation
          */
         private String methodName;
-        @NestedConfigurationProperty
         private FhirContext fhirContext;
         private Boolean forceConformanceCheck = false;
         private String username;

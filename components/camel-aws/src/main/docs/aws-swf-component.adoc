@@ -105,7 +105,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 55 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -115,28 +115,11 @@ The component supports 55 options, which are listed below.
 | *camel.component.aws-swf.access-key* | Amazon AWS Access Key. |  | String
 | *camel.component.aws-swf.configuration.access-key* | Amazon AWS Access Key. |  | String
 | *camel.component.aws-swf.configuration.activity-list* | The list name to consume activities from. |  | String
-| *camel.component.aws-swf.configuration.activity-scheduling-options.heartbeat-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-scheduling-options.schedule-to-close-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-scheduling-options.schedule-to-start-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-scheduling-options.start-to-close-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-scheduling-options.task-list* |  |  | String
-| *camel.component.aws-swf.configuration.activity-scheduling-options.task-priority* |  |  | Integer
+| *camel.component.aws-swf.configuration.activity-scheduling-options* | Activity scheduling options |  | ActivityScheduling Options
 | *camel.component.aws-swf.configuration.activity-thread-pool-size* | Maximum number of threads in work pool for activity. | 100 | Integer
-| *camel.component.aws-swf.configuration.activity-type-execution-options.do-not-retry-task-failed* |  |  | Boolean
-| *camel.component.aws-swf.configuration.activity-type-execution-options.manual-activity-completion* |  |  | Boolean
-| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-backoff-coefficient* |  |  | Double
-| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-maximum-retries* |  |  | Integer
-| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-retry-initial-interval* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-type-execution-options.respond-task-completed-retry-maximum-interval* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-heartbeat-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-list* |  |  | String
-| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-priority* |  |  | Integer
-| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-schedule-to-close-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-schedule-to-start-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-type-registration-options.default-task-start-to-close-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.activity-type-registration-options.description* |  |  | String
-| *camel.component.aws-swf.configuration.amazon-s-w-client.signer-region-override* |  |  | String
-| *camel.component.aws-swf.configuration.amazon-s-w-client.time-offset* |  |  | Integer
+| *camel.component.aws-swf.configuration.activity-type-execution-options* | Activity execution options |  | ActivityTypeExecution Options
+| *camel.component.aws-swf.configuration.activity-type-registration-options* | Activity registration options |  | ActivityType RegistrationOptions
+| *camel.component.aws-swf.configuration.amazon-s-w-client* | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow Client
 | *camel.component.aws-swf.configuration.child-policy* | The policy to use on child workflows when terminating a workflow. |  | String
 | *camel.component.aws-swf.configuration.client-configuration-parameters* | To configure the ClientConfiguration using the key/values from the
  Map. |  | Map
@@ -163,13 +146,7 @@ The component supports 55 options, which are listed below.
 | *camel.component.aws-swf.configuration.type* | Activity or workflow |  | String
 | *camel.component.aws-swf.configuration.version* | The workflow or activity event version to use. |  | String
 | *camel.component.aws-swf.configuration.workflow-list* | The list name to consume workflows from. |  | String
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-child-policy* |  |  | ChildPolicy
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-execution-start-to-close-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-lambda-role* |  |  | String
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-task-list* |  |  | String
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-task-priority* |  |  | Integer
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.default-task-start-to-close-timeout-seconds* |  |  | Long
-| *camel.component.aws-swf.configuration.workflow-type-registration-options.description* |  |  | String
+| *camel.component.aws-swf.configuration.workflow-type-registration-options* | Workflow registration options |  | WorkflowType RegistrationOptions
 | *camel.component.aws-swf.enabled* | Enable aws-swf component | true | Boolean
 | *camel.component.aws-swf.region* | Amazon AWS Region. |  | String
 | *camel.component.aws-swf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when

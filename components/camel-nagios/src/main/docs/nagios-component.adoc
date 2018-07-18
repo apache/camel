@@ -96,7 +96,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 15 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -109,12 +109,7 @@ The component supports 15 options, which are listed below.
  
  @deprecated use the {@link #encryption} query parameter instead. |  | NagiosEncryptionMethod
 | *camel.component.nagios.configuration.host* | This is the address of the Nagios host where checks should be send. |  | String
-| *camel.component.nagios.configuration.nagios-settings.connect-timeout* |  |  | Integer
-| *camel.component.nagios.configuration.nagios-settings.encryptor* |  |  | Encryptor
-| *camel.component.nagios.configuration.nagios-settings.nagios-host* |  |  | String
-| *camel.component.nagios.configuration.nagios-settings.password* |  |  | String
-| *camel.component.nagios.configuration.nagios-settings.port* |  |  | Integer
-| *camel.component.nagios.configuration.nagios-settings.timeout* |  |  | Integer
+| *camel.component.nagios.configuration.nagios-settings* |  |  | NagiosSettings
 | *camel.component.nagios.configuration.password* | Password to be authenticated when sending checks to Nagios. |  | String
 | *camel.component.nagios.configuration.port* | The port number of the host. |  | Integer
 | *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
