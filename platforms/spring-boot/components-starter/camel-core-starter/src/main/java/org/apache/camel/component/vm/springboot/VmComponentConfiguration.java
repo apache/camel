@@ -33,7 +33,8 @@ public class VmComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the vm component
+     * Whether to enable auto configuration of the vm component. This is enabled
+     * by default.
      */
     private Boolean enabled;
     /**

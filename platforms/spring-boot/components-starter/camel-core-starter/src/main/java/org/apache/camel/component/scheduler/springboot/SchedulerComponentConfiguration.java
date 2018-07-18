@@ -33,7 +33,8 @@ public class SchedulerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the scheduler component
+     * Whether to enable auto configuration of the scheduler component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

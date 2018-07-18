@@ -32,7 +32,8 @@ public class ValidatorComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the validator component
+     * Whether to enable auto configuration of the validator component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

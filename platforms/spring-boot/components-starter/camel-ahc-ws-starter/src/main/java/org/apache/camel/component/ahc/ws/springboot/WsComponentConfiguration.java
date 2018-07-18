@@ -32,7 +32,7 @@ public class WsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the ahc-wss component. This is
+     * Whether to enable auto configuration of the ahc-ws component. This is
      * enabled by default.
      */
     private Boolean enabled;

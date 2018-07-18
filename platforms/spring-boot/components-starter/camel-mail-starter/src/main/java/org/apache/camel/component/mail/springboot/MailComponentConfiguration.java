@@ -38,7 +38,7 @@ public class MailComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the pop3s component. This is
+     * Whether to enable auto configuration of the imap component. This is
      * enabled by default.
      */
     private Boolean enabled;

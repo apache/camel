@@ -32,7 +32,8 @@ public class BeanComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the bean component
+     * Whether to enable auto configuration of the bean component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

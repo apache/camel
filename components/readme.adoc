@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 298 in 203 JAR artifacts (21 deprecated)
+Number of Components: 299 in 203 JAR artifacts (21 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -481,6 +481,9 @@ Number of Components: 298 in 203 JAR artifacts (21 deprecated)
 
 | link:camel-kubernetes/src/main/docs/kubernetes-hpa-component.adoc[Kubernetes HPA] (camel-kubernetes) +
 `kubernetes-hpa:masterUrl` | 2.23 | The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume pod events.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-job-component.adoc[Kubernetes Job] (camel-kubernetes) +
+`kubernetes-job:masterUrl` | 2.23 | The Kubernetes Jobs component provides a producer to execute kubernetes job operations
 
 | link:camel-kubernetes/src/main/docs/kubernetes-namespaces-component.adoc[Kubernetes Namespaces] (camel-kubernetes) +
 `kubernetes-namespaces:masterUrl` | 2.17 | The Kubernetes Namespaces component provides a producer to execute kubernetes namespace operations and a consumer to consume namespace events.

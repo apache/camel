@@ -33,7 +33,8 @@ public class BindingNameComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the binding component
+     * Whether to enable auto configuration of the binding component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

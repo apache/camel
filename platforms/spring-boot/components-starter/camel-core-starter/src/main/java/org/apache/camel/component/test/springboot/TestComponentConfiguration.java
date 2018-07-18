@@ -33,7 +33,8 @@ public class TestComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the test component
+     * Whether to enable auto configuration of the test component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

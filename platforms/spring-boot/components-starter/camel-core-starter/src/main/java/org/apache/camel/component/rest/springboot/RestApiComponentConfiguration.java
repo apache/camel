@@ -33,7 +33,8 @@ public class RestApiComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the rest-api component
+     * Whether to enable auto configuration of the rest-api component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

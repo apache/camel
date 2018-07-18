@@ -33,7 +33,8 @@ public class DataSetComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the dataset component
+     * Whether to enable auto configuration of the dataset component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

@@ -34,7 +34,8 @@ public class XsltComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the xslt component
+     * Whether to enable auto configuration of the xslt component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

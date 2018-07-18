@@ -33,7 +33,8 @@ public class MockComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the mock component
+     * Whether to enable auto configuration of the mock component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

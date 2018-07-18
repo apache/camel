@@ -33,7 +33,8 @@ public class BrowseComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the browse component
+     * Whether to enable auto configuration of the browse component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

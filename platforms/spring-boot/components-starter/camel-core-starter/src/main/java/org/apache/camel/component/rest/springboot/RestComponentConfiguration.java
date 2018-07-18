@@ -33,7 +33,8 @@ public class RestComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the rest component
+     * Whether to enable auto configuration of the rest component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

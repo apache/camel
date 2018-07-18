@@ -32,7 +32,8 @@ public class ClassComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the class component
+     * Whether to enable auto configuration of the class component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**
