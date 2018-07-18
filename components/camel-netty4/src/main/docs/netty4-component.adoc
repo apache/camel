@@ -171,7 +171,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 94 options, which are listed below.
+The component supports 90 options, which are listed below.
 
 
 
@@ -353,11 +353,7 @@ The component supports 94 options, which are listed below.
 | *camel.component.netty4.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
 | *camel.component.netty4.configuration.ssl-context-parameters.session-timeout* |  |  | String
 | *camel.component.netty4.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
-| *camel.component.netty4.configuration.ssl-handler.close-notify-flush-timeout-millis* |  |  | Long
-| *camel.component.netty4.configuration.ssl-handler.close-notify-read-timeout-millis* |  |  | Long
-| *camel.component.netty4.configuration.ssl-handler.close-notify-timeout-millis* |  |  | Long
-| *camel.component.netty4.configuration.ssl-handler.handshake-timeout-millis* |  |  | Long
-| *camel.component.netty4.configuration.ssl-handler.single-decode* |  |  | Boolean
+| *camel.component.netty4.configuration.ssl-handler* | Reference to a class that could be used to return an SSL Handler |  | SslHandler
 | *camel.component.netty4.configuration.sync* | Setting to set endpoint as one-way or request-response | true | Boolean
 | *camel.component.netty4.configuration.tcp-no-delay* | Setting to improve TCP protocol performance | true | Boolean
 | *camel.component.netty4.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to

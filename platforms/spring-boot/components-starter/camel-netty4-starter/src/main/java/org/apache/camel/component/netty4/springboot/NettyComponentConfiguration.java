@@ -431,7 +431,6 @@ public class NettyComponentConfiguration
         /**
          * Reference to a class that could be used to return an SSL Handler
          */
-        @NestedConfigurationProperty
         private SslHandler sslHandler;
         /**
          * To configure security using SSLContextParameters

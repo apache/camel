@@ -180,7 +180,6 @@ public class ConsulComponentConfiguration
         /**
          * Reference to a `com.orbitz.consul.Consul` in the registry.
          */
-        @NestedConfigurationProperty
         private Consul consulClient;
         /**
          * The Consul agent URL

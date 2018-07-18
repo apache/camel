@@ -118,7 +118,6 @@ public class CacheComponentConfiguration
          * <li>FIFO - First In First Out</li>
          * </ul>
          */
-        @NestedConfigurationProperty
         private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy;
         /**
          * Specifies whether cache may overflow to disk

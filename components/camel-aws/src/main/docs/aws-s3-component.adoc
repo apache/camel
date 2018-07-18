@@ -175,7 +175,8 @@ The component supports 34 options, which are listed below.
  headers, or only the {@link S3Constants#KEY} header. | true | Boolean
 | *camel.component.aws-s3.configuration.delete-after-write* | Delete file object after the S3 file has been uploaded | false | Boolean
 | *camel.component.aws-s3.configuration.dualstack-enabled* | Define if Dualstack enabled is true or false | false | Boolean
-| *camel.component.aws-s3.configuration.encryption-materials.materials-description* |  |  | Map
+| *camel.component.aws-s3.configuration.encryption-materials* | The encryption materials to use in case of Symmetric/Asymmetric
+ client usage |  | EncryptionMaterials
 | *camel.component.aws-s3.configuration.file-name* | To get the object from the bucket with the given file name |  | String
 | *camel.component.aws-s3.configuration.force-global-bucket-access-enabled* | Define if Force Global Bucket Access enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.include-body* | If it is true, the exchange body will be set to a stream to the

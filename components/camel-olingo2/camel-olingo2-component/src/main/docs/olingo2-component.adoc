@@ -108,7 +108,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 24 options, which are listed below.
+The component supports 27 options, which are listed below.
 
 
 
@@ -120,9 +120,18 @@ The component supports 24 options, which are listed below.
  (30 seconds) | 30000 | Integer
 | *camel.component.olingo2.configuration.content-type* | Content-Type header value can be used to specify JSON or XML message
  format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
+| *camel.component.olingo2.configuration.http-async-client-builder* | Custom HTTP async client builder for more complex HTTP client
+ configuration, overrides connectionTimeout, socketTimeout, proxy and
+ sslContext. Note that a socketTimeout MUST be specified in the
+ builder, otherwise OData requests could block indefinitely |  | HttpAsyncClientBuilder
+| *camel.component.olingo2.configuration.http-client-builder* | Custom HTTP client builder for more complex HTTP client
+ configuration, overrides connectionTimeout, socketTimeout, proxy and
+ sslContext. Note that a socketTimeout MUST be specified in the
+ builder, otherwise OData requests could block indefinitely |  | HttpClientBuilder
 | *camel.component.olingo2.configuration.http-headers* | Custom HTTP headers to inject into every request, this could include
  OAuth tokens, etc. |  | Map
 | *camel.component.olingo2.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.olingo2.configuration.proxy* | HTTP proxy server configuration |  | HttpHost
 | *camel.component.olingo2.configuration.service-uri* | Target OData service base URI, e.g.
  http://services.odata.org/OData/OData.svc |  | String
 | *camel.component.olingo2.configuration.socket-timeout* | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer

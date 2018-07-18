@@ -131,7 +131,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 106 options, which are listed below.
+The component supports 70 options, which are listed below.
 
 
 
@@ -152,32 +152,7 @@ The component supports 106 options, which are listed below.
 | *camel.component.servicenow.configuration.exclude-reference-link* | True to exclude Table API links for reference fields (default: false) |  | Boolean
 | *camel.component.servicenow.configuration.favorites* | Set this parameter to true to return only scorecards that are
  favorites of the querying user. |  | Boolean
-| *camel.component.servicenow.configuration.http-client-policy.accept* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.accept-encoding* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.accept-language* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.allow-chunking* |  |  | Boolean
-| *camel.component.servicenow.configuration.http-client-policy.async-execute-timeout* |  |  | Long
-| *camel.component.servicenow.configuration.http-client-policy.async-execute-timeout-rejection* |  |  | Boolean
-| *camel.component.servicenow.configuration.http-client-policy.auto-redirect* |  |  | Boolean
-| *camel.component.servicenow.configuration.http-client-policy.browser-type* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.cache-control* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.chunk-length* |  |  | Integer
-| *camel.component.servicenow.configuration.http-client-policy.chunking-threshold* |  |  | Integer
-| *camel.component.servicenow.configuration.http-client-policy.connection* |  |  | ConnectionType
-| *camel.component.servicenow.configuration.http-client-policy.connection-request-timeout* |  |  | Long
-| *camel.component.servicenow.configuration.http-client-policy.connection-timeout* |  |  | Long
-| *camel.component.servicenow.configuration.http-client-policy.content-type* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.cookie* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.decoupled-endpoint* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.host* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.max-retransmits* |  |  | Integer
-| *camel.component.servicenow.configuration.http-client-policy.non-proxy-hosts* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.other-attributes* |  |  | Map
-| *camel.component.servicenow.configuration.http-client-policy.proxy-server* |  |  | String
-| *camel.component.servicenow.configuration.http-client-policy.proxy-server-port* |  |  | Integer
-| *camel.component.servicenow.configuration.http-client-policy.proxy-server-type* |  |  | ProxyServerType
-| *camel.component.servicenow.configuration.http-client-policy.receive-timeout* |  |  | Long
-| *camel.component.servicenow.configuration.http-client-policy.referer* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy* | To configure http-client |  | HTTPClientPolicy
 | *camel.component.servicenow.configuration.include-aggregates* | Set this parameter to true to always return all available aggregates
  for an indicator, including when an aggregate has already been
  applied. If a value is not specified, this parameter defaults to
@@ -198,15 +173,7 @@ The component supports 106 options, which are listed below.
 | *camel.component.servicenow.configuration.input-display-value* | True to set raw value of input fields (default: false) |  | Boolean
 | *camel.component.servicenow.configuration.key* | Set this parameter to true to return only scorecards for key
  indicators. |  | Boolean
-| *camel.component.servicenow.configuration.mapper.date-format* |  |  | DateFormat
-| *camel.component.servicenow.configuration.mapper.injectable-values* |  |  | InjectableValues
-| *camel.component.servicenow.configuration.mapper.node-factory* |  |  | JsonNodeFactory
-| *camel.component.servicenow.configuration.mapper.property-naming-strategy* |  |  | PropertyNamingStrategy
-| *camel.component.servicenow.configuration.mapper.registered-module-ids* |  |  | Set
-| *camel.component.servicenow.configuration.mapper.serializer-factory* |  |  | SerializerFactory
-| *camel.component.servicenow.configuration.mapper.subtype-resolver* |  |  | SubtypeResolver
-| *camel.component.servicenow.configuration.mapper.type-factory* |  |  | TypeFactory
-| *camel.component.servicenow.configuration.mapper.visibility-checker* |  |  | VisibilityChecker<?>
+| *camel.component.servicenow.configuration.mapper* | Sets Jackson's ObjectMapper to use for request/reply |  | ObjectMapper
 | *camel.component.servicenow.configuration.models* |  |  | Map
 | *camel.component.servicenow.configuration.oauth-client-id* | OAuth2 ClientID |  | String
 | *camel.component.servicenow.configuration.oauth-client-secret* | OAuth2 ClientSecret |  | String
@@ -214,10 +181,7 @@ The component supports 106 options, which are listed below.
 | *camel.component.servicenow.configuration.password* | ServiceNow account password, MUST be provided |  | String
 | *camel.component.servicenow.configuration.per-page* | Enter the maximum number of scorecards each query can return. By
  default this value is 10, and the maximum is 100. | 10 | Integer
-| *camel.component.servicenow.configuration.proxy-authorization-policy.authorization* |  |  | String
-| *camel.component.servicenow.configuration.proxy-authorization-policy.authorization-type* |  |  | String
-| *camel.component.servicenow.configuration.proxy-authorization-policy.password* |  |  | String
-| *camel.component.servicenow.configuration.proxy-authorization-policy.user-name* |  |  | String
+| *camel.component.servicenow.configuration.proxy-authorization-policy* | To configure proxy authentication |  | ProxyAuthorization Policy
 | *camel.component.servicenow.configuration.proxy-host* | The proxy host name |  | String
 | *camel.component.servicenow.configuration.proxy-password* | Password for proxy authentication |  | String
 | *camel.component.servicenow.configuration.proxy-port* | The proxy port number |  | Integer

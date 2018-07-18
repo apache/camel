@@ -728,7 +728,6 @@ public class SalesforceComponentConfiguration
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          */
-        @NestedConfigurationProperty
         private ObjectMapper objectMapper;
         /**
          * Backoff interval increment for Streaming connection restart attempts
