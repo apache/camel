@@ -31,6 +31,7 @@ public interface GitOperation {
     String STATUS_OPERATION = "status";
     String LOG_OPERATION = "log";
     String PUSH_OPERATION = "push";
+    String PUSH_TAG_OPERATION = "pushTag";
     String PULL_OPERATION = "pull";
     String MERGE_OPERATION = "merge";
     String SHOW_BRANCHES_OPERATION = "showBranches";
