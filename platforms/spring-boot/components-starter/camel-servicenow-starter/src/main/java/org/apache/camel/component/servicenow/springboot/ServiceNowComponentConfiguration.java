@@ -416,6 +416,9 @@ public class ServiceNowComponentConfiguration
          * The date-time format used for Json serialization/deserialization
          */
         private String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        /**
+         * Defines both request and response models
+         */
         private Map models;
         /**
          * Defines the response model

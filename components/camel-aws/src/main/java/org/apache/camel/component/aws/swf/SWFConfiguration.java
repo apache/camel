@@ -370,24 +370,24 @@ public class SWFConfiguration implements Cloneable {
         this.activityThreadPoolSize = activityThreadPoolSize;
     }
 
-    /**
-     * Set the execution start to close timeout.
-     */
     public String getExecutionStartToCloseTimeout() {
         return executionStartToCloseTimeout;
     }
 
+    /**
+     * Set the execution start to close timeout.
+     */
     public void setExecutionStartToCloseTimeout(String executionStartToCloseTimeout) {
         this.executionStartToCloseTimeout = executionStartToCloseTimeout;
+    }
+
+    public String getTaskStartToCloseTimeout() {
+        return taskStartToCloseTimeout;
     }
 
     /**
      * Set the task start to close timeout.
      */
-    public String getTaskStartToCloseTimeout() {
-        return taskStartToCloseTimeout;
-    }
-
     public void setTaskStartToCloseTimeout(String taskStartToCloseTimeout) {
         this.taskStartToCloseTimeout = taskStartToCloseTimeout;
     }

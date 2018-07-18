@@ -246,69 +246,42 @@ public class SshComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.ssh.SshConfiguration.class;
         /**
          * Sets the username to use in logging into the remote SSH server.
-         * 
-         * @param usernameString
-         *            representing login username.
          */
         private String username;
         /**
          * Sets the hostname of the remote SSH server.
-         * 
-         * @param hostString
-         *            representing hostname of SSH server.
          */
         private String host;
         /**
          * Sets the port number for the remote SSH server.
-         * 
-         * @param portint
-         *            representing port number on remote host. Defaults to 22.
          */
         private Integer port = 22;
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
-         * 
-         * @param passwordString
-         *            representing password for username at remote host.
          */
         private String password;
         /**
          * Sets the command string to send to the remote SSH server during every
          * poll cycle. Only works with camel-ssh component being used as a
-         * consumer, i.e. from("ssh://...") You may need to end your command
-         * with a newline, and that must be URL encoded %0A
-         * 
-         * @param pollCommandString
-         *            representing the command to send.
+         * consumer, i.e. from(ssh://...) You may need to end your command with
+         * a newline, and that must be URL encoded %0A
          */
         private String pollCommand;
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
-         * 
-         * @param keyPairProviderKeyPairProvider
-         *            reference to use in authenticating. If set to 'null', then
-         *            will attempt to connect using username/password settings.
-         * @see KeyPairProvider
          */
         private KeyPairProvider keyPairProvider;
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to "ssh-rsa".
-         * 
-         * @param keyTypeString
-         *            defining the type of KeyPair to use for authentication.
-         * @see KeyPairProvider
+         * value. Defaults to ssh-rsa.
          */
         private String keyType = "ssh-rsa";
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
-         * 
-         * @param timeoutlong
-         *            milliseconds to wait.
          */
         private Long timeout = 30000L;
         /**
@@ -319,52 +292,32 @@ public class SshComponentConfiguration
         private String certFilename;
         /**
          * Sets the resource path of the certificate to use for Authentication.
-         * Will use {@link ResourceHelperKeyPairProvider} to resolve file based
+         * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
-         * 
-         * @param certResourceString
-         *            file, classpath, or http url for the certificate
          */
         private String certResource;
         /**
          * Sets the resource path for a known_hosts file
-         * 
-         * @param knownHostsString
-         *            file, classpath, or http url for the certificate
          */
         private String knownHostsResource;
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
-         * 
-         * @param boolean boolean flag, whether a connection to an unknown host
-         *        should fail
          */
         private Boolean failOnUnknownHost = false;
         /**
          * Sets the channel type to pass to the Channel as part of command
-         * execution. Defaults to "exec".
-         * 
-         * @param channelTypeString
-         *            defining the type of Channel to use for command execution.
-         * @seeorg.apache.sshd.common.channel.Channel
+         * execution. Defaults to exec.
          */
         private String channelType = "exec";
         /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution
-         * 
-         * @param shellPromptString
-         *            defining ending string of command line which has to be
-         *            dropped when response is read after command execution.
          */
         private String shellPrompt;
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
-         * 
-         * @param sleepForShellPromptlong
-         *            milliseconds to wait.
          */
         private Long sleepForShellPrompt = 100L;
 

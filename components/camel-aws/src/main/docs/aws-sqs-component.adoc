@@ -140,7 +140,8 @@ The component supports 30 options, which are listed below.
 | *camel.component.aws-sqs.configuration.amazon-s-q-s-client* | To use the AmazonSQS as client |  | AmazonSQS
 | *camel.component.aws-sqs.configuration.attribute-names* | A list of attribute names to receive when consuming. Multiple names
  can be separated by comma. |  | String
-| *camel.component.aws-sqs.configuration.concurrent-consumers* |  | 1 | Integer
+| *camel.component.aws-sqs.configuration.concurrent-consumers* | Allows you to use multiple threads to poll the sqs queue to increase
+ throughput | 1 | Integer
 | *camel.component.aws-sqs.configuration.default-visibility-timeout* | The default visibility timeout (in seconds) |  | Integer
 | *camel.component.aws-sqs.configuration.delay-seconds* | Delay sending messages for a number of seconds. |  | Integer
 | *camel.component.aws-sqs.configuration.delete-after-read* | Delete message from SQS after it has been read | true | Boolean
@@ -159,13 +160,16 @@ The component supports 30 options, which are listed below.
 | *camel.component.aws-sqs.configuration.message-retention-period* | The messageRetentionPeriod (in seconds) a message will be retained by
  SQS for this queue. |  | Integer
 | *camel.component.aws-sqs.configuration.policy* | The policy for this queue |  | String
-| *camel.component.aws-sqs.configuration.proxy-host* |  |  | String
-| *camel.component.aws-sqs.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-sqs.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
+| *camel.component.aws-sqs.configuration.proxy-port* | To define a proxy port when instantiating the SQS client |  | Integer
 | *camel.component.aws-sqs.configuration.queue-name* | Name of queue. The queue will be created if they don't already
  exists. |  | String
 | *camel.component.aws-sqs.configuration.queue-owner-a-w-s-account-id* | Specify the queue owner aws account id when you need to connect the
  queue with different account owner. |  | String
-| *camel.component.aws-sqs.configuration.queue-url* |  |  | String
+| *camel.component.aws-sqs.configuration.queue-url* | To define the queueUrl explicitly. All other parameters, which would
+ influence the queueUrl, are ignored. This parameter is intended to be
+ used, to connect to a mock implementation of SQS, for testing
+ purposes. |  | String
 | *camel.component.aws-sqs.configuration.receive-message-wait-time-seconds* | If you do not specify WaitTimeSeconds in the request, the queue
  attribute ReceiveMessageWaitTimeSeconds is used to determine how long
  to wait. |  | Integer

@@ -70,15 +70,15 @@ public class KestrelComponentConfiguration
     public static class KestrelConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.kestrel.KestrelConfiguration.class;
         /**
-         * The addresses
+         * The address(es) on which kestrel is running
          */
         private String[] addresses;
         /**
-         * The wait time in milliseconds
+         * How long a given wait should block (server side), in milliseconds
          */
         private Integer waitTimeMs = 100;
         /**
-         * The number of concurrent consumers
+         * How many concurrent listeners to schedule for the thread pool
          */
         private Integer concurrentConsumers = 1;
 

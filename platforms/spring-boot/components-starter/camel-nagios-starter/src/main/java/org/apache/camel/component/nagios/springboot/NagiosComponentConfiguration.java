@@ -94,8 +94,6 @@ public class NagiosComponentConfiguration
         private String password;
         /**
          * To specify an encryption method.
-         * 
-         * @deprecated use the {@link #encryption} query parameter instead.
          */
         @Deprecated
         private NagiosEncryptionMethod encryptionMethod;

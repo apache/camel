@@ -71,7 +71,13 @@ public class FhirComponentConfiguration
 
     public static class FhirConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.fhir.FhirConfiguration.class;
+        /**
+         * The FHIR server base URL
+         */
         private String serverUrl;
+        /**
+         * Pretty print all request
+         */
         private Boolean prettyPrint = false;
         /**
          * What kind of operation to perform
@@ -81,22 +87,76 @@ public class FhirComponentConfiguration
          * What sub operation to use for the selected operation
          */
         private String methodName;
+        /**
+         * FhirContext is an expensive object to create. To avoid creating
+         * multiple instances, it can be set directly.
+         */
         private FhirContext fhirContext;
+        /**
+         * Force conformance check
+         */
         private Boolean forceConformanceCheck = false;
+        /**
+         * Username to use for basic authentication
+         */
         private String username;
+        /**
+         * Username to use for basic authentication
+         */
         private String password;
+        /**
+         * OAuth access token
+         */
         private String accessToken;
+        /**
+         * Will log every requests and responses
+         */
         private Boolean log = false;
+        /**
+         * Compresses outgoing (POST/PUT) contents to the GZIP format
+         */
         private Boolean compress = false;
+        /**
+         * HTTP session cookie to add to every request
+         */
         private String sessionCookie;
+        /**
+         * When this option is set, model classes will not be scanned for
+         * children until the child list for the given type is actually
+         * accessed.
+         */
         private Boolean deferModelScanning = false;
+        /**
+         * How long to try and establish the initial TCP connection (in ms)
+         */
         private Integer connectionTimeout = 10000;
+        /**
+         * How long to block for individual read/write operations (in ms)
+         */
         private Integer socketTimeout = 10000;
+        /**
+         * The proxy host
+         */
         private String proxyHost;
+        /**
+         * The proxy password
+         */
         private String proxyPassword;
+        /**
+         * The proxy port
+         */
         private Integer proxyPort;
+        /**
+         * The proxy username
+         */
         private String proxyUser;
+        /**
+         * "To use the custom client"
+         */
         private IGenericClient client;
+        /**
+         * "To use the custom client factory"
+         */
         private IRestfulClientFactory clientFactory;
 
         public String getServerUrl() {

@@ -102,9 +102,9 @@ The component supports 16 options, which are listed below.
 | *camel.component.aws-sns.configuration.amazon-s-n-s-client* | To use the AmazonSNS as the client |  | AmazonSNS
 | *camel.component.aws-sns.configuration.message-structure* | The message structure to use such as json |  | String
 | *camel.component.aws-sns.configuration.policy* | The policy for this queue |  | String
-| *camel.component.aws-sns.configuration.proxy-host* |  |  | String
-| *camel.component.aws-sns.configuration.proxy-port* |  |  | Integer
-| *camel.component.aws-sns.configuration.region* |  |  | String
+| *camel.component.aws-sns.configuration.proxy-host* | To define a proxy host when instantiating the SNS client |  | String
+| *camel.component.aws-sns.configuration.proxy-port* | To define a proxy port when instantiating the SNS client |  | Integer
+| *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work |  | String
 | *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject'
  is not present. |  | String

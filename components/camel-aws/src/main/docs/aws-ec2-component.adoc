@@ -97,9 +97,9 @@ The component supports 12 options, which are listed below.
  startInstances, stopInstances, terminateInstances, describeInstances,
  describeInstancesStatus, rebootInstances, monitorInstances,
  unmonitorInstances, createTags or deleteTags |  | EC2Operations
-| *camel.component.aws-ec2.configuration.proxy-host* |  |  | String
-| *camel.component.aws-ec2.configuration.proxy-port* |  |  | Integer
-| *camel.component.aws-ec2.configuration.region* |  |  | String
+| *camel.component.aws-ec2.configuration.proxy-host* | To define a proxy host when instantiating the EC2 client |  | String
+| *camel.component.aws-ec2.configuration.proxy-port* | To define a proxy port when instantiating the EC2 client |  | Integer
+| *camel.component.aws-ec2.configuration.region* | The region in which EC2 client needs to work |  | String
 | *camel.component.aws-ec2.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ec2.enabled* | Enable aws-ec2 component | true | Boolean
 | *camel.component.aws-ec2.region* | The region in which EC2 client needs to work |  | String

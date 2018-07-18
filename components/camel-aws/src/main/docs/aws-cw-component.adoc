@@ -101,9 +101,9 @@ The component supports 16 options, which are listed below.
 | *camel.component.aws-cw.configuration.amazon-cw-client* | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
 | *camel.component.aws-cw.configuration.name* | The metric name |  | String
 | *camel.component.aws-cw.configuration.namespace* | The metric namespace |  | String
-| *camel.component.aws-cw.configuration.proxy-host* |  |  | String
-| *camel.component.aws-cw.configuration.proxy-port* |  |  | Integer
-| *camel.component.aws-cw.configuration.region* |  |  | String
+| *camel.component.aws-cw.configuration.proxy-host* | To define a proxy host when instantiating the CW client |  | String
+| *camel.component.aws-cw.configuration.proxy-port* | To define a proxy port when instantiating the CW client |  | Integer
+| *camel.component.aws-cw.configuration.region* | The region in which CW client needs to work |  | String
 | *camel.component.aws-cw.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-cw.configuration.timestamp* | The metric timestamp |  | Date
 | *camel.component.aws-cw.configuration.unit* | The metric unit |  | String

@@ -109,7 +109,7 @@ public class BraintreeComponentConfiguration
          */
         private Integer proxyPort;
         /**
-         * Set logging level for http calls, @see java.util.logging.Level
+         * Set logging level for http calls, see java.util.logging.Level
          */
         private Level httpLogLevel;
         /**

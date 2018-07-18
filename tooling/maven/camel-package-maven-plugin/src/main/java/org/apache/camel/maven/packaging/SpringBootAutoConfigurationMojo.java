@@ -50,6 +50,7 @@ import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
 import org.apache.camel.maven.packaging.model.OtherModel;
 import org.apache.camel.maven.packaging.model.OtherOptionModel;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.commons.io.FileUtils;
@@ -86,6 +87,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDescriptionValue;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyJavaType;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyType;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
@@ -807,6 +809,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 PropertySource<JavaClassSource> sourceProp = resolvedProperty.propertySource;
 
                 Type<JavaClassSource> propType = sourceProp.getType();
+                // skip these types
+                if (propType.isType("CamelContext")) {
+                    continue;
+                }
+
                 final PropertySource<JavaClassSource> prop = innerClass.addProperty(optionType, sourceProp.getName());
 
                 boolean anEnum;
@@ -837,12 +844,22 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
                 }
 
+                // find description for the nested type on its field/setter javadoc or via Camel annotations
                 String description = null;
                 final MethodSource<JavaClassSource> mutator = sourceProp.getMutator();
                 if (mutator.hasJavaDoc()) {
                     description = mutator.getJavaDoc().getFullText();
                 } else if (sourceProp.hasField()) {
                     description = sourceProp.getField().getJavaDoc().getFullText();
+                }
+                if (Strings.isBlank(description) && sourceProp.hasAnnotation(UriPath.class)) {
+                    description = sourceProp.getAnnotation(UriPath.class).getLiteralValue("description");
+                }
+                if (Strings.isBlank(description) && sourceProp.hasAnnotation(UriParam.class)) {
+                    description = sourceProp.getAnnotation(UriParam.class).getLiteralValue("description");
+                }
+                if (Strings.isBlank(description) && sourceProp.hasAnnotation(Metadata.class)) {
+                    description = sourceProp.getAnnotation(Metadata.class).getLiteralValue("description");
                 }
                 if (!Strings.isBlank(description)) {
                     prop.getField().getJavaDoc().setFullText(description);
@@ -880,6 +897,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                                 javaType = getPropertyJavaType(rows, optionName);
                                 type = getPropertyType(rows, optionName);
                                 defaultValue = getPropertyDefaultValue(rows, optionName);
+                                // favour description from the model
+                                description = getPropertyDescriptionValue(rows, optionName);
+                                if (description != null) {
+                                    prop.getField().getJavaDoc().setFullText(description);
+                                }
                             }
                         } catch (IOException e) {
                             // ignore

@@ -83,27 +83,21 @@ public class SmppComponentConfiguration
          * The system id (username) for connecting to SMSC server.
          */
         private String systemId = "smppclient";
+        /**
+         * The password for connecting to SMSC server.
+         */
         private String password;
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are:
-         * <ul>
-         * <li>0: SMSC Default Alphabet</li>
-         * <li>3: Latin 1 (ISO-8859-1)</li>
-         * <li>4: Octet unspecified (8-bit binary)</li>
-         * <li>8: UCS2 (ISO/IEC-10646)</li>
-         * <li>13: Extended Kanji JIS(X 0212-1990)</li>
-         * </ul>
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990)
          */
         private Byte dataCoding;
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19.
-         * <ul>
-         * <li>0: SMSC Default Alphabet
-         * <li>4: 8 bit Alphabet</li>
-         * <li>8: UCS2 Alphabet</li></li>
-         * </ul>
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet
          */
         private Byte alphabet;
         /**
@@ -131,92 +125,52 @@ public class SmppComponentConfiguration
         private String systemType = "cp";
         /**
          * Is used to request an SMSC delivery receipt and/or SME originated
-         * acknowledgements. The following values are defined:
-         * <ul>
-         * <li>0: No SMSC delivery receipt requested.</li>
-         * <li>1: SMSC delivery receipt requested where final delivery outcome
-         * is success or failure.</li>
-         * <li>2: SMSC delivery receipt requested where the final delivery
-         * outcome is delivery failure.</li>
-         * </ul>
+         * acknowledgements. The following values are defined: 0: No SMSC
+         * delivery receipt requested. 1: SMSC delivery receipt requested where
+         * final delivery outcome is success or failure. 2: SMSC delivery
+         * receipt requested where the final delivery outcome is delivery
+         * failure.
          */
         private Byte registeredDelivery;
         /**
          * The service type parameter can be used to indicate the SMS
          * Application service associated with the message. The following
-         * generic service_types are defined:
-         * <ul>
-         * <li>CMT: Cellular Messaging</li>
-         * <li>CPT: Cellular Paging</li>
-         * <li>VMN: Voice Mail Notification</li>
-         * <li>VMA: Voice Mail Alerting</li>
-         * <li>WAP: Wireless Application Protocol</li>
-         * <li>USSD: Unstructured Supplementary Services Data</li>
-         * </ul>
+         * generic service_types are defined: CMT: Cellular Messaging CPT:
+         * Cellular Paging VMN: Voice Mail Notification VMA: Voice Mail Alerting
+         * WAP: Wireless Application Protocol USSD: Unstructured Supplementary
+         * Services Data
          */
         private String serviceType = "CMT";
         /**
          * Defines the type of number (TON) to be used in the SME originator
-         * address parameters. The following TON values are defined:
-         * <ul>
-         * <li>0: Unknown</li>
-         * <li>1: International</li>
-         * <li>2: National</li>
-         * <li>3: Network Specific</li>
-         * <li>4: Subscriber Number</li>
-         * <li>5: Alphanumeric</li>
-         * <li>6: Abbreviated</li>
-         * </ul>
+         * address parameters. The following TON values are defined: 0: Unknown
+         * 1: International 2: National 3: Network Specific 4: Subscriber Number
+         * 5: Alphanumeric 6: Abbreviated
          */
         private Byte sourceAddrTon;
         /**
          * Defines the type of number (TON) to be used in the SME destination
          * address parameters. Only for SubmitSm, SubmitMulti, CancelSm and
-         * DataSm. The following TON values are defined:
-         * <ul>
-         * <li>0: Unknown</li>
-         * <li>1: International</li>
-         * <li>2: National</li>
-         * <li>3: Network Specific</li>
-         * <li>4: Subscriber Number</li>
-         * <li>5: Alphanumeric</li>
-         * <li>6: Abbreviated</li>
-         * </ul>
+         * DataSm. The following TON values are defined: 0: Unknown 1:
+         * International 2: National 3: Network Specific 4: Subscriber Number 5:
+         * Alphanumeric 6: Abbreviated
          */
         private Byte destAddrTon;
         /**
          * Defines the numeric plan indicator (NPI) to be used in the SME
          * originator address parameters. The following NPI values are defined:
-         * <ul>
-         * <li>0: Unknown</li>
-         * <li>1: ISDN (E163/E164)</li>
-         * <li>2: Data (X.121)</li>
-         * <li>3: Telex (F.69)</li>
-         * <li>6: Land Mobile (E.212)</li>
-         * <li>8: National</li>
-         * <li>9: Private</li>
-         * <li>10: ERMES</li>
-         * <li>13: Internet (IP)</li>
-         * <li>18: WAP Client Id (to be defined by WAP Forum)</li>
-         * </ul>
+         * 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6:
+         * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
+         * (IP) 18: WAP Client Id (to be defined by WAP Forum)
          */
         private Byte sourceAddrNpi;
         /**
          * Defines the type of number (TON) to be used in the SME destination
          * address parameters. Only for SubmitSm, SubmitMulti, CancelSm and
-         * DataSm. The following NPI values are defined:
-         * <ul>
-         * <li>0: Unknown</li>
-         * <li>1: ISDN (E163/E164)</li>
-         * <li>2: Data (X.121)</li>
-         * <li>3: Telex (F.69)</li>
-         * <li>6: Land Mobile (E.212)</li>
-         * <li>8: National</li>
-         * <li>9: Private</li>
-         * <li>10: ERMES</li>
-         * <li>13: Internet (IP)</li>
-         * <li>18: WAP Client Id (to be defined by WAP Forum)</li>
-         * </ul>
+         * DataSm. The following NPI values are defined: 0: Unknown 1: ISDN
+         * (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8:
+         * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
+         * be defined by WAP Forum)
          */
         private Byte destAddrNpi;
         /**
@@ -226,13 +180,8 @@ public class SmppComponentConfiguration
         /**
          * Allows the originating SME to assign a priority level to the short
          * message. Only for SubmitSm and SubmitMulti. Four Priority Levels are
-         * supported:
-         * <ul>
-         * <li>0: Level 0 (lowest) priority</li>
-         * <li>1: Level 1 priority</li>
-         * <li>2: Level 2 priority</li>
-         * <li>3: Level 3 (highest) priority</li>
-         * </ul>
+         * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
+         * 2 priority 3: Level 3 (highest) priority
          */
         private Byte priorityFlag;
         /**
@@ -240,11 +189,8 @@ public class SmppComponentConfiguration
          * that is still pending delivery. The SMSC will replace an existing
          * message provided that the source address, destination address and
          * service type match the same fields in the new message. The following
-         * replace if present flag values are defined:
-         * <ul>
-         * <li>0: Don't replace</li>
-         * <li>1: Replace</li>
-         * </ul>
+         * replace if present flag values are defined: 0: Don't replace 1:
+         * Replace
          */
         private Byte replaceIfPresentFlag;
         /**
@@ -260,33 +206,16 @@ public class SmppComponentConfiguration
         private String destAddr = "1717";
         /**
          * Defines the type of number (TON) to be used in the SME. The following
-         * TON values are defined:
-         * <ul>
-         * <li>0: Unknown</li>
-         * <li>1: International</li>
-         * <li>2: National</li>
-         * <li>3: Network Specific</li>
-         * <li>4: Subscriber Number</li>
-         * <li>5: Alphanumeric</li>
-         * <li>6: Abbreviated</li>
-         * </ul>
+         * TON values are defined: 0: Unknown 1: International 2: National 3:
+         * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated
          */
         private Byte typeOfNumber;
         /**
          * Defines the numeric plan indicator (NPI) to be used in the SME. The
-         * following NPI values are defined:
-         * <ul>
-         * <li>0: Unknown</li>
-         * <li>1: ISDN (E163/E164)</li>
-         * <li>2: Data (X.121)</li>
-         * <li>3: Telex (F.69)</li>
-         * <li>6: Land Mobile (E.212)</li>
-         * <li>8: National</li>
-         * <li>9: Private</li>
-         * <li>10: ERMES</li>
-         * <li>13: Internet (IP)</li>
-         * <li>18: WAP Client Id (to be defined by WAP Forum)</li>
-         * </ul>
+         * following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2:
+         * Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9:
+         * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
+         * by WAP Forum)
          */
         private Byte numberingPlanIndicator;
         /**
@@ -304,6 +233,10 @@ public class SmppComponentConfiguration
          * succeed.
          */
         private Long reconnectDelay = 5000L;
+        /**
+         * Defines the maximum number of attempts to reconnect to the SMSC, if
+         * SMSC returns a negative bind response
+         */
         private Integer maxReconnect = 2147483647;
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
@@ -346,18 +279,14 @@ public class SmppComponentConfiguration
          */
         private String addressRange;
         /**
-         * You can specify a policy for handling long messages:
-         * <ul>
-         * <li>ALLOW - the default, long messages are split to 140 bytes per
-         * message</li>
-         * <li>TRUNCATE - long messages are split and only the first fragment
-         * will be sent to the SMSC. Some carriers drop subsequent fragments so
-         * this reduces load on the SMPP connection sending parts of a message
-         * that will never be delivered.</li>
-         * <li>REJECT - if a message would need to be split, it is rejected with
-         * an SMPP NegativeResponseException and the reason code signifying the
-         * message is too long.</li>
-         * </ul>
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          */
         private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
         /**

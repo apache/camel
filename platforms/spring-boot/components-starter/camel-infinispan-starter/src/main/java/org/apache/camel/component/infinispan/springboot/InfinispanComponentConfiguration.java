@@ -92,8 +92,6 @@ public class InfinispanComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.infinispan.InfinispanConfiguration.class;
         /**
          * The operation to perform.
-         * 
-         * @deprecated replaced by @{link setOperation}
          */
         @Deprecated
         private String command = "PUT";
@@ -101,28 +99,49 @@ public class InfinispanComponentConfiguration
          * The operation to perform.
          */
         private InfinispanOperation operation = InfinispanOperation.PUT;
+        /**
+         * Specifies the host of the cache on Infinispan instance
+         */
         private String hosts;
+        /**
+         * Specifies the cache Container to connect
+         */
         private BasicCacheContainer cacheContainer;
+        /**
+         * If true, the consumer will receive notifications synchronously
+         */
         private Boolean sync = true;
+        /**
+         * If true, the listener will be installed for the entire cluster
+         */
         private Boolean clusteredListener = false;
         /**
          * Specifies the set of event types to register by the consumer.
-         * Multiple event can be separated by comma.
-         * <p/>
-         * The possible event types are: CACHE_ENTRY_ACTIVATED,
-         * CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
-         * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED,
-         * CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
+         * Multiple event can be separated by comma. The possible event types
+         * are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED,
+         * CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED,
+         * CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
+         * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
          * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
          * PARTITION_STATUS_CHANGED
          */
         private Set eventTypes;
+        /**
+         * Returns the custom listener in use, if provided
+         */
         private InfinispanCustomListener customListener;
         /**
          * Specifies the query builder.
          */
         private InfinispanQueryBuilder queryBuilder;
+        /**
+         * A comma separated list of Flag to be applied by default on each cache
+         * invocation, not applicable to remote caches.
+         */
         private Flag[] flags;
+        /**
+         * An implementation specific URI for the CacheManager
+         */
         private String configurationUri;
         /**
          * Implementation specific properties for the CacheManager

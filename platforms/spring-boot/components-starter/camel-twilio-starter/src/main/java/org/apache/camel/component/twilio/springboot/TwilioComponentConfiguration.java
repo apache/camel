@@ -120,16 +120,10 @@ public class TwilioComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.twilio.TwilioConfiguration.class;
         /**
          * What kind of operation to perform
-         * 
-         * @param apiNamethe
-         *            API Name to set
          */
         private TwilioApiName apiName;
         /**
          * What sub operation to use for the selected operation
-         * 
-         * @param methodNamethe
-         *            methodName to set
          */
         private String methodName;
 

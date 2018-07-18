@@ -164,8 +164,6 @@ public class SWFComponentConfiguration
         /**
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
-         * 
-         * @param startWorkflowOptionsParameters
          */
         private Map startWorkflowOptionsParameters;
         /**
@@ -218,7 +216,13 @@ public class SWFComponentConfiguration
          * Maximum number of threads in work pool for activity.
          */
         private Integer activityThreadPoolSize = 100;
+        /**
+         * Set the execution start to close timeout.
+         */
         private String executionStartToCloseTimeout = "3600";
+        /**
+         * Set the task start to close timeout.
+         */
         private String taskStartToCloseTimeout = "600";
 
         public String getAccessKey() {

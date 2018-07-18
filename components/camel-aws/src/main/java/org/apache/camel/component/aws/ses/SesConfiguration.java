@@ -152,35 +152,35 @@ public class SesConfiguration implements Cloneable {
         this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
     }
     
-    /**
-     * To define a proxy host when instantiating the SES client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the SES client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the SES client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
     
-    /**
-     * The region in which SES client needs to work
-     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * The region in which SES client needs to work
+     */
     public void setRegion(String region) {
         this.region = region;
     }

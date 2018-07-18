@@ -113,7 +113,7 @@ public class GoogleDriveComponentConfiguration
         private String refreshToken;
         /**
          * Google drive application name. Example would be
-         * "camel-google-drive/1.0"
+         * camel-google-drive/1.0
          */
         private String applicationName;
         /**

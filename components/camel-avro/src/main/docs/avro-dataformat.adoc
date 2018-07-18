@@ -163,7 +163,7 @@ The component supports 15 options, which are listed below.
  type will be auto detected | false | Boolean
 | *camel.component.avro.configuration.single-parameter* | If true, consumer parameter won't be wrapped into array. Will fail if
  protocol specifies more then 1 parameter for the message | false | Boolean
-| *camel.component.avro.configuration.transport* |  |  | AvroTransport
+| *camel.component.avro.configuration.transport* | Transport to use, can be either http or netty |  | AvroTransport
 | *camel.component.avro.configuration.uri-authority* | Authority to use (username and password) |  | String
 | *camel.component.avro.enabled* | Enable avro component | true | Boolean
 | *camel.component.avro.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when

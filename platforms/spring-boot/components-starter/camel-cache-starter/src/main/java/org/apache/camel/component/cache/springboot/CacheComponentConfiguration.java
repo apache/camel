@@ -112,11 +112,8 @@ public class CacheComponentConfiguration
         /**
          * Which eviction strategy to use when maximum number of elements in
          * memory is reached. The strategy defines which elements to be removed.
-         * <ul>
-         * <li>LRU - Lest Recently Used</li>
-         * <li>LFU - Lest Frequently Used</li>
-         * <li>FIFO - First In First Out</li>
-         * </ul>
+         * LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In
+         * First Out
          */
         private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy;
         /**

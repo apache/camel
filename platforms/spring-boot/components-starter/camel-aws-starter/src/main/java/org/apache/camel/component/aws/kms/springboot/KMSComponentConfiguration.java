@@ -121,8 +121,17 @@ public class KMSComponentConfiguration
          * The operation to perform
          */
         private KMSOperations operation;
+        /**
+         * To define a proxy host when instantiating the KMS client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the KMS client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which KMS client needs to work
+         */
         private String region;
 
         public AWSKMS getKmsClient() {
