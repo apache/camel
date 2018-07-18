@@ -53,6 +53,11 @@ public class JmsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jms component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared JMS configuration
      */
     private JmsConfigurationNestedConfiguration configuration;

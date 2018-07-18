@@ -42,6 +42,11 @@ public class DigitalSignatureComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the crypto component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared DigitalSignatureConfiguration as configuration
      */
     private DigitalSignatureConfigurationNestedConfiguration configuration;

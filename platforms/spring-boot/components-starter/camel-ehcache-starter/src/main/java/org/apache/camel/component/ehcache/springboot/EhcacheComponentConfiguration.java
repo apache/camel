@@ -42,6 +42,11 @@ public class EhcacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ehcache component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the global component configuration
      */
     private EhcacheConfigurationNestedConfiguration configuration;

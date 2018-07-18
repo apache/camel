@@ -40,6 +40,11 @@ public class KafkaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the kafka component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Allows to pre-configure the Kafka component with common options that the
      * endpoints will reuse.
      */

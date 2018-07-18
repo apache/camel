@@ -34,6 +34,11 @@ public class KMSComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-kms component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS MQ default configuration
      */
     private KMSConfigurationNestedConfiguration configuration;

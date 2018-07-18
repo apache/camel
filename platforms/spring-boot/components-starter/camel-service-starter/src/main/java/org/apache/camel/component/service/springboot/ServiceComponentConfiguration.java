@@ -33,6 +33,11 @@ public class ServiceComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the service component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Inject the service to use. The option is a
      * org.apache.camel.cloud.ServiceRegistry type.
      */

@@ -38,6 +38,11 @@ public class CacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the cache component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the given CacheManagerFactory for creating the CacheManager. By
      * default the DefaultCacheManagerFactory is used. The option is a
      * org.apache.camel.component.cache.CacheManagerFactory type.

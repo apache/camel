@@ -33,6 +33,11 @@ public class MicrometerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the micrometer component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom configured MetricRegistry. The option is a
      * io.micrometer.core.instrument.MeterRegistry type.
      */

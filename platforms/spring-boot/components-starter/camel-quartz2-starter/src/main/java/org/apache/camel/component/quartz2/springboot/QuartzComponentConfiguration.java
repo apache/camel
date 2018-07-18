@@ -32,6 +32,11 @@ public class QuartzComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the quartz2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether or not the scheduler should be auto started. This options is
      * default true
      */

@@ -49,6 +49,11 @@ public class NettyComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the netty4 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The thread pool size for the EventExecutorGroup if its in use. The
      * default value is 16.
      */

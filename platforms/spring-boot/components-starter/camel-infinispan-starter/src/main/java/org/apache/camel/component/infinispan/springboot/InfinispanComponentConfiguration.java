@@ -42,6 +42,11 @@ public class InfinispanComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the infinispan component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The default configuration shared among endpoints.
      */
     private InfinispanConfigurationNestedConfiguration configuration;

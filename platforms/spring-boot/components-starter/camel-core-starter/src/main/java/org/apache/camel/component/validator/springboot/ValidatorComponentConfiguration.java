@@ -32,6 +32,10 @@ public class ValidatorComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the validator component
+     */
+    private Boolean enabled;
+    /**
      * To use a custom LSResourceResolver which depends on a dynamic endpoint
      * resource URI. The option is a
      * org.apache.camel.component.validator.ValidatorResourceResolverFactory

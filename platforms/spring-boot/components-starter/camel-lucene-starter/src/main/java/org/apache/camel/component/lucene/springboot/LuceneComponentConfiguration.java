@@ -38,6 +38,11 @@ public class LuceneComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the lucene component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared lucene configuration
      */
     private LuceneConfigurationNestedConfiguration config;

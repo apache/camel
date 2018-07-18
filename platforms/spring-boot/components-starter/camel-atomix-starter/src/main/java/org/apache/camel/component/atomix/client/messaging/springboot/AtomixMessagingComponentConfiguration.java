@@ -37,6 +37,11 @@ public class AtomixMessagingComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-messaging component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixMessagingConfigurationNestedConfiguration configuration;

@@ -48,6 +48,11 @@ public class SalesforceComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the salesforce component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Explicit authentication method to be used, one of USERNAME_PASSWORD,
      * REFRESH_TOKEN or JWT. Salesforce component can auto-determine the
      * authentication method to use from the properties set, set this property

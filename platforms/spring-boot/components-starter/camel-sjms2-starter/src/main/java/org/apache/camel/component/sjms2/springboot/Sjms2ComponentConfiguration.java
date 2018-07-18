@@ -33,6 +33,11 @@ public class Sjms2ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the sjms2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * A ConnectionFactory is required to enable the SjmsComponent. It can be
      * set directly or set set as part of a ConnectionResource. The option is a
      * javax.jms.ConnectionFactory type.

@@ -44,6 +44,11 @@ public class XmlSignatureComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xmlsecurity component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared XmlSignerConfiguration configuration to use as base for
      * configuring endpoints.
      */

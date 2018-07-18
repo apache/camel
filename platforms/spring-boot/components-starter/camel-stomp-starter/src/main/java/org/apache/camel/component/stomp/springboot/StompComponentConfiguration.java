@@ -35,6 +35,11 @@ public class StompComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the stomp component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared stomp configuration
      */
     private StompConfigurationNestedConfiguration configuration;

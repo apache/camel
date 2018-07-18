@@ -101,7 +101,8 @@ The component supports 8 options, which are listed below.
 | *camel.component.atomix-value.configuration.default-action* | The default action. |  | AtomixValue$Action
 | *camel.component.atomix-value.configuration.result-header* | The header that wil carry the result. |  | String
 | *camel.component.atomix-value.configuration.ttl* | The resource ttl. |  | Long
-| *camel.component.atomix-value.enabled* |  |  | Boolean
+| *camel.component.atomix-value.enabled* | Whether to enable auto configuration of the atomix-value component. This
+ is enabled by default. |  | Boolean
 | *camel.component.atomix-value.nodes* | The nodes the AtomixClient should connect to |  | List
 | *camel.component.atomix-value.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

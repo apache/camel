@@ -33,6 +33,11 @@ public class LumberjackComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the lumberjack component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the default SSL configuration to use for all the endpoints. You can
      * also configure it directly at the endpoint level. The option is a
      * org.apache.camel.util.jsse.SSLContextParameters type.

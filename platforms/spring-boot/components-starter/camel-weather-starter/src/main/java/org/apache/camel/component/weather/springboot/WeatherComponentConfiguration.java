@@ -32,6 +32,11 @@ public class WeatherComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the weather component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The geolocation service now needs an accessKey to be used
      */
     private String geolocationAccessKey;

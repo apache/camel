@@ -33,6 +33,11 @@ public class UndertowComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the undertow component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient. The option is a
      * org.apache.camel.component.undertow.UndertowHttpBinding type.

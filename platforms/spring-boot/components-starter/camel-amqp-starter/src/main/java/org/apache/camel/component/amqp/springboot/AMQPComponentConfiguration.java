@@ -36,6 +36,11 @@ public class AMQPComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the amqp component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared JMS configuration. The option is a
      * org.apache.camel.component.jms.JmsConfiguration type.
      */

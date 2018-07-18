@@ -33,6 +33,11 @@ public class SpringBatchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the spring-batch component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Explicitly specifies a JobLauncher to be used. The option is a
      * org.springframework.batch.core.launch.JobLauncher type.
      */

@@ -34,6 +34,11 @@ public class ZooKeeperComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the zookeeper component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared ZooKeeperConfiguration
      */
     private ZooKeeperConfigurationNestedConfiguration configuration;

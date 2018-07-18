@@ -33,6 +33,11 @@ public class HazelcastAtomicnumberComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the hazelcast-atomicvalue
+     * component. This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The hazelcast instance reference which can be used for hazelcast
      * endpoint. If you don't specify the instance reference, camel use the
      * default hazelcast instance from the camel-hazelcast instance. The option

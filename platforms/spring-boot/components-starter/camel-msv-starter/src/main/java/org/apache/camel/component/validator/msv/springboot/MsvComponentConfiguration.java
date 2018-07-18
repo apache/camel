@@ -32,6 +32,11 @@ public class MsvComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the msv component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the javax.xml.validation.SchemaFactory. The option is a
      * javax.xml.validation.SchemaFactory type.
      */

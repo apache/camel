@@ -33,6 +33,11 @@ public class GoogleMailStreamComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-mail-stream component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The configuration
      */
     private GoogleMailStreamConfigurationNestedConfiguration configuration;

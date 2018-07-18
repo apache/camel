@@ -33,6 +33,11 @@ public class RestletComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the restlet component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Indicates if the controller thread should be a daemon (not blocking JVM
      * exit).
      */

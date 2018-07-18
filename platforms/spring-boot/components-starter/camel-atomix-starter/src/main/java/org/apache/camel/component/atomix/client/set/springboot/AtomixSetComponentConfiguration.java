@@ -36,6 +36,11 @@ public class AtomixSetComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-set component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixSetConfigurationNestedConfiguration configuration;

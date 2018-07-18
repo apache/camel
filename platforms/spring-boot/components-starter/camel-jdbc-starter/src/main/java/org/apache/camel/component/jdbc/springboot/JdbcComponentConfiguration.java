@@ -33,6 +33,11 @@ public class JdbcComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jdbc component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the DataSource instance instead of looking up the data source by
      * name from the registry. The option is a javax.sql.DataSource type.
      */

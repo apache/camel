@@ -39,6 +39,11 @@ public class AS2ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the as2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private AS2ConfigurationNestedConfiguration configuration;

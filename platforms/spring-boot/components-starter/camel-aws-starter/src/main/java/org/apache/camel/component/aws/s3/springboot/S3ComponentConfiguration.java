@@ -37,6 +37,11 @@ public class S3ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-s3 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS S3 default configuration
      */
     private S3ConfigurationNestedConfiguration configuration;

@@ -32,6 +32,11 @@ public class HdfsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the hdfs component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the given configuration for security with JAAS. The option is a
      * javax.security.auth.login.Configuration type.
      */

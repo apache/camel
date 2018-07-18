@@ -33,6 +33,11 @@ public class MetricsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the metrics component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom configured MetricRegistry. The option is a
      * com.codahale.metrics.MetricRegistry type.
      */

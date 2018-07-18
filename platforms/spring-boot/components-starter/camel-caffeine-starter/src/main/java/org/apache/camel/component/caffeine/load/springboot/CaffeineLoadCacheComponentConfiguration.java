@@ -39,6 +39,11 @@ public class CaffeineLoadCacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the caffeine-loadcache component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the global component configuration
      */
     private CaffeineConfigurationNestedConfiguration configuration;

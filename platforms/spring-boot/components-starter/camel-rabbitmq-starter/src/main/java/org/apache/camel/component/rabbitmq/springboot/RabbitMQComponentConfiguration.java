@@ -33,6 +33,11 @@ public class RabbitMQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the rabbitmq component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The hostname of the running rabbitmq instance or cluster.
      */
     private String hostname;

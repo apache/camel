@@ -32,6 +32,11 @@ public class CxfRsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the cxfrs component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;

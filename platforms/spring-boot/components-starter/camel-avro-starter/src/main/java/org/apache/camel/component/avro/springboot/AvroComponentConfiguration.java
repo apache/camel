@@ -35,6 +35,11 @@ public class AvroComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the avro component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared AvroConfiguration to configure options once
      */
     private AvroConfigurationNestedConfiguration configuration;

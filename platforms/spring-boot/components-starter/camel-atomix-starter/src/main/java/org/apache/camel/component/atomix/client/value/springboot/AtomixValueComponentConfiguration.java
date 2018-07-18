@@ -36,6 +36,11 @@ public class AtomixValueComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-value component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixValueConfigurationNestedConfiguration configuration;

@@ -33,6 +33,11 @@ public class GuavaEventBusComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the guava-eventbus component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the given Guava EventBus instance. The option is a
      * com.google.common.eventbus.EventBus type.
      */

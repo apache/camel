@@ -33,6 +33,11 @@ public class GoogleCalendarComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-calendar component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private GoogleCalendarConfigurationNestedConfiguration configuration;

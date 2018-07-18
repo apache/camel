@@ -32,6 +32,11 @@ public class VelocityComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the velocity component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the VelocityEngine otherwise a new engine is created. The option
      * is a org.apache.velocity.app.VelocityEngine type.
      */

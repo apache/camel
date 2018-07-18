@@ -32,6 +32,11 @@ public class MustacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mustache component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom MustacheFactory. The option is a
      * com.github.mustachejava.MustacheFactory type.
      */

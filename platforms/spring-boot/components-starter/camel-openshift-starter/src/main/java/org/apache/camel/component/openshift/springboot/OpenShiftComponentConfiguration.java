@@ -32,6 +32,11 @@ public class OpenShiftComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the openshift component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The username to login to openshift server.
      */
     private String username;

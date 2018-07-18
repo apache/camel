@@ -160,7 +160,8 @@ The component supports 32 options, which are listed below.
 | *camel.component.fhir.configuration.session-cookie* |  |  | String
 | *camel.component.fhir.configuration.socket-timeout* |  | 10000 | Integer
 | *camel.component.fhir.configuration.username* |  |  | String
-| *camel.component.fhir.enabled* |  |  | Boolean
+| *camel.component.fhir.enabled* | Whether to enable auto configuration of the fhir component. This is
+ enabled by default. |  | Boolean
 | *camel.component.fhir.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

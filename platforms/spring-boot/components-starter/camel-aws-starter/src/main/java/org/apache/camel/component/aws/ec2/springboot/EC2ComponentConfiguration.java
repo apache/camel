@@ -35,6 +35,11 @@ public class EC2ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-ec2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS EC2 default configuration
      */
     private EC2ConfigurationNestedConfiguration configuration;

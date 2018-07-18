@@ -32,6 +32,11 @@ public class IrcComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the irc component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;

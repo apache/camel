@@ -34,6 +34,11 @@ public class ElsqlComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the elsql component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a vendor specific com.opengamma.elsql.ElSqlConfig
      */
     private ElSqlDatabaseVendor databaseVendor;

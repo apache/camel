@@ -33,6 +33,10 @@ public class SedaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the seda component
+     */
+    private Boolean enabled;
+    /**
      * Sets the default maximum capacity of the SEDA queue (i.e., the number of
      * messages it can hold).
      */

@@ -34,6 +34,10 @@ public class XsltComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xslt component
+     */
+    private Boolean enabled;
+    /**
      * To use a custom implementation of
      * org.apache.camel.converter.jaxp.XmlConverter
      */

@@ -32,6 +32,10 @@ public class LogComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the log component
+     */
+    private Boolean enabled;
+    /**
      * Sets a custom ExchangeFormatter to convert the Exchange to a String
      * suitable for logging. If not specified, we default to
      * DefaultExchangeFormatter. The option is a

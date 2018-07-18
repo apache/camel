@@ -109,7 +109,8 @@ The component supports 13 options, which are listed below.
 | *camel.component.elasticsearch-rest.connection-timeout* | The time in ms to wait before connection will timeout. | 30000 | Integer
 | *camel.component.elasticsearch-rest.enable-s-s-l* | Enable SSL | false | Boolean
 | *camel.component.elasticsearch-rest.enable-sniffer* | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
-| *camel.component.elasticsearch-rest.enabled* |  |  | Boolean
+| *camel.component.elasticsearch-rest.enabled* | Whether to enable auto configuration of the elasticsearch-rest component.
+ This is enabled by default. |  | Boolean
 | *camel.component.elasticsearch-rest.host-addresses* | Comma separated list with ip:port formatted remote transport addresses to
  use. The ip and port options must be left blank for hostAddresses to be
  considered instead. |  | String

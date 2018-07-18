@@ -33,6 +33,11 @@ public class SparkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the spark component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * RDD to compute against. The option is a
      * org.apache.spark.api.java.JavaRDDLike type.
      */

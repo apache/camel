@@ -36,6 +36,11 @@ public class AtomixQueueComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-queue component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixQueueConfigurationNestedConfiguration configuration;

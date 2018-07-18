@@ -33,6 +33,11 @@ public class JpaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jpa component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the EntityManagerFactory. This is strongly recommended to
      * configure. The option is a javax.persistence.EntityManagerFactory type.
      */

@@ -33,6 +33,11 @@ public class JettyHttpComponentConfiguration9
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jetty component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The key password, which is used to access the certificate's key entry in
      * the keystore (this is the same password that is supplied to the keystore
      * command's -keypass option).

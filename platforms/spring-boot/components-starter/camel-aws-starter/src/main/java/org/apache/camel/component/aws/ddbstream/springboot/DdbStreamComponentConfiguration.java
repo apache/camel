@@ -36,6 +36,11 @@ public class DdbStreamComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-ddbstream component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS DDB stream default configuration
      */
     private DdbStreamConfigurationNestedConfiguration configuration;

@@ -33,6 +33,11 @@ public class SjmsBatchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the sjms-batch component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * A ConnectionFactory is required to enable the SjmsBatchComponent. The
      * option is a javax.jms.ConnectionFactory type.
      */

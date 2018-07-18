@@ -36,6 +36,11 @@ public class SmppComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the smpp component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared SmppConfiguration as configuration.
      */
     private SmppConfigurationNestedConfiguration configuration;

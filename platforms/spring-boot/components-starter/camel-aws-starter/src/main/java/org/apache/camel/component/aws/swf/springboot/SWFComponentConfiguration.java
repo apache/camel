@@ -41,6 +41,11 @@ public class SWFComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-swf component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SWF default configuration
      */
     private SWFConfigurationNestedConfiguration configuration;

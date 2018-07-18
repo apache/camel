@@ -33,6 +33,10 @@ public class SchedulerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the scheduler component
+     */
+    private Boolean enabled;
+    /**
      * Number of threads used by the scheduling thread pool. Is by default using
      * a single thread
      */

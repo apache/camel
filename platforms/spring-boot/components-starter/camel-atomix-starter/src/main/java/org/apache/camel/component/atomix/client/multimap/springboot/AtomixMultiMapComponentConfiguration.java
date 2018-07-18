@@ -37,6 +37,11 @@ public class AtomixMultiMapComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-multimap component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixMultiMapConfigurationNestedConfiguration configuration;

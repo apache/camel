@@ -39,6 +39,11 @@ public class Olingo4ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the olingo4 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private Olingo4ConfigurationNestedConfiguration configuration;

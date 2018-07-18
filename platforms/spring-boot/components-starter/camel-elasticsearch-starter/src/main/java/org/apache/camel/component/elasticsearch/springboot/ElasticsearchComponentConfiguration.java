@@ -33,6 +33,11 @@ public class ElasticsearchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the elasticsearch component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use an existing configured Elasticsearch client, instead of creating a
      * client per endpoint. The option is a org.elasticsearch.client.Client
      * type.

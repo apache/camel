@@ -33,6 +33,11 @@ public class GoogleMailComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-mail component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private GoogleMailConfigurationNestedConfiguration configuration;

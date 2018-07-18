@@ -33,6 +33,11 @@ public class WebsocketComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the websocket component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Set a resource path for static resources (such as .html files etc). The
      * resources can be loaded from classpath, if you prefix with classpath:,
      * otherwise the resources is loaded from file system or from JAR files. For

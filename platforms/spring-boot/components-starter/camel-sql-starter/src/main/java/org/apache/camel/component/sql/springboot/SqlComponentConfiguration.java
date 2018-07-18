@@ -32,6 +32,11 @@ public class SqlComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the sql component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the DataSource to use to communicate with the database. The option
      * is a javax.sql.DataSource type.
      */

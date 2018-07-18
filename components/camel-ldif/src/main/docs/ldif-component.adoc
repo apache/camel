@@ -92,7 +92,8 @@ The component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.ldif.enabled* |  |  | Boolean
+| *camel.component.ldif.enabled* | Whether to enable auto configuration of the ldif component. This is
+ enabled by default. |  | Boolean
 | *camel.component.ldif.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

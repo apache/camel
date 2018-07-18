@@ -33,6 +33,10 @@ public class DirectVmComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the direct-vm component
+     */
+    private Boolean enabled;
+    /**
      * If sending a message to a direct endpoint which has no active consumer,
      * then we can tell the producer to block and wait for the consumer to
      * become active.

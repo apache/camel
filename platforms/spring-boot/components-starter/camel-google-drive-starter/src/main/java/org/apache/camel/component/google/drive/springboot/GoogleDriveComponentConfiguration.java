@@ -35,6 +35,11 @@ public class GoogleDriveComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-drive component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private GoogleDriveConfigurationNestedConfiguration configuration;

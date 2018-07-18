@@ -127,7 +127,8 @@ The component supports 7 options, which are listed below.
  buffer, then events will be dropped in order to maintain the buffer
  size.
  </p> |  | Integer
-| *camel.component.iec60870-server.enabled* |  |  | Boolean
+| *camel.component.iec60870-server.enabled* | Whether to enable auto configuration of the iec60870-server component.
+ This is enabled by default. |  | Boolean
 | *camel.component.iec60870-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

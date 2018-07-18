@@ -33,6 +33,11 @@ public class JGroupsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jgroups component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Channel to use. The option is a org.jgroups.JChannel type.
      */
     private String channel;
