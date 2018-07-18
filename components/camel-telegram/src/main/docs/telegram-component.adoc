@@ -148,7 +148,7 @@ in Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("direct:start").to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+from("direct:start").to("telegram:bots/123456789:insertAuthorizationTokenHere");
 ---------------------------------------------------------
 
 or in Spring XML
@@ -157,11 +157,11 @@ or in Spring XML
 ---------------------------------------------
 <route>
     <from uri="direct:start"/>
-    <to uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <to uri="telegram:bots/123456789:insertAuthorizationTokenHere"/>
 <route>
 ---------------------------------------------
 
-The code `123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L` is the *authorization token* corresponding to the Bot.
+The code `123456789:insertAuthorizationTokenHere` is the *authorization token* corresponding to the Bot.
 
 When using the producer endpoint without specifying the *chat id* option, the target chat will be identified using information contained in the body or headers of the message.
 The following message bodies are allowed for a producer endpoint (messages of type `OutgoingXXXMessage` belong to the package `org.apache.camel.component.telegram.model`)
@@ -188,7 +188,7 @@ In Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertAuthorizationTokenHere")
 .bean(ProcessorBean.class)
 ---------------------------------------------------------
 
@@ -197,7 +197,7 @@ or in Spring XML
 [source,xml]
 ---------------------------------------------
 <route>
-    <from uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <from uri="telegram:bots/123456789:insertAuthorizationTokenHere"/>
     <bean ref="myBean" />
 <route>
 
@@ -243,9 +243,9 @@ The following is a basic configuration of the chat-bot in Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertAuthorizationTokenHere")
 .bean(ChatBotLogic.class)
-.to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+.to("telegram:bots/123456789:insertAuthorizationTokenHere");
 ---------------------------------------------------------
 
 or in Spring XML
@@ -253,9 +253,9 @@ or in Spring XML
 [source,xml]
 ---------------------------------------------
 <route>
-    <from uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <from uri="telegram:bots/123456789:insertAuthorizationTokenHere"/>
     <bean ref="chatBotLogic" />
-    <to uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <to uri="telegram:bots/123456789:insertAuthorizationTokenHere"/>
 <route>
 
 <bean id="chatBotLogic" class="com.example.ChatBotLogic"/>
@@ -293,7 +293,7 @@ First, add the bot to the chat where you want to push messages, then run a route
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertAuthorizationTokenHere")
 .to("log:INFO?showHeaders=true");
 ---------------------------------------------------------
 
@@ -306,7 +306,7 @@ Once you get the chat ID, you can use the following sample route to push message
 ---------------------------------------------------------
 from("timer:tick")
 .setBody().constant("Hello")
-to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L?chatId=123456")
+to("telegram:bots/123456789:insertAuthorizationTokenHere?chatId=123456")
 ---------------------------------------------------------
 
 Note that the corresponding URI parameter is simply `chatId`.
