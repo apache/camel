@@ -126,9 +126,7 @@ The component supports 57 options, which are listed below.
 | *camel.component.zookeeper.cluster.service.retry-policy* |  |  | RetryPolicy
 | *camel.component.zookeeper.cluster.service.session-timeout* |  |  | Long
 | *camel.component.zookeeper.cluster.service.session-timeout-unit* |  |  | TimeUnit
-| *camel.component.zookeeper.configuration.await-existence* | Not in use
- 
- @deprecated The usage of this option has no effect at all. | true | Boolean
+| *camel.component.zookeeper.configuration.await-existence* | Not in use | true | Boolean
 | *camel.component.zookeeper.configuration.backoff* | The time interval to backoff for after an error before retrying. | 5000 | Long
 | *camel.component.zookeeper.configuration.create* | Should the endpoint create the node if it does not currently exist. | false | Boolean
 | *camel.component.zookeeper.configuration.create-mode* | The create mode that should be used for the newly created node | EPHEMERAL | String

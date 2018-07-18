@@ -236,8 +236,8 @@ The component supports 32 options, which are listed below.
 | *camel.component.netty4-http.configuration.compression* | Allow using gzip/deflate for compression on the Netty HTTP server if
  the client supports it from the HTTP headers. | false | Boolean
 | *camel.component.netty4-http.configuration.disable-stream-cache* | Determines whether or not the raw input stream from Netty
- HttpRequest#getContent() or HttpResponset#getContent() is cached or
- not (Camel will read the stream into a in light-weight memory based
+ HttpRequestgetContent() or HttpResponsetgetContent() is cached or not
+ (Camel will read the stream into a in light-weight memory based
  Stream caching) cache. By default Camel will cache the Netty input
  stream to support reading it multiple times to ensure it Camel can
  retrieve all data from the stream. However you can set this option to
@@ -249,8 +249,8 @@ The component supports 32 options, which are listed below.
  the Netty stream when the Netty HTTP server/HTTP client is done
  processing, which means that if the asynchronous routing engine is in
  use then any asynchronous thread that may continue routing the
- {@link org.apache.camel.Exchange} may not be able to read the Netty
- stream, because Netty has closed it. | false | Boolean
+ org.apache.camel.Exchange may not be able to read the Netty stream,
+ because Netty has closed it. | false | Boolean
 | *camel.component.netty4-http.configuration.host* | The local hostname such as localhost, or 0.0.0.0 when being a
  consumer. The remote HTTP server hostname when using producer. |  | String
 | *camel.component.netty4-http.configuration.map-headers* | If this option is enabled, then during binding from Netty to Camel
@@ -264,13 +264,11 @@ The component supports 32 options, which are listed below.
  the URI prefix if no exact match is found. | false | Boolean
 | *camel.component.netty4-http.configuration.max-header-size* | The maximum length of all headers. If the sum of the length of each
  header exceeds this value, a
- {@link io.netty.handler.codec.TooLongFrameException} will be raised. | 8192 | Integer
+ io.netty.handler.codec.TooLongFrameException will be raised. | 8192 | Integer
 | *camel.component.netty4-http.configuration.ok-status-code-range* | The status codes which are considered a success response. The values
  are inclusive. Multiple ranges can be defined, separated by comma,
- e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number
- or from-to with the dash included.
- <p/>
- The default range is <tt>200-299</tt> | 200-299 | String
+ e.g. 200-204,209,301-304. Each range must be a single number or
+ from-to with the dash included. The default range is 200-299 | 200-299 | String
 | *camel.component.netty4-http.configuration.path* | Resource path |  | String
 | *camel.component.netty4-http.configuration.port* | The port number. Is default 80 for http and 443 for https. |  | Integer
 | *camel.component.netty4-http.configuration.protocol* | The protocol to use which is either http or https |  | String
@@ -285,11 +283,10 @@ The component supports 32 options, which are listed below.
  as a application/x-java-serialized-object content type. On the
  producer side the exception will be deserialized and thrown as is,
  instead of the HttpOperationFailedException. The caused exception is
- required to be serialized.
- <p/>
- This is by default turned off. If you enable this then be aware that
- Java will deserialize the incoming data from the request to Java and
- that can be a potential security risk. | false | Boolean
+ required to be serialized. This is by default turned off. If you
+ enable this then be aware that Java will deserialize the incoming
+ data from the request to Java and that can be a potential security
+ risk. | false | Boolean
 | *camel.component.netty4-http.configuration.url-decode-headers* | If this option is enabled, then during binding from Netty to Camel
  Message then the header values will be URL decoded (eg %20 will be a
  space character. Notice this option is used by the default

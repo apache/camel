@@ -151,11 +151,11 @@ public class FhirComponentConfiguration
          */
         private String proxyUser;
         /**
-         * "To use the custom client"
+         * To use the custom client
          */
         private IGenericClient client;
         /**
-         * "To use the custom client factory"
+         * To use the custom client factory
          */
         private IRestfulClientFactory clientFactory;
 

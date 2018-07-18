@@ -93,14 +93,13 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 31 options, which are listed below.
+The component supports 30 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.etcd.configuration.camel-context* |  |  | CamelContext
 | *camel.component.etcd.configuration.from-index* | The index to watch from | 0 | Long
 | *camel.component.etcd.configuration.password* | The password to use for basic authentication. |  | String
 | *camel.component.etcd.configuration.recursive* | To apply an action recursively. | false | Boolean

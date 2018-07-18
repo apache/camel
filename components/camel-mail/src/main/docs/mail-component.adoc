@@ -244,9 +244,8 @@ The component supports 61 options, which are listed below.
 | *camel.component.mail.configuration.handle-failed-message* | If the mail consumer cannot retrieve a given mail message, then this
  option allows to handle the caused exception by the consumer's error
  handler. By enable the bridge error handler on the consumer, then the
- Camel routing error handler can handle the exception instead.
- <p/>
- The default behavior would be the consumer throws an exception and no
+ Camel routing error handler can handle the exception instead. The
+ default behavior would be the consumer throws an exception and no
  mails from the batch would be able to be routed by Camel. | false | Boolean
 | *camel.component.mail.configuration.host* | The mail server host name |  | String
 | *camel.component.mail.configuration.ignore-unsupported-charset* | Option to let Camel ignore unsupported charset in the local JVM when
@@ -259,9 +258,8 @@ The component supports 61 options, which are listed below.
  content-type and it relies on the platform default instead. | false | Boolean
 | *camel.component.mail.configuration.java-mail-properties* | Sets the java mail options. Will clear any default properties and
  only use the properties provided for this method. |  | Properties
-| *camel.component.mail.configuration.java-mail-sender* | To use a custom
- {@link org.apache.camel.component.mail.JavaMailSender} for sending
- emails. |  | JavaMailSender
+| *camel.component.mail.configuration.java-mail-sender* | To use a custom org.apache.camel.component.mail.JavaMailSender for
+ sending emails. |  | JavaMailSender
 | *camel.component.mail.configuration.map-mail-message* | Specifies whether Camel should map the received mail message to Camel
  body/headers. If set to true, the body of the mail message is mapped
  to the body of the Camel IN message and the mail headers are mapped
@@ -287,10 +285,9 @@ The component supports 61 options, which are listed below.
  you. |  | Session
 | *camel.component.mail.configuration.skip-failed-message* | If the mail consumer cannot retrieve a given mail message, then this
  option allows to skip the message and move on to retrieve the next
- mail message.
- <p/>
- The default behavior would be the consumer throws an exception and no
- mails from the batch would be able to be routed by Camel. | false | Boolean
+ mail message. The default behavior would be the consumer throws an
+ exception and no mails from the batch would be able to be routed by
+ Camel. | false | Boolean
 | *camel.component.mail.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
 | *camel.component.mail.configuration.ssl-context-parameters.cert-alias* |  |  | String
 | *camel.component.mail.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters

@@ -136,9 +136,7 @@ The component supports 32 options, which are listed below.
 | *camel.component.aws-swf.configuration.secret-key* | Amazon AWS Secret Key. |  | String
 | *camel.component.aws-swf.configuration.signal-name* | The name of the signal to send to the workflow. |  | String
 | *camel.component.aws-swf.configuration.start-workflow-options-parameters* | To configure the StartWorkflowOptions using the key/values from the
- Map.
- 
- @param startWorkflowOptionsParameters |  | Map
+ Map. |  | Map
 | *camel.component.aws-swf.configuration.state-result-type* | The type of the result when a workflow state is queried. |  | String
 | *camel.component.aws-swf.configuration.task-start-to-close-timeout* | Set the task start to close timeout. | 600 | String
 | *camel.component.aws-swf.configuration.termination-details* | Details for terminating a workflow. |  | String

@@ -141,7 +141,7 @@ The component supports 11 options, which are listed below.
  refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-drive.configuration.api-name* | What kind of operation to perform |  | GoogleDriveApiName
 | *camel.component.google-drive.configuration.application-name* | Google drive application name. Example would be
- "camel-google-drive/1.0" |  | String
+ camel-google-drive/1.0 |  | String
 | *camel.component.google-drive.configuration.client-id* | Client ID of the drive application |  | String
 | *camel.component.google-drive.configuration.client-secret* | Client secret of the drive application |  | String
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String

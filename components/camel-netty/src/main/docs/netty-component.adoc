@@ -194,7 +194,7 @@ The component supports 83 options, which are listed below.
 | *camel.component.netty.configuration.backlog* | Allows to configure a backlog for netty consumer (server). Note the
  backlog is just a best effort depending on the OS. Setting this
  option to a value such as 200, 500 or 1000, tells the TCP stack how
- long the "accept" queue can be If this option is not configured, then
+ long the accept queue can be If this option is not configured, then
  the backlog depends on OS setting. |  | Integer
 | *camel.component.netty.configuration.boss-count* | When netty works on nio mode, it uses default bossCount parameter
  from Netty, which is 1. User can use this operation to override the
@@ -216,7 +216,7 @@ The component supports 83 options, which are listed below.
 | *camel.component.netty.configuration.decoder-max-line-length* | The max line length to use for the textline codec. | 1024 | Integer
 | *camel.component.netty.configuration.decoders* | A list of decoders to be used. You can use a String which have values
  separated by comma, and have the values be looked up in the Registry.
- Just remember to prefix the value with # so Camel knows it should
+ Just remember to prefix the value with so Camel knows it should
  lookup. |  | List
 | *camel.component.netty.configuration.delimiter* | The delimiter to use for the textline codec. Possible values are LINE
  and NULL. |  | TextLineDelimiter
@@ -230,21 +230,19 @@ The component supports 83 options, which are listed below.
  org.jboss.netty.channel.ChannelDownStreamHandler. |  | ChannelHandler
 | *camel.component.netty.configuration.encoders* | A list of encoders to be used. You can use a String which have values
  separated by comma, and have the values be looked up in the Registry.
- Just remember to prefix the value with # so Camel knows it should
+ Just remember to prefix the value with so Camel knows it should
  lookup. |  | List
 | *camel.component.netty.configuration.encoding* | The encoding (a charset name) to use for the textline codec. If not
  provided, Camel will use the JVM default Charset. |  | String
-| *camel.component.netty.configuration.host* | The hostname.
- <p/>
- For the consumer the hostname is localhost or 0.0.0.0 For the
- producer the hostname is the remote host to connect to |  | String
+| *camel.component.netty.configuration.host* | The hostname. For the consumer the hostname is localhost or 0.0.0.0
+ For the producer the hostname is the remote host to connect to |  | String
 | *camel.component.netty.configuration.keep-alive* | Setting to ensure socket is not closed due to inactivity | true | Boolean
 | *camel.component.netty.configuration.key-store-file* | Client side certificate keystore to be used for encryption |  | File
-| *camel.component.netty.configuration.key-store-format* | Keystore format to be used for payload encryption. Defaults to "JKS"
- if not set | JKS | String
+| *camel.component.netty.configuration.key-store-format* | Keystore format to be used for payload encryption. Defaults to JKS if
+ not set | JKS | String
 | *camel.component.netty.configuration.key-store-resource* | Client side certificate keystore to be used for encryption. Is loaded
- by default from classpath, but you can prefix with "classpath:",
- "file:", or "http:" to load the resource from different systems. |  | String
+ by default from classpath, but you can prefix with classpath:, file:,
+ or http: to load the resource from different systems. |  | String
 | *camel.component.netty.configuration.lazy-channel-creation* | Channels can be lazily created to avoid exceptions, if the remote
  server is not up and running when the Camel producer is started. | true | Boolean
 | *camel.component.netty.configuration.max-channel-memory-size* | The maximum total size of the queued events per channel when using
@@ -259,10 +257,10 @@ The component supports 83 options, which are listed below.
  interface by its name, such as eth0 to join a multicast group. |  | String
 | *camel.component.netty.configuration.no-reply-log-level* | If sync is enabled this option dictates NettyConsumer which logging
  level to use when logging a there is no reply to send back. |  | LoggingLevel
-| *camel.component.netty.configuration.options* | Allows to configure additional netty options using "option." as
- prefix. For example "option.child.keepAlive=false" to set the netty
- option "child.keepAlive=false". See the Netty documentation for
- possible options that can be used. |  | Map
+| *camel.component.netty.configuration.options* | Allows to configure additional netty options using option. as prefix.
+ For example option.child.keepAlive=false to set the netty option
+ child.keepAlive=false. See the Netty documentation for possible
+ options that can be used. |  | Map
 | *camel.component.netty.configuration.ordered-thread-pool-executor* | Whether to use ordered thread pool, to ensure events are processed
  orderly on the same channel. See details at the netty javadoc of
  org.jboss
@@ -277,7 +275,7 @@ The component supports 83 options, which are listed below.
 | *camel.component.netty.configuration.producer-pool-max-active* | Sets the cap on the number of objects that can be allocated by the
  pool (checked out to clients, or idle awaiting checkout) at a given
  time. Use a negative value for no limit. | -1 | Integer
-| *camel.component.netty.configuration.producer-pool-max-idle* | Sets the cap on the number of "idle" instances in the pool. | 100 | Integer
+| *camel.component.netty.configuration.producer-pool-max-idle* | Sets the cap on the number of idle instances in the pool. | 100 | Integer
 | *camel.component.netty.configuration.producer-pool-min-evictable-idle* | Sets the minimum amount of time (value in millis) an object may sit
  idle in the pool before it is eligible for eviction by the idle
  object evictor. | 300000 | Long
@@ -294,7 +292,7 @@ The component supports 83 options, which are listed below.
  Netty's ReadTimeoutHandler to trigger the timeout. |  | Long
 | *camel.component.netty.configuration.reuse-address* | Setting to facilitate socket multiplexing | true | Boolean
 | *camel.component.netty.configuration.security-provider* | Security provider to be used for payload encryption. Defaults to
- "SunX509" if not set. | SunX509 | String
+ SunX509 if not set. | SunX509 | String
 | *camel.component.netty.configuration.send-buffer-size* | The TCP/UDP buffer sizes to be used during outbound communication.
  Size is bytes. | 65536 | Long
 | *camel.component.netty.configuration.server-closed-channel-exception-caught-log-level* | If the server (NettyConsumer) catches an
@@ -338,15 +336,15 @@ The component supports 83 options, which are listed below.
  objects and log it at WARN level. | false | Boolean
 | *camel.component.netty.configuration.trust-store-file* | Server side certificate keystore to be used for encryption |  | File
 | *camel.component.netty.configuration.trust-store-resource* | Server side certificate keystore to be used for encryption. Is loaded
- by default from classpath, but you can prefix with "classpath:",
- "file:", or "http:" to load the resource from different systems. |  | String
+ by default from classpath, but you can prefix with classpath:, file:,
+ or http: to load the resource from different systems. |  | String
 | *camel.component.netty.configuration.udp-connectionless-sending* | This option supports connection less udp sending which is a real fire
  and forget. A connected udp send receive the PortUnreachableException
  if no one is listen on the receiving port. | false | Boolean
 | *camel.component.netty.configuration.use-channel-buffer* | If the useChannelBuffer is true, netty producer will turn the message
- body into {@link ChannelBuffer} before sending it out. | false | Boolean
+ body into ChannelBuffer before sending it out. | false | Boolean
 | *camel.component.netty.configuration.worker-count* | When netty works on nio mode, it uses default workerCount parameter
- from Netty, which is cpu_core_threads*2. User can use this operation
+ from Netty, which is cpu_core_threads2. User can use this operation
  to override the default workerCount from Netty |  | Integer
 | *camel.component.netty.configuration.worker-pool* | To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as
  the worker thread pool. For example to share a thread pool with

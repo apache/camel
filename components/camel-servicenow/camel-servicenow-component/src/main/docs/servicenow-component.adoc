@@ -174,7 +174,7 @@ The component supports 70 options, which are listed below.
 | *camel.component.servicenow.configuration.key* | Set this parameter to true to return only scorecards for key
  indicators. |  | Boolean
 | *camel.component.servicenow.configuration.mapper* | Sets Jackson's ObjectMapper to use for request/reply |  | ObjectMapper
-| *camel.component.servicenow.configuration.models* |  |  | Map
+| *camel.component.servicenow.configuration.models* | Defines both request and response models |  | Map
 | *camel.component.servicenow.configuration.oauth-client-id* | OAuth2 ClientID |  | String
 | *camel.component.servicenow.configuration.oauth-client-secret* | OAuth2 ClientSecret |  | String
 | *camel.component.servicenow.configuration.oauth-token-url* | OAuth token Url |  | String

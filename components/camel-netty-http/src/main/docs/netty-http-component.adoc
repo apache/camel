@@ -233,7 +233,7 @@ The component supports 31 options, which are listed below.
 | *camel.component.netty-http.configuration.compression* | Allow using gzip/deflate for compression on the Netty HTTP server if
  the client supports it from the HTTP headers. | false | Boolean
 | *camel.component.netty-http.configuration.disable-stream-cache* | Determines whether or not the raw input stream from Netty
- HttpRequest#getContent() is cached or not (Camel will read the stream
+ HttpRequestgetContent() is cached or not (Camel will read the stream
  into a in light-weight memory based Stream caching) cache. By default
  Camel will cache the Netty input stream to support reading it
  multiple times to ensure it Camel can retrieve all data from the
@@ -255,14 +255,11 @@ The component supports 31 options, which are listed below.
 | *camel.component.netty-http.configuration.match-on-uri-prefix* | Whether or not Camel should try to find a target consumer by matching
  the URI prefix if no exact match is found. | false | Boolean
 | *camel.component.netty-http.configuration.max-header-size* | The maximum length of all headers. If the sum of the length of each
- header exceeds this value, a {@link TooLongFrameException} will be
- raised. | 8192 | Integer
+ header exceeds this value, a TooLongFrameException will be raised. | 8192 | Integer
 | *camel.component.netty-http.configuration.ok-status-code-range* | The status codes which are considered a success response. The values
  are inclusive. Multiple ranges can be defined, separated by comma,
- e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number
- or from-to with the dash included.
- <p/>
- The default range is <tt>200-299</tt> | 200-299 | String
+ e.g. 200-204,209,301-304. Each range must be a single number or
+ from-to with the dash included. The default range is 200-299 | 200-299 | String
 | *camel.component.netty-http.configuration.path* | Resource path |  | String
 | *camel.component.netty-http.configuration.port* | The port number. Is default 80 for http and 443 for https. |  | Integer
 | *camel.component.netty-http.configuration.protocol* | The protocol to use which is either http or https |  | String
@@ -277,11 +274,10 @@ The component supports 31 options, which are listed below.
  as a application/x-java-serialized-object content type. On the
  producer side the exception will be deserialized and thrown as is,
  instead of the HttpOperationFailedException. The caused exception is
- required to be serialized.
- <p/>
- This is by default turned off. If you enable this then be aware that
- Java will deserialize the incoming data from the request to Java and
- that can be a potential security risk. | false | Boolean
+ required to be serialized. This is by default turned off. If you
+ enable this then be aware that Java will deserialize the incoming
+ data from the request to Java and that can be a potential security
+ risk. | false | Boolean
 | *camel.component.netty-http.configuration.url-decode-headers* | If this option is enabled, then during binding from Netty to Camel
  Message then the header values will be URL decoded (eg %20 will be a
  space character. Notice this option is used by the default
@@ -289,11 +285,10 @@ The component supports 31 options, which are listed below.
  if you implement a custom
  org.apache.camel.component.netty.http.NettyHttpBinding then you would
  need to decode the headers accordingly to this option. | false | Boolean
-| *camel.component.netty-http.configuration.use-relative-path* | Sets whether to use a relative path in HTTP requests.
- <p/>
- Some third party backend systems such as IBM Datapower do not support
- absolute URIs in HTTP POSTs, and setting this option to <tt>true</tt>
- can work around this problem. | false | Boolean
+| *camel.component.netty-http.configuration.use-relative-path* | Sets whether to use a relative path in HTTP requests. Some third
+ party backend systems such as IBM Datapower do not support absolute
+ URIs in HTTP POSTs, and setting this option to true can work around
+ this problem. | false | Boolean
 | *camel.component.netty-http.enabled* | Enable netty-http component | true | Boolean
 | *camel.component.netty-http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
  headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
