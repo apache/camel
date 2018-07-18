@@ -116,6 +116,8 @@ from("direct:start")
         .setHeader(GitConstants.GIT_COMMIT_MESSAGE, constant("first commit"))
         .to("git:///tmp/testRepo?operation=commit")
         .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
+        .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
+        .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
 --------------------------------------------------------------------------------------------------------------------
 
 ### Consumer Example
