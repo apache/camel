@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The Kubernetes HPA component provides a producer to execute kubernetes hpa operations
- * and a consumer to consume pod events.
+ * and a consumer to consume HPA events.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA",
     syntax = "kubernetes-hpa:masterUrl", consumerClass = KubernetesHPAConsumer.class, label = "container,cloud,paas")
