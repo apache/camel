@@ -33,7 +33,8 @@ public class StubComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the stub component
+     * Whether to enable auto configuration of the stub component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

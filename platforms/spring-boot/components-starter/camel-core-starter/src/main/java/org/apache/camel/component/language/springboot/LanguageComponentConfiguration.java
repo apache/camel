@@ -33,7 +33,8 @@ public class LanguageComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the language component
+     * Whether to enable auto configuration of the language component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

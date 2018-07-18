@@ -32,7 +32,8 @@ public class LogComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the log component
+     * Whether to enable auto configuration of the log component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

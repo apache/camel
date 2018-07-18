@@ -33,7 +33,8 @@ public class SedaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the seda component
+     * Whether to enable auto configuration of the seda component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

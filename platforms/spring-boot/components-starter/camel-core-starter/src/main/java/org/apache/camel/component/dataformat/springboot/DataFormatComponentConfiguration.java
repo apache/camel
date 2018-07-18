@@ -33,7 +33,8 @@ public class DataFormatComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the dataformat component
+     * Whether to enable auto configuration of the dataformat component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

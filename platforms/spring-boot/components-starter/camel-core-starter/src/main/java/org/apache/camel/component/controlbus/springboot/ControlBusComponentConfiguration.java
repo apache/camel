@@ -33,7 +33,8 @@ public class ControlBusComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the controlbus component
+     * Whether to enable auto configuration of the controlbus component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

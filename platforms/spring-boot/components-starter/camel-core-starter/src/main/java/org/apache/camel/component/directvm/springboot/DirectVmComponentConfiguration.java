@@ -33,7 +33,8 @@ public class DirectVmComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the direct-vm component
+     * Whether to enable auto configuration of the direct-vm component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

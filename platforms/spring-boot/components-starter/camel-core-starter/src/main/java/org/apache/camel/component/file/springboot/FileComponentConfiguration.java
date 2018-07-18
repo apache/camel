@@ -32,7 +32,8 @@ public class FileComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the file component
+     * Whether to enable auto configuration of the file component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

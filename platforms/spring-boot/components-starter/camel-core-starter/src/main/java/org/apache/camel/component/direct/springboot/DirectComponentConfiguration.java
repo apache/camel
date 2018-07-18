@@ -33,7 +33,8 @@ public class DirectComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the direct component
+     * Whether to enable auto configuration of the direct component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

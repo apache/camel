@@ -33,7 +33,8 @@ public class RefComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the ref component
+     * Whether to enable auto configuration of the ref component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**

@@ -33,7 +33,8 @@ public class SagaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the saga component
+     * Whether to enable auto configuration of the saga component. This is
+     * enabled by default.
      */
     private Boolean enabled;
     /**
