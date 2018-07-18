@@ -23,21 +23,30 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="direct:marshal"/>
-      <marshal>
-        <fhirJson fhirVersion="DSTU3" prettyPrint="true"/>
-      </marshal>
-      <to uri="mock:result"/>
+      <from uri="direct:unmarshalErrorHandlerStrict"/>
+      <unmarshal ref="strict"/>
+      <to uri="mock:errorIsThrown"/>
     </route>
     <route>
-      <from uri="direct:unmarshal"/>
-      <unmarshal>
-        <fhirJson/>
-      </unmarshal>
+      <from uri="direct:unmarshalErrorHandlerLenient"/>
+      <unmarshal ref="lenient"/>
       <to uri="mock:result"/>
     </route>
   </camelContext>
+
+  <bean id="strict" class="org.apache.camel.model.dataformat.FhirJsonDataFormat">
+    <property name="parserErrorHandler">
+      <bean class="ca.uhn.fhir.parser.StrictErrorHandler"/>
+    </property>
+    <property name="fhirContext" ref="fhirContext"/>
+  </bean>
+  <bean id="lenient" class="org.apache.camel.model.dataformat.FhirJsonDataFormat">
+    <property name="parserErrorHandler">
+      <bean class="ca.uhn.fhir.parser.LenientErrorHandler"/>
+    </property>
+    <property name="fhirContext" ref="fhirContext"/>
+  </bean>
+  <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forDstu3"/>
 </beans>

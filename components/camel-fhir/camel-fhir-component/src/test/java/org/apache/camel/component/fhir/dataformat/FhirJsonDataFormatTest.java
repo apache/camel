@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.fhir;
+package org.apache.camel.component.fhir.dataformat;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,13 +31,12 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FhirXmlDataFormatTest extends CamelTestSupport {
+public class FhirJsonDataFormatTest extends CamelTestSupport {
 
-    private static final String PATIENT =
-            "<Patient xmlns=\"http://hl7.org/fhir\">"
-                    + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
-                    + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
-                    + "</Patient>";
+    private static final String PATIENT = "{\"resourceType\":\"Patient\","
+            + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
+            + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
+
     private MockEndpoint mockEndpoint;
 
     @Override
@@ -47,7 +45,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
-    
+
     @Test
     public void unmarshal() throws Exception {
         mockEndpoint.expectedMessageCount(1);
@@ -72,7 +70,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
+        IBaseResource iBaseResource = FhirContext.forDstu3().newJsonParser().parseResource(new InputStreamReader(inputStream));
         assertTrue("Patients should be equal!", patient.equalsDeep((Base) iBaseResource));
     }
 
@@ -86,13 +84,14 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:marshal")
-                    .marshal().fhirXml()
-                    .to("mock:result");
+                        .marshal().fhirJson("DSTU3")
+                        .to("mock:result");
 
                 from("direct:unmarshal")
-                    .unmarshal().fhirXml()
-                    .to("mock:result");
+                        .unmarshal().fhirJson()
+                        .to("mock:result");
             }
         };
     }
+
 }

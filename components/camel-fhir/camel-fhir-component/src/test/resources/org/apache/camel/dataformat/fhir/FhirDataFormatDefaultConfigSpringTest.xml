@@ -23,20 +23,19 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <dataFormats>
+      <fhirJson id="fhirJson"/>
+      <fhirXml id="fhirXml" />
+    </dataFormats>
     <route>
-      <from uri="direct:marshal"/>
-      <marshal>
-        <fhirJson fhirVersion="DSTU3" prettyPrint="true"/>
-      </marshal>
+      <from uri="direct:marshalJson"/>
+      <marshal ref="fhirJson"/>
       <to uri="mock:result"/>
     </route>
     <route>
-      <from uri="direct:unmarshal"/>
-      <unmarshal>
-        <fhirJson/>
-      </unmarshal>
+      <from uri="direct:marshalXml"/>
+      <marshal ref="fhirXml"/>
       <to uri="mock:result"/>
     </route>
   </camelContext>

@@ -1264,6 +1264,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(jsonDataFormat);
     }
 
+    public T fhirJson(boolean prettyPrint) {
+        FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        jsonDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jsonDataFormat);
+    }
+
+    public T fhirJson(String version, boolean prettyPrint) {
+        FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        jsonDataFormat.setPrettyPrint(prettyPrint);
+        jsonDataFormat.setFhirVersion(version);
+        return dataFormat(jsonDataFormat);
+    }
+
     /**
      * Uses the FHIR XML data format
      */
@@ -1275,6 +1288,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T fhirXml(String version) {
         FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
         fhirXmlDataFormat.setFhirVersion(version);
+        return dataFormat(fhirXmlDataFormat);
+    }
+
+    public T fhirXml(boolean prettyPrint) {
+        FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        fhirXmlDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(fhirXmlDataFormat);
+    }
+
+    public T fhirXml(String version, boolean prettyPrint) {
+        FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        fhirXmlDataFormat.setFhirVersion(version);
+        fhirXmlDataFormat.setPrettyPrint(prettyPrint);
         return dataFormat(fhirXmlDataFormat);
     }
 
