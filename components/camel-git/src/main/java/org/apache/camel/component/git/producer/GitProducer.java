@@ -36,6 +36,7 @@ import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -48,6 +49,7 @@ import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class GitProducer extends DefaultProducer {
 
@@ -138,6 +140,10 @@ public class GitProducer extends DefaultProducer {
 
         case GitOperation.PUSH_OPERATION:
             doPush(exchange, operation);
+            break;
+
+        case GitOperation.PUSH_TAG_OPERATION:
+            doPushTag(exchange, operation);
             break;
 
         case GitOperation.PULL_OPERATION:
@@ -399,6 +405,28 @@ public class GitProducer extends DefaultProducer {
                 result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
             } else {
                 result = git.push().setRemote(endpoint.getRemoteName()).call();
+            }
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+
+    protected void doPushTag(Exchange exchange, String operation) throws Exception {
+        Iterable<PushResult> result = null;
+        try {
+            if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
+                throw new IllegalArgumentException("Remote name must be specified to execute " + operation);
+            }
+            if (ObjectHelper.isEmpty(endpoint.getTagName())) {
+                throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
+            }
+            if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
+            } else {
+                result = git.push().setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
