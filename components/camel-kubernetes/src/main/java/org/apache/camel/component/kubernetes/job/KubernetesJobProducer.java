@@ -78,7 +78,7 @@ public class KubernetesJobProducer extends DefaultProducer {
             break;
 
         case KubernetesOperations.DELETE_JOB_OPERATION:
-        	doDeleteJob(exchange, operation);
+            doDeleteJob(exchange, operation);
             break;
 
         default:
@@ -130,7 +130,7 @@ public class KubernetesJobProducer extends DefaultProducer {
     }
 
     protected void doCreateJob(Exchange exchange, String operation) throws Exception {
-    	Job job = null;
+        Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
