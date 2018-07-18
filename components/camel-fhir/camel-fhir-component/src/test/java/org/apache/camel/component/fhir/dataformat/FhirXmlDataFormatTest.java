@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.fhir;
+package org.apache.camel.component.fhir.dataformat;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Base;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -29,17 +31,14 @@ import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
+public class FhirXmlDataFormatTest extends CamelTestSupport {
 
     private static final String PATIENT =
             "<Patient xmlns=\"http://hl7.org/fhir\">"
                     + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
                     + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
                     + "</Patient>";
-
     private MockEndpoint mockEndpoint;
 
     @Override
@@ -48,7 +47,7 @@ public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
-
+    
     @Test
     public void unmarshal() throws Exception {
         mockEndpoint.expectedMessageCount(1);
@@ -83,8 +82,17 @@ public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
         return patient;
     }
 
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/xml/FhirXmlDataFormatSpringTest.xml");
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:marshal")
+                    .marshal().fhirXml()
+                    .to("mock:result");
+
+                from("direct:unmarshal")
+                    .unmarshal().fhirXml()
+                    .to("mock:result");
+            }
+        };
     }
 }

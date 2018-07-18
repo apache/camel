@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.fhir;
+package org.apache.camel.component.fhir.dataformat.spring;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Base;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -30,12 +29,16 @@ import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class FhirJsonDataFormatTest extends CamelTestSupport {
+public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
 
-    private static final String PATIENT = "{\"resourceType\":\"Patient\","
-            + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
-            + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
+    private static final String PATIENT =
+            "<Patient xmlns=\"http://hl7.org/fhir\">"
+                    + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
+                    + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
+                    + "</Patient>";
 
     private MockEndpoint mockEndpoint;
 
@@ -70,7 +73,7 @@ public class FhirJsonDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        IBaseResource iBaseResource = FhirContext.forDstu3().newJsonParser().parseResource(new InputStreamReader(inputStream));
+        final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
         assertTrue("Patients should be equal!", patient.equalsDeep((Base) iBaseResource));
     }
 
@@ -80,18 +83,8 @@ public class FhirJsonDataFormatTest extends CamelTestSupport {
         return patient;
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:marshal")
-                        .marshal().fhirJson("DSTU3")
-                        .to("mock:result");
-
-                from("direct:unmarshal")
-                        .unmarshal().fhirJson()
-                        .to("mock:result");
-            }
-        };
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/xml/FhirXmlDataFormatSpringTest.xml");
     }
-
 }

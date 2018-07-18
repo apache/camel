@@ -20,44 +20,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.parser.IParser;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
-public class FhirJsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
-
-    private FhirContext fhirContext;
-    private String fhirVersion;
-    private boolean contentTypeHeader = true;
-
-    public FhirContext getFhirContext() {
-        return fhirContext;
-    }
-
-    public void setFhirContext(FhirContext fhirContext) {
-        this.fhirContext = fhirContext;
-    }
-
-    public String getFhirVersion() {
-        return fhirVersion;
-    }
-
-    public void setFhirVersion(String fhirVersion) {
-        this.fhirVersion = fhirVersion;
-    }
-
-    public boolean isContentTypeHeader() {
-        return contentTypeHeader;
-    }
-
-    public void setContentTypeHeader(boolean contentTypeHeader) {
-        this.contentTypeHeader = contentTypeHeader;
-    }
+public class FhirJsonDataFormat extends FhirDataFormat {
 
     @Override
     public void marshal(Exchange exchange, Object o, OutputStream outputStream) throws Exception {
@@ -68,35 +35,24 @@ public class FhirJsonDataFormat extends ServiceSupport implements DataFormat, Da
             iBaseResource = (IBaseResource) o;
         }
 
-        fhirContext.newJsonParser().encodeResourceToWriter(iBaseResource, new OutputStreamWriter(outputStream));
+        IParser parser = getFhirContext().newJsonParser();
+        configureParser(parser);
+        parser.encodeResourceToWriter(iBaseResource, new OutputStreamWriter(outputStream));
 
         if (isContentTypeHeader()) {
-            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, parser.getEncoding().getResourceContentTypeNonLegacy());
         }
     }
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        return fhirContext.newJsonParser().parseResource(new InputStreamReader(inputStream));
+        IParser parser = getFhirContext().newJsonParser();
+        configureParser(parser);
+        return parser.parseResource(new InputStreamReader(inputStream));
     }
 
     @Override
     public String getDataFormatName() {
         return "fhirJson";
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        if (fhirContext == null && fhirVersion != null) {
-            FhirVersionEnum version = FhirVersionEnum.valueOf(fhirVersion);
-            fhirContext = new FhirContext(version);
-        } else if (fhirContext == null) {
-            fhirContext = FhirContext.forDstu3();
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 }
