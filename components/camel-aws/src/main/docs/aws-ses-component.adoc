@@ -82,6 +82,42 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-ses.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.configuration.amazon-s-e-s-client* | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
+| *camel.component.aws-ses.configuration.from* | The sender's email address. |  | String
+| *camel.component.aws-ses.configuration.proxy-host* |  |  | String
+| *camel.component.aws-ses.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-ses.configuration.region* |  |  | String
+| *camel.component.aws-ses.configuration.reply-to-addresses* | List of reply-to email address(es) for the message, override it using
+ 'CamelAwsSesReplyToAddresses' header. |  | List
+| *camel.component.aws-ses.configuration.return-path* | The email address to which bounce notifications are to be forwarded,
+ override it using 'CamelAwsSesReturnPath' header. |  | String
+| *camel.component.aws-ses.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ses.configuration.subject* | The subject which is used if the message header 'CamelAwsSesSubject'
+ is not present. |  | String
+| *camel.component.aws-ses.configuration.to* | List of destination email address. Can be overriden with
+ 'CamelAwsSesTo' header. |  | List
+| *camel.component.aws-ses.enabled* | Enable aws-ses component | true | Boolean
+| *camel.component.aws-ses.region* | The region in which SES client needs to work |  | String
+| *camel.component.aws-ses.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.aws-ses.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

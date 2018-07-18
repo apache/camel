@@ -37,6 +37,26 @@ The JXPath language supports 2 options, which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.language.jxpath.enabled* | Enable jxpath language | true | Boolean
+| *camel.language.jxpath.lenient* | Allows to turn lenient on the JXPathContext. When turned on this allows
+ the JXPath expression to evaluate against expressions and message bodies
+ which may be invalid / missing data. This option is by default false | false | Boolean
+| *camel.language.jxpath.trim* | Whether to trim the value to remove leading and trailing whitespaces and
+ line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

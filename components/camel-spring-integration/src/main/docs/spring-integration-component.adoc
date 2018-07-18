@@ -79,6 +79,24 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.spring-integration.enabled* | Enable spring-integration component | true | Boolean
+| *camel.component.spring-integration.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Usage

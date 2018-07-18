@@ -102,6 +102,37 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 15 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-ddbstream.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddbstream.configuration.access-key* |  |  | String
+| *camel.component.aws-ddbstream.configuration.amazon-dynamo-db-streams-client* |  |  | AmazonDynamoDBStreams
+| *camel.component.aws-ddbstream.configuration.iterator-type* |  |  | ShardIteratorType
+| *camel.component.aws-ddbstream.configuration.max-results-per-request* |  |  | Integer
+| *camel.component.aws-ddbstream.configuration.proxy-host* |  |  | String
+| *camel.component.aws-ddbstream.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-ddbstream.configuration.region* |  |  | String
+| *camel.component.aws-ddbstream.configuration.secret-key* |  |  | String
+| *camel.component.aws-ddbstream.configuration.sequence-number-provider* |  |  | SequenceNumberProvider
+| *camel.component.aws-ddbstream.configuration.table-name* |  |  | String
+| *camel.component.aws-ddbstream.enabled* | Enable aws-ddbstream component | true | Boolean
+| *camel.component.aws-ddbstream.region* | Amazon AWS Region |  | String
+| *camel.component.aws-ddbstream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.aws-ddbstream.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

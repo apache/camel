@@ -107,6 +107,60 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 31 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.web3j.configuration.address* | Contract address. |  | String
+| *camel.component.web3j.configuration.addresses* | Contract address or a list of addresses. |  | List
+| *camel.component.web3j.configuration.block-hash* | Hash of the block where this transaction was in. |  | String
+| *camel.component.web3j.configuration.client-id* | A random hexadecimal(32 bytes) ID identifying the client. |  | String
+| *camel.component.web3j.configuration.data* | The compiled code of a contract OR the hash of the invoked method
+ signature and encoded parameters. |  | String
+| *camel.component.web3j.configuration.database-name* | The local database name. |  | String
+| *camel.component.web3j.configuration.filter-id* | The filter id to use. |  | BigInteger
+| *camel.component.web3j.configuration.from-address* | The address the transaction is send from |  | String
+| *camel.component.web3j.configuration.full-transaction-objects* | If true it returns the full transaction objects, if false only the
+ hashes of the transactions. | false | Boolean
+| *camel.component.web3j.configuration.gas-limit* | The maximum gas allowed in this block. |  | BigInteger
+| *camel.component.web3j.configuration.gas-price* | Gas price used for each paid gas. |  | BigInteger
+| *camel.component.web3j.configuration.hashrate* | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
+| *camel.component.web3j.configuration.header-pow-hash* | The header's pow-hash (256 bits) used for submitting a proof-of-work
+ solution. |  | String
+| *camel.component.web3j.configuration.index* | The transactions/uncle index position in the block. |  | BigInteger
+| *camel.component.web3j.configuration.key-name* | The key name in the database. |  | String
+| *camel.component.web3j.configuration.mix-digest* | The mix digest (256 bits) used for submitting a proof-of-work
+ solution. |  | String
+| *camel.component.web3j.configuration.nonce* | The nonce found (64 bits) used for submitting a proof-of-work
+ solution. |  | String
+| *camel.component.web3j.configuration.operation* | Operation to use. | transaction | String
+| *camel.component.web3j.configuration.position* | The transaction index position withing a block. |  | BigInteger
+| *camel.component.web3j.configuration.priority* | The priority of a whisper message. |  | BigInteger
+| *camel.component.web3j.configuration.sha3-hash-of-data-to-sign* | Message to sign by calculating an Ethereum specific signature. |  | String
+| *camel.component.web3j.configuration.signed-transaction-data* | The signed transaction data for a new message call transaction or a
+ contract creation for signed transactions. |  | String
+| *camel.component.web3j.configuration.source-code* | The source code to compile. |  | String
+| *camel.component.web3j.configuration.to-address* | The address the transaction is directed to. |  | String
+| *camel.component.web3j.configuration.topics* | Topics are order-dependent. Each topic can also be a list of topics.
+ Specify multiple topics separated by comma. |  | List
+| *camel.component.web3j.configuration.transaction-hash* | The information about a transaction requested by transaction hash. |  | String
+| *camel.component.web3j.configuration.ttl* | The time to live in seconds of a whisper message. |  | BigInteger
+| *camel.component.web3j.configuration.value* | The value sent within a transaction. |  | BigInteger
+| *camel.component.web3j.configuration.web3j* | The preconfigured Web3j object. |  | Web3j
+| *camel.component.web3j.enabled* | Enable web3j component | true | Boolean
+| *camel.component.web3j.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 You can append query options to the URI in the following format,

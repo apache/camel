@@ -108,6 +108,24 @@ with the following path and query parameters:
 | *tailTrackIncreasingField* (tail) | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField lastValue (possibly recovered from persistent tail tracking). Can be of type Integer, Date, String, etc. NOTE: No support for dot notation at the current time, so the field should be at the top level of the document. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mongodb3.enabled* | Enable mongodb3 component | true | Boolean
+| *camel.component.mongodb3.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 Note on options of MoongoDB component 
 

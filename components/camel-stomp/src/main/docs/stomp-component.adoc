@@ -94,6 +94,50 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 26 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.stomp.broker-u-r-l* | The URI of the Stomp broker to connect to |  | String
+| *camel.component.stomp.configuration.broker-u-r-l* | The URI of the Stomp broker to connect to | tcp://localhost:61613 | String
+| *camel.component.stomp.configuration.host* | The virtual host name |  | String
+| *camel.component.stomp.configuration.login* | The username |  | String
+| *camel.component.stomp.configuration.passcode* | The password |  | String
+| *camel.component.stomp.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
+| *camel.component.stomp.configuration.ssl-context-parameters.cert-alias* |  |  | String
+| *camel.component.stomp.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
+| *camel.component.stomp.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
+| *camel.component.stomp.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
+| *camel.component.stomp.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
+| *camel.component.stomp.configuration.ssl-context-parameters.provider* |  |  | String
+| *camel.component.stomp.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
+| *camel.component.stomp.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
+| *camel.component.stomp.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
+| *camel.component.stomp.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
+| *camel.component.stomp.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
+| *camel.component.stomp.configuration.ssl-context-parameters.session-timeout* |  |  | String
+| *camel.component.stomp.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.stomp.enabled* | Enable stomp component | true | Boolean
+| *camel.component.stomp.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+ header to and from Camel message. The option is a
+ org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.stomp.host* | The virtual host |  | String
+| *camel.component.stomp.login* | The username |  | String
+| *camel.component.stomp.passcode* | The password |  | String
+| *camel.component.stomp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.stomp.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

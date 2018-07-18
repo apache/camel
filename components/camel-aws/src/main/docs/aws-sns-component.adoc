@@ -86,6 +86,39 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-sns.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sns.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-sns.configuration.amazon-s-n-s-client* | To use the AmazonSNS as the client |  | AmazonSNS
+| *camel.component.aws-sns.configuration.message-structure* | The message structure to use such as json |  | String
+| *camel.component.aws-sns.configuration.policy* | The policy for this queue |  | String
+| *camel.component.aws-sns.configuration.proxy-host* |  |  | String
+| *camel.component.aws-sns.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-sns.configuration.region* |  |  | String
+| *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject'
+ is not present. |  | String
+| *camel.component.aws-sns.configuration.topic-arn* | The Amazon Resource Name (ARN) assigned to the created topic. |  | String
+| *camel.component.aws-sns.configuration.topic-name* | The name of the topic |  | String
+| *camel.component.aws-sns.enabled* | Enable aws-sns component | true | Boolean
+| *camel.component.aws-sns.region* | The region in which SNS client needs to work |  | String
+| *camel.component.aws-sns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.aws-sns.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

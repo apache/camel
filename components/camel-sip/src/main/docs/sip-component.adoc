@@ -146,6 +146,24 @@ with the following path and query parameters:
 | *useRouterForAllUris* (proxy) | This setting is used when requests are sent to the Presence Agent via a proxy. | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.sip.enabled* | Enable sip component | true | Boolean
+| *camel.component.sip.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Sending Messages to/from a SIP endpoint
 

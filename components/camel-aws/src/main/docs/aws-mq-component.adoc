@@ -79,6 +79,35 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-mq.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-mq.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-mq.configuration.amazon-mq-client* | To use a existing configured AmazonMQClient as client |  | AmazonMQ
+| *camel.component.aws-mq.configuration.operation* | The operation to perform. It can be
+ listBrokers,createBroker,deleteBroker |  | MQOperations
+| *camel.component.aws-mq.configuration.proxy-host* |  |  | String
+| *camel.component.aws-mq.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-mq.configuration.region* |  |  | String
+| *camel.component.aws-mq.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-mq.enabled* |  |  | Boolean
+| *camel.component.aws-mq.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-mq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.aws-mq.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

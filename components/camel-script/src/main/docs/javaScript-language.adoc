@@ -35,6 +35,31 @@ The JavaScript language supports 1 options, which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.language.javascript.enabled* | Enable javascript language | true | Boolean
+| *camel.language.javascript.trim* | Whether to trim the value to remove leading and trailing whitespaces and
+ line breaks | true | Boolean
+| *camel.language.php.enabled* | Enable php language | true | Boolean
+| *camel.language.php.trim* | Whether to trim the value to remove leading and trailing whitespaces and
+ line breaks | true | Boolean
+| *camel.language.python.enabled* | Enable python language | true | Boolean
+| *camel.language.python.trim* | Whether to trim the value to remove leading and trailing whitespaces and
+ line breaks | true | Boolean
+| *camel.language.ruby.enabled* | Enable ruby language | true | Boolean
+| *camel.language.ruby.trim* | Whether to trim the value to remove leading and trailing whitespaces and
+ line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 ### Example
 

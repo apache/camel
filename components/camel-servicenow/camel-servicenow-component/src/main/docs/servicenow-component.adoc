@@ -127,6 +127,156 @@ with the following path and query parameters:
 | *userName* (security) | *Required* ServiceNow user account name, MUST be provided |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 106 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.servicenow.api-url* | The ServiceNow REST API url |  | String
+| *camel.component.servicenow.configuration.api-url* | The ServiceNow REST API url |  | String
+| *camel.component.servicenow.configuration.api-version* | The ServiceNow REST API version, default latest |  | String
+| *camel.component.servicenow.configuration.date-format* | The date format used for Json serialization/deserialization | yyyy-MM-dd | String
+| *camel.component.servicenow.configuration.date-time-format* | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
+| *camel.component.servicenow.configuration.display* | Set this parameter to true to return only scorecards where the
+ indicator Display field is selected. Set this parameter to all to
+ return scorecards with any Display field value. This parameter is
+ true by default. | true | String
+| *camel.component.servicenow.configuration.display-value* | Return the display value (true), actual value (false), or both (all)
+ for reference fields (default: false) | false | String
+| *camel.component.servicenow.configuration.exclude-reference-link* | True to exclude Table API links for reference fields (default: false) |  | Boolean
+| *camel.component.servicenow.configuration.favorites* | Set this parameter to true to return only scorecards that are
+ favorites of the querying user. |  | Boolean
+| *camel.component.servicenow.configuration.http-client-policy.accept* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.accept-encoding* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.accept-language* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.allow-chunking* |  |  | Boolean
+| *camel.component.servicenow.configuration.http-client-policy.async-execute-timeout* |  |  | Long
+| *camel.component.servicenow.configuration.http-client-policy.async-execute-timeout-rejection* |  |  | Boolean
+| *camel.component.servicenow.configuration.http-client-policy.auto-redirect* |  |  | Boolean
+| *camel.component.servicenow.configuration.http-client-policy.browser-type* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.cache-control* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.chunk-length* |  |  | Integer
+| *camel.component.servicenow.configuration.http-client-policy.chunking-threshold* |  |  | Integer
+| *camel.component.servicenow.configuration.http-client-policy.connection* |  |  | ConnectionType
+| *camel.component.servicenow.configuration.http-client-policy.connection-request-timeout* |  |  | Long
+| *camel.component.servicenow.configuration.http-client-policy.connection-timeout* |  |  | Long
+| *camel.component.servicenow.configuration.http-client-policy.content-type* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.cookie* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.decoupled-endpoint* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.host* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.max-retransmits* |  |  | Integer
+| *camel.component.servicenow.configuration.http-client-policy.non-proxy-hosts* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.other-attributes* |  |  | Map
+| *camel.component.servicenow.configuration.http-client-policy.proxy-server* |  |  | String
+| *camel.component.servicenow.configuration.http-client-policy.proxy-server-port* |  |  | Integer
+| *camel.component.servicenow.configuration.http-client-policy.proxy-server-type* |  |  | ProxyServerType
+| *camel.component.servicenow.configuration.http-client-policy.receive-timeout* |  |  | Long
+| *camel.component.servicenow.configuration.http-client-policy.referer* |  |  | String
+| *camel.component.servicenow.configuration.include-aggregates* | Set this parameter to true to always return all available aggregates
+ for an indicator, including when an aggregate has already been
+ applied. If a value is not specified, this parameter defaults to
+ false and returns no aggregates. |  | Boolean
+| *camel.component.servicenow.configuration.include-available-aggregates* | Set this parameter to true to return all available aggregates for an
+ indicator when no aggregate has been applied. If a value is not
+ specified, this parameter defaults to false and returns no
+ aggregates. |  | Boolean
+| *camel.component.servicenow.configuration.include-available-breakdowns* | Set this parameter to true to return all available breakdowns for an
+ indicator. If a value is not specified, this parameter defaults to
+ false and returns no breakdowns. |  | Boolean
+| *camel.component.servicenow.configuration.include-score-notes* | Set this parameter to true to return all notes associated with the
+ score. The note element contains the note text as well as the author
+ and timestamp when the note was added. |  | Boolean
+| *camel.component.servicenow.configuration.include-scores* | Set this parameter to true to return all scores for a scorecard. If a
+ value is not specified, this parameter defaults to false and returns
+ only the most recent score value. |  | Boolean
+| *camel.component.servicenow.configuration.input-display-value* | True to set raw value of input fields (default: false) |  | Boolean
+| *camel.component.servicenow.configuration.key* | Set this parameter to true to return only scorecards for key
+ indicators. |  | Boolean
+| *camel.component.servicenow.configuration.mapper.date-format* |  |  | DateFormat
+| *camel.component.servicenow.configuration.mapper.injectable-values* |  |  | InjectableValues
+| *camel.component.servicenow.configuration.mapper.node-factory* |  |  | JsonNodeFactory
+| *camel.component.servicenow.configuration.mapper.property-naming-strategy* |  |  | PropertyNamingStrategy
+| *camel.component.servicenow.configuration.mapper.registered-module-ids* |  |  | Set
+| *camel.component.servicenow.configuration.mapper.serializer-factory* |  |  | SerializerFactory
+| *camel.component.servicenow.configuration.mapper.subtype-resolver* |  |  | SubtypeResolver
+| *camel.component.servicenow.configuration.mapper.type-factory* |  |  | TypeFactory
+| *camel.component.servicenow.configuration.mapper.visibility-checker* |  |  | VisibilityChecker<?>
+| *camel.component.servicenow.configuration.models* |  |  | Map
+| *camel.component.servicenow.configuration.oauth-client-id* | OAuth2 ClientID |  | String
+| *camel.component.servicenow.configuration.oauth-client-secret* | OAuth2 ClientSecret |  | String
+| *camel.component.servicenow.configuration.oauth-token-url* | OAuth token Url |  | String
+| *camel.component.servicenow.configuration.password* | ServiceNow account password, MUST be provided |  | String
+| *camel.component.servicenow.configuration.per-page* | Enter the maximum number of scorecards each query can return. By
+ default this value is 10, and the maximum is 100. | 10 | Integer
+| *camel.component.servicenow.configuration.proxy-authorization-policy.authorization* |  |  | String
+| *camel.component.servicenow.configuration.proxy-authorization-policy.authorization-type* |  |  | String
+| *camel.component.servicenow.configuration.proxy-authorization-policy.password* |  |  | String
+| *camel.component.servicenow.configuration.proxy-authorization-policy.user-name* |  |  | String
+| *camel.component.servicenow.configuration.proxy-host* | The proxy host name |  | String
+| *camel.component.servicenow.configuration.proxy-password* | Password for proxy authentication |  | String
+| *camel.component.servicenow.configuration.proxy-port* | The proxy port number |  | Integer
+| *camel.component.servicenow.configuration.proxy-user-name* | Username for proxy authentication |  | String
+| *camel.component.servicenow.configuration.release* | The ServiceNow release to target, default to Helsinki See
+ https://docs.servicenow.com |  | ServiceNowRelease
+| *camel.component.servicenow.configuration.request-models* | Defines the request model |  | Map
+| *camel.component.servicenow.configuration.resource* | The default resource, can be overridden by header
+ CamelServiceNowResource |  | String
+| *camel.component.servicenow.configuration.response-models* | Defines the response model |  | Map
+| *camel.component.servicenow.configuration.retrieve-target-record-on-import* | Set this parameter to true to retrieve the target record when using
+ import set api. The import set result is then replaced by the target
+ record | false | Boolean
+| *camel.component.servicenow.configuration.sort-by* | Specify the value to use when sorting results. By default, queries
+ sort records by value. |  | String
+| *camel.component.servicenow.configuration.sort-dir* | Specify the sort direction, ascending or descending. By default,
+ queries sort records in descending order. Use sysparm_sortdir=asc to
+ sort in ascending order. |  | String
+| *camel.component.servicenow.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
+| *camel.component.servicenow.configuration.ssl-context-parameters.cert-alias* |  |  | String
+| *camel.component.servicenow.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.provider* |  |  | String
+| *camel.component.servicenow.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
+| *camel.component.servicenow.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
+| *camel.component.servicenow.configuration.ssl-context-parameters.session-timeout* |  |  | String
+| *camel.component.servicenow.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.servicenow.configuration.suppress-auto-sys-field* | True to suppress auto generation of system fields (default: false) |  | Boolean
+| *camel.component.servicenow.configuration.suppress-pagination-header* | Set this value to true to remove the Link header from the response.
+ The Link header allows you to request additional pages of data when
+ the number of records matching your query exceeds the query limit |  | Boolean
+| *camel.component.servicenow.configuration.table* | The default table, can be overridden by header CamelServiceNowTable |  | String
+| *camel.component.servicenow.configuration.target* | Set this parameter to true to return only scorecards that have a
+ target. |  | Boolean
+| *camel.component.servicenow.configuration.time-format* | The time format used for Json serialization/deserialization | HH:mm:ss | String
+| *camel.component.servicenow.configuration.top-level-only* | Gets only those categories whose parent is a catalog. |  | Boolean
+| *camel.component.servicenow.configuration.user-name* | ServiceNow user account name, MUST be provided |  | String
+| *camel.component.servicenow.enabled* | Enable servicenow component | true | Boolean
+| *camel.component.servicenow.instance-name* | The ServiceNow instance name |  | String
+| *camel.component.servicenow.oauth-client-id* | OAuth2 ClientID |  | String
+| *camel.component.servicenow.oauth-client-secret* | OAuth2 ClientSecret |  | String
+| *camel.component.servicenow.oauth-token-url* | OAuth token Url |  | String
+| *camel.component.servicenow.password* | ServiceNow account password |  | String
+| *camel.component.servicenow.proxy-host* | The proxy host name |  | String
+| *camel.component.servicenow.proxy-password* | Password for proxy authentication |  | String
+| *camel.component.servicenow.proxy-port* | The proxy port number |  | Integer
+| *camel.component.servicenow.proxy-user-name* | Username for proxy authentication |  | String
+| *camel.component.servicenow.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+| *camel.component.servicenow.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.component.servicenow.user-name* | ServiceNow user account name |  | String
+|===
+// spring-boot-auto-configure options: END
 
 
 

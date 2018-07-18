@@ -94,6 +94,38 @@ with the following path and query parameters:
 | *proxyPort* (proxy) | The proxy port |  | Integer
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.braintree.configuration.access-token* | The access token granted by a merchant to another in order to process
+ transactions on their behalf. Used in place of environment, merchant
+ id, public key and private key fields. |  | String
+| *camel.component.braintree.configuration.api-name* | What kind of operation to perform |  | BraintreeApiName
+| *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
+| *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, @see java.util.logging.Level |  | Level
+| *camel.component.braintree.configuration.http-log-name* | Set log category to use to log http calls, default "Braintree" |  | String
+| *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | Integer
+| *camel.component.braintree.configuration.merchant-id* | The merchant id provided by Braintree. |  | String
+| *camel.component.braintree.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.braintree.configuration.private-key* | The private key provided by Braintree. |  | String
+| *camel.component.braintree.configuration.proxy-host* | The proxy host |  | String
+| *camel.component.braintree.configuration.proxy-port* | The proxy port |  | Integer
+| *camel.component.braintree.configuration.public-key* | The public key provided by Braintree. |  | String
+| *camel.component.braintree.enabled* | Enable braintree component | true | Boolean
+| *camel.component.braintree.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### URI format

@@ -120,6 +120,39 @@ with the following path and query parameters:
 | *username* (security) | Username to connect to Kubernetes |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.kubernetes.cluster.service.attributes* | Custom service attributes. |  | Map
+| *camel.component.kubernetes.cluster.service.cluster-labels* | Set the labels used to identify the pods composing the cluster. |  | Map
+| *camel.component.kubernetes.cluster.service.config-map-name* | Set the name of the ConfigMap used to do optimistic locking (defaults to 'leaders'). |  | String
+| *camel.component.kubernetes.cluster.service.connection-timeout-millis* | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
+| *camel.component.kubernetes.cluster.service.enabled* | Sets if the Kubernetes cluster service should be enabled or not, default is false. | false | Boolean
+| *camel.component.kubernetes.cluster.service.id* | Cluster Service ID |  | String
+| *camel.component.kubernetes.cluster.service.jitter-factor* | A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant. |  | Double
+| *camel.component.kubernetes.cluster.service.kubernetes-namespace* | Set the name of the Kubernetes namespace containing the pods and the configmap (autodetected by default) |  | String
+| *camel.component.kubernetes.cluster.service.lease-duration-millis* | The default duration of the lease for the current leader. |  | Long
+| *camel.component.kubernetes.cluster.service.master-url* | Set the URL of the Kubernetes master (read from Kubernetes client properties by default). |  | String
+| *camel.component.kubernetes.cluster.service.order* | Service lookup order/priority. |  | Integer
+| *camel.component.kubernetes.cluster.service.pod-name* | Set the name of the current pod (autodetected from container host name by default). |  | String
+| *camel.component.kubernetes.cluster.service.renew-deadline-millis* | The deadline after which the leader must stop its services because it may have lost the leadership. |  | Long
+| *camel.component.kubernetes.cluster.service.retry-period-millis* | The time between two subsequent attempts to check and acquire the leadership.
+ It is randomized using the jitter factor. |  | Long
+| *camel.component.kubernetes.enabled* |  |  | Boolean
+| *camel.component.kubernetes.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
+ starting. Only properties which are of String type can use property
+ placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
