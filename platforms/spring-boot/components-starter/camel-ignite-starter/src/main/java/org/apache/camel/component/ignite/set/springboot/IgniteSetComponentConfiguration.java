@@ -33,6 +33,11 @@ public class IgniteSetComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ignite-set component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the Ignite instance. The option is a org.apache.ignite.Ignite type.
      */
     private String ignite;

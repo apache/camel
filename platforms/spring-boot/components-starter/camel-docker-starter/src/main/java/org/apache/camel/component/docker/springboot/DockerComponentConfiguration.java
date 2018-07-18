@@ -34,6 +34,11 @@ public class DockerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the docker component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared docker configuration
      */
     private DockerConfigurationNestedConfiguration configuration;

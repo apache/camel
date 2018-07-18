@@ -114,7 +114,8 @@ The component supports 10 options, which are listed below.
 | *camel.component.twitter-search.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-search.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-search.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter-search.enabled* |  |  | Boolean
+| *camel.component.twitter-search.enabled* | Whether to enable auto configuration of the twitter-search component.
+ This is enabled by default. |  | Boolean
 | *camel.component.twitter-search.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-search.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-search.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer

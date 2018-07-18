@@ -106,7 +106,8 @@ The component supports 13 options, which are listed below.
 | *camel.component.aws-lambda.configuration.proxy-port* |  |  | Integer
 | *camel.component.aws-lambda.configuration.region* | Amazon AWS Region |  | String
 | *camel.component.aws-lambda.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-lambda.enabled* |  |  | Boolean
+| *camel.component.aws-lambda.enabled* | Whether to enable auto configuration of the aws-lambda component. This is
+ enabled by default. |  | Boolean
 | *camel.component.aws-lambda.region* | Amazon AWS Region |  | String
 | *camel.component.aws-lambda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

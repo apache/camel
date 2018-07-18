@@ -32,6 +32,11 @@ public class FlinkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the flink component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * DataSet to compute against. The option is a
      * org.apache.flink.api.java.DataSet type.
      */

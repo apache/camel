@@ -33,6 +33,11 @@ public class VertxComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the vertx component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom VertxFactory implementation. The option is a
      * io.vertx.core.spi.VertxFactory type.
      */

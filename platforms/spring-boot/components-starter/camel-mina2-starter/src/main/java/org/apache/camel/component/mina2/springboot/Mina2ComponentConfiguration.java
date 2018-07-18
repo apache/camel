@@ -39,6 +39,11 @@ public class Mina2ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mina2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared mina configuration.
      */
     private Mina2ConfigurationNestedConfiguration configuration;

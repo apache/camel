@@ -37,6 +37,11 @@ public class NagiosComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the nagios component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared NagiosConfiguration
      */
     private NagiosConfigurationNestedConfiguration configuration;

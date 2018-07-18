@@ -33,6 +33,11 @@ public class Jt400ComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jt400 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Returns the default connection pool used by this component. The option is
      * a com.ibm.as400.access.AS400ConnectionPool type.
      */

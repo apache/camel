@@ -35,6 +35,11 @@ public class MiloServerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the milo-server component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The URI of the namespace, defaults to urn:org:apache:camel
      */
     private String namespaceUri;

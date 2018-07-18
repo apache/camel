@@ -36,6 +36,11 @@ public class Web3jComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the web3j component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default configuration
      */
     private Web3jConfigurationNestedConfiguration configuration;

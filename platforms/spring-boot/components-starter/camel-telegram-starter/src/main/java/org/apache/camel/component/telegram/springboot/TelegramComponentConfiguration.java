@@ -32,6 +32,11 @@ public class TelegramComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the telegram component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The default Telegram authorization token to be used when the information
      * is not provided in the endpoints.
      */

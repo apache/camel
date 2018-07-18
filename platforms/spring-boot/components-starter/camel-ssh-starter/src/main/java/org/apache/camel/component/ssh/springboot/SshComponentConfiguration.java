@@ -35,6 +35,11 @@ public class SshComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ssh component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared SSH configuration
      */
     private SshConfigurationNestedConfiguration configuration;

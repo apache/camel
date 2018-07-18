@@ -34,6 +34,11 @@ public class SnsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-sns component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SNS default configuration
      */
     private SnsConfigurationNestedConfiguration configuration;

@@ -99,7 +99,8 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-mq.configuration.proxy-port* |  |  | Integer
 | *camel.component.aws-mq.configuration.region* |  |  | String
 | *camel.component.aws-mq.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-mq.enabled* |  |  | Boolean
+| *camel.component.aws-mq.enabled* | Whether to enable auto configuration of the aws-mq component. This is
+ enabled by default. |  | Boolean
 | *camel.component.aws-mq.region* | The region in which MQ client needs to work |  | String
 | *camel.component.aws-mq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

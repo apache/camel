@@ -49,6 +49,11 @@ public class NettyComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the netty component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the NettyConfiguration as configuration when creating endpoints.
      */
     private NettyConfigurationNestedConfiguration configuration;

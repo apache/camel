@@ -34,6 +34,11 @@ public class MQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-mq component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS MQ default configuration
      */
     private MQConfigurationNestedConfiguration configuration;

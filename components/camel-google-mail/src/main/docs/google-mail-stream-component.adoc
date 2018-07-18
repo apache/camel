@@ -145,7 +145,8 @@ The component supports 14 options, which are listed below.
 | *camel.component.google-mail-stream.configuration.scopes* | Specifies the level of permissions you want a mail application to
  have to a user account. See
  https://developers.google.com/gmail/api/auth/scopes for more info. |  | List
-| *camel.component.google-mail-stream.enabled* |  |  | Boolean
+| *camel.component.google-mail-stream.enabled* | Whether to enable auto configuration of the google-mail-stream component.
+ This is enabled by default. |  | Boolean
 | *camel.component.google-mail-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

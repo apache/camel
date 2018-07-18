@@ -101,7 +101,8 @@ The component supports 8 options, which are listed below.
 | *camel.component.atomix-set.configuration.default-action* | The default action. |  | AtomixSet$Action
 | *camel.component.atomix-set.configuration.result-header* | The header that wil carry the result. |  | String
 | *camel.component.atomix-set.configuration.ttl* | The resource ttl. |  | Long
-| *camel.component.atomix-set.enabled* |  |  | Boolean
+| *camel.component.atomix-set.enabled* | Whether to enable auto configuration of the atomix-set component. This is
+ enabled by default. |  | Boolean
 | *camel.component.atomix-set.nodes* | The nodes the AtomixClient should connect to |  | List
 | *camel.component.atomix-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

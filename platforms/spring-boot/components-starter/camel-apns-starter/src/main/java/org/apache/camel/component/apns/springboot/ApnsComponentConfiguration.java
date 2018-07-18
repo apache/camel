@@ -32,6 +32,11 @@ public class ApnsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the apns component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The ApnsService to use. The
      * org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to
      * build a ApnsService. The option is a com.notnoop.apns.ApnsService type.

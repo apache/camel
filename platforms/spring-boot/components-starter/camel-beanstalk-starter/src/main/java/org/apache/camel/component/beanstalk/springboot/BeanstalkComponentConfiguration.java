@@ -33,6 +33,11 @@ public class BeanstalkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the beanstalk component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory
      * to use to make connections to Beanstalkd. Especially useful for unit
      * testing without beanstalkd daemon (you can mock ConnectionSettings). The

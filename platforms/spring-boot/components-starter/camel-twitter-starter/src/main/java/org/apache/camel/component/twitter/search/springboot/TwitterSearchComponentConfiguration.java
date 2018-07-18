@@ -32,6 +32,11 @@ public class TwitterSearchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the twitter-search component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The access token
      */
     private String accessToken;

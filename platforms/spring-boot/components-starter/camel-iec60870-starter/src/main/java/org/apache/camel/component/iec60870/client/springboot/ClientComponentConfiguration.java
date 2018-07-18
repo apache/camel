@@ -34,6 +34,11 @@ public class ClientComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the iec60870-client component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default connection options
      */
     private ClientOptionsNestedConfiguration defaultConnectionOptions;

@@ -146,7 +146,8 @@ The component supports 24 options, which are listed below.
  
  @param userAgent
             - AS2 user agent identification string. |  | String
-| *camel.component.as2.enabled* |  |  | Boolean
+| *camel.component.as2.enabled* | Whether to enable auto configuration of the as2 component. This is
+ enabled by default. |  | Boolean
 | *camel.component.as2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

@@ -32,6 +32,11 @@ public class WsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ahc-wss component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom AsyncHttpClient. The option is a
      * org.asynchttpclient.AsyncHttpClient type.
      */

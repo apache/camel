@@ -33,6 +33,11 @@ public class MyBatisBeanComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mybatis-bean component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the SqlSessionFactory. The option is a
      * org.apache.ibatis.session.SqlSessionFactory type.
      */

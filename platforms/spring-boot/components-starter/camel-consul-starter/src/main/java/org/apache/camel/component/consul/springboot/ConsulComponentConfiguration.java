@@ -42,6 +42,11 @@ public class ConsulComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the consul component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The Consul agent URL
      */
     private String url;

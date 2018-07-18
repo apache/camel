@@ -34,6 +34,11 @@ public class SqsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-sqs component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SQS default configuration
      */
     private SqsConfigurationNestedConfiguration configuration;

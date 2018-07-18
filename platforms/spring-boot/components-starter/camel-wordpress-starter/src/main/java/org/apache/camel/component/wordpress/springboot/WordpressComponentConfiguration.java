@@ -35,6 +35,11 @@ public class WordpressComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the wordpress component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Wordpress component configuration
      */
     private WordpressComponentConfigurationNestedConfiguration configuration;

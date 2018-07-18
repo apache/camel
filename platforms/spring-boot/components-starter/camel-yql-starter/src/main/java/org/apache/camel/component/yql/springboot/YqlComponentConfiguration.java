@@ -33,6 +33,11 @@ public class YqlComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the yql component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom configured HttpClientConnectionManager. The option is a
      * org.apache.http.conn.HttpClientConnectionManager type.
      */

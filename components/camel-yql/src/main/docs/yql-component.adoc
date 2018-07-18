@@ -95,7 +95,8 @@ The component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.yql.connection-manager* | To use a custom configured HttpClientConnectionManager. The option is a
  org.apache.http.conn.HttpClientConnectionManager type. |  | String
-| *camel.component.yql.enabled* |  |  | Boolean
+| *camel.component.yql.enabled* | Whether to enable auto configuration of the yql component. This is
+ enabled by default. |  | Boolean
 | *camel.component.yql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

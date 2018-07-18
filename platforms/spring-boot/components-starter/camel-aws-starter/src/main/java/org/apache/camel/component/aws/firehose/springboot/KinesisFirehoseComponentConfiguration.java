@@ -34,6 +34,11 @@ public class KinesisFirehoseComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-kinesis-firehose
+     * component. This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS Kinesis Firehose default configuration
      */
     private KinesisFirehoseConfigurationNestedConfiguration configuration;

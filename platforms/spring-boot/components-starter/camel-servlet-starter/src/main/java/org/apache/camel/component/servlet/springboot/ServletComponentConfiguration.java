@@ -33,6 +33,11 @@ public class ServletComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the servlet component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default name of servlet to use. The default name is CamelServlet.
      */
     private String servletName;

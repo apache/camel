@@ -32,6 +32,11 @@ public class FreemarkerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the freemarker component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use an existing freemarker.template.Configuration instance as the
      * configuration. The option is a freemarker.template.Configuration type.
      */

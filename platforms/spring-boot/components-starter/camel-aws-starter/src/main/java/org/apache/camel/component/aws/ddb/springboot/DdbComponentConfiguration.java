@@ -36,6 +36,11 @@ public class DdbComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-ddb component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS DDB default configuration
      */
     private DdbConfigurationNestedConfiguration configuration;

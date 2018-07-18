@@ -32,6 +32,11 @@ public class HBaseComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the hbase component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration. The option is a
      * org.apache.hadoop.conf.Configuration type.
      */

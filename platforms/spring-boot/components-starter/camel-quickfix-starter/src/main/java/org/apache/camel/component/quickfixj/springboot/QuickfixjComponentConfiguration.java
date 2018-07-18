@@ -33,6 +33,11 @@ public class QuickfixjComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the quickfix component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the given MessageFactory. The option is a quickfix.MessageFactory
      * type.
      */

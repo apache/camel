@@ -34,6 +34,11 @@ public class CwComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-cw component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS CW default configuration
      */
     private CwConfigurationNestedConfiguration configuration;

@@ -33,6 +33,11 @@ public class JoltComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jolt component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Explicitly sets the Transform to use. If not set a Transform specified by
      * the transformDsl will be created. The option is a
      * com.bazaarvoice.jolt.Transform type.

@@ -35,6 +35,11 @@ public class LambdaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-lambda component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS Lambda default configuration
      */
     private LambdaConfigurationNestedConfiguration configuration;

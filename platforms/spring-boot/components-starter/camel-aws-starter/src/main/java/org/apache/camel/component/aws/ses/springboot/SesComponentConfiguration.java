@@ -34,6 +34,11 @@ public class SesComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-ses component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SES default configuration
      */
     private SesConfigurationNestedConfiguration configuration;

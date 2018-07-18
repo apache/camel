@@ -33,6 +33,11 @@ public class RestSwaggerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the rest-swagger component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * API basePath, for example /v2. Default is unset, if set overrides the
      * value present in Swagger specification.
      */

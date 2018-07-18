@@ -105,7 +105,8 @@ The component supports 9 options, which are listed below.
  for a specific key. |  | Object
 | *camel.component.atomix-map.configuration.result-header* | The header that wil carry the result. |  | String
 | *camel.component.atomix-map.configuration.ttl* | The resource ttl. |  | Long
-| *camel.component.atomix-map.enabled* |  |  | Boolean
+| *camel.component.atomix-map.enabled* | Whether to enable auto configuration of the atomix-map component. This is
+ enabled by default. |  | Boolean
 | *camel.component.atomix-map.nodes* | The nodes the AtomixClient should connect to |  | List
 | *camel.component.atomix-map.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

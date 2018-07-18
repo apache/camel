@@ -35,6 +35,10 @@ public class PropertiesComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the properties component
+     */
+    private Boolean enabled;
+    /**
      * A list of locations to load properties. This option will override any
      * default locations and only use the locations from this option.
      */

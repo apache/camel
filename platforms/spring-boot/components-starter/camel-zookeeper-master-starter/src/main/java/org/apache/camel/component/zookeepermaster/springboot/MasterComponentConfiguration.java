@@ -33,6 +33,11 @@ public class MasterComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the zookeeper-master component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom ContainerIdFactory for creating container ids. The option
      * is a org.apache.camel.component.zookeepermaster.ContainerIdFactory type.
      */

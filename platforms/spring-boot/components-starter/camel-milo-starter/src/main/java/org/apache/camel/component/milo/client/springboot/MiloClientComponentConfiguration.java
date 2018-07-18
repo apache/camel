@@ -34,6 +34,11 @@ public class MiloClientComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the milo-client component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * All default options for client
      */
     private MiloClientConfigurationNestedConfiguration defaultConfiguration;

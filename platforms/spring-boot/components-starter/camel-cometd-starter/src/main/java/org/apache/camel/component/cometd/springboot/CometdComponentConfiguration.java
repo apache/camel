@@ -35,6 +35,11 @@ public class CometdComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the cometd component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The password for the keystore when using SSL.
      */
     private String sslKeyPassword;

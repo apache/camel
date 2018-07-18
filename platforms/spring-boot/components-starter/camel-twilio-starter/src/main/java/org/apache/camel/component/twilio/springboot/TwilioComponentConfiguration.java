@@ -34,6 +34,11 @@ public class TwilioComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the twilio component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private TwilioConfigurationNestedConfiguration configuration;

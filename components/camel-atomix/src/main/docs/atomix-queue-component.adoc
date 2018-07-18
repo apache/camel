@@ -99,7 +99,8 @@ The component supports 7 options, which are listed below.
 | *camel.component.atomix-queue.configuration-uri* | The path to the AtomixClient configuration |  | String
 | *camel.component.atomix-queue.configuration.default-action* | The default action. |  | AtomixQueue$Action
 | *camel.component.atomix-queue.configuration.result-header* | The header that wil carry the result. |  | String
-| *camel.component.atomix-queue.enabled* |  |  | Boolean
+| *camel.component.atomix-queue.enabled* | Whether to enable auto configuration of the atomix-queue component. This
+ is enabled by default. |  | Boolean
 | *camel.component.atomix-queue.nodes* | The nodes the AtomixClient should connect to |  | List
 | *camel.component.atomix-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

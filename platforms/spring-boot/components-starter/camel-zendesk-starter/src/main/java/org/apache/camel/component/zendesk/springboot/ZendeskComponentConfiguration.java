@@ -32,6 +32,11 @@ public class ZendeskComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the zendesk component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private ZendeskConfigurationNestedConfiguration configuration;

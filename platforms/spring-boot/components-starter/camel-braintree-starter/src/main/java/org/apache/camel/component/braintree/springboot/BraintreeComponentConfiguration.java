@@ -35,6 +35,11 @@ public class BraintreeComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the braintree component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private BraintreeConfigurationNestedConfiguration configuration;

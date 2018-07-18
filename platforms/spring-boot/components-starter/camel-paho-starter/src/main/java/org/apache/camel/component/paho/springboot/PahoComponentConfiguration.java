@@ -33,6 +33,11 @@ public class PahoComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the paho component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The URL of the MQTT broker.
      */
     private String brokerUrl;

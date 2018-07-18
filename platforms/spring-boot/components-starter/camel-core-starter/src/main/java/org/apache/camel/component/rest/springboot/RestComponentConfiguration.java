@@ -33,6 +33,10 @@ public class RestComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the rest component
+     */
+    private Boolean enabled;
+    /**
      * The Camel Rest component to use for the REST transport, such as restlet,
      * spark-rest. If no component has been explicit configured, then Camel will
      * lookup if there is a Camel component that integrates with the Rest DSL,

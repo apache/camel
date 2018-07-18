@@ -35,6 +35,11 @@ public class YammerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the yammer component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The consumer key
      */
     private String consumerKey;

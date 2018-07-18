@@ -105,7 +105,8 @@ The component supports 10 options, which are listed below.
 | *camel.component.atomix-messaging.configuration.default-action* | The default action. |  | AtomixMessaging$Action
 | *camel.component.atomix-messaging.configuration.member-name* | The Atomix Group member name |  | String
 | *camel.component.atomix-messaging.configuration.result-header* | The header that wil carry the result. |  | String
-| *camel.component.atomix-messaging.enabled* |  |  | Boolean
+| *camel.component.atomix-messaging.enabled* | Whether to enable auto configuration of the atomix-messaging component.
+ This is enabled by default. |  | Boolean
 | *camel.component.atomix-messaging.nodes* | The nodes the AtomixClient should connect to |  | List
 | *camel.component.atomix-messaging.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property

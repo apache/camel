@@ -37,6 +37,11 @@ public class KinesisComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-kinesis component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS S3 default configuration
      */
     private KinesisConfigurationNestedConfiguration configuration;

@@ -32,6 +32,11 @@ public class HttpComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the https component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the custom HttpClientConfigurer to perform configuration of the
      * HttpClient that will be used. The option is a
      * org.apache.camel.component.http.HttpClientConfigurer type.

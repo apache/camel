@@ -90,7 +90,8 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.mybatis-bean.configuration-uri* | Location of MyBatis xml configuration file. The default value is:
  SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
-| *camel.component.mybatis-bean.enabled* |  |  | Boolean
+| *camel.component.mybatis-bean.enabled* | Whether to enable auto configuration of the mybatis-bean component. This
+ is enabled by default. |  | Boolean
 | *camel.component.mybatis-bean.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

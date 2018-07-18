@@ -37,6 +37,11 @@ public class FhirComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the fhir component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private FhirConfigurationNestedConfiguration configuration;

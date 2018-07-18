@@ -33,6 +33,11 @@ public class JCacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jcache component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The fully qualified class name of the javax.cache.spi.CachingProvider
      */
     private String cachingProvider;

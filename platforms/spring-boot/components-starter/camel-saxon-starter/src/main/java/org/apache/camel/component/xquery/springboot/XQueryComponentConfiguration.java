@@ -32,6 +32,11 @@ public class XQueryComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xquery component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the custom ModuleURIResolver. The option is a
      * net.sf.saxon.lib.ModuleURIResolver type.
      */

@@ -36,6 +36,11 @@ public class EtcdComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the etcd component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To set the URIs the client connects.
      */
     private String uris;

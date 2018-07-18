@@ -38,6 +38,11 @@ public class MailComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the pop3s component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the Mail configuration
      */
     private MailConfigurationNestedConfiguration configuration;

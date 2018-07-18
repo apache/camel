@@ -36,6 +36,11 @@ public class MllpComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mllp component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Set the component to log PHI data.
      */
     private Boolean logPhi = true;

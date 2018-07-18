@@ -33,6 +33,11 @@ public class CMISComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the cmis component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade
      * instances. The option is a
      * org.apache.camel.component.cmis.CMISSessionFacadeFactory type.

@@ -41,6 +41,11 @@ public class ServiceNowComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the servicenow component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The ServiceNow instance name
      */
     private String instanceName;

@@ -33,6 +33,11 @@ public class KestrelComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the kestrel component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared configured configuration as base for creating new
      * endpoints.
      */

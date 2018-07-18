@@ -36,6 +36,11 @@ public class AtomixMapComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-map component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixMapConfigurationNestedConfiguration configuration;
