@@ -114,16 +114,23 @@ The component supports 15 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.aws-ddbstream.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ddbstream.configuration.access-key* |  |  | String
-| *camel.component.aws-ddbstream.configuration.amazon-dynamo-db-streams-client* |  |  | AmazonDynamoDBStreams
-| *camel.component.aws-ddbstream.configuration.iterator-type* |  |  | ShardIteratorType
-| *camel.component.aws-ddbstream.configuration.max-results-per-request* |  |  | Integer
-| *camel.component.aws-ddbstream.configuration.proxy-host* |  |  | String
-| *camel.component.aws-ddbstream.configuration.proxy-port* |  |  | Integer
-| *camel.component.aws-ddbstream.configuration.region* |  |  | String
-| *camel.component.aws-ddbstream.configuration.secret-key* |  |  | String
-| *camel.component.aws-ddbstream.configuration.sequence-number-provider* |  |  | SequenceNumberProvider
-| *camel.component.aws-ddbstream.configuration.table-name* |  |  | String
+| *camel.component.aws-ddbstream.configuration.access-key* | "Amazon AWS Access Key" |  | String
+| *camel.component.aws-ddbstream.configuration.amazon-dynamo-db-streams-client* | "Amazon DynamoDB client to use for all requests for this endpoint" |  | AmazonDynamoDBStreams
+| *camel.component.aws-ddbstream.configuration.iterator-type* | "Defines where in the DynaboDB stream" +
+ " to start getting records. Note that using TRIM_HORIZON can cause a"
+ + " significant delay before the stream has caught up to real-time."+
+ " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider"
+ + " MUST be supplied." |  | ShardIteratorType
+| *camel.component.aws-ddbstream.configuration.max-results-per-request* | "Maximum number of records that will be fetched in each poll" |  | Integer
+| *camel.component.aws-ddbstream.configuration.proxy-host* | "To define a proxy host when instantiating the DDBStreams client" |  | String
+| *camel.component.aws-ddbstream.configuration.proxy-port* | "To define a proxy port when instantiating the DDBStreams client" |  | Integer
+| *camel.component.aws-ddbstream.configuration.region* | "The region in which DDBStreams client needs to work" |  | String
+| *camel.component.aws-ddbstream.configuration.secret-key* | "Amazon AWS Secret Key" |  | String
+| *camel.component.aws-ddbstream.configuration.sequence-number-provider* | "Provider for the sequence number when" +
+ " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
+ +
+ " iterator types. Can be a registry reference or a literal sequence number." |  | SequenceNumberProvider
+| *camel.component.aws-ddbstream.configuration.table-name* | "Name of the dynamodb table" |  | String
 | *camel.component.aws-ddbstream.enabled* | Enable aws-ddbstream component | true | Boolean
 | *camel.component.aws-ddbstream.region* | Amazon AWS Region |  | String
 | *camel.component.aws-ddbstream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when

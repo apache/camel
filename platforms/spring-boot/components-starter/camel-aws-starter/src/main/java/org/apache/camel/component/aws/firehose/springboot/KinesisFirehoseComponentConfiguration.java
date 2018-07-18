@@ -105,12 +105,34 @@ public class KinesisFirehoseComponentConfiguration
 
     public static class KinesisFirehoseConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration.class;
+        /**
+         * Amazon Kinesis Firehose client to use for all requests for this
+         * endpoint
+         */
         private AmazonKinesisFirehose amazonKinesisFirehoseClient;
+        /**
+         * Name of the stream
+         */
         private String streamName;
+        /**
+         * Amazon AWS Access Key
+         */
         private String accessKey;
+        /**
+         * Amazon AWS Secret Key
+         */
         private String secretKey;
+        /**
+         * The region in which Kinesis client needs to work
+         */
         private String region;
+        /**
+         * To define a proxy host when instantiating the DDBStreams client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the DDBStreams client
+         */
         private Integer proxyPort;
 
         public AmazonKinesisFirehose getAmazonKinesisFirehoseClient() {

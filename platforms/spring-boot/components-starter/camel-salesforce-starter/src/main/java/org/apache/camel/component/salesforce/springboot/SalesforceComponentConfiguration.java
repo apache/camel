@@ -584,9 +584,8 @@ public class SalesforceComponentConfiguration
          */
         private PayloadFormat format;
         /**
-         * Use raw payload {@link String} for request and response (either JSON
-         * or XML depending on {@code format} ), instead of DTOs, false by
-         * default
+         * Use raw payload String for request and response (either JSON or XML
+         * depending on format), instead of DTOs, false by default
          */
         private Boolean rawPayload = false;
         /**
@@ -682,23 +681,23 @@ public class SalesforceComponentConfiguration
         private NotifyForFieldsEnum notifyForFields;
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version < 29.0)
+         * version 29.0)
          */
         private NotifyForOperationsEnum notifyForOperations;
         /**
-         * Notify for create operation, defaults to false (API version >= 29.0)
+         * Notify for create operation, defaults to false (API version = 29.0)
          */
         private Boolean notifyForOperationCreate;
         /**
-         * Notify for update operation, defaults to false (API version >= 29.0)
+         * Notify for update operation, defaults to false (API version = 29.0)
          */
         private Boolean notifyForOperationUpdate;
         /**
-         * Notify for delete operation, defaults to false (API version >= 29.0)
+         * Notify for delete operation, defaults to false (API version = 29.0)
          */
         private Boolean notifyForOperationDelete;
         /**
-         * Notify for un-delete operation, defaults to false (API version >=
+         * Notify for un-delete operation, defaults to false (API version =
          * 29.0)
          */
         private Boolean notifyForOperationUndelete;
@@ -740,10 +739,8 @@ public class SalesforceComponentConfiguration
          */
         private Long maxBackoff;
         /**
-         * Default replayId setting if no value is found in
-         * {@link #initialReplayIdMap}
-         * 
-         * @param defaultReplayId
+         * Default replayId setting if no value is found in link
+         * initialReplayIdMap
          */
         private Long defaultReplayId;
         /**
@@ -753,8 +750,6 @@ public class SalesforceComponentConfiguration
         /**
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
-         * 
-         * @param limit
          */
         private Integer limit;
         /**
@@ -807,9 +802,9 @@ public class SalesforceComponentConfiguration
         private Boolean approvalSkipEntryCriteria;
         /**
          * Sets the behaviour of 404 not found status received from Salesforce
-         * API. Should the body be set to NULL {@link NotFoundBehaviour#NULL} or
-         * should a exception be signaled on the exchange
-         * {@link NotFoundBehaviour#EXCEPTION} - the default.
+         * API. Should the body be set to NULL link NotFoundBehaviourNULL or
+         * should a exception be signaled on the exchange link
+         * NotFoundBehaviourEXCEPTION - the default.
          */
         private NotFoundBehaviour notFoundBehaviour;
 

@@ -131,7 +131,13 @@ public class LambdaComponentConfiguration
          * createFunction, deleteFunction or invokeFunction
          */
         private LambdaOperations operation;
+        /**
+         * To define a proxy host when instantiating the Lambda client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the Lambda client
+         */
         private Integer proxyPort;
 
         public String getFunction() {

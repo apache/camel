@@ -124,8 +124,17 @@ public class EC2ComponentConfiguration
          * unmonitorInstances, createTags or deleteTags
          */
         private EC2Operations operation;
+        /**
+         * To define a proxy host when instantiating the EC2 client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the EC2 client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which EC2 client needs to work
+         */
         private String region;
 
         public AmazonEC2Client getAmazonEc2Client() {

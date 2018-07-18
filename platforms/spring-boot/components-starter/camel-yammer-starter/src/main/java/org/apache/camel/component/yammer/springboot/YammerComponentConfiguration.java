@@ -144,7 +144,7 @@ public class YammerComponentConfiguration
          * Returns messages older than the message ID specified as a numeric
          * string. This is useful for paginating messages. For example, if
          * you're currently viewing 20 messages and the oldest is number 2912,
-         * you could append "?olderThan=2912″ to your request to get the 20
+         * you could append olderThan=2912 to your request to get the 20
          * messages prior to those you're seeing.
          */
         private Integer olderThan = -1;
@@ -152,7 +152,7 @@ public class YammerComponentConfiguration
          * Returns messages newer than the message ID specified as a numeric
          * string. This should be used when polling for new messages. If you're
          * looking at messages, and the most recent message returned is 3516,
-         * you can make a request with the parameter "?newerThan=3516″ to ensure
+         * you can make a request with the parameter newerThan=3516 to ensure
          * that you do not get duplicate copies of messages already on your
          * page.
          */

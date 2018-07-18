@@ -141,8 +141,17 @@ public class SesComponentConfiguration
          * 'CamelAwsSesReplyToAddresses' header.
          */
         private List replyToAddresses;
+        /**
+         * To define a proxy host when instantiating the SES client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the SES client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which SES client needs to work
+         */
         private String region;
 
         public String getAccessKey() {

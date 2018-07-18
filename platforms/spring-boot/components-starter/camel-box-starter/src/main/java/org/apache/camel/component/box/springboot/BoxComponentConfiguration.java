@@ -75,115 +75,66 @@ public class BoxComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.box.BoxConfiguration.class;
         /**
          * What kind of operation to perform
-         * 
-         * @param apiNamethe
-         *            API Name to set
          */
         private BoxApiName apiName;
         /**
          * What sub operation to use for the selected operation
-         * 
-         * @param methodNamethe
-         *            methodName to set
          */
         private String methodName;
         /**
          * The enterprise ID to use for an App Enterprise.
-         * 
-         * @param enterpriseIdthe
-         *            enterpriseId to set
          */
         private String enterpriseId;
         /**
          * The user ID to use for an App User.
-         * 
-         * @param userIdthe
-         *            userId to set
          */
         private String userId;
         /**
          * The ID for public key for validating the JWT signature.
-         * 
-         * @param publicKeyIdthe
-         *            publicKeyId to set
          */
         private String publicKeyId;
         /**
          * The private key for generating the JWT signature.
-         * 
-         * @param privateKeythe
-         *            privateKey to set
          */
         private String privateKeyFile;
         /**
          * The password for the private key.
-         * 
-         * @param privateKeyPasswordthe
-         *            privateKeyPassword to set
          */
         private String privateKeyPassword;
         /**
-         * The type of authentication for connection.
-         * <p>
-         * Types of Authentication:
-         * <ul>
-         * <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged)</li>
-         * <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens</li>
-         * </ul>
-         * 
-         * @param authenticationTypethe
-         *            authenticationType to set
+         * The type of authentication for connection. Types of Authentication:
+         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
+         * - OAuth 2.0 with JSON Web Tokens
          */
         private String authenticationType = "APP_USER_AUTHENTICATION";
         /**
          * Box application client ID
-         * 
-         * @param clientIdthe
-         *            clientId to set
          */
         private String clientId;
         /**
          * Box application client secret
-         * 
-         * @param clientSecretthe
-         *            clientSecret to set
          */
         private String clientSecret;
         /**
          * Box user name, MUST be provided
-         * 
-         * @param userNamethe
-         *            userName to set
          */
         private String userName;
         /**
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call
-         * 
-         * @param userPasswordthe
-         *            userPassword to set
          */
         private String userPassword;
         /**
          * Custom HTTP params for settings like proxy host
-         * 
-         * @param httpParamsthe
-         *            httpParams to set
          */
         private Map httpParams;
         /**
          * To configure security using SSLContextParameters.
-         * 
-         * @param sslContextParametersthe
-         *            sslContextParameters to set
          */
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
-         * 
-         * @param accessTokenCache
-         *            - the Custom Access Token Cache
          */
         private IAccessTokenCache accessTokenCache;
 

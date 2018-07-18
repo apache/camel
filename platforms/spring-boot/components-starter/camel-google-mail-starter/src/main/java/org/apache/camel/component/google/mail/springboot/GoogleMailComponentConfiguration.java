@@ -110,8 +110,7 @@ public class GoogleMailComponentConfiguration
          */
         private String refreshToken;
         /**
-         * Google mail application name. Example would be
-         * "camel-google-mail/1.0"
+         * Google mail application name. Example would be camel-google-mail/1.0
          */
         private String applicationName;
 

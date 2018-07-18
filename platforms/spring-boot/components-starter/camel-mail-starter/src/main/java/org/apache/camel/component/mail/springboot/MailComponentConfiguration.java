@@ -38,7 +38,7 @@ public class MailComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the imap component. This is
+     * Whether to enable auto configuration of the pop3s component. This is
      * enabled by default.
      */
     private Boolean enabled;
@@ -100,9 +100,8 @@ public class MailComponentConfiguration
     public static class MailConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.mail.MailConfiguration.class;
         /**
-         * To use a custom
-         * {@link org.apache.camel.component.mail.JavaMailSender} for sending
-         * emails.
+         * To use a custom org.apache.camel.component.mail.JavaMailSender for
+         * sending emails.
          */
         private JavaMailSender javaMailSender;
         /**
@@ -286,19 +285,17 @@ public class MailComponentConfiguration
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to skip the message and move on to retrieve the next
-         * mail message.
-         * <p/>
-         * The default behavior would be the consumer throws an exception and no
-         * mails from the batch would be able to be routed by Camel.
+         * mail message. The default behavior would be the consumer throws an
+         * exception and no mails from the batch would be able to be routed by
+         * Camel.
          */
         private Boolean skipFailedMessage = false;
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to handle the caused exception by the consumer's error
          * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead.
-         * <p/>
-         * The default behavior would be the consumer throws an exception and no
+         * Camel routing error handler can handle the exception instead. The
+         * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          */
         private Boolean handleFailedMessage = false;

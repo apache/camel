@@ -181,11 +181,10 @@ public class NettyHttpComponentConfiguration
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized.
-         * <p/>
-         * This is by default turned off. If you enable this then be aware that
-         * Java will deserialize the incoming data from the request to Java and
-         * that can be a potential security risk.
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Java will deserialize the incoming
+         * data from the request to Java and that can be a potential security
+         * risk.
          */
         private Boolean transferException = false;
         /**
@@ -229,8 +228,8 @@ public class NettyHttpComponentConfiguration
         private String path;
         /**
          * Determines whether or not the raw input stream from Netty
-         * HttpRequest#getContent() or HttpResponset#getContent() is cached or
-         * not (Camel will read the stream into a in light-weight memory based
+         * HttpRequestgetContent() or HttpResponsetgetContent() is cached or not
+         * (Camel will read the stream into a in light-weight memory based
          * Stream caching) cache. By default Camel will cache the Netty input
          * stream to support reading it multiple times to ensure it Camel can
          * retrieve all data from the stream. However you can set this option to
@@ -242,8 +241,8 @@ public class NettyHttpComponentConfiguration
          * the Netty stream when the Netty HTTP server/HTTP client is done
          * processing, which means that if the asynchronous routing engine is in
          * use then any asynchronous thread that may continue routing the
-         * {@link org.apache.camel.Exchange} may not be able to read the Netty
-         * stream, because Netty has closed it.
+         * org.apache.camel.Exchange may not be able to read the Netty stream,
+         * because Netty has closed it.
          */
         private Boolean disableStreamCache = false;
         /**
@@ -260,17 +259,15 @@ public class NettyHttpComponentConfiguration
         /**
          * The maximum length of all headers. If the sum of the length of each
          * header exceeds this value, a
-         * {@link io.netty.handler.codec.TooLongFrameException} will be raised.
+         * io.netty.handler.codec.TooLongFrameException will be raised.
          */
         private Integer maxHeaderSize = 8192;
         private Boolean allowDefaultCodec;
         /**
          * The status codes which are considered a success response. The values
          * are inclusive. Multiple ranges can be defined, separated by comma,
-         * e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number
-         * or from-to with the dash included.
-         * <p/>
-         * The default range is <tt>200-299</tt>
+         * e.g. 200-204,209,301-304. Each range must be a single number or
+         * from-to with the dash included. The default range is 200-299
          */
         private String okStatusCodeRange = "200-299";
         /**

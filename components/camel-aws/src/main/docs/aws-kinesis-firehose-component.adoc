@@ -93,13 +93,13 @@ The component supports 12 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.aws-kinesis-firehose.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-kinesis-firehose.configuration.access-key* |  |  | String
-| *camel.component.aws-kinesis-firehose.configuration.amazon-kinesis-firehose-client* |  |  | AmazonKinesisFirehose
-| *camel.component.aws-kinesis-firehose.configuration.proxy-host* |  |  | String
-| *camel.component.aws-kinesis-firehose.configuration.proxy-port* |  |  | Integer
-| *camel.component.aws-kinesis-firehose.configuration.region* |  |  | String
-| *camel.component.aws-kinesis-firehose.configuration.secret-key* |  |  | String
-| *camel.component.aws-kinesis-firehose.configuration.stream-name* |  |  | String
+| *camel.component.aws-kinesis-firehose.configuration.access-key* | "Amazon AWS Access Key" |  | String
+| *camel.component.aws-kinesis-firehose.configuration.amazon-kinesis-firehose-client* | "Amazon Kinesis Firehose client to use for all requests for this endpoint" |  | AmazonKinesisFirehose
+| *camel.component.aws-kinesis-firehose.configuration.proxy-host* | "To define a proxy host when instantiating the DDBStreams client" |  | String
+| *camel.component.aws-kinesis-firehose.configuration.proxy-port* | "To define a proxy port when instantiating the DDBStreams client" |  | Integer
+| *camel.component.aws-kinesis-firehose.configuration.region* | "The region in which Kinesis client needs to work" |  | String
+| *camel.component.aws-kinesis-firehose.configuration.secret-key* | "Amazon AWS Secret Key" |  | String
+| *camel.component.aws-kinesis-firehose.configuration.stream-name* | "Name of the stream" |  | String
 | *camel.component.aws-kinesis-firehose.enabled* | Enable aws-kinesis-firehose component | true | Boolean
 | *camel.component.aws-kinesis-firehose.region* | Amazon AWS Region |  | String
 | *camel.component.aws-kinesis-firehose.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when

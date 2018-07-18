@@ -17,7 +17,6 @@
 package org.apache.camel.component.etcd.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -133,7 +132,6 @@ public class EtcdComponentConfiguration
 
     public static class EtcdConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.etcd.EtcdConfiguration.class;
-        private CamelContext camelContext;
         /**
          * To set the URIs the client connects.
          */
@@ -175,14 +173,6 @@ public class EtcdComponentConfiguration
          * The path to look for for service discovery
          */
         private String servicePath = "/services/";
-
-        public CamelContext getCamelContext() {
-            return camelContext;
-        }
-
-        public void setCamelContext(CamelContext camelContext) {
-            this.camelContext = camelContext;
-        }
 
         public String getUris() {
             return uris;

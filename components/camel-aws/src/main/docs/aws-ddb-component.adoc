@@ -103,11 +103,11 @@ The component supports 18 options, which are listed below.
 | *camel.component.aws-ddb.configuration.key-attribute-name* | Attribute name when creating table |  | String
 | *camel.component.aws-ddb.configuration.key-attribute-type* | Attribute type when creating table |  | String
 | *camel.component.aws-ddb.configuration.operation* | What operation to perform |  | DdbOperations
-| *camel.component.aws-ddb.configuration.proxy-host* |  |  | String
-| *camel.component.aws-ddb.configuration.proxy-port* |  |  | Integer
+| *camel.component.aws-ddb.configuration.proxy-host* | To define a proxy host when instantiating the DDB client |  | String
+| *camel.component.aws-ddb.configuration.proxy-port* | To define a proxy port when instantiating the DDB client |  | Integer
 | *camel.component.aws-ddb.configuration.read-capacity* | The provisioned throughput to reserve for reading resources from your
  table |  | Long
-| *camel.component.aws-ddb.configuration.region* |  |  | String
+| *camel.component.aws-ddb.configuration.region* | The region in which DDB client needs to work |  | String
 | *camel.component.aws-ddb.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ddb.configuration.table-name* | The name of the table currently worked with. |  | String
 | *camel.component.aws-ddb.configuration.write-capacity* | The provisioned throughput to reserved for writing resources to your

@@ -128,7 +128,7 @@ The component supports 32 options, which are listed below.
  serializing/deserializing the data. |  | DataConverter
 | *camel.component.aws-swf.configuration.domain-name* | The workflow domain to use. |  | String
 | *camel.component.aws-swf.configuration.event-name* | The workflow or activity event name to use. |  | String
-| *camel.component.aws-swf.configuration.execution-start-to-close-timeout* |  | 3600 | String
+| *camel.component.aws-swf.configuration.execution-start-to-close-timeout* | Set the execution start to close timeout. | 3600 | String
 | *camel.component.aws-swf.configuration.operation* | Workflow operation | START | String
 | *camel.component.aws-swf.configuration.region* | Amazon AWS Region. |  | String
 | *camel.component.aws-swf.configuration.s-w-client-parameters* | To configure the AmazonSimpleWorkflowClient using the key/values from
@@ -140,7 +140,7 @@ The component supports 32 options, which are listed below.
  
  @param startWorkflowOptionsParameters |  | Map
 | *camel.component.aws-swf.configuration.state-result-type* | The type of the result when a workflow state is queried. |  | String
-| *camel.component.aws-swf.configuration.task-start-to-close-timeout* |  | 600 | String
+| *camel.component.aws-swf.configuration.task-start-to-close-timeout* | Set the task start to close timeout. | 600 | String
 | *camel.component.aws-swf.configuration.termination-details* | Details for terminating a workflow. |  | String
 | *camel.component.aws-swf.configuration.termination-reason* | The reason for terminating a workflow. |  | String
 | *camel.component.aws-swf.configuration.type* | Activity or workflow |  | String

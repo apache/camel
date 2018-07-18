@@ -122,8 +122,17 @@ public class MQComponentConfiguration
          * listBrokers,createBroker,deleteBroker
          */
         private MQOperations operation;
+        /**
+         * To define a proxy host when instantiating the MQ client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the MQ client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which MQ client needs to work
+         */
         private String region;
 
         public AmazonMQ getAmazonMqClient() {

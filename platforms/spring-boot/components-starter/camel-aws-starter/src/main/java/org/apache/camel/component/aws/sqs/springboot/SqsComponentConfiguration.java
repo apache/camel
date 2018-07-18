@@ -212,9 +212,25 @@ public class SqsComponentConfiguration
          * queueOwnerAWSAccountId to build the service URL.
          */
         private String region;
+        /**
+         * Allows you to use multiple threads to poll the sqs queue to increase
+         * throughput
+         */
         private Integer concurrentConsumers = 1;
+        /**
+         * To define the queueUrl explicitly. All other parameters, which would
+         * influence the queueUrl, are ignored. This parameter is intended to be
+         * used, to connect to a mock implementation of SQS, for testing
+         * purposes.
+         */
         private String queueUrl;
+        /**
+         * To define a proxy host when instantiating the SQS client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the SQS client
+         */
         private Integer proxyPort;
 
         public String getAmazonAWSHost() {

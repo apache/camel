@@ -107,15 +107,50 @@ public class DdbStreamComponentConfiguration
 
     public static class DdbStreamConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration.class;
+        /**
+         * Amazon DynamoDB client to use for all requests for this endpoint
+         */
         private AmazonDynamoDBStreams amazonDynamoDbStreamsClient;
+        /**
+         * Amazon AWS Access Key
+         */
         private String accessKey;
+        /**
+         * Amazon AWS Secret Key
+         */
         private String secretKey;
+        /**
+         * The region in which DDBStreams client needs to work
+         */
         private String region;
+        /**
+         * Maximum number of records that will be fetched in each poll
+         */
         private Integer maxResultsPerRequest;
+        /**
+         * Name of the dynamodb table
+         */
         private String tableName;
+        /**
+         * Defines where in the DynaboDB stream to start getting records. Note
+         * that using TRIM_HORIZON can cause a significant delay before the
+         * stream has caught up to real-time. if AT,AFTER_SEQUENCE_NUMBER are
+         * used, then a sequenceNumberProvider MUST be supplied.
+         */
         private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
+        /**
+         * Provider for the sequence number when using one of the two
+         * ShardIteratorType.AT,AFTER_SEQUENCE_NUMBER iterator types. Can be a
+         * registry reference or a literal sequence number.
+         */
         private SequenceNumberProvider sequenceNumberProvider;
+        /**
+         * To define a proxy host when instantiating the DDBStreams client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the DDBStreams client
+         */
         private Integer proxyPort;
 
         public AmazonDynamoDBStreams getAmazonDynamoDbStreamsClient() {

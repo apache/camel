@@ -91,8 +91,6 @@ public class ZooKeeperComponentConfiguration
         private Boolean repeat = false;
         /**
          * Not in use
-         * 
-         * @deprecated The usage of this option has no effect at all.
          */
         @Deprecated
         private Boolean awaitExistence = true;

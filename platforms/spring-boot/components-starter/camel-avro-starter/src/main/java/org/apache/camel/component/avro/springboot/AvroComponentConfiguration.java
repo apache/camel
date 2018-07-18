@@ -81,6 +81,9 @@ public class AvroComponentConfiguration
          * Avro protocol to use
          */
         private Protocol protocol;
+        /**
+         * Transport to use, can be either http or netty
+         */
         private AvroTransport transport;
         /**
          * Avro protocol location
