@@ -232,7 +232,7 @@ The component supports 29 options, which are listed below.
 | *camel.component.facebook.configuration.o-auth-app-secret* | The application Secret |  | String
 | *camel.component.facebook.configuration.o-auth-authorization-u-r-l* | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
 | *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See
- https://developers.facebook.com/docs/reference/login/#permissions for
+ https://developers.facebook.com/docs/reference/login/permissions for
  the detail |  | String
 | *camel.component.facebook.configuration.pretty-debug-enabled* | Prettify JSON debug output if set to true | false | Boolean
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String

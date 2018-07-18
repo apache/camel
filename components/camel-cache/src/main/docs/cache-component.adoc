@@ -139,11 +139,8 @@ The component supports 17 options, which are listed below.
  memory. | 1000 | Integer
 | *camel.component.cache.configuration.memory-store-eviction-policy* | Which eviction strategy to use when maximum number of elements in
  memory is reached. The strategy defines which elements to be removed.
- <ul>
- <li>LRU - Lest Recently Used</li>
- <li>LFU - Lest Frequently Used</li>
- <li>FIFO - First In First Out</li>
- </ul> |  | MemoryStoreEviction Policy
+ LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In
+ First Out |  | MemoryStoreEviction Policy
 | *camel.component.cache.configuration.object-cache* | Whether to turn on allowing to store non serializable objects in the
  cache. If this option is enabled then overflow to disk cannot be
  enabled as well. | false | Boolean

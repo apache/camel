@@ -110,7 +110,7 @@ The component supports 14 options, which are listed below.
  id, public key and private key fields. |  | String
 | *camel.component.braintree.configuration.api-name* | What kind of operation to perform |  | BraintreeApiName
 | *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
-| *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, @see java.util.logging.Level |  | Level
+| *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, see java.util.logging.Level |  | Level
 | *camel.component.braintree.configuration.http-log-name* | Set log category to use to log http calls, default "Braintree" |  | String
 | *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | Integer
 | *camel.component.braintree.configuration.merchant-id* | The merchant id provided by Braintree. |  | String

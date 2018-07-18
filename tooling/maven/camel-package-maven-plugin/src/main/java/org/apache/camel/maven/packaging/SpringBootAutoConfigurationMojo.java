@@ -853,13 +853,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     description = sourceProp.getField().getJavaDoc().getFullText();
                 }
                 if (Strings.isBlank(description) && sourceProp.hasAnnotation(UriPath.class)) {
-                    description = sourceProp.getAnnotation(UriPath.class).getLiteralValue("description");
+                    description = sourceProp.getAnnotation(UriPath.class).getStringValue("description");
                 }
                 if (Strings.isBlank(description) && sourceProp.hasAnnotation(UriParam.class)) {
-                    description = sourceProp.getAnnotation(UriParam.class).getLiteralValue("description");
+                    description = sourceProp.getAnnotation(UriParam.class).getStringValue("description");
                 }
                 if (Strings.isBlank(description) && sourceProp.hasAnnotation(Metadata.class)) {
-                    description = sourceProp.getAnnotation(Metadata.class).getLiteralValue("description");
+                    description = sourceProp.getAnnotation(Metadata.class).getStringValue("description");
                 }
                 if (!Strings.isBlank(description)) {
                     prop.getField().getJavaDoc().setFullText(description);

@@ -518,18 +518,24 @@ The component supports 173 options, which are listed below.
 | *camel.component.jms.configuration.acknowledgement-mode-name* | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
  CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ ACKNOWLEDGE | String
 | *camel.component.jms.configuration.allow-additional-headers* | This option is used to allow additional headers which may have values
- that are invalid according to JMS specification. + For example some
+ that are invalid according to JMS specification. For example some
  message systems such as WMQ do this with header names using prefix
  JMS_IBM_MQMD_ containing values with byte array or other invalid
- types. + You can specify multiple header names separated by comma,
- and use * as suffix for wildcard matching. |  | String
+ types. You can specify multiple header names separated by comma, and
+ use as suffix for wildcard matching. |  | String
 | *camel.component.jms.configuration.allow-null-body* | Whether to allow sending messages with no body. If this option is
  false and the message body is null, then an JMSException is thrown. | true | Boolean
-| *camel.component.jms.configuration.allow-reply-manager-quick-stop* |  | false | Boolean
+| *camel.component.jms.configuration.allow-reply-manager-quick-stop* | Whether the DefaultMessageListenerContainer used in the reply
+ managers for request-reply messaging allow the link
+ DefaultMessageListenerContainerrunningAllowed() flag to quick stop in
+ case link JmsConfigurationisAcceptMessagesWhileStopping() is enabled,
+ and org.apache.camel.CamelContext is currently being stopped. This
+ quick stop ability is enabled by default in the regular JMS consumers
+ but to enable for reply managers you must enable this flag. | false | Boolean
 | *camel.component.jms.configuration.allow-serialized-headers* | Controls whether or not to include serialized headers. Applies only
- when {@link #isTransferExchange()} is {@code true} . This requires
- that the objects are serializable. Camel will exclude any
- non-serializable objects and log it at WARN level. | false | Boolean
+ when link isTransferExchange() is true. This requires that the
+ objects are serializable. Camel will exclude any non-serializable
+ objects and log it at WARN level. | false | Boolean
 | *camel.component.jms.configuration.always-copy-message* | If true, Camel will always make a JMS message copy of the message
  when it is passed to the producer for sending. Copying the message is
  needed in some situations, such as when a
@@ -569,22 +575,18 @@ The component supports 173 options, which are listed below.
 | *camel.component.jms.configuration.client-id* | Sets the JMS client ID to use. Note that this value, if specified,
  must be unique and can only be used by a single JMS connection
  instance. It is typically only required for durable topic
- subscriptions.
- <p>
- If using Apache ActiveMQ you may prefer to use Virtual Topics
- instead. |  | String
+ subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
+ Topics instead. |  | String
 | *camel.component.jms.configuration.concurrent-consumers* | Specifies the default number of concurrent consumers when consuming
  from JMS (not for request/reply over JMS). See also the
  maxMessagesPerTask option to control dynamic scaling up/down of
- threads.
- <p>
- When doing request/reply over JMS then the option
+ threads. When doing request/reply over JMS then the option
  replyToConcurrentConsumers is used to control number of concurrent
  consumers on the reply message listener. | 1 | Integer
 | *camel.component.jms.configuration.connection-factory* | Sets the default connection factory to be used if a connection
- factory is not specified for either
- {@link #setTemplateConnectionFactory(ConnectionFactory)} or
- {@link #setListenerConnectionFactory(ConnectionFactory)} |  | ConnectionFactory
+ factory is not specified for either link
+ setTemplateConnectionFactory(ConnectionFactory) or link
+ setListenerConnectionFactory(ConnectionFactory) |  | ConnectionFactory
 | *camel.component.jms.configuration.consumer-type* | The consumer type to use, which can be one of: Simple, Default, or
  Custom. The consumer type determines which Spring JMS listener to
  use. Default will use
@@ -609,9 +611,9 @@ The component supports 173 options, which are listed below.
  ThreadPoolTaskExecutor with optimal values - cached threadpool-like).
  If not set, it defaults to the previous behaviour, which uses a
  cached thread pool for consumer endpoints and SimpleAsync for reply
- consumers. The use of ThreadPool is recommended to reduce
- "thread trash" in elastic configurations with dynamically increasing
- and decreasing concurrent consumers. |  | DefaultTaskExecutor Type
+ consumers. The use of ThreadPool is recommended to reduce thread
+ trash in elastic configurations with dynamically increasing and
+ decreasing concurrent consumers. |  | DefaultTaskExecutor Type
 | *camel.component.jms.configuration.delivery-mode* | Specifies the delivery mode to be used. Possibles values are those
  defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
  = 2. |  | Integer
@@ -687,7 +689,7 @@ The component supports 173 options, which are listed below.
  brokers which do not care whether JMS header keys contain illegal
  characters. You can provide your own implementation of the
  org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
- using the # notation. |  | JmsKeyFormatStrategy
+ using the notation. |  | JmsKeyFormatStrategy
 | *camel.component.jms.configuration.jms-message-type* | Allows you to force the use of a specific javax.jms.Message
  implementation for sending JMS messages. Possible values are: Bytes,
  Map, Object, Stream, Text. By default, Camel would determine which
@@ -705,21 +707,19 @@ The component supports 173 options, which are listed below.
 | *camel.component.jms.configuration.max-concurrent-consumers* | Specifies the maximum number of concurrent consumers when consuming
  from JMS (not for request/reply over JMS). See also the
  maxMessagesPerTask option to control dynamic scaling up/down of
- threads.
- <p>
- When doing request/reply over JMS then the option
+ threads. When doing request/reply over JMS then the option
  replyToMaxConcurrentConsumers is used to control number of concurrent
  consumers on the reply message listener. |  | Integer
 | *camel.component.jms.configuration.max-messages-per-task* | The number of messages per task. -1 is unlimited. If you use a range
- for concurrent consumers (eg min < max), then this option can be used
+ for concurrent consumers (eg min max), then this option can be used
  to set a value to eg 100 to control how fast the consumers will
  shrink when less work is required. | -1 | Integer
 | *camel.component.jms.configuration.message-converter* | To use a custom Spring
  org.springframework.jms.support.converter.MessageConverter so you can
  be in control how to map to/from a javax.jms.Message. |  | MessageConverter
 | *camel.component.jms.configuration.message-created-strategy* | To use the given MessageCreatedStrategy which are invoked when Camel
- creates new instances of <tt>javax.jms.Message</tt> objects when
- Camel is sending a JMS message. |  | MessageCreatedStrategy
+ creates new instances of javax.jms.Message objects when Camel is
+ sending a JMS message. |  | MessageCreatedStrategy
 | *camel.component.jms.configuration.message-id-enabled* | When sending, specifies whether message IDs should be added. This is
  just an hint to the JMS Broker. If the JMS provider accepts this
  hint, these messages must have the message ID set to null; if the
@@ -803,7 +803,7 @@ The component supports 173 options, which are listed below.
  lower performance than its alternatives Temporary and Exclusive. |  | ReplyToType
 | *camel.component.jms.configuration.request-timeout* | The timeout for waiting for a reply when using the InOut Exchange
  Pattern (in milliseconds). The default is 20 seconds. You can include
- the header "CamelJmsRequestTimeout" to override this endpoint
+ the header CamelJmsRequestTimeout to override this endpoint
  configured timeout value, and thus have per message individual
  timeout values. See also the requestTimeoutCheckerInterval option. | 20000 | Long
 | *camel.component.jms.configuration.request-timeout-checker-interval* | Configures how often Camel should check for timed out Exchanges when
@@ -821,40 +821,30 @@ The component supports 173 options, which are listed below.
  chunk is then written to the StreamMessage until no more data. | false | Boolean
 | *camel.component.jms.configuration.subscription-durable* | Set whether to make the subscription durable. The durable
  subscription name to be used can be specified through the
- "subscriptionName" property.
- <p>
- Default is "false". Set this to "true" to register a durable
- subscription, typically in combination with a "subscriptionName"
- value (unless your message listener class name is good enough as
- subscription name).
- <p>
- Only makes sense when listening to a topic (pub-sub domain),
- therefore this method switches the "pubSubDomain" flag as well. | false | Boolean
+ subscriptionName property. Default is false. Set this to true to
+ register a durable subscription, typically in combination with a
+ subscriptionName value (unless your message listener class name is
+ good enough as subscription name). Only makes sense when listening to
+ a topic (pub-sub domain), therefore this method switches the
+ pubSubDomain flag as well. | false | Boolean
 | *camel.component.jms.configuration.subscription-name* | Set the name of a subscription to create. To be applied in case of a
- topic (pub-sub domain) with a shared or durable subscription.
- <p>
- The subscription name needs to be unique within this client's JMS
- client id. Default is the class name of the specified message
- listener.
- <p>
+ topic (pub-sub domain) with a shared or durable subscription. The
+ subscription name needs to be unique within this client's JMS client
+ id. Default is the class name of the specified message listener.
  Note: Only 1 concurrent consumer (which is the default of this
  message listener container) is allowed for each subscription, except
  for a shared subscription (which requires JMS 2.0). |  | String
 | *camel.component.jms.configuration.subscription-shared* | Set whether to make the subscription shared. The shared subscription
- name to be used can be specified through the "subscriptionName"
- property.
- <p>
- Default is "false". Set this to "true" to register a shared
- subscription, typically in combination with a "subscriptionName"
- value (unless your message listener class name is good enough as
+ name to be used can be specified through the subscriptionName
+ property. Default is false. Set this to true to register a shared
+ subscription, typically in combination with a subscriptionName value
+ (unless your message listener class name is good enough as
  subscription name). Note that shared subscriptions may also be
  durable, so this flag can (and often will) be combined with
- "subscriptionDurable" as well.
- <p>
- Only makes sense when listening to a topic (pub-sub domain),
- therefore this method switches the "pubSubDomain" flag as well.
- <p>
- <b>Requires a JMS 2.0 compatible message broker.</b> | false | Boolean
+ subscriptionDurable as well. Only makes sense when listening to a
+ topic (pub-sub domain), therefore this method switches the
+ pubSubDomain flag as well. Requires a JMS 2.0 compatible message
+ broker. | false | Boolean
 | *camel.component.jms.configuration.task-executor* | Allows you to specify a custom task executor for consuming messages. |  | TaskExecutor
 | *camel.component.jms.configuration.template-connection-factory* | Sets the connection factory to be used for sending messages via the
  {@link JmsTemplate} via
@@ -892,15 +882,13 @@ The component supports 173 options, which are listed below.
  a regular payload. | false | Boolean
 | *camel.component.jms.configuration.transfer-fault* | If enabled and you are using Request Reply messaging (InOut) and an
  Exchange failed with a SOAP fault (not exception) on the consumer
- side, then the fault flag on
- {@link org.apache.camel.Message#isFault()} will be send back in the
- response as a JMS header with the key
- {@link JmsConstants#JMS_TRANSFER_FAULT} . If the client is Camel, the
- returned fault flag will be set on the
- {@link org.apache.camel.Message#setFault(boolean)} .
- <p>
- You may want to enable this when using Camel components that support
- faults such as SOAP based such as cxf or spring-ws. | false | Boolean
+ side, then the fault flag on link org.apache.camel.MessageisFault()
+ will be send back in the response as a JMS header with the key link
+ JmsConstantsJMS_TRANSFER_FAULT. If the client is Camel, the returned
+ fault flag will be set on the link
+ org.apache.camel.MessagesetFault(boolean). You may want to enable
+ this when using Camel components that support faults such as SOAP
+ based such as cxf or spring-ws. | false | Boolean
 | *camel.component.jms.configuration.use-message-i-d-as-correlation-i-d* | Specifies whether JMSMessageID should always be used as
  JMSCorrelationID for InOut messages. | false | Boolean
 | *camel.component.jms.configuration.username* | Username to use with the ConnectionFactory. You can also configure

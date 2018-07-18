@@ -83,14 +83,8 @@ The component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.twilio.account-sid* | The account SID to use. |  | String
-| *camel.component.twilio.configuration.api-name* | What kind of operation to perform
- 
- @param apiNamethe
-            API Name to set |  | TwilioApiName
-| *camel.component.twilio.configuration.method-name* | What sub operation to use for the selected operation
- 
- @param methodNamethe
-            methodName to set |  | String
+| *camel.component.twilio.configuration.api-name* | What kind of operation to perform |  | TwilioApiName
+| *camel.component.twilio.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.twilio.enabled* | Enable twilio component | true | Boolean
 | *camel.component.twilio.password* | Auth token for the account. |  | String
 | *camel.component.twilio.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when

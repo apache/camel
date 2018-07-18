@@ -118,7 +118,7 @@ The component supports 14 options, which are listed below.
  refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-calendar.configuration.api-name* | What kind of operation to perform |  | GoogleCalendarApiName
 | *camel.component.google-calendar.configuration.application-name* | Google calendar application name. Example would be
- "camel-google-calendar/1.0" |  | String
+ camel-google-calendar/1.0 |  | String
 | *camel.component.google-calendar.configuration.client-id* | Client ID of the calendar application |  | String
 | *camel.component.google-calendar.configuration.client-secret* | Client secret of the calendar application |  | String
 | *camel.component.google-calendar.configuration.email-address* | The emailAddress of the Google Service Account. |  | String
