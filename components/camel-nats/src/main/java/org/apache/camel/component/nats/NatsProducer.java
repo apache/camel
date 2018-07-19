@@ -18,10 +18,7 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-import java.util.Properties;
-import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.SSLContext;
 
