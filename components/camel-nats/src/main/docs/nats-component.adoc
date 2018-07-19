@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
-| *flushTimeout* (common) | Set the flush timeout | 1000 | int
+| *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 3 | int
 | *noEcho* (common) | Turn off echo. If supported by the gnatsd version you are connecting to this flag will prevent the server from echoing messages back to the connection if it has subscriptions on the subject being published to. | false | boolean
 | *noRandomizeServers* (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
