@@ -131,7 +131,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 70 options, which are listed below.
+The component supports 57 options, which are listed below.
 
 
 
@@ -200,20 +200,8 @@ The component supports 70 options, which are listed below.
 | *camel.component.servicenow.configuration.sort-dir* | Specify the sort direction, ascending or descending. By default,
  queries sort records in descending order. Use sysparm_sortdir=asc to
  sort in ascending order. |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
-| *camel.component.servicenow.configuration.ssl-context-parameters.cert-alias* |  |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.provider* |  |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.component.servicenow.configuration.ssl-context-parameters.session-timeout* |  |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. See
+ http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
 | *camel.component.servicenow.configuration.suppress-auto-sys-field* | True to suppress auto generation of system fields (default: false) |  | Boolean
 | *camel.component.servicenow.configuration.suppress-pagination-header* | Set this value to true to remove the Link header from the response.
  The Link header allows you to request additional pages of data when

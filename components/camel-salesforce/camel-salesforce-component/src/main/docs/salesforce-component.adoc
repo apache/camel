@@ -756,7 +756,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 140 options, which are listed below.
+The component supports 85 options, which are listed below.
 
 
 
@@ -777,6 +777,9 @@ The component supports 140 options, which are listed below.
 | *camel.component.salesforce.config.apex-url* | APEX method URL |  | String
 | *camel.component.salesforce.config.api-version* | Salesforce API version, defaults to
  SalesforceEndpointConfig.DEFAULT_VERSION |  | String
+| *camel.component.salesforce.config.approval* | The approval request for Approval API.
+ 
+ @param approval |  | ApprovalRequest
 | *camel.component.salesforce.config.approval-action-type* | Represents the kind of action to take: Submit, Approve, or Reject.
  
  @param actionType |  | ApprovalRequest$Action
@@ -804,13 +807,6 @@ The component supports 140 options, which are listed below.
  not set by this request.
  
  @param skipEntryCriteria |  | Boolean
-| *camel.component.salesforce.config.approval.action-type* |  |  | ApprovalRequest$Action
-| *camel.component.salesforce.config.approval.comments* |  |  | String
-| *camel.component.salesforce.config.approval.context-actor-id* |  |  | String
-| *camel.component.salesforce.config.approval.context-id* |  |  | String
-| *camel.component.salesforce.config.approval.next-approver-ids* |  |  | List
-| *camel.component.salesforce.config.approval.process-definition-name-or-id* |  |  | String
-| *camel.component.salesforce.config.approval.skip-entry-criteria* |  |  | Boolean
 | *camel.component.salesforce.config.backoff-increment* | Backoff interval increment for Streaming connection restart attempts
  for failures beyond CometD auto-reconnect. |  | Long
 | *camel.component.salesforce.config.batch-id* | Bulk API Batch ID |  | String
@@ -819,40 +815,7 @@ The component supports 140 options, which are listed below.
  initialReplayIdMap |  | Long
 | *camel.component.salesforce.config.format* | Payload format to use for Salesforce API calls, either JSON or XML,
  defaults to JSON |  | PayloadFormat
-| *camel.component.salesforce.config.http-client.address-resolution-timeout* |  |  | Long
-| *camel.component.salesforce.config.http-client.authentication-store* |  |  | AuthenticationStore
-| *camel.component.salesforce.config.http-client.beans* |  |  | Object>
-| *camel.component.salesforce.config.http-client.bind-address* |  |  | SocketAddress
-| *camel.component.salesforce.config.http-client.byte-buffer-pool* |  |  | ByteBufferPool
-| *camel.component.salesforce.config.http-client.connect-blocking* |  |  | Boolean
-| *camel.component.salesforce.config.http-client.connect-timeout* |  |  | Long
-| *camel.component.salesforce.config.http-client.content-decoder-factories* |  |  | Set
-| *camel.component.salesforce.config.http-client.cookie-store* |  |  | CookieStore
-| *camel.component.salesforce.config.http-client.default-request-content-type* |  |  | String
-| *camel.component.salesforce.config.http-client.destinations* |  |  | List
-| *camel.component.salesforce.config.http-client.dispatch-i-o* |  |  | Boolean
-| *camel.component.salesforce.config.http-client.executor* |  |  | Executor
-| *camel.component.salesforce.config.http-client.follow-redirects* |  |  | Boolean
-| *camel.component.salesforce.config.http-client.http-compliance* |  |  | HttpCompliance
-| *camel.component.salesforce.config.http-client.idle-timeout* |  |  | Long
-| *camel.component.salesforce.config.http-client.max-connections-per-destination* |  |  | Integer
-| *camel.component.salesforce.config.http-client.max-content-length* |  |  | Integer
-| *camel.component.salesforce.config.http-client.max-redirects* |  |  | Integer
-| *camel.component.salesforce.config.http-client.max-requests-queued-per-destination* |  |  | Integer
-| *camel.component.salesforce.config.http-client.max-retries* |  |  | Integer
-| *camel.component.salesforce.config.http-client.name* |  |  | String
-| *camel.component.salesforce.config.http-client.remove-idle-destinations* |  |  | Boolean
-| *camel.component.salesforce.config.http-client.request-buffer-size* |  |  | Integer
-| *camel.component.salesforce.config.http-client.request-listeners* |  |  | List
-| *camel.component.salesforce.config.http-client.response-buffer-size* |  |  | Integer
-| *camel.component.salesforce.config.http-client.scheduler* |  |  | Scheduler
-| *camel.component.salesforce.config.http-client.session* |  |  | SalesforceSession
-| *camel.component.salesforce.config.http-client.socket-address-resolver* |  |  | SocketAddressResolver
-| *camel.component.salesforce.config.http-client.stop-timeout* |  |  | Long
-| *camel.component.salesforce.config.http-client.strict-event-ordering* |  |  | Boolean
-| *camel.component.salesforce.config.http-client.t-c-p-no-delay* |  |  | Boolean
-| *camel.component.salesforce.config.http-client.timeout* |  |  | Long
-| *camel.component.salesforce.config.http-client.user-agent-field* |  |  | HttpField
+| *camel.component.salesforce.config.http-client* | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *camel.component.salesforce.config.include-details* | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
 | *camel.component.salesforce.config.initial-replay-id-map* | Replay IDs to start from per channel name. |  | Map
 | *camel.component.salesforce.config.instance-id* | Salesforce1 Analytics report execution instance ID |  | String
@@ -878,19 +841,7 @@ The component supports 140 options, which are listed below.
 | *camel.component.salesforce.config.raw-payload* | Use raw payload String for request and response (either JSON or XML
  depending on format), instead of DTOs, false by default | false | Boolean
 | *camel.component.salesforce.config.report-id* | Salesforce1 Analytics report Id |  | String
-| *camel.component.salesforce.config.report-metadata.aggregates* |  |  | String[]
-| *camel.component.salesforce.config.report-metadata.currency* |  |  | String
-| *camel.component.salesforce.config.report-metadata.detail-columns* |  |  | String[]
-| *camel.component.salesforce.config.report-metadata.developer-name* |  |  | String
-| *camel.component.salesforce.config.report-metadata.groupings-across* |  |  | GroupingInfo[]
-| *camel.component.salesforce.config.report-metadata.groupings-down* |  |  | GroupingInfo[]
-| *camel.component.salesforce.config.report-metadata.historical-snapshot-dates* |  |  | String[]
-| *camel.component.salesforce.config.report-metadata.id* |  |  | String
-| *camel.component.salesforce.config.report-metadata.name* |  |  | String
-| *camel.component.salesforce.config.report-metadata.report-boolean-filter* |  |  | String
-| *camel.component.salesforce.config.report-metadata.report-filters* |  |  | ReportFilter[]
-| *camel.component.salesforce.config.report-metadata.report-format* |  |  | ReportFormatEnum
-| *camel.component.salesforce.config.report-metadata.report-type* |  |  | ReportType
+| *camel.component.salesforce.config.report-metadata* | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
 | *camel.component.salesforce.config.result-id* | Bulk API Result ID |  | String
 | *camel.component.salesforce.config.s-object-blob-field-name* | SObject blob field name |  | String
 | *camel.component.salesforce.config.s-object-class* | Fully qualified SObject class name, usually generated using
@@ -943,11 +894,8 @@ The component supports 140 options, which are listed below.
 | *camel.component.salesforce.login-config.client-id* | Salesforce connected application Consumer Key |  | String
 | *camel.component.salesforce.login-config.client-secret* | Salesforce connected application Consumer Secret |  | String
 | *camel.component.salesforce.login-config.instance-url* |  |  | String
-| *camel.component.salesforce.login-config.keystore.camel-context* |  |  | CamelContext
-| *camel.component.salesforce.login-config.keystore.password* |  |  | String
-| *camel.component.salesforce.login-config.keystore.provider* |  |  | String
-| *camel.component.salesforce.login-config.keystore.resource* |  |  | String
-| *camel.component.salesforce.login-config.keystore.type* |  |  | String
+| *camel.component.salesforce.login-config.keystore* | Keystore parameters for keystore containing certificate and private
+ key needed for OAuth 2.0 JWT Bearer Token Flow. |  | KeyStoreParameters
 | *camel.component.salesforce.login-config.lazy-login* | Flag to enable/disable lazy OAuth, default is false. When enabled,
  OAuth token retrieval or generation is not done until the first API
  call |  | Boolean

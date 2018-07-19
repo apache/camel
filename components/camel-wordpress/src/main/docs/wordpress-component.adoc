@@ -65,7 +65,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 15 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -77,12 +77,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.wordpress.configuration.force* | Whether to bypass trash and force deletion. | false | Boolean
 | *camel.component.wordpress.configuration.id* | The entity id |  | Integer
 | *camel.component.wordpress.configuration.password* | Password from authorized user |  | String
-| *camel.component.wordpress.configuration.search-criteria.exclude* |  |  | List
-| *camel.component.wordpress.configuration.search-criteria.include* |  |  | List
-| *camel.component.wordpress.configuration.search-criteria.order* |  |  | Order
-| *camel.component.wordpress.configuration.search-criteria.page* |  |  | Integer
-| *camel.component.wordpress.configuration.search-criteria.per-page* |  |  | Integer
-| *camel.component.wordpress.configuration.search-criteria.search* |  |  | String
+| *camel.component.wordpress.configuration.search-criteria* |  |  | SearchCriteria
 | *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
 | *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is

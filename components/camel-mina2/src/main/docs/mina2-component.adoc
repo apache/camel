@@ -144,7 +144,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 42 options, which are listed below.
+The component supports 29 options, which are listed below.
 
 
 
@@ -189,20 +189,7 @@ The component supports 42 options, which are listed below.
  orderly on the same channel. | true | Boolean
 | *camel.component.mina2.configuration.port* | Port number |  | Integer
 | *camel.component.mina2.configuration.protocol* | Protocol to use |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
-| *camel.component.mina2.configuration.ssl-context-parameters.cert-alias* |  |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.component.mina2.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.provider* |  |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.component.mina2.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.component.mina2.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.component.mina2.configuration.ssl-context-parameters.session-timeout* |  |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.mina2.configuration.ssl-context-parameters* | To configure SSL security. |  | SSLContextParameters
 | *camel.component.mina2.configuration.sync* | Setting to set endpoint as one-way or request-response. | true | Boolean
 | *camel.component.mina2.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to
  indicate a text line based codec; if not specified or the value is

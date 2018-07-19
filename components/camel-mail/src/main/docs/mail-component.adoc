@@ -191,7 +191,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 61 options, which are listed below.
+The component supports 48 options, which are listed below.
 
 
 
@@ -288,20 +288,7 @@ The component supports 61 options, which are listed below.
  mail message. The default behavior would be the consumer throws an
  exception and no mails from the batch would be able to be routed by
  Camel. | false | Boolean
-| *camel.component.mail.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
-| *camel.component.mail.configuration.ssl-context-parameters.cert-alias* |  |  | String
-| *camel.component.mail.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.component.mail.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
-| *camel.component.mail.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.component.mail.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
-| *camel.component.mail.configuration.ssl-context-parameters.provider* |  |  | String
-| *camel.component.mail.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
-| *camel.component.mail.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
-| *camel.component.mail.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.component.mail.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.component.mail.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.component.mail.configuration.ssl-context-parameters.session-timeout* |  |  | String
-| *camel.component.mail.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.mail.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. |  | SSLContextParameters
 | *camel.component.mail.configuration.subject* | The Subject of the message being sent. Note: Setting the subject in
  the header takes precedence over this option. |  | String
 | *camel.component.mail.configuration.to* | Sets the To email address. Separate multiple email addresses with
