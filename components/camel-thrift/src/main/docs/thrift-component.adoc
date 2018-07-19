@@ -107,7 +107,8 @@ The component supports 7 options, which are listed below.
  from the data format if the data format is capable of doing so. For
  example application/xml for data formats marshalling to XML, or
  application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.thrift.enabled* |  |  | Boolean
+| *camel.dataformat.thrift.enabled* | Whether to enable auto configuration of the thrift data format. This is
+ enabled by default. |  | Boolean
 | *camel.dataformat.thrift.instance-class* | Name of class to use when unarmshalling |  | String
 |===
 // spring-boot-auto-configure options: END

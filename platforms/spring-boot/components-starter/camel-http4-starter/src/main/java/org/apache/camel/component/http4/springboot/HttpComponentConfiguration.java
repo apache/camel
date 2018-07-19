@@ -32,7 +32,7 @@ public class HttpComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the http4 component. This is
+     * Whether to enable auto configuration of the https4 component. This is
      * enabled by default.
      */
     private Boolean enabled;

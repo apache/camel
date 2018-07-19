@@ -33,6 +33,11 @@ public class GzipDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the gzip data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
