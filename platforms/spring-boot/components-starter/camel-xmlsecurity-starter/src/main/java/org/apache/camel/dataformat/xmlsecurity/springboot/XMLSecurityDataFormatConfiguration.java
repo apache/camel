@@ -33,6 +33,11 @@ public class XMLSecurityDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the secureXML data format. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The cipher algorithm to be used for encryption/decryption of the XML
      * message content. The available choices are: XMLCipher.TRIPLEDES
      * XMLCipher.AES_128 XMLCipher.AES_128_GCM XMLCipher.AES_192

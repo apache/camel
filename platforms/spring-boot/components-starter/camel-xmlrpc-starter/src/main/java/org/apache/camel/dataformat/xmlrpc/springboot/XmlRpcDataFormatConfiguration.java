@@ -32,6 +32,11 @@ public class XmlRpcDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xmlrpc data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether to marshal/unmarshal request or response Is by default false
      */
     private Boolean request = false;

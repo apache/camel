@@ -33,6 +33,11 @@ public class UniVocityFixedWidthDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the univocity-fixed data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether or not the trailing characters until new line must be ignored.
      * The default value is false
      */

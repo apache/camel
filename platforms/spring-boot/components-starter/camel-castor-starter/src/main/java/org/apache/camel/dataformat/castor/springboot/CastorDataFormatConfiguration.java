@@ -33,6 +33,11 @@ public class CastorDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the castor data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Path to a Castor mapping file to load from the classpath.
      */
     private String mappingFile;

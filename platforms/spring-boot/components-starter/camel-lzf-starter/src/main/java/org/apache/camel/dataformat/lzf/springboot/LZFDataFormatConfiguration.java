@@ -33,6 +33,11 @@ public class LZFDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the lzf data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Enable encoding (compress) using multiple processing cores.
      */
     private Boolean usingParallelCompression = false;

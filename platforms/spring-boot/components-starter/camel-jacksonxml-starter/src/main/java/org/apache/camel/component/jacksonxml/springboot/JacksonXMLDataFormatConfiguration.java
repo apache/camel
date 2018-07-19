@@ -33,6 +33,11 @@ public class JacksonXMLDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jacksonxml data format. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Lookup and use the existing XmlMapper with the given id.
      */
     private String xmlMapper;

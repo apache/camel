@@ -32,6 +32,11 @@ public class Base64DataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the base64 data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To specific a maximum line length for the encoded data. By default 76 is
      * used.
      */

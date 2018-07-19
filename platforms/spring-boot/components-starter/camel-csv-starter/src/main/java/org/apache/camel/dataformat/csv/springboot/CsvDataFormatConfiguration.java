@@ -33,6 +33,11 @@ public class CsvDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the csv data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The reference format to use, it will be updated with the other format
      * options, the default value is CSVFormat.DEFAULT
      */

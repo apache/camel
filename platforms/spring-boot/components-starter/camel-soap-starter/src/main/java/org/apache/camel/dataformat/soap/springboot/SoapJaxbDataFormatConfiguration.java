@@ -33,6 +33,11 @@ public class SoapJaxbDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the soapjaxb data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Package name where your JAXB classes are located.
      */
     private String contextPath;

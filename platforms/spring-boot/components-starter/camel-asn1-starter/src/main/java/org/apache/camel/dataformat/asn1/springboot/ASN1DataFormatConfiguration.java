@@ -33,6 +33,11 @@ public class ASN1DataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the asn1 data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * If the asn1 file has more then one entry, the setting this option to
      * true, allows to work with the splitter EIP, to split the data using an
      * iterator in a streaming mode.
