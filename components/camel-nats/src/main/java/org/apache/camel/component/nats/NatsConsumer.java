@@ -56,7 +56,7 @@ public class NatsConsumer extends DefaultConsumer {
 
     @Override
     public NatsEndpoint getEndpoint() {
-        return (NatsEndpoint) super.getEndpoint();
+        return (NatsEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class NatsConsumer extends DefaultConsumer {
             LOG.debug("Flushing Messages before stopping");
             connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
         }
-        
+
         try {
             dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic());
         } catch (Exception e) {
@@ -95,17 +95,17 @@ public class NatsConsumer extends DefaultConsumer {
             }
         }
         executor = null;
-        
+
         LOG.debug("Closing Nats Connection");
         if (!connection.getStatus().equals(Status.CLOSED)) {
-            connection.close();   
+            connection.close();
         }
     }
 
     private Connection getConnection() throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
         Builder builder = getEndpoint().getNatsConfiguration().createOptions();
         if (getEndpoint().getNatsConfiguration().getSslContextParameters() != null && getEndpoint().getNatsConfiguration().isSecure()) {
-            SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()); 
+            SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext());
             builder.sslContext(sslCtx);
         }
         Options options = builder.build();
@@ -135,7 +135,7 @@ public class NatsConsumer extends DefaultConsumer {
         public void run() {
             try {
                 if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
-                	dispatcher = connection.createDispatcher(new MessageHandler() {
+                    dispatcher = connection.createDispatcher(new MessageHandler() {
                         @Override
                         public void onMessage(Message msg) {
                             LOG.debug("Received Message: {}", msg);
@@ -149,34 +149,34 @@ public class NatsConsumer extends DefaultConsumer {
                             }
                         }
                     });
-                	dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic(), getEndpoint().getNatsConfiguration().getQueueName());
-                    if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
-                    }
-                	if (dispatcher.isActive()) {
-                		setActive(true);
-                    }
-                } else {
-                	dispatcher = connection.createDispatcher(new MessageHandler() {
-                        @Override
-                        public void onMessage(Message msg) {
-                            LOG.debug("Received Message: {}", msg);
-                            Exchange exchange = getEndpoint().createExchange();
-                            exchange.getIn().setBody(msg);
-                            exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
-                            }
-                        }
-                    });
-                	dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic());
+                    dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic(), getEndpoint().getNatsConfiguration().getQueueName());
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
                         dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
                     }
                     if (dispatcher.isActive()) {
-                    	setActive(true);
+                        setActive(true);
+                    }
+                } else {
+                    dispatcher = connection.createDispatcher(new MessageHandler() {
+                        @Override
+                        public void onMessage(Message msg) {
+                            LOG.debug("Received Message: {}", msg);
+                            Exchange exchange = getEndpoint().createExchange();
+                            exchange.getIn().setBody(msg);
+                            exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
+                            try {
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                getExceptionHandler().handleException("Error during processing", exchange, e);
+                            }
+                        }
+                    });
+                    dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic());
+                    if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
+                        dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
+                    }
+                    if (dispatcher.isActive()) {
+                        setActive(true);
                     }
                 }
             } catch (Throwable e) {
