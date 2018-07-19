@@ -134,21 +134,8 @@ public class NatsConsumer extends DefaultConsumer {
         @Override
         public void run() {
             try {
+                dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
                 if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
-                    dispatcher = connection.createDispatcher(new MessageHandler() {
-                        @Override
-                        public void onMessage(Message msg) {
-                            LOG.debug("Received Message: {}", msg);
-                            Exchange exchange = getEndpoint().createExchange();
-                            exchange.getIn().setBody(msg);
-                            exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
-                            }
-                        }
-                    });
                     dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic(), getEndpoint().getNatsConfiguration().getQueueName());
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
                         dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
@@ -157,20 +144,6 @@ public class NatsConsumer extends DefaultConsumer {
                         setActive(true);
                     }
                 } else {
-                    dispatcher = connection.createDispatcher(new MessageHandler() {
-                        @Override
-                        public void onMessage(Message msg) {
-                            LOG.debug("Received Message: {}", msg);
-                            Exchange exchange = getEndpoint().createExchange();
-                            exchange.getIn().setBody(msg);
-                            exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
-                            }
-                        }
-                    });
                     dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic());
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
                         dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
@@ -181,6 +154,23 @@ public class NatsConsumer extends DefaultConsumer {
                 }
             } catch (Throwable e) {
                 getExceptionHandler().handleException("Error during processing", e);
+            }
+            
+        }
+        
+        class CamelNatsMessageHandler implements MessageHandler {
+
+            @Override
+            public void onMessage(Message msg) throws InterruptedException {
+                LOG.debug("Received Message: {}", msg);
+                Exchange exchange = getEndpoint().createExchange();
+                exchange.getIn().setBody(msg);
+                exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
+                try {
+                    processor.process(exchange);
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error during processing", exchange, e);
+                }
             }
         }
     }
