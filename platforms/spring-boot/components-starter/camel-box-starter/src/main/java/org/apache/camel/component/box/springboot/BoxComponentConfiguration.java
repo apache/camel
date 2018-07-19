@@ -23,7 +23,6 @@ import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For uploading downloading and managing files folders groups collaborations
@@ -131,7 +130,6 @@ public class BoxComponentConfiguration
         /**
          * To configure security using SSLContextParameters.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.

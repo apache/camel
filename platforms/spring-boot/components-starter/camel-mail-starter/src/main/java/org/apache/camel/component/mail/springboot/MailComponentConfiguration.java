@@ -24,7 +24,6 @@ import org.apache.camel.component.mail.JavaMailSender;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To send or receive emails using imap/pop3 or smtp protocols.
@@ -265,7 +264,6 @@ public class MailComponentConfiguration
         /**
          * To configure security using SSLContextParameters.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * After processing a mail message, it can be copied to a mail folder

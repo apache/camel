@@ -119,6 +119,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
      */
     private static final Pattern INCLUDE_INNER_PATTERN = Pattern.compile("org\\.apache\\.camel\\..*");
 
+    /**
+     * Whether to enable adding @NestedConfigurationProperty annotations to options.
+     * This is disabled as the generated options likely is not configurable as plain POJOs
+     * and there is also no documentation for each of the generated options.
+     */
+    private static final boolean ADD_NESTED_CONFIGURATION_PROPERTY = false;
+
     private static final Map<String, String> PRIMITIVEMAP;
 
     static {
@@ -746,13 +753,15 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
-            if (!type.endsWith(INNER_TYPE_SUFFIX)
-                && type.indexOf('[') == -1
-                && INCLUDE_INNER_PATTERN.matcher(type).matches()
-                && Strings.isBlank(option.getEnums())
-                && (javaClassSource == null || (javaClassSource.isClass() && !javaClassSource.isAbstract()))) {
-                // add nested configuration annotation for complex properties
-                prop.getField().addAnnotation(NestedConfigurationProperty.class);
+            if (ADD_NESTED_CONFIGURATION_PROPERTY) {
+                if (!type.endsWith(INNER_TYPE_SUFFIX)
+                    && type.indexOf('[') == -1
+                    && INCLUDE_INNER_PATTERN.matcher(type).matches()
+                    && Strings.isBlank(option.getEnums())
+                    && (javaClassSource == null || (javaClassSource.isClass() && !javaClassSource.isAbstract()))) {
+                    // add nested configuration annotation for complex properties
+                    prop.getField().addAnnotation(NestedConfigurationProperty.class);
+                }
             }
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
@@ -827,14 +836,16 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
 
                 // add nested configuration annotation for complex properties
-                if (INCLUDE_INNER_PATTERN.matcher(optionType).matches()
-                    && !propType.isArray()
-                    && !anEnum
-                    && optionClass != null
-                    && !optionClass.isInterface()
-                    && !optionClass.isAnnotation()
-                    && !Modifier.isAbstract(optionClass.getModifiers())) {
-                    prop.getField().addAnnotation(NestedConfigurationProperty.class);
+                if (ADD_NESTED_CONFIGURATION_PROPERTY) {
+                    if (INCLUDE_INNER_PATTERN.matcher(optionType).matches()
+                        && !propType.isArray()
+                        && !anEnum
+                        && optionClass != null
+                        && !optionClass.isInterface()
+                        && !optionClass.isAnnotation()
+                        && !Modifier.isAbstract(optionClass.getModifiers())) {
+                        prop.getField().addAnnotation(NestedConfigurationProperty.class);
+                    }
                 }
                 if (sourceProp.hasAnnotation(Deprecated.class)) {
                     prop.getField().addAnnotation(Deprecated.class);

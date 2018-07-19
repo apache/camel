@@ -23,7 +23,6 @@ import org.apache.camel.component.cache.CacheLoaderRegistry;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cache component enables you to perform caching operations using EHCache
@@ -151,12 +150,10 @@ public class CacheComponentConfiguration
         /**
          * To configure event listeners using the CacheEventListenerRegistry
          */
-        @NestedConfigurationProperty
         private CacheEventListenerRegistry eventListenerRegistry;
         /**
          * To configure cache loader using the CacheLoaderRegistry
          */
-        @NestedConfigurationProperty
         private CacheLoaderRegistry cacheLoaderRegistry;
         /**
          * Whether to turn on allowing to store non serializable objects in the

@@ -26,7 +26,6 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The servicenow component is used to integrate Camel with ServiceNow cloud
@@ -378,7 +377,6 @@ public class ServiceNowComponentConfiguration
          * To configure security using SSLContextParameters. See
          * http://camel.apache.org/camel-configuration-utilities.html
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * To configure http-client

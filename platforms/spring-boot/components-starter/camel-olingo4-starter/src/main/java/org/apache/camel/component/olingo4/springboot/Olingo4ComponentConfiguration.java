@@ -25,7 +25,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Communicates with OData 4.0 services using Apache Olingo OData API.
@@ -126,7 +125,6 @@ public class Olingo4ComponentConfiguration
         /**
          * To configure security using SSLContextParameters
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Custom HTTP async client builder for more complex HTTP client

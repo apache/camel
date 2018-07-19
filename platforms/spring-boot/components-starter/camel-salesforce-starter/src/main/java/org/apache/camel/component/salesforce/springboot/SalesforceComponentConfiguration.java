@@ -33,7 +33,6 @@ import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnu
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The salesforce component is used for integrating Camel with the massive
@@ -473,7 +472,6 @@ public class SalesforceComponentConfiguration
          * Keystore parameters for keystore containing certificate and private
          * key needed for OAuth 2.0 JWT Bearer Token Flow.
          */
-        @NestedConfigurationProperty
         private KeyStoreParameters keystore;
         /**
          * Salesforce connected application Consumer token
@@ -652,7 +650,6 @@ public class SalesforceComponentConfiguration
          * 
          * @param approval
          */
-        @NestedConfigurationProperty
         private ApprovalRequest approval;
         /**
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV
@@ -712,7 +709,6 @@ public class SalesforceComponentConfiguration
         /**
          * Salesforce1 Analytics report metadata for filtering
          */
-        @NestedConfigurationProperty
         private ReportMetadata reportMetadata;
         /**
          * Salesforce1 Analytics report execution instance ID
@@ -721,7 +717,6 @@ public class SalesforceComponentConfiguration
         /**
          * Custom Jetty Http Client to use to connect to Salesforce.
          */
-        @NestedConfigurationProperty
         private SalesforceHttpClient httpClient;
         /**
          * Custom Jackson ObjectMapper to use when serializing/deserializing

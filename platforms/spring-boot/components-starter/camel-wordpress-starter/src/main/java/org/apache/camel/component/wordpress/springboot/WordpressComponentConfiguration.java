@@ -21,7 +21,6 @@ import javax.annotation.Generated;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Integrates Camel with Wordpress.
@@ -94,7 +93,6 @@ public class WordpressComponentConfiguration
          * Whether to bypass trash and force deletion.
          */
         private Boolean force = false;
-        @NestedConfigurationProperty
         private SearchCriteria searchCriteria;
         private Map criteriaProperties;
 
