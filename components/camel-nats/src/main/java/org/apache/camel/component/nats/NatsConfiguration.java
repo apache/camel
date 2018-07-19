@@ -53,6 +53,8 @@ public class NatsConfiguration {
     private String replySubject;
     @UriParam
     private boolean noRandomizeServers;
+    @UriParam
+    private boolean noEcho;
     @UriParam(label = "consumer")
     private String queueName;
     @UriParam(label = "consumer")
@@ -179,6 +181,19 @@ public class NatsConfiguration {
     public void setNoRandomizeServers(boolean noRandomizeServers) {
         this.noRandomizeServers = noRandomizeServers;
     }
+    
+    /**
+     * Turn off echo. If supported by the gnatsd version you are connecting 
+     * to this flag will prevent the server from echoing messages back 
+     * to the connection if it has subscriptions on the subject being published to.
+     */
+    public boolean getNoEcho() {
+        return noEcho;
+    }
+
+    public void setNoEcho(boolean noEcho) {
+        this.noEcho = noEcho;
+    }
 
     /**
      * The Queue name if we are using nats for a queue configuration
@@ -279,6 +294,9 @@ public class NatsConfiguration {
         builder.pingInterval(Duration.ofMillis(getPingInterval()));
         if (getNoRandomizeServers()) {
             builder.noRandomize();
+        }
+        if (getNoEcho()) {
+            builder.noEcho();
         }
         return builder;
     }
