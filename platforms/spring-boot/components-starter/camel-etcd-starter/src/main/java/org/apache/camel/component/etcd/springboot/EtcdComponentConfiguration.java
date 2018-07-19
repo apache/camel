@@ -20,7 +20,6 @@ import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The camel etcd component allows you to work with Etcd, a distributed reliable
@@ -139,7 +138,6 @@ public class EtcdComponentConfiguration
         /**
          * To configure security using SSLContextParameters.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * The user name to use for basic authentication.

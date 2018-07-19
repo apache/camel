@@ -35,7 +35,6 @@ import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Socket level networking using TCP or UDP with the Netty 3.x library.
@@ -377,7 +376,6 @@ public class NettyComponentConfiguration
         /**
          * To configure security using SSLContextParameters
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Configures whether the server needs client authentication when using

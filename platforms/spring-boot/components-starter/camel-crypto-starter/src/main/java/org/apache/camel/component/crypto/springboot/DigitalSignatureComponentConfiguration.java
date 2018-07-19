@@ -26,7 +26,6 @@ import org.apache.camel.component.crypto.CryptoOperation;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The crypto component is used for signing and verifying exchanges using the
@@ -149,7 +148,6 @@ public class DigitalSignatureComponentConfiguration
          * and there is only a single entry in the Keystore, then this single
          * entry will be used.
          */
-        @NestedConfigurationProperty
         private KeyStoreParameters keyStoreParameters;
         /**
          * Set the SecureRandom used to initialize the Signature service

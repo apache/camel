@@ -25,7 +25,6 @@ import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The kafka component allows messages to be sent to (or consumed from) Apache
@@ -450,7 +449,6 @@ public class KafkaComponentConfiguration
          * SSL configuration using a Camel SSLContextParameters object. If
          * configured it's applied before the other SSL endpoint parameters.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * The password of the private key in the key store file. This is

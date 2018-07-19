@@ -32,7 +32,6 @@ import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -1631,7 +1630,6 @@ public class JmsComponentConfiguration
          * this is not required and Camel will auto-detect the provider metadata
          * from the underlying provider.
          */
-        @NestedConfigurationProperty
         private JmsProviderMetadata providerMetadata;
         /**
          * Sets the {@link JmsOperations} used to deduce the

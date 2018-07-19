@@ -26,7 +26,6 @@ import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The camel consul component allows you to work with Consul, a distributed,
@@ -216,7 +215,6 @@ public class ConsulComponentConfiguration
          * SSL configuration using an
          * org.apache.camel.util.jsse.SSLContextParameters instance.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Sets the ACL token to be used with Consul

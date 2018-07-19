@@ -25,7 +25,6 @@ import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Socket level networking using TCP or UDP with the Apache Mina 2.x library.
@@ -198,7 +197,6 @@ public class Mina2ComponentConfiguration
         /**
          * To configure SSL security.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Whether to auto start SSL handshake.
