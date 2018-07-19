@@ -33,6 +33,11 @@ public class StringDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the string data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets an encoding to use. Will by default use the JVM platform default
      * charset.
      */
