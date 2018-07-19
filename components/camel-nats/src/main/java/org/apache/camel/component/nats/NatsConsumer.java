@@ -66,7 +66,7 @@ public class NatsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor();
 
         LOG.debug("Getting Nats Connection");
-        connection = getConnection();
+        connection = getEndpoint().getConnection();
 
         executor.submit(new NatsConsumingTask(connection, getEndpoint().getNatsConfiguration()));
     }
@@ -100,17 +100,6 @@ public class NatsConsumer extends DefaultConsumer {
         if (!connection.getStatus().equals(Status.CLOSED)) {
             connection.close();
         }
-    }
-
-    private Connection getConnection() throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
-        Builder builder = getEndpoint().getNatsConfiguration().createOptions();
-        if (getEndpoint().getNatsConfiguration().getSslContextParameters() != null && getEndpoint().getNatsConfiguration().isSecure()) {
-            SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext());
-            builder.sslContext(sslCtx);
-        }
-        Options options = builder.build();
-        connection = Nats.connect(options);
-        return connection;
     }
 
     public boolean isActive() {
