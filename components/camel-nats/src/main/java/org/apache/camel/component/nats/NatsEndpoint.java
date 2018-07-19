@@ -22,17 +22,17 @@ import java.util.concurrent.ExecutorService;
 
 import javax.net.ssl.SSLContext;
 
+import io.nats.client.Connection;
+import io.nats.client.Nats;
+import io.nats.client.Options;
+import io.nats.client.Options.Builder;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-
-import io.nats.client.Connection;
-import io.nats.client.Nats;
-import io.nats.client.Options;
-import io.nats.client.Options.Builder;
 
 /**
  * The nats component allows you produce and consume messages from <a href="http://nats.io/">NATS</a>.
