@@ -245,7 +245,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Set the flush timeout
+     * Set the flush timeout (in milliseconds)
      */
     public void setFlushTimeout(int flushTimeout) {
         this.flushTimeout = flushTimeout;
