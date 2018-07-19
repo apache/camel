@@ -503,6 +503,12 @@ a update rules.
 You can define the filter using MongoDBConstants.CRITERIA header as `Bson`
 and define the update rules as `Bson` in Body.
 
+NOTE: *Update after enrich* . While defining the filter by using MongoDBConstants.CRITERIA header as `Bson`
+to query mongodb before you do update, you should notice you need to remove it from the resulting camel exchange 
+during aggregation if you use enrich pattern with a aggregation strategy and then apply mongodb update. 
+If you don't remove this header during aggregation and/or redefine MongoDBConstants.CRITERIA header before sending
+camel exchange to mongodb producer endpoint, you may end up with invalid camel exchange payload while updating mongodb. 
+
 The second way Require a
 List<Bson> as the IN message body containing exactly 2 elements:
 
