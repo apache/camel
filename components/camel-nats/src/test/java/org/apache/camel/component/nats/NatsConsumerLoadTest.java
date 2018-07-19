@@ -30,7 +30,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-//@Ignore("Require a running Nats server")
+@Ignore("Require a running Nats server")
 public class NatsConsumerLoadTest extends CamelTestSupport {
     
     @EndpointInject(uri = "mock:result")
