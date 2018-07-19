@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+==== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,6 +75,7 @@ with the following path and query parameters:
 | *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
 | *flushTimeout* (common) | Set the flush timeout | 1000 | int
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 3 | int
+| *noEcho* (common) | Turn off echo. If supported by the gnatsd version you are connecting to this flag will prevent the server from echoing messages back to the connection if it has subscriptions on the subject being published to. | false | boolean
 | *noRandomizeServers* (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
 | *pedantic* (common) | Whether or not running in pedantic mode (this affects performace) | false | boolean
 | *pingInterval* (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 4000 | int
