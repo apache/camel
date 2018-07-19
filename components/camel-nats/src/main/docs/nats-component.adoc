@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,9 +91,7 @@ with the following path and query parameters:
 | *replySubject* (producer) | the subject to which subscribers should send response |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *secure* (security) | Set secure option indicating TLS is required | false | boolean
-| *ssl* (security) | Whether or not using SSL | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *tlsDebug* (security) | TLS Debug, it will add additional console output | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

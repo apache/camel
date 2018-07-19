@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import io.nats.client.Connection;
-import io.nats.client.ConnectionFactory;
+import io.nats.client.Nats;
+import io.nats.client.Options;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,8 +39,8 @@ public class NatsConsumerLoadTest extends CamelTestSupport {
     @Test
     public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
         mockResultEndpoint.setExpectedMessageCount(10000);
-        ConnectionFactory cf = new ConnectionFactory("nats://localhost:4222");
-        Connection connection = cf.createConnection();
+        Options options = new Options.Builder().server("nats://localhost:4222").build();
+        Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 10000; i++) {
             connection.publish("test", ("test" + i).getBytes());
