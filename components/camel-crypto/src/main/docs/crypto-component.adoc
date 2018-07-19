@@ -144,7 +144,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 37 options, which are listed below.
+The component supports 33 options, which are listed below.
 
 
 
@@ -169,11 +169,13 @@ The component supports 37 options, which are listed below.
  passwords may escape if unset. | true | Boolean
 | *camel.component.crypto.configuration.crypto-operation* | Set the Crypto operation from that supplied after the crypto scheme
  in the endpoint uri e.g. crypto:sign sets sign as the operation. |  | CryptoOperation
-| *camel.component.crypto.configuration.key-store-parameters.camel-context* |  |  | CamelContext
-| *camel.component.crypto.configuration.key-store-parameters.password* |  |  | String
-| *camel.component.crypto.configuration.key-store-parameters.provider* |  |  | String
-| *camel.component.crypto.configuration.key-store-parameters.resource* |  |  | String
-| *camel.component.crypto.configuration.key-store-parameters.type* |  |  | String
+| *camel.component.crypto.configuration.key-store-parameters* | Sets the KeyStore that can contain keys and Certficates for use in
+ signing and verifying exchanges based on the given
+ KeyStoreParameters. A KeyStore is typically used with an alias,
+ either one supplied in the Route definition or dynamically via the
+ message header CamelSignatureKeyStoreAlias. If no alias is supplied
+ and there is only a single entry in the Keystore, then this single
+ entry will be used. |  | KeyStoreParameters
 | *camel.component.crypto.configuration.keystore* | Sets the KeyStore that can contain keys and Certficates for use in
  signing and verifying exchanges. A KeyStore is typically used with an
  alias, either one supplied in the Route definition or dynamically via

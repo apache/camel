@@ -126,7 +126,7 @@ The component supports 17 options, which are listed below.
  org.apache.camel.component.cache.CacheManagerFactory type. |  | String
 | *camel.component.cache.configuration-file* | Sets the location of the ehcache.xml file to load from classpath or file
  system. By default the file is loaded from classpath:ehcache.xml | classpath:ehcache.xml | String
-| *camel.component.cache.configuration.cache-loader-registry.cache-loaders* |  |  | List
+| *camel.component.cache.configuration.cache-loader-registry* | To configure cache loader using the CacheLoaderRegistry |  | CacheLoaderRegistry
 | *camel.component.cache.configuration.cache-name* | Name of the cache |  | String
 | *camel.component.cache.configuration.disk-expiry-thread-interval-seconds* | The number of seconds between runs of the disk expiry thread. |  | Long
 | *camel.component.cache.configuration.disk-persistent* | Whether the disk store persists between restarts of the application. | false | Boolean
@@ -134,7 +134,7 @@ The component supports 17 options, which are listed below.
  injection. |  | String
 | *camel.component.cache.configuration.eternal* | Sets whether elements are eternal. If eternal, timeouts are ignored
  and the element never expires. | false | Boolean
-| *camel.component.cache.configuration.event-listener-registry.event-listeners* |  |  | List
+| *camel.component.cache.configuration.event-listener-registry* | To configure event listeners using the CacheEventListenerRegistry |  | CacheEventListener Registry
 | *camel.component.cache.configuration.max-elements-in-memory* | The number of elements that may be stored in the defined cache in
  memory. | 1000 | Integer
 | *camel.component.cache.configuration.memory-store-eviction-policy* | Which eviction strategy to use when maximum number of elements in

@@ -177,7 +177,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 111 options, which are listed below.
+The component supports 98 options, which are listed below.
 
 
 
@@ -485,20 +485,8 @@ The component supports 111 options, which are listed below.
  negotiate the security settings for a network connection using TLS or
  SSL network protocol.By default all the available cipher suites are
  supported. |  | String
-| *camel.component.kafka.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
-| *camel.component.kafka.configuration.ssl-context-parameters.cert-alias* |  |  | String
-| *camel.component.kafka.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.component.kafka.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
-| *camel.component.kafka.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.component.kafka.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
-| *camel.component.kafka.configuration.ssl-context-parameters.provider* |  |  | String
-| *camel.component.kafka.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
-| *camel.component.kafka.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
-| *camel.component.kafka.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.component.kafka.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.component.kafka.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.component.kafka.configuration.ssl-context-parameters.session-timeout* |  |  | String
-| *camel.component.kafka.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.kafka.configuration.ssl-context-parameters* | SSL configuration using a Camel SSLContextParameters object. If
+ configured it's applied before the other SSL endpoint parameters. |  | SSLContextParameters
 | *camel.component.kafka.configuration.ssl-enabled-protocols* | The list of protocols enabled for SSL connections. TLSv1.2, TLSv1.1
  and TLSv1 are enabled by default. | TLSv1.2,TLSv1.1,TLSv1 | String
 | *camel.component.kafka.configuration.ssl-endpoint-algorithm* | The endpoint identification algorithm to validate server hostname

@@ -93,7 +93,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 30 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -105,20 +105,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.etcd.configuration.recursive* | To apply an action recursively. | false | Boolean
 | *camel.component.etcd.configuration.send-empty-exchange-on-timeout* | To send an empty message in case of timeout watching for a key. | false | Boolean
 | *camel.component.etcd.configuration.service-path* | The path to look for for service discovery | /services/ | String
-| *camel.component.etcd.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
-| *camel.component.etcd.configuration.ssl-context-parameters.cert-alias* |  |  | String
-| *camel.component.etcd.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.component.etcd.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
-| *camel.component.etcd.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.component.etcd.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
-| *camel.component.etcd.configuration.ssl-context-parameters.provider* |  |  | String
-| *camel.component.etcd.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
-| *camel.component.etcd.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
-| *camel.component.etcd.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.component.etcd.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.component.etcd.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.component.etcd.configuration.ssl-context-parameters.session-timeout* |  |  | String
-| *camel.component.etcd.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.etcd.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. |  | SSLContextParameters
 | *camel.component.etcd.configuration.time-to-live* | To set the lifespan of a key in milliseconds. |  | Integer
 | *camel.component.etcd.configuration.timeout* | To set the maximum time an action could take to complete. |  | Long
 | *camel.component.etcd.configuration.uris* | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String

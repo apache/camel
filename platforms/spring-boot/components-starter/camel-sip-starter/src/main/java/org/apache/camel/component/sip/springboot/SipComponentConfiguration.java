@@ -33,7 +33,7 @@ public class SipComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Whether to enable auto configuration of the sips component. This is
+     * Whether to enable auto configuration of the sip component. This is
      * enabled by default.
      */
     private Boolean enabled;

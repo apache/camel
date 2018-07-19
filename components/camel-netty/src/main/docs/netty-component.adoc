@@ -178,7 +178,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 83 options, which are listed below.
+The component supports 70 options, which are listed below.
 
 
 
@@ -308,20 +308,7 @@ The component supports 83 options, which are listed below.
  Camel Message with headers having information about the client
  certificate such as subject name, issuer name, serial number, and the
  valid date range. | false | Boolean
-| *camel.component.netty.configuration.ssl-context-parameters.camel-context* |  |  | CamelContext
-| *camel.component.netty.configuration.ssl-context-parameters.cert-alias* |  |  | String
-| *camel.component.netty.configuration.ssl-context-parameters.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.component.netty.configuration.ssl-context-parameters.cipher-suites-filter* |  |  | FilterParameters
-| *camel.component.netty.configuration.ssl-context-parameters.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.component.netty.configuration.ssl-context-parameters.key-managers* |  |  | KeyManagersParameters
-| *camel.component.netty.configuration.ssl-context-parameters.provider* |  |  | String
-| *camel.component.netty.configuration.ssl-context-parameters.secure-random* |  |  | SecureRandomParameters
-| *camel.component.netty.configuration.ssl-context-parameters.secure-socket-protocol* |  |  | String
-| *camel.component.netty.configuration.ssl-context-parameters.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.component.netty.configuration.ssl-context-parameters.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.component.netty.configuration.ssl-context-parameters.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.component.netty.configuration.ssl-context-parameters.session-timeout* |  |  | String
-| *camel.component.netty.configuration.ssl-context-parameters.trust-managers* |  |  | TrustManagersParameters
+| *camel.component.netty.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
 | *camel.component.netty.configuration.ssl-handler* | Reference to a class that could be used to return an SSL Handler |  | SslHandler
 | *camel.component.netty.configuration.sync* | Setting to set endpoint as one-way or request-response | true | Boolean
 | *camel.component.netty.configuration.tcp-no-delay* | Setting to improve TCP protocol performance | true | Boolean
