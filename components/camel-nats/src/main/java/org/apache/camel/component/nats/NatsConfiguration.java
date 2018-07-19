@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.nats;
 
-import java.util.Properties;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
+
+import io.nats.client.Options;
+import io.nats.client.Options.Builder;
 
 @UriParams
 public class NatsConfiguration {
@@ -39,8 +43,6 @@ public class NatsConfiguration {
     private boolean pedantic;
     @UriParam
     private boolean verbose;
-    @UriParam(label = "security")
-    private boolean ssl;
     @UriParam(defaultValue = "2000")
     private int reconnectTimeWait = 2000;
     @UriParam(defaultValue = "3")
@@ -63,8 +65,6 @@ public class NatsConfiguration {
     private int flushTimeout = 1000;
     @UriParam(label = "security")
     private boolean secure;
-    @UriParam(label = "security")
-    private boolean tlsDebug;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
@@ -121,17 +121,6 @@ public class NatsConfiguration {
 
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
-    }
-
-    /**
-     * Whether or not using SSL
-     */
-    public boolean getSsl() {
-        return ssl;
-    }
-
-    public void setSsl(boolean ssl) {
-        this.ssl = ssl;
     }
 
     /**
@@ -257,17 +246,6 @@ public class NatsConfiguration {
     }
 
     /**
-     * TLS Debug, it will add additional console output
-     */
-    public boolean isTlsDebug() {
-        return tlsDebug;
-    }
-
-    public void setTlsDebug(boolean tlsDebug) {
-        this.tlsDebug = tlsDebug;
-    }
-
-    /**
      * To configure security using SSLContextParameters
      */
     public SSLContextParameters getSslContextParameters() {
@@ -278,24 +256,29 @@ public class NatsConfiguration {
         this.sslContextParameters = sslContextParameters;
     }
 
-    private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
-        if (value != null) {
-            props.put(key, value);
-        }
-    }
-
-    public Properties createProperties() {
-        Properties props = new Properties();
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_URL, splitServers());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_VERBOSE, getVerbose());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_PEDANTIC, getPedantic());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_SSL, getSsl());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_RECONNECT, getReconnect());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_MAX_RECONNECT_ATTEMPTS, getMaxReconnectAttempts());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_RECONNECT_TIME_WAIT, getReconnectTimeWait());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_PING_INTERVAL, getPingInterval());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_DONT_RANDOMIZE_SERVERS, getNoRandomizeServers());
-        return props;
+    public Builder createOptions() throws NoSuchAlgorithmException, IllegalArgumentException {
+    	Builder builder = new Options.Builder();
+    	builder.server(splitServers());
+    	if (getVerbose()) {
+    		builder.verbose();
+    	}
+    	if (getPedantic()) {
+    		builder.pedantic();
+    	}
+    	if (isSecure()) {
+    		builder.secure();
+    	}
+    	if (!getReconnect()) {
+    		builder.noReconnect();
+    	} else {
+    		builder.maxReconnects(getMaxReconnectAttempts());
+    		builder.reconnectWait(Duration.ofMillis(getReconnectTimeWait()));
+    	}
+    	builder.pingInterval(Duration.ofMillis(getPingInterval()));
+    	if (getNoRandomizeServers()) {
+    		builder.noRandomize();
+    	}
+    	return builder;
     }
 
     private String splitServers() {
