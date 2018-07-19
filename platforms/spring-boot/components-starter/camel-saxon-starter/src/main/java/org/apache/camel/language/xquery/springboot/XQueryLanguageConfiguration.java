@@ -32,6 +32,11 @@ public class XQueryLanguageConfiguration
             LanguageConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xquery language. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the class name of the result type (type from output) The default
      * result type is NodeSet
      */

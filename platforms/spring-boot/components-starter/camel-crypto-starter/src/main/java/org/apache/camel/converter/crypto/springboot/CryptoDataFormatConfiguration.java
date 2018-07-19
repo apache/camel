@@ -33,6 +33,11 @@ public class CryptoDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the crypto data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The JCE algorithm name indicating the cryptographic algorithm that will
      * be used. Is by default DES/CBC/PKCS5Padding.
      */

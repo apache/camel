@@ -33,6 +33,11 @@ public class UniVocityTsvDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the univocity-tsv data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The escape character.
      */
     private String escapeChar = "\\";

@@ -34,6 +34,11 @@ public class XStreamDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xstream data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Adds permissions that controls which Java packages and classes XStream is
      * allowed to use during unmarshal from xml/json to Java beans. A permission
      * must be configured either here or globally using a JVM system property.

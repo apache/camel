@@ -33,6 +33,11 @@ public class FhirXmlDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the fhirXml data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The version of FHIR to use. Possible values are:
      * DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4
      */

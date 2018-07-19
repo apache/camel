@@ -36,6 +36,11 @@ public class SnakeYAMLDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the yaml-snakeyaml data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Which yaml library to use. By default it is SnakeYAML
      */
     private YAMLLibrary library = YAMLLibrary.SnakeYAML;

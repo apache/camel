@@ -35,6 +35,11 @@ public class JsonDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the json-xstream data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Lookup and use the existing ObjectMapper with the given id when using
      * Jackson.
      */
