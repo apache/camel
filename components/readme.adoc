@@ -480,7 +480,7 @@ Number of Components: 299 in 203 JAR artifacts (21 deprecated)
 `kubernetes-deployments:masterUrl` | 2.20 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-hpa-component.adoc[Kubernetes HPA] (camel-kubernetes) +
-`kubernetes-hpa:masterUrl` | 2.23 | The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume pod events.
+`kubernetes-hpa:masterUrl` | 2.23 | The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume HPA events.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-job-component.adoc[Kubernetes Job] (camel-kubernetes) +
 `kubernetes-job:masterUrl` | 2.23 | The Kubernetes Jobs component provides a producer to execute kubernetes job operations
