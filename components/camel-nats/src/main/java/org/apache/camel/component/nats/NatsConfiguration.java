@@ -19,14 +19,14 @@ package org.apache.camel.component.nats;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
+import io.nats.client.Options;
+import io.nats.client.Options.Builder;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
-
-import io.nats.client.Options;
-import io.nats.client.Options.Builder;
 
 @UriParams
 public class NatsConfiguration {
@@ -69,7 +69,8 @@ public class NatsConfiguration {
     private SSLContextParameters sslContextParameters;
 
     /**
-     * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
+     * URLs to one or more NAT servers. Use comma to separate URLs when
+     * specifying multiple servers.
      */
     public String getServers() {
         return servers;
@@ -155,7 +156,6 @@ public class NatsConfiguration {
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
     }
-    
 
     /**
      * the subject to which subscribers should send response
@@ -169,7 +169,8 @@ public class NatsConfiguration {
     }
 
     /**
-     * Whether or not randomizing the order of servers for the connection attempts
+     * Whether or not randomizing the order of servers for the connection
+     * attempts
      */
     public boolean getNoRandomizeServers() {
         return noRandomizeServers;
@@ -191,7 +192,8 @@ public class NatsConfiguration {
     }
 
     /**
-     * Stop receiving messages from a topic we are subscribing to after maxMessages 
+     * Stop receiving messages from a topic we are subscribing to after
+     * maxMessages
      */
     public String getMaxMessages() {
         return maxMessages;
@@ -257,28 +259,28 @@ public class NatsConfiguration {
     }
 
     public Builder createOptions() throws NoSuchAlgorithmException, IllegalArgumentException {
-    	Builder builder = new Options.Builder();
-    	builder.server(splitServers());
-    	if (getVerbose()) {
-    		builder.verbose();
-    	}
-    	if (getPedantic()) {
-    		builder.pedantic();
-    	}
-    	if (isSecure()) {
-    		builder.secure();
-    	}
-    	if (!getReconnect()) {
-    		builder.noReconnect();
-    	} else {
-    		builder.maxReconnects(getMaxReconnectAttempts());
-    		builder.reconnectWait(Duration.ofMillis(getReconnectTimeWait()));
-    	}
-    	builder.pingInterval(Duration.ofMillis(getPingInterval()));
-    	if (getNoRandomizeServers()) {
-    		builder.noRandomize();
-    	}
-    	return builder;
+        Builder builder = new Options.Builder();
+        builder.server(splitServers());
+        if (getVerbose()) {
+            builder.verbose();
+        }
+        if (getPedantic()) {
+            builder.pedantic();
+        }
+        if (isSecure()) {
+            builder.secure();
+        }
+        if (!getReconnect()) {
+            builder.noReconnect();
+        } else {
+            builder.maxReconnects(getMaxReconnectAttempts());
+            builder.reconnectWait(Duration.ofMillis(getReconnectTimeWait()));
+        }
+        builder.pingInterval(Duration.ofMillis(getPingInterval()));
+        if (getNoRandomizeServers()) {
+            builder.noRandomize();
+        }
+        return builder;
     }
 
     private String splitServers() {
