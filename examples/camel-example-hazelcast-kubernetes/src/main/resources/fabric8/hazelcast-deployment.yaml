@@ -12,7 +12,7 @@ spec:
     spec: 
       containers: 
       - name: hazelcast
-        image: quay.io/pires/hazelcast-kubernetes:3.10.2
+        image: quay.io/pires/hazelcast-kubernetes:3.10.3
         imagePullPolicy: Always
         env:
         - name: "DNS_DOMAIN"
