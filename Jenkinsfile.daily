@@ -23,7 +23,7 @@ def BUILD_JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
-def jdk9_result, jdk10_result, jdk11_result
+def jdk9_result, jdk10_result, jdk11_result, karaf_itests_result
 
 pipeline {
 
@@ -60,7 +60,9 @@ pipeline {
             steps {
                 dir("tests/camel-itest-karaf/") {
                     sh "./kill-karaf.sh"
-                    karaf_itests_result = sh script: "./run-tests.sh", returnStatus: true
+                    script {
+                        karaf_itests_result = sh script: "./run-tests.sh", returnStatus: true
+                    }
                 }
             }
         }
