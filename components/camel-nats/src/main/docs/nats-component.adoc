@@ -66,12 +66,13 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *connectionTimeout* (common) | Timeout for connection attempts. (in milliseconds) | 2000 | int
 | *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
 | *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 3 | int
