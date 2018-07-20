@@ -151,21 +151,20 @@ public class NatsConfiguration {
     public void setMaxReconnectAttempts(int maxReconnectAttempts) {
         this.maxReconnectAttempts = maxReconnectAttempts;
     }
-    
 
     /**
-     * maximum number of pings have not received a response allowed by the 
+     * maximum number of pings have not received a response allowed by the
      * client
      */
     public int getMaxPingsOut() {
-		return maxPingsOut;
-	}
+        return maxPingsOut;
+    }
 
-	public void setMaxPingsOut(int maxPingsOut) {
-		this.maxPingsOut = maxPingsOut;
-	}
+    public void setMaxPingsOut(int maxPingsOut) {
+        this.maxPingsOut = maxPingsOut;
+    }
 
-	/**
+    /**
      * Ping interval to be aware if connection is still alive (in milliseconds)
      */
     public int getPingInterval() {
@@ -175,19 +174,19 @@ public class NatsConfiguration {
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
     }
-    
+
     /**
      * Timeout for connection attempts. (in milliseconds)
      */
     public int getConnectionTimeout() {
-		return connectionTimeout;
-	}
+        return connectionTimeout;
+    }
 
-	public void setConnectionTimeout(int connectionTimeout) {
-		this.connectionTimeout = connectionTimeout;
-	}
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
 
-	/**
+    /**
      * the subject to which subscribers should send response
      */
     public String getReplySubject() {
@@ -209,11 +208,11 @@ public class NatsConfiguration {
     public void setNoRandomizeServers(boolean noRandomizeServers) {
         this.noRandomizeServers = noRandomizeServers;
     }
-    
+
     /**
-     * Turn off echo. If supported by the gnatsd version you are connecting 
-     * to this flag will prevent the server from echoing messages back 
-     * to the connection if it has subscriptions on the subject being published to.
+     * Turn off echo. If supported by the gnatsd version you are connecting to
+     * this flag will prevent the server from echoing messages back to the
+     * connection if it has subscriptions on the subject being published to.
      */
     public boolean getNoEcho() {
         return noEcho;
