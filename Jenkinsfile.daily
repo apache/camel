@@ -60,7 +60,7 @@ pipeline {
             steps {
                 dir("tests/camel-itest-karaf/") {
                     sh "./kill-karaf.sh"
-                    sh "./run-tests.sh"
+                    karaf_itests_result = sh script: "./run-tests.sh", returnStatus: true
                 }
             }
         }
@@ -124,6 +124,7 @@ pipeline {
     post {
         always {
             script {
+                echo "Karaf Itests result is ${karaf_itests_result}"
                 currentBuild.result = jdk9_result == 0 && jdk10_result == 0 && jdk11_result == 0 ? 'SUCCESS' : 'FAILURE'
             }
         }
