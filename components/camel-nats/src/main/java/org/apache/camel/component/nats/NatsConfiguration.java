@@ -47,8 +47,8 @@ public class NatsConfiguration {
     private int reconnectTimeWait = 2000;
     @UriParam(defaultValue = "3")
     private int maxReconnectAttempts = 3;
-    @UriParam(defaultValue = "4000")
-    private int pingInterval = 4000;
+    @UriParam(defaultValue = "120000")
+    private int pingInterval = 120000;
     @UriParam(label = "common", defaultValue = "2000")
     private int connectionTimeout = 2000;
     @UriParam(label = "producer")
