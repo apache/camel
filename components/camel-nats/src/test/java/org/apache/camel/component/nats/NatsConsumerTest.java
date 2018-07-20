@@ -21,12 +21,9 @@ import java.io.IOException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Require a running Nats server")
-public class NatsConsumerTest extends CamelTestSupport {
+public class NatsConsumerTest extends NatsTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -44,8 +41,8 @@ public class NatsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test&flushConnection=true");
-                from("nats://localhost:4222?topic=test&flushConnection=true").to(mockResultEndpoint);
+                from("direct:send").to("nats://"  + getNatsUrl() + "?topic=test&flushConnection=true");
+                from("nats://" + getNatsUrl() + "?topic=test&flushConnection=true").to(mockResultEndpoint);
             }
         };
     }
