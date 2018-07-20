@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,6 +83,7 @@ with the following path and query parameters:
 | *pingInterval* (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 120000 | int
 | *reconnect* (common) | Whether or not using reconnection feature | true | boolean
 | *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
+| *requestCleanupInterval* (common) | Interval to clean up cancelled/timed out requests. | 5000 | int
 | *topic* (common) | *Required* The name of topic we want to use |  | String
 | *verbose* (common) | Whether or not running in verbose mode | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
