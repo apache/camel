@@ -75,11 +75,11 @@ with the following path and query parameters:
 | *connectionTimeout* (common) | Timeout for connection attempts. (in milliseconds) | 2000 | int
 | *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
 | *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
-| *maxReconnectAttempts* (common) | Max reconnection attempts | 3 | int
+| *maxReconnectAttempts* (common) | Max reconnection attempts | 60 | int
 | *noEcho* (common) | Turn off echo. If supported by the gnatsd version you are connecting to this flag will prevent the server from echoing messages back to the connection if it has subscriptions on the subject being published to. | false | boolean
 | *noRandomizeServers* (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
 | *pedantic* (common) | Whether or not running in pedantic mode (this affects performace) | false | boolean
-| *pingInterval* (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 4000 | int
+| *pingInterval* (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 120000 | int
 | *reconnect* (common) | Whether or not using reconnection feature | true | boolean
 | *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
 | *topic* (common) | *Required* The name of topic we want to use |  | String
