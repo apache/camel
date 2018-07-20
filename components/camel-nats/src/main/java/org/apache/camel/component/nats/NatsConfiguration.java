@@ -53,6 +53,8 @@ public class NatsConfiguration {
     private int connectionTimeout = 2000;
     @UriParam(label = "common", defaultValue = "2")
     private int maxPingsOut = Options.DEFAULT_MAX_PINGS_OUT;
+    @UriParam(label = "common", defaultValue = "5000")
+    private int requestCleanupInterval = 5000;
     @UriParam(label = "producer")
     private String replySubject;
     @UriParam
@@ -162,6 +164,17 @@ public class NatsConfiguration {
 
     public void setMaxPingsOut(int maxPingsOut) {
         this.maxPingsOut = maxPingsOut;
+    }
+
+    /**
+     *  Interval to clean up cancelled/timed out requests.
+     */
+    public int getRequestCleanupInterval() {
+        return requestCleanupInterval;
+    }
+
+    public void setRequestCleanupInterval(int requestCleanupInterval) {
+        this.requestCleanupInterval = requestCleanupInterval;
     }
 
     /**
@@ -321,6 +334,7 @@ public class NatsConfiguration {
         builder.pingInterval(Duration.ofMillis(getPingInterval()));
         builder.connectionTimeout(Duration.ofMillis(getConnectionTimeout()));
         builder.maxPingsOut(getMaxPingsOut());
+        builder.requestCleanupInterval(Duration.ofMillis(getRequestCleanupInterval()));
         if (getNoRandomizeServers()) {
             builder.noRandomize();
         }
