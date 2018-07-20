@@ -53,6 +53,18 @@ pipeline {
             }
         }
 
+        stage('karaf-itests') {
+            tools {
+                jdk BUILD_JDK_NAME
+            }
+            steps {
+                dir("tests/camel-itest-karaf/") {
+                    sh "./kill-karaf.sh"
+                    sh "./run-tests.sh"
+                }
+            }
+        }
+
         stage('Test JDK 9') {
             tools {
                 jdk 'JDK 1.9 (latest)'
