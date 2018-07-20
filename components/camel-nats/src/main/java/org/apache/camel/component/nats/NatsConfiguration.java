@@ -49,6 +49,8 @@ public class NatsConfiguration {
     private int maxReconnectAttempts = 3;
     @UriParam(defaultValue = "4000")
     private int pingInterval = 4000;
+    @UriParam(label = "common", defaultValue = "2000")
+    private int connectionTimeout = 2000;
     @UriParam(label = "producer")
     private String replySubject;
     @UriParam
@@ -158,8 +160,19 @@ public class NatsConfiguration {
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
     }
-
+    
     /**
+     * Timeout for connection attempts. (in milliseconds)
+     */
+    public int getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	public void setConnectionTimeout(int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+	}
+
+	/**
      * the subject to which subscribers should send response
      */
     public String getReplySubject() {
@@ -292,6 +305,7 @@ public class NatsConfiguration {
             builder.reconnectWait(Duration.ofMillis(getReconnectTimeWait()));
         }
         builder.pingInterval(Duration.ofMillis(getPingInterval()));
+        builder.connectionTimeout(Duration.ofMillis(getConnectionTimeout()));
         if (getNoRandomizeServers()) {
             builder.noRandomize();
         }
