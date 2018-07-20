@@ -51,6 +51,8 @@ public class NatsConfiguration {
     private int pingInterval = 120000;
     @UriParam(label = "common", defaultValue = "2000")
     private int connectionTimeout = 2000;
+    @UriParam(label = "common", defaultValue = "2")
+    private int maxPingsOut = Options.DEFAULT_MAX_PINGS_OUT;
     @UriParam(label = "producer")
     private String replySubject;
     @UriParam
@@ -149,8 +151,21 @@ public class NatsConfiguration {
     public void setMaxReconnectAttempts(int maxReconnectAttempts) {
         this.maxReconnectAttempts = maxReconnectAttempts;
     }
+    
 
     /**
+     * maximum number of pings have not received a response allowed by the 
+     * client
+     */
+    public int getMaxPingsOut() {
+		return maxPingsOut;
+	}
+
+	public void setMaxPingsOut(int maxPingsOut) {
+		this.maxPingsOut = maxPingsOut;
+	}
+
+	/**
      * Ping interval to be aware if connection is still alive (in milliseconds)
      */
     public int getPingInterval() {
@@ -306,6 +321,7 @@ public class NatsConfiguration {
         }
         builder.pingInterval(Duration.ofMillis(getPingInterval()));
         builder.connectionTimeout(Duration.ofMillis(getConnectionTimeout()));
+        builder.maxPingsOut(getMaxPingsOut());
         if (getNoRandomizeServers()) {
             builder.noRandomize();
         }
