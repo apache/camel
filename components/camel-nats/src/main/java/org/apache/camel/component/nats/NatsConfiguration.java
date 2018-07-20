@@ -45,8 +45,8 @@ public class NatsConfiguration {
     private boolean verbose;
     @UriParam(defaultValue = "2000")
     private int reconnectTimeWait = 2000;
-    @UriParam(defaultValue = "3")
-    private int maxReconnectAttempts = 3;
+    @UriParam(defaultValue = "60")
+    private int maxReconnectAttempts = Options.DEFAULT_MAX_RECONNECT;
     @UriParam(defaultValue = "120000")
     private int pingInterval = 120000;
     @UriParam(label = "common", defaultValue = "2000")
