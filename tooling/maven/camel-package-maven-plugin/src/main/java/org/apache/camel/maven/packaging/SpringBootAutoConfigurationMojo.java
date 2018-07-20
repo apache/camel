@@ -40,6 +40,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Generated;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
@@ -818,8 +819,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 PropertySource<JavaClassSource> sourceProp = resolvedProperty.propertySource;
 
                 Type<JavaClassSource> propType = sourceProp.getType();
+
                 // skip these types
-                if (propType.isType("CamelContext")) {
+                boolean ignore = sourceProp.getAnnotation(XmlTransient.class) != null;
+                if (ignore || propType.isType("CamelContext")) {
                     continue;
                 }
 

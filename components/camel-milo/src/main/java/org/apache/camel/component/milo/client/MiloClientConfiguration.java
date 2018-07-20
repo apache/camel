@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.google.common.base.Supplier;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.KeyStoreLoader.Result;
@@ -44,6 +46,7 @@ public class MiloClientConfiguration implements Cloneable {
 
     private static final String DEFAULT_PRODUCT_URI = "http://camel.apache.org/EclipseMilo";
 
+    @XmlTransient // to not be included in component docs
     private String endpointUri;
 
     @UriParam
@@ -128,6 +131,9 @@ public class MiloClientConfiguration implements Cloneable {
         this.overrideHost = other.overrideHost;
     }
 
+    /**
+     * The OPC UA server endpoint
+     */
     public void setEndpointUri(final String endpointUri) {
         this.endpointUri = endpointUri;
     }
