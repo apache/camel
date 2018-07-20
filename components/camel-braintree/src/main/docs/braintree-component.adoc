@@ -121,6 +121,7 @@ Endpoint prefix can be one of:
 * paymentmethod
 * paymentmethodNonce
 * plan
+* report
 * settlementBatchSummary
 * subscription
 * transaction
@@ -568,7 +569,32 @@ braintree://plan/endpoint
 |all |  |  |List<com.braintreegateway.Plan>
 |====================================================
 
- 
+
+#### Endpoint prefix _report_
+
+The following endpoints can be invoked with the prefix *report* as
+follows:
+
+[source,java]
+---------------------------------
+braintree://plan/report?[options]
+---------------------------------
+
+[cols="<,<,<,<",options="header",]
+|==============================================================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|transactionLevelFees |  | request |com.braintreegateway.Result<com.braintreegateway.TransactionLevelFeeReport>
+|==============================================================================================================
+
+[[Braintree-URIOptionsfortreport]]
+URI Options for _report_
+
+[cols="<,<",options="header",]
+|==============================================================
+|Name |Type
+|request |com.braintreegateway.TransactionLevelFeeReportRequest
+|==============================================================
+
 
 #### Endpoint prefix _settlementBatchSummary_
 

@@ -226,6 +226,11 @@
                   <fromJavadoc/>
                 </api>
                 <api>
+                  <apiName>report</apiName>
+                  <proxyClass>com.braintreegateway.ReportGateway</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
                   <apiName>settlementBatchSummary</apiName>
                   <proxyClass>com.braintreegateway.SettlementBatchSummaryGateway</proxyClass>
                   <fromJavadoc/>
