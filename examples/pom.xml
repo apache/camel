@@ -47,6 +47,7 @@
     <module>camel-example-cdi-cassandraql</module>
     <module>camel-example-fhir</module>
     <module>camel-example-fhir-osgi</module>
+    <module>camel-example-fhir-spring-boot</module>
     <module>camel-example-cdi-kubernetes</module>
     <module>camel-example-cdi-metrics</module>
     <module>camel-example-cdi-osgi</module>
