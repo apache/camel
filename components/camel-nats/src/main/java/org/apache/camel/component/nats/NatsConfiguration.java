@@ -26,6 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
@@ -75,7 +76,6 @@ public class NatsConfiguration {
     private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when
      * specifying multiple servers.
