@@ -184,7 +184,6 @@
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
     <docker-java-version>3.0.14</docker-java-version>
     <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
-    <docker-maven-plugin-version>0.26.0</docker-maven-plugin-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.2.0</dozer-version>
     <drools-version>7.3.0.Final</drools-version>
