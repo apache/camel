@@ -108,7 +108,13 @@
     <!-- for testing sftp -->
     <dependency>
       <groupId>org.apache.sshd</groupId>
-      <artifactId>sshd-core</artifactId>
+      <artifactId>sshd-sftp</artifactId>
+      <version>${sshd-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-scp</artifactId>
       <version>${sshd-version}</version>
       <scope>test</scope>
     </dependency>

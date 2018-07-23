@@ -670,7 +670,7 @@
     <squareup-okio-bundle-version>1.14.0_1</squareup-okio-bundle-version>
     <squareup-retrofit-bundle-version>1.9.0_1</squareup-retrofit-bundle-version>
     <squareup-retrofit2-bundle-version>2.4.0_1</squareup-retrofit2-bundle-version>
-    <sshd-version>1.7.0</sshd-version>
+    <sshd-version>2.0.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <swagger-scala-version>1.3.12</swagger-scala-version>
     <swagger-scala-guava-version>15.0</swagger-scala-guava-version>
