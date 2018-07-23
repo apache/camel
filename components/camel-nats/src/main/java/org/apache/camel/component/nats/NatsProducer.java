@@ -70,22 +70,24 @@ public class NatsProducer extends DefaultProducer {
         LOG.debug("Starting Nats Producer");
         
         LOG.debug("Getting Nats Connection");
-        connection = getEndpoint().getConnection();
+        connection = getEndpoint().getNatsConfiguration().getConnection() != null ? 
+            getEndpoint().getNatsConfiguration().getConnection():getEndpoint().getConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
         LOG.debug("Stopping Nats Producer");
-        
-        LOG.debug("Closing Nats Connection");
-        if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
-            if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
-                LOG.debug("Flushing Nats Connection");
-                connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
+        if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
+            LOG.debug("Closing Nats Connection");
+            if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
+                if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+                    LOG.debug("Flushing Nats Connection");
+                    connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
+                }
+                connection.close();
             }
-            connection.close();
         }
+        super.doStop();
     }
 
 }

@@ -19,6 +19,7 @@ package org.apache.camel.component.nats;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
+import io.nats.client.Connection;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
 
@@ -37,6 +38,8 @@ public class NatsConfiguration {
     @UriParam
     @Metadata(required = "true")
     private String topic;
+    @UriParam
+    private Connection connection;
     @UriParam(defaultValue = "true")
     private boolean reconnect = true;
     @UriParam
@@ -96,6 +99,17 @@ public class NatsConfiguration {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+    
+    /**
+     * Reference an already instantiated connection to Nats server
+     */  
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 
     /**

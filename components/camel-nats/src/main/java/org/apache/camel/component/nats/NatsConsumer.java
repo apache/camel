@@ -66,14 +66,14 @@ public class NatsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor();
 
         LOG.debug("Getting Nats Connection");
-        connection = getEndpoint().getConnection();
+        connection = getEndpoint().getNatsConfiguration().getConnection() != null ? 
+            getEndpoint().getNatsConfiguration().getConnection():getEndpoint().getConnection();
 
         executor.submit(new NatsConsumingTask(connection, getEndpoint().getNatsConfiguration()));
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
 
         if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
             LOG.debug("Flushing Messages before stopping");
@@ -96,10 +96,13 @@ public class NatsConsumer extends DefaultConsumer {
         }
         executor = null;
 
-        LOG.debug("Closing Nats Connection");
-        if (!connection.getStatus().equals(Status.CLOSED)) {
-            connection.close();
+        if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
+            LOG.debug("Closing Nats Connection");
+            if (!connection.getStatus().equals(Status.CLOSED)) {
+                connection.close();
+            }
         }
+        super.doStop();
     }
 
     public boolean isActive() {
