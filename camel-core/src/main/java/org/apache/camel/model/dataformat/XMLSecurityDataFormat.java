@@ -46,6 +46,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @XmlAttribute
     private String passPhrase;
     @XmlAttribute
+    private byte[] passPhraseByte;
+    @XmlAttribute
     private String secureTag;
     @XmlAttribute
     private Boolean secureTagContents;
@@ -259,8 +261,12 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         boolean isSecureTagContents = getSecureTagContents() != null && getSecureTagContents();
         setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
 
-        if (passPhrase != null) {
-            setProperty(camelContext, dataFormat, "passPhrase", getPassPhrase().getBytes());
+        if (passPhrase != null || passPhraseByte != null) {
+            if (passPhraseByte != null) {
+                setProperty(camelContext, dataFormat, "passPhrase", passPhraseByte);
+            } else {
+                setProperty(camelContext, dataFormat, "passPhrase", passPhrase.getBytes());
+            }
         } else {
             setProperty(camelContext, dataFormat, "passPhrase", "Just another 24 Byte key".getBytes());
         }
@@ -335,6 +341,20 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
      */
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
+    }
+    
+    public byte[] getPassPhraseByte() {
+        return passPhraseByte;
+    }
+
+    /**
+     * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided.
+     * If no passPhrase is specified, a default passPhrase is used.
+     * The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm.
+     * For example using TRIPLEDES the passPhase can be a "Only another 24 Byte key"
+     */
+    public void setPassPhraseByte(byte[] passPhraseByte) {
+        this.passPhraseByte = passPhraseByte;
     }
 
     public String getSecureTag() {

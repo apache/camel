@@ -140,6 +140,31 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         xmlsecTestHelper.testEncryption(context);
     }
+    
+    @Test
+    public void testPartialPayloadXMLElementEncryptionWithByteKeyAndAlgorithm() throws Exception {
+        final byte[] bits192 = {
+            (byte)0x24, (byte)0xf2, (byte)0xd3, (byte)0x45,
+            (byte)0xc0, (byte)0x75, (byte)0xb1, (byte)0x00,
+            (byte)0x30, (byte)0xd4, (byte)0x3d, (byte)0xf5,
+            (byte)0x6d, (byte)0xaa, (byte)0x7d, (byte)0xc2,
+            (byte)0x85, (byte)0x32, (byte)0x2a, (byte)0xb6,
+            (byte)0xfe, (byte)0xed, (byte)0xbe, (byte)0xef  
+        };
+        
+
+        final String passCode = new String(bits192);
+        byte[] bytes = passCode.getBytes();
+        assertTrue(bits192.length != bytes.length);
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .marshal().secureXML("//cheesesites/netherlands", false, bits192, XMLCipher.TRIPLEDES)
+                    .to("mock:encrypted");
+            }
+        });
+        xmlsecTestHelper.testEncryption(context);
+    }
 
     @Test
     public void testFullPayloadAsymmetricKeyEncryption() throws Exception {
