@@ -18,5 +18,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.component.fhir.springboot.FhirJsonDataFormatAutoConfiguration,\
 org.apache.camel.component.fhir.springboot.FhirXmlDataFormatAutoConfiguration,\
-org.apache.camel.component.fhir.springboot.fhirComponentAutoConfiguration,\
 org.apache.camel.component.fhir.springboot.FhirComponentAutoConfiguration
