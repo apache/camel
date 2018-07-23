@@ -1027,6 +1027,56 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(xsdf);
     }
     
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, boolean secureTagContents, byte[] passPhraseByte) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        return dataFormat(xsdf);
+    }
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, byte[] passPhraseByte) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        return dataFormat(xsdf);
+    }
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, boolean secureTagContents, byte[] passPhraseByte, String xmlCipherAlgorithm) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        return dataFormat(xsdf);
+    }
+    
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, byte[] passPhraseByte, String xmlCipherAlgorithm) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        return dataFormat(xsdf);
+    }
+    
     /**
      * @deprecated Use {@link #secureXML(String, Map, boolean, String, String, String, String)} instead.
      * Uses the XML Security data format

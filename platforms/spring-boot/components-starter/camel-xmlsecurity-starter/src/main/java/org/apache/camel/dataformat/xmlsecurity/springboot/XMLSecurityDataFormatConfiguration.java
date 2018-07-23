@@ -55,6 +55,14 @@ public class XMLSecurityDataFormatConfiguration
      */
     private String passPhrase;
     /**
+     * A byte used as passPhrase to encrypt/decrypt content. The passPhrase has
+     * to be provided. If no passPhrase is specified, a default passPhrase is
+     * used. The passPhrase needs to be put together in conjunction with the
+     * appropriate encryption algorithm. For example using TRIPLEDES the
+     * passPhase can be a Only another 24 Byte key
+     */
+    private byte[] passPhraseByte;
+    /**
      * The XPath reference to the XML Element selected for
      * encryption/decryption. If no tag is specified, the entire payload is
      * encrypted/decrypted.
@@ -130,6 +138,14 @@ public class XMLSecurityDataFormatConfiguration
 
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
+    }
+
+    public byte[] getPassPhraseByte() {
+        return passPhraseByte;
+    }
+
+    public void setPassPhraseByte(byte[] passPhraseByte) {
+        this.passPhraseByte = passPhraseByte;
     }
 
     public String getSecureTag() {
