@@ -18,12 +18,15 @@ package org.apache.camel.component.aws.iam;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
+import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +51,9 @@ public class IAMProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
         case listAccessKeys:
             listAccessKeys(getEndpoint().getIamClient(), exchange);
+            break;
+        case createUser:
+            createUser(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -85,6 +91,23 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.listAccessKeys();
         } catch (AmazonServiceException ase) {
             LOG.trace("List Access Keys command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void createUser(AmazonIdentityManagement iamClient, Exchange exchange) {
+        CreateUserRequest request = new CreateUserRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        CreateUserResult result;
+        try {
+            result = iamClient.createUser(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Create user command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

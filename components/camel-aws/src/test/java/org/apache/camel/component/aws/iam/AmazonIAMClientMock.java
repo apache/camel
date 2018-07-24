@@ -146,7 +146,11 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
 	@Override
 	public CreateUserResult createUser(CreateUserRequest createUserRequest) {
-        throw new UnsupportedOperationException();
+        CreateUserResult result = new CreateUserResult();
+        User user = new User();
+        user.setUserName("test");
+        result.setUser(user);
+        return result;
 	}
 
 	@Override
