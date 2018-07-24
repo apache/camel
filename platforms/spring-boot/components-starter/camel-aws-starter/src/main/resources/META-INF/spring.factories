@@ -29,7 +29,9 @@ org.apache.camel.component.aws.ddb.springboot.DdbComponentAutoConfiguration,\
 org.apache.camel.component.aws.firehose.springboot.KinesisFirehoseComponentAutoConfiguration,\
 org.apache.camel.component.aws.lambda.springboot.LambdaComponentAutoConfiguration,\
 org.apache.camel.component.aws.mq.springboot.MQComponentAutoConfiguration,\
-org.apache.camel.component.aws.kms.springboot.KMSComponentAutoConfiguration
+org.apache.camel.component.aws.kms.springboot.KMSComponentAutoConfiguration,\
+org.apache.camel.component.aws.iam.springboot.IAMComponentAutoConfiguration
+
 
 
 
