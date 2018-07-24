@@ -38,7 +38,7 @@ public class RabbitMQComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The hostname of the running rabbitmq instance or cluster.
+     * The hostname of the running RabbitMQ instance or cluster.
      */
     private String hostname;
     /**
@@ -281,6 +281,10 @@ public class RabbitMQComponentConfiguration
      * The type of the dead letter exchange
      */
     private String deadLetterExchangeType = "direct";
+    /**
+     * Allow pass null values to header
+     */
+    private Boolean allowNullHeaders = false;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -673,6 +677,14 @@ public class RabbitMQComponentConfiguration
 
     public void setDeadLetterExchangeType(String deadLetterExchangeType) {
         this.deadLetterExchangeType = deadLetterExchangeType;
+    }
+
+    public Boolean getAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(Boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
