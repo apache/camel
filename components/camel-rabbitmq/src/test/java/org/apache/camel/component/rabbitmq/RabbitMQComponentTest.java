@@ -45,6 +45,7 @@ public class RabbitMQComponentTest {
         assertEquals(true, endpoint.isAutoDelete());
         assertEquals(true, endpoint.isDurable());
         assertEquals(false, endpoint.isExclusiveConsumer());
+        assertEquals(false, endpoint.isAllowNullHeaders());
         assertEquals("direct", endpoint.getExchangeType());
         assertEquals(ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT, endpoint.getConnectionTimeout());
         assertEquals(ConnectionFactory.DEFAULT_CHANNEL_MAX, endpoint.getRequestedChannelMax());
@@ -70,6 +71,7 @@ public class RabbitMQComponentTest {
         params.put("requestedFrameMax", 789);
         params.put("requestedHeartbeat", 321);
         params.put("exclusiveConsumer", true);
+        params.put("allowNullHeaders", true);
 
         RabbitMQEndpoint endpoint = createEndpoint(params);
 
@@ -89,6 +91,7 @@ public class RabbitMQComponentTest {
         assertEquals(789, endpoint.getRequestedFrameMax());
         assertEquals(321, endpoint.getRequestedHeartbeat());
         assertEquals(true, endpoint.isExclusiveConsumer());
+        assertEquals(true, endpoint.isAllowNullHeaders());
     }
 
     private RabbitMQEndpoint createEndpoint(Map<String, Object> params) throws Exception {
