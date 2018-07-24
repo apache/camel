@@ -37,16 +37,7 @@ public class RabbitMQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-<<<<<<< HEAD
-     * The hostname of the running rabbitmq instance or cluster.
-=======
-     * Whether to enable auto configuration of the rabbitmq component. This is
-     * enabled by default.
-     */
-    private Boolean enabled;
-    /**
      * The hostname of the running RabbitMQ instance or cluster.
->>>>>>> fddedbc44de... CAMEL-12654: RabbitMQ Headers - Headers with null value are skipped
      */
     private String hostname;
     /**
