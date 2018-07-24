@@ -39,7 +39,7 @@ public class KMSComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The AWS MQ default configuration
+     * The AWS KMS default configuration
      */
     private KMSConfigurationNestedConfiguration configuration;
     /**
@@ -51,7 +51,7 @@ public class KMSComponentConfiguration
      */
     private String secretKey;
     /**
-     * The region in which MQ client needs to work
+     * The region in which KMS client needs to work
      */
     private String region;
     /**

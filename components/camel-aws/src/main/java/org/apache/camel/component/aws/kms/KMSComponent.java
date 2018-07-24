@@ -76,7 +76,7 @@ public class KMSComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS MQ default configuration
+     * The AWS KMS default configuration
      */
     public void setConfiguration(KMSConfiguration configuration) {
         this.configuration = configuration;
@@ -109,7 +109,7 @@ public class KMSComponent extends DefaultComponent {
     }
 
     /**
-     * The region in which MQ client needs to work
+     * The region in which KMS client needs to work
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
