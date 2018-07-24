@@ -136,6 +136,8 @@ Camel-AWS IAM component provides the following operation on the producer side:
 
 - listAccessKeys
 - createUser
+- deleteUser
+- listUsers
 
 Dependencies
 
