@@ -166,6 +166,19 @@ public class TestHelper {
         testDecryption(XML_FRAGMENT, context);
     }
     
+    protected void testDecryptionNoEncryptedKey(CamelContext context) throws Exception {
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
+        resultEndpoint.setExpectedMessageCount(1);
+        context.start();
+        resultEndpoint.assertIsSatisfied(100);
+        Exchange exchange = resultEndpoint.getExchanges().get(0);
+        Document inDoc = getDocumentForInMessage(exchange);
+        XmlConverter converter = new XmlConverter();
+        String xmlStr = converter.toString(inDoc, exchange);
+        log.info(xmlStr);
+        Assert.assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
+    }
+    
     private boolean hasEncryptedData(Document doc) throws Exception {
         NodeList nodeList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
         return nodeList.getLength() > 0;

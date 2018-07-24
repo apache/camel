@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.xmlsecurity;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.XMLCipher;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -165,6 +167,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         xmlsecTestHelper.testEncryption(context);
     }
+    
 
     @Test
     public void testFullPayloadAsymmetricKeyEncryption() throws Exception {
@@ -341,6 +344,32 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             }
         });
         xmlsecTestHelper.testDecryption(context);
+    }
+    
+    @Test
+    public void testXMLElementDecryptionWithoutEncryptedKey() throws Exception {
+        if (!TestHelper.HAS_3DES) {
+            return;
+        }
+        String passPhrase = "this is a test passphrase";
+        
+        byte[] bytes = passPhrase.getBytes();
+        final byte[] keyBytes = Arrays.copyOf(bytes, 24);
+        for (int j = 0, k = 16; j < 8;) {
+            keyBytes[k++] = keyBytes[j++];
+        }
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("timer://foo?period=5000&repeatCount=1").
+                to("language:constant:resource:classpath:org/apache/camel/component/xmlsecurity/EncryptedMessage.xml")
+                .unmarshal()
+                        .secureXML("/*[local-name()='Envelope']/*[local-name()='Body']", 
+                                   true, keyBytes, XMLCipher.TRIPLEDES)
+                        .to("mock:decrypted");
+            }
+        });
+        xmlsecTestHelper.testDecryptionNoEncryptedKey(context);
     }
 
     @Test

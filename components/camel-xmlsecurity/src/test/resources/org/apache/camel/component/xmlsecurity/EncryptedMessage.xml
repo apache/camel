@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:S="http://www.w3.org/2001/12/soap-envelope" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/04/secext" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#">
+  <S:Header>
+    <wsse:Security>
+      <xenc:ReferenceList>
+        <xenc:DataReference URI="StaticKeyEncryption" />
+      </xenc:ReferenceList>
+    </wsse:Security>
+  </S:Header>
+  <S:Body>
+    <xenc:EncryptedData Id="StaticKeyEncryption">
+      <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc">
+        <KeySize>168</KeySize>
+      </xenc:EncryptionMethod>
+      <ds:KeyInfo>
+        <ds:KeyName>mykey</ds:KeyName>
+      </ds:KeyInfo>
+      <xenc:CipherData>
+        <xenc:CipherValue>yP17O2otQdraY+W42w8i8U/pQQac1g84vWaGWqbS1tgCduFfjhnIz2ZqbFJ6n7Ow1cIeF5HyAoHRGaoDd4gbVw==</xenc:CipherValue>
+      </xenc:CipherData>
+    </xenc:EncryptedData>
+  </S:Body>
+</S:Envelope>
+
+
