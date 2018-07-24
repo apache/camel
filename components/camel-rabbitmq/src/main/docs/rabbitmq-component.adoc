@@ -47,14 +47,14 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component supports 48 options, which are listed below.
+The RabbitMQ component supports 49 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *hostname* (common) | The hostname of the running rabbitmq instance or cluster. |  | String
+| *hostname* (common) | The hostname of the running RabbitMQ instance or cluster. |  | String
 | *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. | 5672 | int
 | *username* (security) | Username in case of authenticated access | guest | String
 | *password* (security) | Password for authenticated access | guest | String
@@ -101,6 +101,7 @@ The RabbitMQ component supports 48 options, which are listed below.
 | *deadLetterQueue* (common) | The name of the dead letter queue |  | String
 | *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
 | *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
+| *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -125,7 +126,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (60 parameters):
+==== Query Parameters (61 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -161,6 +162,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
+| *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *bridgeEndpoint* (producer) | If the bridgeEndpoint is true, the producer will ignore the message header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY | false | boolean
 | *channelPoolMaxSize* (producer) | Get maximum number of opened channel in pool | 10 | int
 | *channelPoolMaxWait* (producer) | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | long

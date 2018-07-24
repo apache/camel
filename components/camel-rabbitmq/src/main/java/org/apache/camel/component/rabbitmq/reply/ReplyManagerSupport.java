@@ -224,6 +224,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ObjectHelper.notNull(executorService, "executorService", this);
         ObjectHelper.notNull(endpoint, "endpoint", this);
 
+        messageConverter.setAllowNullHeaders(endpoint.isAllowNullHeaders());
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
         log.debug("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
