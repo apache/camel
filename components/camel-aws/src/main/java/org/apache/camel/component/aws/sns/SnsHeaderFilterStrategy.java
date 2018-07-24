@@ -25,6 +25,6 @@ public class SnsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     protected void initialize() {
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*"); 
+        setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*"); 
     }
 }
