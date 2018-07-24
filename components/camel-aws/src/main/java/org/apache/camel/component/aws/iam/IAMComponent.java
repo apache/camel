@@ -76,7 +76,7 @@ public class IAMComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS MQ default configuration
+     * The AWS IAM default configuration
      */
     public void setConfiguration(IAMConfiguration configuration) {
         this.configuration = configuration;
@@ -109,7 +109,7 @@ public class IAMComponent extends DefaultComponent {
     }
 
     /**
-     * The region in which MQ client needs to work
+     * The region in which IAM client needs to work
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
