@@ -25,6 +25,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 
 public class IAMProducerTest extends CamelTestSupport {
@@ -49,6 +50,24 @@ public class IAMProducerTest extends CamelTestSupport {
 		assertEquals(1, resultGet.getAccessKeyMetadata().size());
 		assertEquals("1", resultGet.getAccessKeyMetadata().get(0).getAccessKeyId());
 	}
+	
+    @Test
+    public void iamCreateUserTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createUser", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.createUser);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+        CreateUserResult resultGet = (CreateUserResult) exchange.getIn().getBody();
+        assertEquals("test", resultGet.getUser().getUserName());
+    }
 
 	@Override
 	protected JndiRegistry createRegistry() throws Exception {
@@ -68,6 +87,8 @@ public class IAMProducerTest extends CamelTestSupport {
 			public void configure() throws Exception {
 				from("direct:listKeys").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys")
 						.to("mock:result");
+				from("direct:createUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser")
+				        .to("mock:result");
 			}
 		};
 	}

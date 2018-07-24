@@ -24,6 +24,7 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 
 public class IAMProducerSpringTest extends CamelSpringTestSupport {
@@ -48,6 +49,25 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 		assertEquals(1, resultGet.getAccessKeyMetadata().size());
 		assertEquals("1", resultGet.getAccessKeyMetadata().get(0).getAccessKeyId());
 	}
+	
+    @Test
+    public void iamCreateUserTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createUser", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.createUser);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+        CreateUserResult resultGet = (CreateUserResult) exchange.getIn().getBody();
+        assertEquals("test", resultGet.getUser().getUserName());
+    }
+
 
 	@Override
 	protected ClassPathXmlApplicationContext createApplicationContext() {

@@ -29,6 +29,11 @@
             <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=listAccessKeys"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:createUser"/>
+            <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=createUser"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
     
     <bean id="amazonIAMClient" class="org.apache.camel.component.aws.iam.AmazonIAMClientMock"/>
