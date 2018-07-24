@@ -268,7 +268,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
 	@Override
 	public DeleteUserResult deleteUser(DeleteUserRequest deleteUserRequest) {
-        throw new UnsupportedOperationException();
+        DeleteUserResult res = new DeleteUserResult();
+        return res;
 	}
 
 	@Override

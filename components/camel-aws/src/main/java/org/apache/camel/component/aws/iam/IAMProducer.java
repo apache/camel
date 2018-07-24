@@ -20,6 +20,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
+import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
+import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 
 import org.apache.camel.Endpoint;
@@ -54,6 +56,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case createUser:
             createUser(getEndpoint().getIamClient(), exchange);
+            break;
+        case deleteUser:
+            deleteUser(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -108,6 +113,23 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.createUser(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Create user command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void deleteUser(AmazonIdentityManagement iamClient, Exchange exchange) {
+        DeleteUserRequest request = new DeleteUserRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        DeleteUserResult result;
+        try {
+            result = iamClient.deleteUser(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Delete user command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
