@@ -44,6 +44,7 @@ public class CamelAwsTest extends AbstractSpringBootTestSupport {
         this.runComponentTest(createTestConfig(), "aws-ddb");
         this.runComponentTest(createTestConfig(), "aws-ddbstream");
         this.runComponentTest(createTestConfig(), "aws-ec2");
+        this.runComponentTest(createTestConfig(), "aws-iam");
         this.runComponentTest(createTestConfig(), "aws-kinesis");
         this.runComponentTest(createTestConfig(), "aws-kinesis-firehose");
         this.runComponentTest(createTestConfig(), "aws-lambda");
