@@ -20,5 +20,6 @@ public enum IAMOperations {
 
     listAccessKeys,
     createUser,
-    deleteUser
+    deleteUser,
+    listUsers
 }

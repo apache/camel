@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 
 public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
@@ -34,7 +35,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 	private MockEndpoint mock;
 
 	@Test
-	public void mqListBrokersTest() throws Exception {
+	public void iamListAccessKeysTest() throws Exception {
 
 		mock.expectedMessageCount(1);
 		Exchange exchange = template.request("direct:listKeys", new Processor() {
@@ -86,6 +87,24 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         DeleteUserResult resultGet = (DeleteUserResult) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
+    
+	@Test
+	public void iamListUsersTest() throws Exception {
+
+		mock.expectedMessageCount(1);
+		Exchange exchange = template.request("direct:listUsers", new Processor() {
+			@Override
+			public void process(Exchange exchange) throws Exception {
+				exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listUsers);
+			}
+		});
+
+		assertMockEndpointsSatisfied();
+
+		ListUsersResult resultGet = (ListUsersResult) exchange.getIn().getBody();
+		assertEquals(1, resultGet.getUsers().size());
+		assertEquals("test", resultGet.getUsers().get(0).getUserName());
+	}
 
 	@Override
 	protected ClassPathXmlApplicationContext createApplicationContext() {

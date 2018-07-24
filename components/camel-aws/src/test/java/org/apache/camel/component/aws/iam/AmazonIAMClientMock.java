@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.iam;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
@@ -655,7 +656,13 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
 	@Override
 	public ListUsersResult listUsers() {
-        throw new UnsupportedOperationException();
+        ListUsersResult res = new ListUsersResult();
+        List<User> list = new ArrayList<>();
+        User user = new User();
+        user.setUserName("test");
+        list.add(user);
+        res.setUsers(list);
+        return res;
 	}
 
 	@Override

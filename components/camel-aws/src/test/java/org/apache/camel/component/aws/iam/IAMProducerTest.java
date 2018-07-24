@@ -28,6 +28,7 @@ import org.junit.Test;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 
 public class IAMProducerTest extends CamelTestSupport {
 
@@ -87,6 +88,24 @@ public class IAMProducerTest extends CamelTestSupport {
         DeleteUserResult resultGet = (DeleteUserResult) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
+    
+	@Test
+	public void iamListUsersTest() throws Exception {
+
+		mock.expectedMessageCount(1);
+		Exchange exchange = template.request("direct:listUsers", new Processor() {
+			@Override
+			public void process(Exchange exchange) throws Exception {
+				exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listUsers);
+			}
+		});
+
+		assertMockEndpointsSatisfied();
+
+		ListUsersResult resultGet = (ListUsersResult) exchange.getIn().getBody();
+		assertEquals(1, resultGet.getUsers().size());
+		assertEquals("test", resultGet.getUsers().get(0).getUserName());
+	}
 
 	@Override
 	protected JndiRegistry createRegistry() throws Exception {
@@ -110,6 +129,8 @@ public class IAMProducerTest extends CamelTestSupport {
 				        .to("mock:result");
 				from("direct:deleteUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
 		                .to("mock:result");
+				from("direct:listUsers").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listUsers")
+                        .to("mock:result");
 			}
 		};
 	}
