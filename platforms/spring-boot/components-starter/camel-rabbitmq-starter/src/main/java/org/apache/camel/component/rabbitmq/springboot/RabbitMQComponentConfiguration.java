@@ -37,7 +37,7 @@ public class RabbitMQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * The hostname of the running rabbitmq instance or cluster.
+     * The hostname of the running RabbitMQ instance or cluster.
      */
     private String hostname;
     /**
@@ -661,6 +661,14 @@ public class RabbitMQComponentConfiguration
 
     public void setDeadLetterExchangeType(String deadLetterExchangeType) {
         this.deadLetterExchangeType = deadLetterExchangeType;
+    }
+
+    public Boolean getAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(Boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
