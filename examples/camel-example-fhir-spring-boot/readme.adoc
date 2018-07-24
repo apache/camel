@@ -36,7 +36,9 @@ $ mvn spring-boot:run
 When the Camel application runs, you should see a folder created under `target/work/fhir/input`. Copy the file `hl7v2.patient`
 located in the `src/main/data` folder into it. You should see the following output:
 ```
-
+2018-07-24 11:52:51.615  INFO 30666 --- [work/fhir/input] fhir-example: Converting hl7v2.patient
+2018-07-24 11:52:52.700  INFO 30666 --- [work/fhir/input] fhir-example: Inserting Patient: {"resourceType":"Patient","id":"100005056","name":[{"family":"Freeman","given":["Vincent"]}]}
+2018-07-24 11:52:56.995  INFO 30666 --- [ #2 - CamelFhir] fhir-example: Patient created successfully: ca.uhn.fhir.rest.api.MethodOutcome@270f03f1
 ```
 
 The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
