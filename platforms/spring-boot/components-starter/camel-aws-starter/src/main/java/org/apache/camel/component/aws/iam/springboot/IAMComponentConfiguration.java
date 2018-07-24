@@ -39,7 +39,7 @@ public class IAMComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The AWS MQ default configuration
+     * The AWS IAM default configuration
      */
     private IAMConfigurationNestedConfiguration configuration;
     /**
@@ -51,7 +51,7 @@ public class IAMComponentConfiguration
      */
     private String secretKey;
     /**
-     * The region in which MQ client needs to work
+     * The region in which IAM client needs to work
      */
     private String region;
     /**

@@ -33,10 +33,10 @@ The AWS IAM component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The AWS MQ default configuration |  | IAMConfiguration
+| *configuration* (advanced) | The AWS IAM default configuration |  | IAMConfiguration
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *region* (producer) | The region in which MQ client needs to work |  | String
+| *region* (producer) | The region in which IAM client needs to work |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
