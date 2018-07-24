@@ -100,7 +100,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-kms.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-kms.enabled* | Whether to enable auto configuration of the aws-kms component. This is
  enabled by default. |  | Boolean
-| *camel.component.aws-kms.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-kms.region* | The region in which KMS client needs to work |  | String
 | *camel.component.aws-kms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
  starting. Only properties which are of String type can use property
  placeholders. | true | Boolean

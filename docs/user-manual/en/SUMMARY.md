@@ -145,6 +145,7 @@
 	* [AWS DynamoDB](aws-ddb-component.adoc)
 	* [AWS DynamoDB Streams](aws-ddbstream-component.adoc)
 	* [AWS EC2](aws-ec2-component.adoc)
+	* [AWS IAM](aws-iam-component.adoc)
 	* [AWS Kinesis](aws-kinesis-component.adoc)
 	* [AWS Kinesis Firehose](aws-kinesis-firehose-component.adoc)
 	* [AWS KMS](aws-kms-component.adoc)

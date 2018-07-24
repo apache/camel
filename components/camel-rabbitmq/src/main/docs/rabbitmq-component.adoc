@@ -201,7 +201,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 50 options, which are listed below.
+The component supports 51 options, which are listed below.
 
 
 
@@ -211,6 +211,7 @@ The component supports 50 options, which are listed below.
 | *camel.component.rabbitmq.addresses* | If this option is set, camel-rabbitmq will try to create connection based
  on the setting of option addresses. The addresses value is a string which
  looks like server1:12345, server2:12345 |  | String
+| *camel.component.rabbitmq.allow-null-headers* | Allow pass null values to header | false | Boolean
 | *camel.component.rabbitmq.args* | Specify arguments for configuring the different RabbitMQ concepts, a
  different prefix is required for each: Exchange: arg.exchange. Queue:
  arg.queue. Binding: arg.binding. For example to declare a queue with
@@ -255,7 +256,7 @@ The component supports 50 options, which are listed below.
  delivered (basic.return) and the message is marked as mandatory.
  PublisherAcknowledgement will also be activated in this case. See also
  publisher acknowledgements - When will messages be confirmed. | false | Boolean
-| *camel.component.rabbitmq.hostname* | The hostname of the running rabbitmq instance or cluster. |  | String
+| *camel.component.rabbitmq.hostname* | The hostname of the running RabbitMQ instance or cluster. |  | String
 | *camel.component.rabbitmq.immediate* | This flag tells the server how to react if the message cannot be routed
  to a queue consumer immediately. If this flag is set, the server will
  return an undeliverable message with a Return method. If this flag is
