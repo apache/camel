@@ -28,634 +28,602 @@ import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
 import com.amazonaws.services.identitymanagement.model.*;
 import com.amazonaws.services.identitymanagement.waiters.AmazonIdentityManagementWaiters;
 
-
 public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
-	@Override
-	public void setEndpoint(String endpoint) {
-	}
+    @Override
+    public void setEndpoint(String endpoint) {
+    }
 
-	@Override
-	public void setRegion(Region region) {	
-	}
+    @Override
+    public void setRegion(Region region) {
+    }
 
-	@Override
-	public AddClientIDToOpenIDConnectProviderResult addClientIDToOpenIDConnectProvider(
-			AddClientIDToOpenIDConnectProviderRequest addClientIDToOpenIDConnectProviderRequest) {
+    @Override
+    public AddClientIDToOpenIDConnectProviderResult addClientIDToOpenIDConnectProvider(AddClientIDToOpenIDConnectProviderRequest addClientIDToOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public AddRoleToInstanceProfileResult addRoleToInstanceProfile(
-			AddRoleToInstanceProfileRequest addRoleToInstanceProfileRequest) {
+    @Override
+    public AddRoleToInstanceProfileResult addRoleToInstanceProfile(AddRoleToInstanceProfileRequest addRoleToInstanceProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public AddUserToGroupResult addUserToGroup(AddUserToGroupRequest addUserToGroupRequest) {
+    @Override
+    public AddUserToGroupResult addUserToGroup(AddUserToGroupRequest addUserToGroupRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public AttachGroupPolicyResult attachGroupPolicy(AttachGroupPolicyRequest attachGroupPolicyRequest) {
+    @Override
+    public AttachGroupPolicyResult attachGroupPolicy(AttachGroupPolicyRequest attachGroupPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public AttachRolePolicyResult attachRolePolicy(AttachRolePolicyRequest attachRolePolicyRequest) {
+    @Override
+    public AttachRolePolicyResult attachRolePolicy(AttachRolePolicyRequest attachRolePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public AttachUserPolicyResult attachUserPolicy(AttachUserPolicyRequest attachUserPolicyRequest) {
+    @Override
+    public AttachUserPolicyResult attachUserPolicy(AttachUserPolicyRequest attachUserPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ChangePasswordResult changePassword(ChangePasswordRequest changePasswordRequest) {
+    @Override
+    public ChangePasswordResult changePassword(ChangePasswordRequest changePasswordRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateAccessKeyResult createAccessKey(CreateAccessKeyRequest createAccessKeyRequest) {
+    @Override
+    public CreateAccessKeyResult createAccessKey(CreateAccessKeyRequest createAccessKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateAccessKeyResult createAccessKey() {
+    @Override
+    public CreateAccessKeyResult createAccessKey() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateAccountAliasResult createAccountAlias(CreateAccountAliasRequest createAccountAliasRequest) {
+    @Override
+    public CreateAccountAliasResult createAccountAlias(CreateAccountAliasRequest createAccountAliasRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateGroupResult createGroup(CreateGroupRequest createGroupRequest) {
+    @Override
+    public CreateGroupResult createGroup(CreateGroupRequest createGroupRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateInstanceProfileResult createInstanceProfile(
-			CreateInstanceProfileRequest createInstanceProfileRequest) {
+    @Override
+    public CreateInstanceProfileResult createInstanceProfile(CreateInstanceProfileRequest createInstanceProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateLoginProfileResult createLoginProfile(CreateLoginProfileRequest createLoginProfileRequest) {
+    @Override
+    public CreateLoginProfileResult createLoginProfile(CreateLoginProfileRequest createLoginProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateOpenIDConnectProviderResult createOpenIDConnectProvider(
-			CreateOpenIDConnectProviderRequest createOpenIDConnectProviderRequest) {
+    @Override
+    public CreateOpenIDConnectProviderResult createOpenIDConnectProvider(CreateOpenIDConnectProviderRequest createOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreatePolicyResult createPolicy(CreatePolicyRequest createPolicyRequest) {
+    @Override
+    public CreatePolicyResult createPolicy(CreatePolicyRequest createPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreatePolicyVersionResult createPolicyVersion(CreatePolicyVersionRequest createPolicyVersionRequest) {
+    @Override
+    public CreatePolicyVersionResult createPolicyVersion(CreatePolicyVersionRequest createPolicyVersionRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateRoleResult createRole(CreateRoleRequest createRoleRequest) {
+    @Override
+    public CreateRoleResult createRole(CreateRoleRequest createRoleRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateSAMLProviderResult createSAMLProvider(CreateSAMLProviderRequest createSAMLProviderRequest) {
+    @Override
+    public CreateSAMLProviderResult createSAMLProvider(CreateSAMLProviderRequest createSAMLProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateServiceLinkedRoleResult createServiceLinkedRole(
-			CreateServiceLinkedRoleRequest createServiceLinkedRoleRequest) {
+    @Override
+    public CreateServiceLinkedRoleResult createServiceLinkedRole(CreateServiceLinkedRoleRequest createServiceLinkedRoleRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateServiceSpecificCredentialResult createServiceSpecificCredential(
-			CreateServiceSpecificCredentialRequest createServiceSpecificCredentialRequest) {
+    @Override
+    public CreateServiceSpecificCredentialResult createServiceSpecificCredential(CreateServiceSpecificCredentialRequest createServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateUserResult createUser(CreateUserRequest createUserRequest) {
+    @Override
+    public CreateUserResult createUser(CreateUserRequest createUserRequest) {
         CreateUserResult result = new CreateUserResult();
         User user = new User();
         user.setUserName("test");
         result.setUser(user);
         return result;
-	}
+    }
 
-	@Override
-	public CreateVirtualMFADeviceResult createVirtualMFADevice(
-			CreateVirtualMFADeviceRequest createVirtualMFADeviceRequest) {
+    @Override
+    public CreateVirtualMFADeviceResult createVirtualMFADevice(CreateVirtualMFADeviceRequest createVirtualMFADeviceRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeactivateMFADeviceResult deactivateMFADevice(DeactivateMFADeviceRequest deactivateMFADeviceRequest) {
+    @Override
+    public DeactivateMFADeviceResult deactivateMFADevice(DeactivateMFADeviceRequest deactivateMFADeviceRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteAccessKeyResult deleteAccessKey(DeleteAccessKeyRequest deleteAccessKeyRequest) {
+    @Override
+    public DeleteAccessKeyResult deleteAccessKey(DeleteAccessKeyRequest deleteAccessKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteAccountAliasResult deleteAccountAlias(DeleteAccountAliasRequest deleteAccountAliasRequest) {
+    @Override
+    public DeleteAccountAliasResult deleteAccountAlias(DeleteAccountAliasRequest deleteAccountAliasRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteAccountPasswordPolicyResult deleteAccountPasswordPolicy(
-			DeleteAccountPasswordPolicyRequest deleteAccountPasswordPolicyRequest) {
+    @Override
+    public DeleteAccountPasswordPolicyResult deleteAccountPasswordPolicy(DeleteAccountPasswordPolicyRequest deleteAccountPasswordPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteAccountPasswordPolicyResult deleteAccountPasswordPolicy() {
+    @Override
+    public DeleteAccountPasswordPolicyResult deleteAccountPasswordPolicy() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteGroupResult deleteGroup(DeleteGroupRequest deleteGroupRequest) {
+    @Override
+    public DeleteGroupResult deleteGroup(DeleteGroupRequest deleteGroupRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteGroupPolicyResult deleteGroupPolicy(DeleteGroupPolicyRequest deleteGroupPolicyRequest) {
+    @Override
+    public DeleteGroupPolicyResult deleteGroupPolicy(DeleteGroupPolicyRequest deleteGroupPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteInstanceProfileResult deleteInstanceProfile(
-			DeleteInstanceProfileRequest deleteInstanceProfileRequest) {
+    @Override
+    public DeleteInstanceProfileResult deleteInstanceProfile(DeleteInstanceProfileRequest deleteInstanceProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteLoginProfileResult deleteLoginProfile(DeleteLoginProfileRequest deleteLoginProfileRequest) {
+    @Override
+    public DeleteLoginProfileResult deleteLoginProfile(DeleteLoginProfileRequest deleteLoginProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteOpenIDConnectProviderResult deleteOpenIDConnectProvider(
-			DeleteOpenIDConnectProviderRequest deleteOpenIDConnectProviderRequest) {
+    @Override
+    public DeleteOpenIDConnectProviderResult deleteOpenIDConnectProvider(DeleteOpenIDConnectProviderRequest deleteOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeletePolicyResult deletePolicy(DeletePolicyRequest deletePolicyRequest) {
+    @Override
+    public DeletePolicyResult deletePolicy(DeletePolicyRequest deletePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeletePolicyVersionResult deletePolicyVersion(DeletePolicyVersionRequest deletePolicyVersionRequest) {
+    @Override
+    public DeletePolicyVersionResult deletePolicyVersion(DeletePolicyVersionRequest deletePolicyVersionRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteRoleResult deleteRole(DeleteRoleRequest deleteRoleRequest) {
+    @Override
+    public DeleteRoleResult deleteRole(DeleteRoleRequest deleteRoleRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteRolePolicyResult deleteRolePolicy(DeleteRolePolicyRequest deleteRolePolicyRequest) {
+    @Override
+    public DeleteRolePolicyResult deleteRolePolicy(DeleteRolePolicyRequest deleteRolePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteSAMLProviderResult deleteSAMLProvider(DeleteSAMLProviderRequest deleteSAMLProviderRequest) {
+    @Override
+    public DeleteSAMLProviderResult deleteSAMLProvider(DeleteSAMLProviderRequest deleteSAMLProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteSSHPublicKeyResult deleteSSHPublicKey(DeleteSSHPublicKeyRequest deleteSSHPublicKeyRequest) {
+    @Override
+    public DeleteSSHPublicKeyResult deleteSSHPublicKey(DeleteSSHPublicKeyRequest deleteSSHPublicKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteServerCertificateResult deleteServerCertificate(
-			DeleteServerCertificateRequest deleteServerCertificateRequest) {
+    @Override
+    public DeleteServerCertificateResult deleteServerCertificate(DeleteServerCertificateRequest deleteServerCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteServiceLinkedRoleResult deleteServiceLinkedRole(
-			DeleteServiceLinkedRoleRequest deleteServiceLinkedRoleRequest) {
+    @Override
+    public DeleteServiceLinkedRoleResult deleteServiceLinkedRole(DeleteServiceLinkedRoleRequest deleteServiceLinkedRoleRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteServiceSpecificCredentialResult deleteServiceSpecificCredential(
-			DeleteServiceSpecificCredentialRequest deleteServiceSpecificCredentialRequest) {
+    @Override
+    public DeleteServiceSpecificCredentialResult deleteServiceSpecificCredential(DeleteServiceSpecificCredentialRequest deleteServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteSigningCertificateResult deleteSigningCertificate(
-			DeleteSigningCertificateRequest deleteSigningCertificateRequest) {
+    @Override
+    public DeleteSigningCertificateResult deleteSigningCertificate(DeleteSigningCertificateRequest deleteSigningCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteUserResult deleteUser(DeleteUserRequest deleteUserRequest) {
+    @Override
+    public DeleteUserResult deleteUser(DeleteUserRequest deleteUserRequest) {
         DeleteUserResult res = new DeleteUserResult();
         return res;
-	}
+    }
 
-	@Override
-	public DeleteUserPolicyResult deleteUserPolicy(DeleteUserPolicyRequest deleteUserPolicyRequest) {
+    @Override
+    public DeleteUserPolicyResult deleteUserPolicy(DeleteUserPolicyRequest deleteUserPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteVirtualMFADeviceResult deleteVirtualMFADevice(
-			DeleteVirtualMFADeviceRequest deleteVirtualMFADeviceRequest) {
+    @Override
+    public DeleteVirtualMFADeviceResult deleteVirtualMFADevice(DeleteVirtualMFADeviceRequest deleteVirtualMFADeviceRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DetachGroupPolicyResult detachGroupPolicy(DetachGroupPolicyRequest detachGroupPolicyRequest) {
+    @Override
+    public DetachGroupPolicyResult detachGroupPolicy(DetachGroupPolicyRequest detachGroupPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DetachRolePolicyResult detachRolePolicy(DetachRolePolicyRequest detachRolePolicyRequest) {
+    @Override
+    public DetachRolePolicyResult detachRolePolicy(DetachRolePolicyRequest detachRolePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DetachUserPolicyResult detachUserPolicy(DetachUserPolicyRequest detachUserPolicyRequest) {
+    @Override
+    public DetachUserPolicyResult detachUserPolicy(DetachUserPolicyRequest detachUserPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public EnableMFADeviceResult enableMFADevice(EnableMFADeviceRequest enableMFADeviceRequest) {
+    @Override
+    public EnableMFADeviceResult enableMFADevice(EnableMFADeviceRequest enableMFADeviceRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GenerateCredentialReportResult generateCredentialReport(
-			GenerateCredentialReportRequest generateCredentialReportRequest) {
+    @Override
+    public GenerateCredentialReportResult generateCredentialReport(GenerateCredentialReportRequest generateCredentialReportRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GenerateCredentialReportResult generateCredentialReport() {
+    @Override
+    public GenerateCredentialReportResult generateCredentialReport() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccessKeyLastUsedResult getAccessKeyLastUsed(GetAccessKeyLastUsedRequest getAccessKeyLastUsedRequest) {
+    @Override
+    public GetAccessKeyLastUsedResult getAccessKeyLastUsed(GetAccessKeyLastUsedRequest getAccessKeyLastUsedRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccountAuthorizationDetailsResult getAccountAuthorizationDetails(
-			GetAccountAuthorizationDetailsRequest getAccountAuthorizationDetailsRequest) {
+    @Override
+    public GetAccountAuthorizationDetailsResult getAccountAuthorizationDetails(GetAccountAuthorizationDetailsRequest getAccountAuthorizationDetailsRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccountAuthorizationDetailsResult getAccountAuthorizationDetails() {
+    @Override
+    public GetAccountAuthorizationDetailsResult getAccountAuthorizationDetails() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccountPasswordPolicyResult getAccountPasswordPolicy(
-			GetAccountPasswordPolicyRequest getAccountPasswordPolicyRequest) {
+    @Override
+    public GetAccountPasswordPolicyResult getAccountPasswordPolicy(GetAccountPasswordPolicyRequest getAccountPasswordPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccountPasswordPolicyResult getAccountPasswordPolicy() {
+    @Override
+    public GetAccountPasswordPolicyResult getAccountPasswordPolicy() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccountSummaryResult getAccountSummary(GetAccountSummaryRequest getAccountSummaryRequest) {
+    @Override
+    public GetAccountSummaryResult getAccountSummary(GetAccountSummaryRequest getAccountSummaryRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetAccountSummaryResult getAccountSummary() {
+    @Override
+    public GetAccountSummaryResult getAccountSummary() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetContextKeysForCustomPolicyResult getContextKeysForCustomPolicy(
-			GetContextKeysForCustomPolicyRequest getContextKeysForCustomPolicyRequest) {
+    @Override
+    public GetContextKeysForCustomPolicyResult getContextKeysForCustomPolicy(GetContextKeysForCustomPolicyRequest getContextKeysForCustomPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetContextKeysForPrincipalPolicyResult getContextKeysForPrincipalPolicy(
-			GetContextKeysForPrincipalPolicyRequest getContextKeysForPrincipalPolicyRequest) {
+    @Override
+    public GetContextKeysForPrincipalPolicyResult getContextKeysForPrincipalPolicy(GetContextKeysForPrincipalPolicyRequest getContextKeysForPrincipalPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetCredentialReportResult getCredentialReport(GetCredentialReportRequest getCredentialReportRequest) {
+    @Override
+    public GetCredentialReportResult getCredentialReport(GetCredentialReportRequest getCredentialReportRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetCredentialReportResult getCredentialReport() {
+    @Override
+    public GetCredentialReportResult getCredentialReport() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetGroupResult getGroup(GetGroupRequest getGroupRequest) {
+    @Override
+    public GetGroupResult getGroup(GetGroupRequest getGroupRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetGroupPolicyResult getGroupPolicy(GetGroupPolicyRequest getGroupPolicyRequest) {
+    @Override
+    public GetGroupPolicyResult getGroupPolicy(GetGroupPolicyRequest getGroupPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetInstanceProfileResult getInstanceProfile(GetInstanceProfileRequest getInstanceProfileRequest) {
+    @Override
+    public GetInstanceProfileResult getInstanceProfile(GetInstanceProfileRequest getInstanceProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetLoginProfileResult getLoginProfile(GetLoginProfileRequest getLoginProfileRequest) {
+    @Override
+    public GetLoginProfileResult getLoginProfile(GetLoginProfileRequest getLoginProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetOpenIDConnectProviderResult getOpenIDConnectProvider(
-			GetOpenIDConnectProviderRequest getOpenIDConnectProviderRequest) {
+    @Override
+    public GetOpenIDConnectProviderResult getOpenIDConnectProvider(GetOpenIDConnectProviderRequest getOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetPolicyResult getPolicy(GetPolicyRequest getPolicyRequest) {
+    @Override
+    public GetPolicyResult getPolicy(GetPolicyRequest getPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetPolicyVersionResult getPolicyVersion(GetPolicyVersionRequest getPolicyVersionRequest) {
+    @Override
+    public GetPolicyVersionResult getPolicyVersion(GetPolicyVersionRequest getPolicyVersionRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetRoleResult getRole(GetRoleRequest getRoleRequest) {
+    @Override
+    public GetRoleResult getRole(GetRoleRequest getRoleRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetRolePolicyResult getRolePolicy(GetRolePolicyRequest getRolePolicyRequest) {
+    @Override
+    public GetRolePolicyResult getRolePolicy(GetRolePolicyRequest getRolePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetSAMLProviderResult getSAMLProvider(GetSAMLProviderRequest getSAMLProviderRequest) {
+    @Override
+    public GetSAMLProviderResult getSAMLProvider(GetSAMLProviderRequest getSAMLProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetSSHPublicKeyResult getSSHPublicKey(GetSSHPublicKeyRequest getSSHPublicKeyRequest) {
+    @Override
+    public GetSSHPublicKeyResult getSSHPublicKey(GetSSHPublicKeyRequest getSSHPublicKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetServerCertificateResult getServerCertificate(GetServerCertificateRequest getServerCertificateRequest) {
+    @Override
+    public GetServerCertificateResult getServerCertificate(GetServerCertificateRequest getServerCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetServiceLinkedRoleDeletionStatusResult getServiceLinkedRoleDeletionStatus(
-			GetServiceLinkedRoleDeletionStatusRequest getServiceLinkedRoleDeletionStatusRequest) {
+    @Override
+    public GetServiceLinkedRoleDeletionStatusResult getServiceLinkedRoleDeletionStatus(GetServiceLinkedRoleDeletionStatusRequest getServiceLinkedRoleDeletionStatusRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetUserResult getUser(GetUserRequest getUserRequest) {
+    @Override
+    public GetUserResult getUser(GetUserRequest getUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetUserResult getUser() {
+    @Override
+    public GetUserResult getUser() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public GetUserPolicyResult getUserPolicy(GetUserPolicyRequest getUserPolicyRequest) {
+    @Override
+    public GetUserPolicyResult getUserPolicy(GetUserPolicyRequest getUserPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListAccessKeysResult listAccessKeys(ListAccessKeysRequest listAccessKeysRequest) {
+    @Override
+    public ListAccessKeysResult listAccessKeys(ListAccessKeysRequest listAccessKeysRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListAccessKeysResult listAccessKeys() {
-       ListAccessKeysResult result = new ListAccessKeysResult();
-       Collection<AccessKeyMetadata> accessKeyMetadata = new ArrayList<AccessKeyMetadata>();
-       AccessKeyMetadata meta = new AccessKeyMetadata();
-       meta.setAccessKeyId("1");
-       meta.setCreateDate(new Date());
-       meta.setStatus(StatusType.Active);
-       meta.setUserName("test");
-       accessKeyMetadata.add(meta);
-	   result.setAccessKeyMetadata(accessKeyMetadata);
-	   return result;
-	}
+    @Override
+    public ListAccessKeysResult listAccessKeys() {
+        ListAccessKeysResult result = new ListAccessKeysResult();
+        Collection<AccessKeyMetadata> accessKeyMetadata = new ArrayList<AccessKeyMetadata>();
+        AccessKeyMetadata meta = new AccessKeyMetadata();
+        meta.setAccessKeyId("1");
+        meta.setCreateDate(new Date());
+        meta.setStatus(StatusType.Active);
+        meta.setUserName("test");
+        accessKeyMetadata.add(meta);
+        result.setAccessKeyMetadata(accessKeyMetadata);
+        return result;
+    }
 
-	@Override
-	public ListAccountAliasesResult listAccountAliases(ListAccountAliasesRequest listAccountAliasesRequest) {
+    @Override
+    public ListAccountAliasesResult listAccountAliases(ListAccountAliasesRequest listAccountAliasesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListAccountAliasesResult listAccountAliases() {
+    @Override
+    public ListAccountAliasesResult listAccountAliases() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListAttachedGroupPoliciesResult listAttachedGroupPolicies(
-			ListAttachedGroupPoliciesRequest listAttachedGroupPoliciesRequest) {
+    @Override
+    public ListAttachedGroupPoliciesResult listAttachedGroupPolicies(ListAttachedGroupPoliciesRequest listAttachedGroupPoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListAttachedRolePoliciesResult listAttachedRolePolicies(
-			ListAttachedRolePoliciesRequest listAttachedRolePoliciesRequest) {
+    @Override
+    public ListAttachedRolePoliciesResult listAttachedRolePolicies(ListAttachedRolePoliciesRequest listAttachedRolePoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListAttachedUserPoliciesResult listAttachedUserPolicies(
-			ListAttachedUserPoliciesRequest listAttachedUserPoliciesRequest) {
+    @Override
+    public ListAttachedUserPoliciesResult listAttachedUserPolicies(ListAttachedUserPoliciesRequest listAttachedUserPoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListEntitiesForPolicyResult listEntitiesForPolicy(
-			ListEntitiesForPolicyRequest listEntitiesForPolicyRequest) {
+    @Override
+    public ListEntitiesForPolicyResult listEntitiesForPolicy(ListEntitiesForPolicyRequest listEntitiesForPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListGroupPoliciesResult listGroupPolicies(ListGroupPoliciesRequest listGroupPoliciesRequest) {
+    @Override
+    public ListGroupPoliciesResult listGroupPolicies(ListGroupPoliciesRequest listGroupPoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListGroupsResult listGroups(ListGroupsRequest listGroupsRequest) {
+    @Override
+    public ListGroupsResult listGroups(ListGroupsRequest listGroupsRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListGroupsResult listGroups() {
+    @Override
+    public ListGroupsResult listGroups() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListGroupsForUserResult listGroupsForUser(ListGroupsForUserRequest listGroupsForUserRequest) {
+    @Override
+    public ListGroupsForUserResult listGroupsForUser(ListGroupsForUserRequest listGroupsForUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListInstanceProfilesResult listInstanceProfiles(ListInstanceProfilesRequest listInstanceProfilesRequest) {
+    @Override
+    public ListInstanceProfilesResult listInstanceProfiles(ListInstanceProfilesRequest listInstanceProfilesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListInstanceProfilesResult listInstanceProfiles() {
+    @Override
+    public ListInstanceProfilesResult listInstanceProfiles() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListInstanceProfilesForRoleResult listInstanceProfilesForRole(
-			ListInstanceProfilesForRoleRequest listInstanceProfilesForRoleRequest) {
+    @Override
+    public ListInstanceProfilesForRoleResult listInstanceProfilesForRole(ListInstanceProfilesForRoleRequest listInstanceProfilesForRoleRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListMFADevicesResult listMFADevices(ListMFADevicesRequest listMFADevicesRequest) {
+    @Override
+    public ListMFADevicesResult listMFADevices(ListMFADevicesRequest listMFADevicesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListMFADevicesResult listMFADevices() {
+    @Override
+    public ListMFADevicesResult listMFADevices() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListOpenIDConnectProvidersResult listOpenIDConnectProviders(
-			ListOpenIDConnectProvidersRequest listOpenIDConnectProvidersRequest) {
+    @Override
+    public ListOpenIDConnectProvidersResult listOpenIDConnectProviders(ListOpenIDConnectProvidersRequest listOpenIDConnectProvidersRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListOpenIDConnectProvidersResult listOpenIDConnectProviders() {
+    @Override
+    public ListOpenIDConnectProvidersResult listOpenIDConnectProviders() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListPoliciesResult listPolicies(ListPoliciesRequest listPoliciesRequest) {
+    @Override
+    public ListPoliciesResult listPolicies(ListPoliciesRequest listPoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListPoliciesResult listPolicies() {
+    @Override
+    public ListPoliciesResult listPolicies() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListPolicyVersionsResult listPolicyVersions(ListPolicyVersionsRequest listPolicyVersionsRequest) {
+    @Override
+    public ListPolicyVersionsResult listPolicyVersions(ListPolicyVersionsRequest listPolicyVersionsRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListRolePoliciesResult listRolePolicies(ListRolePoliciesRequest listRolePoliciesRequest) {
+    @Override
+    public ListRolePoliciesResult listRolePolicies(ListRolePoliciesRequest listRolePoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListRolesResult listRoles(ListRolesRequest listRolesRequest) {
+    @Override
+    public ListRolesResult listRoles(ListRolesRequest listRolesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListRolesResult listRoles() {
+    @Override
+    public ListRolesResult listRoles() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListSAMLProvidersResult listSAMLProviders(ListSAMLProvidersRequest listSAMLProvidersRequest) {
+    @Override
+    public ListSAMLProvidersResult listSAMLProviders(ListSAMLProvidersRequest listSAMLProvidersRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListSAMLProvidersResult listSAMLProviders() {
+    @Override
+    public ListSAMLProvidersResult listSAMLProviders() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListSSHPublicKeysResult listSSHPublicKeys(ListSSHPublicKeysRequest listSSHPublicKeysRequest) {
+    @Override
+    public ListSSHPublicKeysResult listSSHPublicKeys(ListSSHPublicKeysRequest listSSHPublicKeysRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListSSHPublicKeysResult listSSHPublicKeys() {
+    @Override
+    public ListSSHPublicKeysResult listSSHPublicKeys() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListServerCertificatesResult listServerCertificates(
-			ListServerCertificatesRequest listServerCertificatesRequest) {
+    @Override
+    public ListServerCertificatesResult listServerCertificates(ListServerCertificatesRequest listServerCertificatesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListServerCertificatesResult listServerCertificates() {
+    @Override
+    public ListServerCertificatesResult listServerCertificates() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListServiceSpecificCredentialsResult listServiceSpecificCredentials(
-			ListServiceSpecificCredentialsRequest listServiceSpecificCredentialsRequest) {
+    @Override
+    public ListServiceSpecificCredentialsResult listServiceSpecificCredentials(ListServiceSpecificCredentialsRequest listServiceSpecificCredentialsRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListSigningCertificatesResult listSigningCertificates(
-			ListSigningCertificatesRequest listSigningCertificatesRequest) {
+    @Override
+    public ListSigningCertificatesResult listSigningCertificates(ListSigningCertificatesRequest listSigningCertificatesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListSigningCertificatesResult listSigningCertificates() {
+    @Override
+    public ListSigningCertificatesResult listSigningCertificates() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListUserPoliciesResult listUserPolicies(ListUserPoliciesRequest listUserPoliciesRequest) {
+    @Override
+    public ListUserPoliciesResult listUserPolicies(ListUserPoliciesRequest listUserPoliciesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListUsersResult listUsers(ListUsersRequest listUsersRequest) {
+    @Override
+    public ListUsersResult listUsers(ListUsersRequest listUsersRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListUsersResult listUsers() {
+    @Override
+    public ListUsersResult listUsers() {
         ListUsersResult res = new ListUsersResult();
         List<User> list = new ArrayList<>();
         User user = new User();
@@ -663,183 +631,166 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
         list.add(user);
         res.setUsers(list);
         return res;
-	}
+    }
 
-	@Override
-	public ListVirtualMFADevicesResult listVirtualMFADevices(
-			ListVirtualMFADevicesRequest listVirtualMFADevicesRequest) {
+    @Override
+    public ListVirtualMFADevicesResult listVirtualMFADevices(ListVirtualMFADevicesRequest listVirtualMFADevicesRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListVirtualMFADevicesResult listVirtualMFADevices() {
+    @Override
+    public ListVirtualMFADevicesResult listVirtualMFADevices() {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public PutGroupPolicyResult putGroupPolicy(PutGroupPolicyRequest putGroupPolicyRequest) {
+    @Override
+    public PutGroupPolicyResult putGroupPolicy(PutGroupPolicyRequest putGroupPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public PutRolePolicyResult putRolePolicy(PutRolePolicyRequest putRolePolicyRequest) {
+    @Override
+    public PutRolePolicyResult putRolePolicy(PutRolePolicyRequest putRolePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public PutUserPolicyResult putUserPolicy(PutUserPolicyRequest putUserPolicyRequest) {
+    @Override
+    public PutUserPolicyResult putUserPolicy(PutUserPolicyRequest putUserPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public RemoveClientIDFromOpenIDConnectProviderResult removeClientIDFromOpenIDConnectProvider(
-			RemoveClientIDFromOpenIDConnectProviderRequest removeClientIDFromOpenIDConnectProviderRequest) {
+    @Override
+    public RemoveClientIDFromOpenIDConnectProviderResult removeClientIDFromOpenIDConnectProvider(RemoveClientIDFromOpenIDConnectProviderRequest removeClientIDFromOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public RemoveRoleFromInstanceProfileResult removeRoleFromInstanceProfile(
-			RemoveRoleFromInstanceProfileRequest removeRoleFromInstanceProfileRequest) {
+    @Override
+    public RemoveRoleFromInstanceProfileResult removeRoleFromInstanceProfile(RemoveRoleFromInstanceProfileRequest removeRoleFromInstanceProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public RemoveUserFromGroupResult removeUserFromGroup(RemoveUserFromGroupRequest removeUserFromGroupRequest) {
+    @Override
+    public RemoveUserFromGroupResult removeUserFromGroup(RemoveUserFromGroupRequest removeUserFromGroupRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ResetServiceSpecificCredentialResult resetServiceSpecificCredential(
-			ResetServiceSpecificCredentialRequest resetServiceSpecificCredentialRequest) {
+    @Override
+    public ResetServiceSpecificCredentialResult resetServiceSpecificCredential(ResetServiceSpecificCredentialRequest resetServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ResyncMFADeviceResult resyncMFADevice(ResyncMFADeviceRequest resyncMFADeviceRequest) {
+    @Override
+    public ResyncMFADeviceResult resyncMFADevice(ResyncMFADeviceRequest resyncMFADeviceRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public SetDefaultPolicyVersionResult setDefaultPolicyVersion(
-			SetDefaultPolicyVersionRequest setDefaultPolicyVersionRequest) {
+    @Override
+    public SetDefaultPolicyVersionResult setDefaultPolicyVersion(SetDefaultPolicyVersionRequest setDefaultPolicyVersionRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public SimulateCustomPolicyResult simulateCustomPolicy(SimulateCustomPolicyRequest simulateCustomPolicyRequest) {
+    @Override
+    public SimulateCustomPolicyResult simulateCustomPolicy(SimulateCustomPolicyRequest simulateCustomPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public SimulatePrincipalPolicyResult simulatePrincipalPolicy(
-			SimulatePrincipalPolicyRequest simulatePrincipalPolicyRequest) {
+    @Override
+    public SimulatePrincipalPolicyResult simulatePrincipalPolicy(SimulatePrincipalPolicyRequest simulatePrincipalPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateAccessKeyResult updateAccessKey(UpdateAccessKeyRequest updateAccessKeyRequest) {
+    @Override
+    public UpdateAccessKeyResult updateAccessKey(UpdateAccessKeyRequest updateAccessKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateAccountPasswordPolicyResult updateAccountPasswordPolicy(
-			UpdateAccountPasswordPolicyRequest updateAccountPasswordPolicyRequest) {
+    @Override
+    public UpdateAccountPasswordPolicyResult updateAccountPasswordPolicy(UpdateAccountPasswordPolicyRequest updateAccountPasswordPolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateAssumeRolePolicyResult updateAssumeRolePolicy(
-			UpdateAssumeRolePolicyRequest updateAssumeRolePolicyRequest) {
+    @Override
+    public UpdateAssumeRolePolicyResult updateAssumeRolePolicy(UpdateAssumeRolePolicyRequest updateAssumeRolePolicyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateGroupResult updateGroup(UpdateGroupRequest updateGroupRequest) {
+    @Override
+    public UpdateGroupResult updateGroup(UpdateGroupRequest updateGroupRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateLoginProfileResult updateLoginProfile(UpdateLoginProfileRequest updateLoginProfileRequest) {
+    @Override
+    public UpdateLoginProfileResult updateLoginProfile(UpdateLoginProfileRequest updateLoginProfileRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateOpenIDConnectProviderThumbprintResult updateOpenIDConnectProviderThumbprint(
-			UpdateOpenIDConnectProviderThumbprintRequest updateOpenIDConnectProviderThumbprintRequest) {
+    @Override
+    public UpdateOpenIDConnectProviderThumbprintResult updateOpenIDConnectProviderThumbprint(UpdateOpenIDConnectProviderThumbprintRequest updateOpenIDConnectProviderThumbprintRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateRoleDescriptionResult updateRoleDescription(
-			UpdateRoleDescriptionRequest updateRoleDescriptionRequest) {
+    @Override
+    public UpdateRoleDescriptionResult updateRoleDescription(UpdateRoleDescriptionRequest updateRoleDescriptionRequest) {
         throw new UnsupportedOperationException();
-	}
-	
+    }
 
-
-	@Override
-	public UpdateSAMLProviderResult updateSAMLProvider(UpdateSAMLProviderRequest updateSAMLProviderRequest) {
+    @Override
+    public UpdateSAMLProviderResult updateSAMLProvider(UpdateSAMLProviderRequest updateSAMLProviderRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateSSHPublicKeyResult updateSSHPublicKey(UpdateSSHPublicKeyRequest updateSSHPublicKeyRequest) {
+    @Override
+    public UpdateSSHPublicKeyResult updateSSHPublicKey(UpdateSSHPublicKeyRequest updateSSHPublicKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateServerCertificateResult updateServerCertificate(
-			UpdateServerCertificateRequest updateServerCertificateRequest) {
+    @Override
+    public UpdateServerCertificateResult updateServerCertificate(UpdateServerCertificateRequest updateServerCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateServiceSpecificCredentialResult updateServiceSpecificCredential(
-			UpdateServiceSpecificCredentialRequest updateServiceSpecificCredentialRequest) {
+    @Override
+    public UpdateServiceSpecificCredentialResult updateServiceSpecificCredential(UpdateServiceSpecificCredentialRequest updateServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateSigningCertificateResult updateSigningCertificate(
-			UpdateSigningCertificateRequest updateSigningCertificateRequest) {
+    @Override
+    public UpdateSigningCertificateResult updateSigningCertificate(UpdateSigningCertificateRequest updateSigningCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateUserResult updateUser(UpdateUserRequest updateUserRequest) {
+    @Override
+    public UpdateUserResult updateUser(UpdateUserRequest updateUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UploadSSHPublicKeyResult uploadSSHPublicKey(UploadSSHPublicKeyRequest uploadSSHPublicKeyRequest) {
+    @Override
+    public UploadSSHPublicKeyResult uploadSSHPublicKey(UploadSSHPublicKeyRequest uploadSSHPublicKeyRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UploadServerCertificateResult uploadServerCertificate(
-			UploadServerCertificateRequest uploadServerCertificateRequest) {
+    @Override
+    public UploadServerCertificateResult uploadServerCertificate(UploadServerCertificateRequest uploadServerCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UploadSigningCertificateResult uploadSigningCertificate(
-			UploadSigningCertificateRequest uploadSigningCertificateRequest) {
+    @Override
+    public UploadSigningCertificateResult uploadSigningCertificate(UploadSigningCertificateRequest uploadSigningCertificateRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public void shutdown() {
+    @Override
+    public void shutdown() {
         throw new UnsupportedOperationException();
-		
-	}
 
-	@Override
-	public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
-        throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public AmazonIdentityManagementWaiters waiters() {
+    @Override
+    public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
         throw new UnsupportedOperationException();
-	}
+    }
+
+    @Override
+    public AmazonIdentityManagementWaiters waiters() {
+        throw new UnsupportedOperationException();
+    }
 }

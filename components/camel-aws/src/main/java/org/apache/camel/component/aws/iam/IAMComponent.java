@@ -35,16 +35,16 @@ public class IAMComponent extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private IAMConfiguration configuration;
-    
+
     public IAMComponent() {
         this(null);
     }
-    
+
     public IAMComponent(CamelContext context) {
         super(context);
-        
+
         this.configuration = new IAMConfiguration();
         registerExtension(new IAMComponentVerifierExtension());
     }
@@ -66,11 +66,11 @@ public class IAMComponent extends DefaultComponent {
         if (configuration.getIamClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
         }
-        
+
         IAMEndpoint endpoint = new IAMEndpoint(uri, this, configuration);
         return endpoint;
     }
-    
+
     public IAMConfiguration getConfiguration() {
         return configuration;
     }
@@ -103,7 +103,7 @@ public class IAMComponent extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         configuration.setSecretKey(secretKey);
     }
-    
+
     public String getRegion() {
         return configuration.getRegion();
     }

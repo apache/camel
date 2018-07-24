@@ -22,7 +22,6 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
 
 import org.apache.camel.Component;
@@ -68,12 +67,12 @@ public class IAMEndpoint extends ScheduledPollEndpoint {
 
         iamClient = configuration.getIamClient() != null ? configuration.getIamClient() : createKMSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getIamClient())) {
             if (iamClient != null) {
-            	iamClient.shutdown();
+                iamClient.shutdown();
             }
         }
         super.doStop();
@@ -88,7 +87,7 @@ public class IAMEndpoint extends ScheduledPollEndpoint {
     }
 
     AmazonIdentityManagement createKMSClient() {
-    	AmazonIdentityManagement client = null;
+        AmazonIdentityManagement client = null;
         ClientConfiguration clientConfiguration = null;
         AmazonIdentityManagementClientBuilder clientBuilder = null;
         boolean isClientConfigFound = false;

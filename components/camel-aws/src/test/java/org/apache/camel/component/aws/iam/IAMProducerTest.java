@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.aws.iam;
 
+import com.amazonaws.services.identitymanagement.model.CreateUserResult;
+import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
+import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListUsersResult;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,34 +30,29 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import com.amazonaws.services.identitymanagement.model.CreateUserResult;
-import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
-import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
-import com.amazonaws.services.identitymanagement.model.ListUsersResult;
-
 public class IAMProducerTest extends CamelTestSupport {
 
-	@EndpointInject(uri = "mock:result")
-	private MockEndpoint mock;
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
 
-	@Test
-	public void iamListKeysTest() throws Exception {
+    @Test
+    public void iamListKeysTest() throws Exception {
 
-		mock.expectedMessageCount(1);
-		Exchange exchange = template.request("direct:listKeys", new Processor() {
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listAccessKeys);
-			}
-		});
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listKeys", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listAccessKeys);
+            }
+        });
 
-		assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
 
-		ListAccessKeysResult resultGet = (ListAccessKeysResult) exchange.getIn().getBody();
-		assertEquals(1, resultGet.getAccessKeyMetadata().size());
-		assertEquals("1", resultGet.getAccessKeyMetadata().get(0).getAccessKeyId());
-	}
-	
+        ListAccessKeysResult resultGet = (ListAccessKeysResult)exchange.getIn().getBody();
+        assertEquals(1, resultGet.getAccessKeyMetadata().size());
+        assertEquals("1", resultGet.getAccessKeyMetadata().get(0).getAccessKeyId());
+    }
+
     @Test
     public void iamCreateUserTest() throws Exception {
 
@@ -66,11 +66,11 @@ public class IAMProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        CreateUserResult resultGet = (CreateUserResult) exchange.getIn().getBody();
+
+        CreateUserResult resultGet = (CreateUserResult)exchange.getIn().getBody();
         assertEquals("test", resultGet.getUser().getUserName());
     }
-    
+
     @Test
     public void iamDeleteUserTest() throws Exception {
 
@@ -84,54 +84,50 @@ public class IAMProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        DeleteUserResult resultGet = (DeleteUserResult) exchange.getIn().getBody();
+
+        DeleteUserResult resultGet = (DeleteUserResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
-	@Test
-	public void iamListUsersTest() throws Exception {
 
-		mock.expectedMessageCount(1);
-		Exchange exchange = template.request("direct:listUsers", new Processor() {
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listUsers);
-			}
-		});
+    @Test
+    public void iamListUsersTest() throws Exception {
 
-		assertMockEndpointsSatisfied();
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listUsers", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listUsers);
+            }
+        });
 
-		ListUsersResult resultGet = (ListUsersResult) exchange.getIn().getBody();
-		assertEquals(1, resultGet.getUsers().size());
-		assertEquals("test", resultGet.getUsers().get(0).getUserName());
-	}
+        assertMockEndpointsSatisfied();
 
-	@Override
-	protected JndiRegistry createRegistry() throws Exception {
-		JndiRegistry registry = super.createRegistry();
+        ListUsersResult resultGet = (ListUsersResult)exchange.getIn().getBody();
+        assertEquals(1, resultGet.getUsers().size());
+        assertEquals("test", resultGet.getUsers().get(0).getUserName());
+    }
 
-		AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
 
-		registry.bind("amazonIAMClient", clientMock);
+        AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
 
-		return registry;
-	}
+        registry.bind("amazonIAMClient", clientMock);
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:listKeys").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys")
-						.to("mock:result");
-				from("direct:createUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser")
-				        .to("mock:result");
-				from("direct:deleteUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
-		                .to("mock:result");
-				from("direct:listUsers").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listUsers")
-                        .to("mock:result");
-			}
-		};
-	}
+        return registry;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:listKeys").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys").to("mock:result");
+                from("direct:createUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser").to("mock:result");
+                from("direct:deleteUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteUser").to("mock:result");
+                from("direct:listUsers").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listUsers").to("mock:result");
+            }
+        };
+    }
 }

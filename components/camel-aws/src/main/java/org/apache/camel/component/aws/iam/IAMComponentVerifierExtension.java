@@ -71,7 +71,8 @@ public class IAMComponentVerifierExtension extends DefaultComponentVerifierExten
             IAMConfiguration configuration = setProperties(new IAMConfiguration(), parameters);
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            AmazonIdentityManagement client = AmazonIdentityManagementClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
+            AmazonIdentityManagement client = AmazonIdentityManagementClientBuilder.standard().withCredentials(credentialsProvider)
+                .withRegion(Regions.valueOf(configuration.getRegion())).build();
             client.listAccessKeys();
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

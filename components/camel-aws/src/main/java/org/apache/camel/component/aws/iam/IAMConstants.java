@@ -18,9 +18,8 @@ package org.apache.camel.component.aws.iam;
 
 /**
  * Constants used in Camel AWS IAM module
- * 
  */
 public interface IAMConstants {
-    String OPERATION                = "CamelAwsIAMOperation";
-    String USERNAME                 = "CamelAwsIAMUsername";
+    String OPERATION = "CamelAwsIAMOperation";
+    String USERNAME = "CamelAwsIAMUsername";
 }
