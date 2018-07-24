@@ -79,6 +79,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private String deadLetterQueue;
     @Metadata(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic")
     private String deadLetterExchangeType = "direct";
+    @Metadata(label = "producer")
+    private boolean allowNullHeaders;
     @Metadata(label = "security")
     private String sslProtocol;
     @Metadata(label = "security")
@@ -238,6 +240,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setDeadLetterExchangeType(getDeadLetterExchangeType());
         endpoint.setDeadLetterQueue(getDeadLetterQueue());
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
+        endpoint.setAllowNullHeaders(isAllowNullHeaders());
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
@@ -259,6 +262,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.getExchangeArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, EXCHANGE_ARG_PREFIX));
         endpoint.getQueueArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, QUEUE_ARG_PREFIX));
         endpoint.getBindingArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, BINDING_ARG_PREFIX));
+        // Change null headers processing for message converter
+        endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
 
         return endpoint;
     }
@@ -268,7 +273,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
     }
 
     /**
-     * The hostname of the running rabbitmq instance or cluster.
+     * The hostname of the running RabbitMQ instance or cluster.
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;
@@ -844,4 +849,14 @@ public class RabbitMQComponent extends UriEndpointComponent {
         this.deadLetterExchangeType = deadLetterExchangeType;
     }
 
+    /**
+     * Allow pass null values to header
+     */
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
+    }
 }

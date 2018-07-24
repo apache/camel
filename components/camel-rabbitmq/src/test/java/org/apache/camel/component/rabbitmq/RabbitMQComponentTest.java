@@ -44,6 +44,7 @@ public class RabbitMQComponentTest {
         assertEquals(true, endpoint.isAutoAck());
         assertEquals(true, endpoint.isAutoDelete());
         assertEquals(true, endpoint.isDurable());
+        assertEquals(false, endpoint.isAllowNullHeaders());
         assertEquals("direct", endpoint.getExchangeType());
         assertEquals(ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT, endpoint.getConnectionTimeout());
         assertEquals(ConnectionFactory.DEFAULT_CHANNEL_MAX, endpoint.getRequestedChannelMax());
@@ -54,7 +55,7 @@ public class RabbitMQComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("username", "coldplay");
         params.put("password", "chrism");
         params.put("autoAck", true);
@@ -86,6 +87,7 @@ public class RabbitMQComponentTest {
         assertEquals(456, endpoint.getRequestedChannelMax());
         assertEquals(789, endpoint.getRequestedFrameMax());
         assertEquals(321, endpoint.getRequestedHeartbeat());
+        assertEquals(true, endpoint.isAllowNullHeaders());
     }
 
     private RabbitMQEndpoint createEndpoint(Map<String, Object> params) throws Exception {
@@ -105,7 +107,7 @@ public class RabbitMQComponentTest {
 
         CamelContext defaultContext = new DefaultCamelContext(registry);
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("connectionFactory", "#connectionFactoryMock");
 
         RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", params);
