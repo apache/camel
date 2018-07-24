@@ -69,6 +69,7 @@ public class RabbitMQComponentTest {
         params.put("requestedChannelMax", 456);
         params.put("requestedFrameMax", 789);
         params.put("requestedHeartbeat", 321);
+        params.put("allowNullHeaders", true);
 
         RabbitMQEndpoint endpoint = createEndpoint(params);
 
