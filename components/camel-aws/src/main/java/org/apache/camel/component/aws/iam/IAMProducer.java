@@ -23,6 +23,8 @@ import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListUsersRequest;
+import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -59,6 +61,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case deleteUser:
             deleteUser(getEndpoint().getIamClient(), exchange);
+            break;
+        case listUsers:
+            listUsers(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -130,6 +135,18 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.deleteUser(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Delete user command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listUsers(AmazonIdentityManagement iamClient, Exchange exchange) {
+        ListUsersResult result;
+        try {
+            result = iamClient.listUsers();
+        } catch (AmazonServiceException ase) {
+            LOG.trace("List users command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
