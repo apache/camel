@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.aws.iam;
 
+import com.amazonaws.services.identitymanagement.model.CreateUserResult;
+import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
+import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListUsersResult;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,34 +29,29 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.amazonaws.services.identitymanagement.model.CreateUserResult;
-import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
-import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
-import com.amazonaws.services.identitymanagement.model.ListUsersResult;
-
 public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
-	@EndpointInject(uri = "mock:result")
-	private MockEndpoint mock;
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
 
-	@Test
-	public void iamListAccessKeysTest() throws Exception {
+    @Test
+    public void iamListAccessKeysTest() throws Exception {
 
-		mock.expectedMessageCount(1);
-		Exchange exchange = template.request("direct:listKeys", new Processor() {
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listAccessKeys);
-			}
-		});
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listKeys", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listAccessKeys);
+            }
+        });
 
-		assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
 
-		ListAccessKeysResult resultGet = (ListAccessKeysResult) exchange.getIn().getBody();
-		assertEquals(1, resultGet.getAccessKeyMetadata().size());
-		assertEquals("1", resultGet.getAccessKeyMetadata().get(0).getAccessKeyId());
-	}
-	
+        ListAccessKeysResult resultGet = (ListAccessKeysResult)exchange.getIn().getBody();
+        assertEquals(1, resultGet.getAccessKeyMetadata().size());
+        assertEquals("1", resultGet.getAccessKeyMetadata().get(0).getAccessKeyId());
+    }
+
     @Test
     public void iamCreateUserTest() throws Exception {
 
@@ -65,11 +65,11 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        CreateUserResult resultGet = (CreateUserResult) exchange.getIn().getBody();
+
+        CreateUserResult resultGet = (CreateUserResult)exchange.getIn().getBody();
         assertEquals("test", resultGet.getUser().getUserName());
     }
-    
+
     @Test
     public void iamDeleteUserTest() throws Exception {
 
@@ -83,32 +83,31 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        DeleteUserResult resultGet = (DeleteUserResult) exchange.getIn().getBody();
+
+        DeleteUserResult resultGet = (DeleteUserResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
-	@Test
-	public void iamListUsersTest() throws Exception {
 
-		mock.expectedMessageCount(1);
-		Exchange exchange = template.request("direct:listUsers", new Processor() {
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listUsers);
-			}
-		});
+    @Test
+    public void iamListUsersTest() throws Exception {
 
-		assertMockEndpointsSatisfied();
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listUsers", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listUsers);
+            }
+        });
 
-		ListUsersResult resultGet = (ListUsersResult) exchange.getIn().getBody();
-		assertEquals(1, resultGet.getUsers().size());
-		assertEquals("test", resultGet.getUsers().get(0).getUserName());
-	}
+        assertMockEndpointsSatisfied();
 
-	@Override
-	protected ClassPathXmlApplicationContext createApplicationContext() {
-		return new ClassPathXmlApplicationContext(
-				"org/apache/camel/component/aws/iam/IAMComponentSpringTest-context.xml");
-	}
+        ListUsersResult resultGet = (ListUsersResult)exchange.getIn().getBody();
+        assertEquals(1, resultGet.getUsers().size());
+        assertEquals("test", resultGet.getUsers().get(0).getUserName());
+    }
+
+    @Override
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/iam/IAMComponentSpringTest-context.xml");
+    }
 }

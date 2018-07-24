@@ -37,7 +37,7 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-    	IAMComponent component = new IAMComponent(context);
+        IAMComponent component = new IAMComponent(context);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

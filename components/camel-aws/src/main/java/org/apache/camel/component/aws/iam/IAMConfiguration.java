@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.aws.iam;
 
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
-import com.amazonaws.services.kms.AWSKMS;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -124,7 +122,7 @@ public class IAMConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     // *************************************************
     //
     // *************************************************

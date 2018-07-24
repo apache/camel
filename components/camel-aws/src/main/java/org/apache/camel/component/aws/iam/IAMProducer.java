@@ -23,7 +23,6 @@ import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
-import com.amazonaws.services.identitymanagement.model.ListUsersRequest;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 
 import org.apache.camel.Endpoint;
@@ -85,7 +84,7 @@ public class IAMProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (iamProducerToString == null) {
-        	iamProducerToString = "IAMProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            iamProducerToString = "IAMProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return iamProducerToString;
     }
@@ -106,7 +105,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createUser(AmazonIdentityManagement iamClient, Exchange exchange) {
         CreateUserRequest request = new CreateUserRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
@@ -123,7 +122,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteUser(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteUserRequest request = new DeleteUserRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
@@ -140,7 +139,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void listUsers(AmazonIdentityManagement iamClient, Exchange exchange) {
         ListUsersResult result;
         try {
