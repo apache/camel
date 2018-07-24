@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * To collect various metrics directly from Camel routes using the Micrometer library.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer", syntax = "micrometer:metricsType:meterName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer", syntax = "micrometer:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MicrometerEndpoint extends DefaultEndpoint {
 
     protected MeterRegistry registry;

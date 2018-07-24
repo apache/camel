@@ -65,7 +65,7 @@ The Micrometer component supports 2 options, which are listed below.
 The Micrometer endpoint is configured using URI syntax:
 
 ----
-micrometer:metricsType:meterName
+micrometer:metricsType:metricsName
 ----
 
 with the following path and query parameters:
