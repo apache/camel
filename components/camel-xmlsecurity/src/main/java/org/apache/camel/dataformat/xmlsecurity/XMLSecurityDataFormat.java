@@ -612,7 +612,18 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             keyEncryptionKey = generateKeyEncryptionKey("AES");
         }
 
-        return decode(exchange, encodedDocument, keyEncryptionKey);
+        Object ret = null;
+        try {
+            ret = decode(exchange, encodedDocument, keyEncryptionKey, true);
+        } catch (org.apache.xml.security.encryption.XMLEncryptionException ex) {
+            if (ex.getMessage().equals("encryption.nokey")) {
+                //the message don't have EncryptionKey, try key directly
+                ret = decode(exchange, encodedDocument, keyEncryptionKey, false);
+            } else {
+                throw ex;
+            }
+        }
+        return  ret;
     }
     
     private Object decodeWithAsymmetricKey(Exchange exchange, Document encodedDocument) throws Exception { 
@@ -628,14 +639,30 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         
         Key keyEncryptionKey = getPrivateKey(this.keyStore, this.recipientKeyAlias, 
                  this.keyPassword != null ? this.keyPassword : this.keyStorePassword);
-        return decode(exchange, encodedDocument, keyEncryptionKey);
+        Object ret = null;
+        try {
+            ret = decode(exchange, encodedDocument, keyEncryptionKey, true);
+        } catch (org.apache.xml.security.encryption.XMLEncryptionException ex) {
+            if (ex.getMessage().equals("encryption.nokey")) {
+                //the message don't have EncryptionKey, try key directly
+                ret = decode(exchange, encodedDocument, keyEncryptionKey, false);
+            } else {
+                throw ex;
+            }
+        }
+        return  ret;
     }
     
-    private Object decode(Exchange exchange, Document encodedDocument, Key keyEncryptionKey) throws Exception {
+    private Object decode(Exchange exchange, Document encodedDocument, Key keyEncryptionKey,
+                          boolean hasEncrytionKey) throws Exception {
         XMLCipher xmlCipher = XMLCipher.getInstance();
         xmlCipher.setSecureValidation(true);
-        xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
-        xmlCipher.setKEK(keyEncryptionKey);
+        if (hasEncrytionKey) {
+            xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
+            xmlCipher.setKEK(keyEncryptionKey);
+        } else {
+            xmlCipher.init(XMLCipher.DECRYPT_MODE, keyEncryptionKey);
+        }
 
         if (secureTag.equalsIgnoreCase("")) {
             checkEncryptionAlgorithm(keyEncryptionKey, encodedDocument.getDocumentElement());
