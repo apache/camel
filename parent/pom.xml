@@ -647,7 +647,6 @@
     <spring-data-redis-version>2.0.8.RELEASE</spring-data-redis-version>
     <spring-data-redis-bundle-version>2.0.8.RELEASE_1</spring-data-redis-bundle-version>
     <spring-integration-version>5.0.3.RELEASE</spring-integration-version>
-    <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
     <spring-retry-version>1.2.2.RELEASE</spring-retry-version>
