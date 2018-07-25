@@ -648,7 +648,6 @@
     <spring-integration-version>5.0.3.RELEASE</spring-integration-version>
     <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
-    <spring-retry-version>1.2.2.RELEASE</spring-retry-version>
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
     <spring-version-range>[4.3,6)</spring-version-range>
     <spring-version>${spring5-version}</spring-version>
