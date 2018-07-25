@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.iam;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.model.CreateAccessKeyRequest;
+import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
@@ -54,6 +56,9 @@ public class IAMProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
         case listAccessKeys:
             listAccessKeys(getEndpoint().getIamClient(), exchange);
+            break;
+        case createAccessKey:
+            createAccessKey(getEndpoint().getIamClient(), exchange);
             break;
         case createUser:
             createUser(getEndpoint().getIamClient(), exchange);
@@ -146,6 +151,23 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.listUsers();
         } catch (AmazonServiceException ase) {
             LOG.trace("List users command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void createAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
+        CreateAccessKeyRequest request = new CreateAccessKeyRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        CreateAccessKeyResult result;
+        try {
+            result = iamClient.createAccessKey(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Create Access Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.iam;
 
+import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
@@ -106,6 +107,25 @@ public class IAMProducerTest extends CamelTestSupport {
         assertEquals(1, resultGet.getUsers().size());
         assertEquals("test", resultGet.getUsers().get(0).getUserName());
     }
+    
+    @Test
+    public void iamCreateAccessKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createAccessKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.createAccessKey);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        CreateAccessKeyResult resultGet = (CreateAccessKeyResult) exchange.getIn().getBody();
+        assertEquals("test", resultGet.getAccessKey().getAccessKeyId());
+        assertEquals("testSecret", resultGet.getAccessKey().getSecretAccessKey());
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -127,6 +147,7 @@ public class IAMProducerTest extends CamelTestSupport {
                 from("direct:createUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser").to("mock:result");
                 from("direct:deleteUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteUser").to("mock:result");
                 from("direct:listUsers").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listUsers").to("mock:result");
+                from("direct:createAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey").to("mock:result");
             }
         };
     }
