@@ -22,6 +22,8 @@ import com.amazonaws.services.identitymanagement.model.CreateAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
+import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyRequest;
+import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
@@ -59,6 +61,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case createAccessKey:
             createAccessKey(getEndpoint().getIamClient(), exchange);
+            break;
+        case deleteAccessKey:
+            deleteAccessKey(getEndpoint().getIamClient(), exchange);
             break;
         case createUser:
             createUser(getEndpoint().getIamClient(), exchange);
@@ -168,6 +173,23 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.createAccessKey(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Create Access Key command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void deleteAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
+        DeleteAccessKeyRequest request = new DeleteAccessKeyRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        DeleteAccessKeyResult result;
+        try {
+            result = iamClient.deleteAccessKey(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Delete Access Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
