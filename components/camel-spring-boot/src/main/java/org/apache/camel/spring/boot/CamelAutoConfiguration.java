@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -37,6 +38,8 @@ import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
+import org.apache.camel.impl.CompositeRegistry;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultTraceFormatter;
@@ -54,6 +57,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -77,6 +81,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.OrderComparator;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
@@ -117,6 +122,18 @@ public class CamelAutoConfiguration {
     static CamelContext doConfigureCamelContext(ApplicationContext applicationContext,
                                          CamelContext camelContext,
                                          CamelConfigurationProperties config) throws Exception {
+
+        if (camelContext instanceof DefaultCamelContext) {
+            final DefaultCamelContext defaultContext = (DefaultCamelContext) camelContext;
+            final Map<String, Registry> registryBeans = applicationContext.getBeansOfType(Registry.class);
+
+            if (!registryBeans.isEmpty()) {
+                final List<Registry> registries = new ArrayList<>(registryBeans.values());
+                OrderComparator.sort(registries);
+                final Registry registry = new CompositeRegistry(registries);
+                defaultContext.setRegistry(registry);
+            }
+        }
 
         if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
             Environment env = applicationContext.getEnvironment();

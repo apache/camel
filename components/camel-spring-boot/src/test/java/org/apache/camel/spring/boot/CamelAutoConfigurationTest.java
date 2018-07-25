@@ -24,6 +24,8 @@ import org.apache.camel.Route;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,11 +34,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
@@ -177,6 +182,12 @@ public class CamelAutoConfigurationTest extends Assert {
         assertEquals(camelContext.getExecutorServiceManager().getThreadNamePattern(), "customThreadName #counter#");
     }
 
+    @Test
+    public void shouldComposeRegistries() {
+        final Registry registry = camelContext.getRegistry();
+        Assertions.assertThat(registry.lookupByName("bean")).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
+    }
+
     @Configuration
     public static class TestConfig {
         // Constants
@@ -197,5 +208,23 @@ public class CamelAutoConfigurationTest extends Assert {
         CamelContextConfiguration camelContextConfiguration() {
             return mock(CamelContextConfiguration.class);
         }
+
+        @Bean
+        Registry customRegistry1() {
+            return mockRegistryWithBeanValueAndOrder(Ordered.LOWEST_PRECEDENCE);
+        }
+
+        @Bean
+        Registry customRegistry2() {
+            return mockRegistryWithBeanValueAndOrder(Ordered.HIGHEST_PRECEDENCE);
+        }
+
+        private Registry mockRegistryWithBeanValueAndOrder(int value) {
+            final Registry registry = mock(Registry.class, withSettings().extraInterfaces(Ordered.class));
+            when(registry.lookupByName("bean")).thenReturn(value);
+            when(((Ordered) registry).getOrder()).thenReturn(value);
+            return registry;
+        }
+
     }
 }
