@@ -639,7 +639,6 @@
     <spring-cloud-consul-version>2.0.0.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.0.RELEASE</spring-cloud-netflix-version>
     <spring-cloud-zookeeper-version>2.0.0.RELEASE</spring-cloud-zookeeper-version>
-    <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>2.0.8.RELEASE</spring-data-commons-version>
     <spring-data-commons-bundle-version>2.0.8.RELEASE_1</spring-data-commons-bundle-version>
     <spring-data-keyvalue-version>2.0.8.RELEASE</spring-data-keyvalue-version>
