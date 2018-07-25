@@ -94,7 +94,7 @@ public class XsltUriResolver implements URIResolver {
             } catch (IOException e) {
                 throw new TransformerException(e);
             }
-            return new StreamSource(is);
+            return new StreamSource(is, href);
         }
 
         // if href and location is the same, then its the initial resolve
@@ -103,8 +103,8 @@ public class XsltUriResolver implements URIResolver {
             return resolve(path, base);
         }
 
-        // okay then its relative to the starting location from the XSLT component
-        String path = FileUtil.onlyPath(location);
+        // okay then its relative to the starting location from the XSLT importing this one
+        String path = FileUtil.onlyPath(base);
         if (ObjectHelper.isEmpty(path)) {
             path = baseScheme + href;
             return resolve(path, base);

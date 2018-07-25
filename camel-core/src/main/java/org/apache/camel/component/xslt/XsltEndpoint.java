@@ -416,7 +416,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         if (source == null) {
             throw new IOException("Cannot load schema resource " + resourceUri);
         } else {
-            source.setSystemId(resourceUri);
             xslt.setTransformerSource(source);
         }
         // now loaded so clear flag
