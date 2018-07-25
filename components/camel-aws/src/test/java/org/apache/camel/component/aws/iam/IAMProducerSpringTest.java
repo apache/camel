@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.iam;
 
+import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
@@ -104,6 +105,25 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         ListUsersResult resultGet = (ListUsersResult)exchange.getIn().getBody();
         assertEquals(1, resultGet.getUsers().size());
         assertEquals("test", resultGet.getUsers().get(0).getUserName());
+    }
+    
+    @Test
+    public void iamCreateAccessKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createAccessKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.createAccessKey);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        CreateAccessKeyResult resultGet = (CreateAccessKeyResult) exchange.getIn().getBody();
+        assertEquals("test", resultGet.getAccessKey().getAccessKeyId());
+        assertEquals("testSecret", resultGet.getAccessKey().getSecretAccessKey());
     }
 
     @Override

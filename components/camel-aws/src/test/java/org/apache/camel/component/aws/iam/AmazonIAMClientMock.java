@@ -75,7 +75,12 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public CreateAccessKeyResult createAccessKey(CreateAccessKeyRequest createAccessKeyRequest) {
-        throw new UnsupportedOperationException();
+        CreateAccessKeyResult res = new CreateAccessKeyResult();
+        AccessKey key = new AccessKey();
+        key.setAccessKeyId("test");
+        key.setSecretAccessKey("testSecret");
+        res.setAccessKey(key);
+        return res;
     }
 
     @Override
