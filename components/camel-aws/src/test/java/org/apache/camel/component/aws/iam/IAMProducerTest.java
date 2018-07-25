@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.iam;
 
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
+import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
@@ -126,6 +127,24 @@ public class IAMProducerTest extends CamelTestSupport {
         assertEquals("test", resultGet.getAccessKey().getAccessKeyId());
         assertEquals("testSecret", resultGet.getAccessKey().getSecretAccessKey());
     }
+    
+    @Test
+    public void iamDeleteAccessKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:deleteAccessKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.deleteAccessKey);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        DeleteAccessKeyResult resultGet = (DeleteAccessKeyResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -148,6 +167,7 @@ public class IAMProducerTest extends CamelTestSupport {
                 from("direct:deleteUser").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteUser").to("mock:result");
                 from("direct:listUsers").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listUsers").to("mock:result");
                 from("direct:createAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey").to("mock:result");
+                from("direct:deleteAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteAccessKey").to("mock:result");
             }
         };
     }

@@ -164,7 +164,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public DeleteAccessKeyResult deleteAccessKey(DeleteAccessKeyRequest deleteAccessKeyRequest) {
-        throw new UnsupportedOperationException();
+        DeleteAccessKeyResult res = new DeleteAccessKeyResult();
+        return res;
     }
 
     @Override
