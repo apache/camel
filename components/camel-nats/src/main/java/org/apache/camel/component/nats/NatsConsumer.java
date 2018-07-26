@@ -59,8 +59,8 @@ public class NatsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor();
 
         LOG.debug("Getting Nats Connection");
-        connection = getEndpoint().getNatsConfiguration().getConnection() != null ? 
-            getEndpoint().getNatsConfiguration().getConnection():getEndpoint().getConnection();
+        connection = getEndpoint().getNatsConfiguration().getConnection() != null 
+            ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
 
         executor.submit(new NatsConsumingTask(connection, getEndpoint().getNatsConfiguration()));
     }

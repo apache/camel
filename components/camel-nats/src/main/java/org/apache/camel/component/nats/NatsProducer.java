@@ -63,8 +63,8 @@ public class NatsProducer extends DefaultProducer {
         LOG.debug("Starting Nats Producer");
         
         LOG.debug("Getting Nats Connection");
-        connection = getEndpoint().getNatsConfiguration().getConnection() != null ? 
-            getEndpoint().getNatsConfiguration().getConnection():getEndpoint().getConnection();
+        connection = getEndpoint().getNatsConfiguration().getConnection() != null 
+            ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
     }
 
     @Override
