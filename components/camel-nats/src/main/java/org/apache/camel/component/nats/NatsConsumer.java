@@ -16,21 +16,14 @@
  */
 package org.apache.camel.component.nats;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
-
-import javax.net.ssl.SSLContext;
 
 import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
 import io.nats.client.Dispatcher;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
-import io.nats.client.Nats;
-import io.nats.client.Options;
-import io.nats.client.Options.Builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
