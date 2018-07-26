@@ -51,7 +51,6 @@ public class NatsConsumerLoadTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://"  + getNatsUrl() +  "?topic=test");
                 from("nats://"  + getNatsUrl() + "?topic=test").to(mockResultEndpoint);
             }
         };

@@ -47,7 +47,7 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
         Options options = new Options.Builder().server("nats://" + getNatsUrl()).build();
         Connection connection = Nats.connect(options);
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100; i++) {
             connection.publish("test", ("test" + i).getBytes());
         }
 
