@@ -23,6 +23,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
@@ -60,6 +61,7 @@ public class ModelAnnotationProcessor extends AbstractProcessor {
                 }
             }
         } catch (Throwable e) {
+            processingEnv.getMessager().printMessage(Kind.ERROR, "Unable to process elements annotated with @XmlRootElement: " + e.getMessage());
             dumpExceptionToErrorFile("camel-apt-error.log", "Error processing", e);
         }
 

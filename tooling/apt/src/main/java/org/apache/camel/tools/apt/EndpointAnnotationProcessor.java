@@ -38,6 +38,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -87,6 +88,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 }
             }
         } catch (Throwable e) {
+            processingEnv.getMessager().printMessage(Kind.ERROR, "Unable to process elements annotated with @UriEndpoint: " + e.getMessage());
             dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @UriEndpoint", e);
         }
         return true;
