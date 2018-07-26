@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,9 +27,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
@@ -138,58 +144,74 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<>();
 
-        // Pojos of the model
-        Map<String, Object> model;
         InputStreamReader in = null;
-        Scanner scanner = null;
         try {
             if (checkEmptyStream(factory, inputStream)) {
                 return models;
             }
     
             in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-    
-            // Scanner is used to read big file
-            scanner = new Scanner(in);
-    
+
             // Retrieve the separator defined to split the record
             String separator = factory.getSeparator();
             String quote = factory.getQuote();
             ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
-    
-            int count = 0;
-            
-            // If the first line of the CSV file contains columns name, then we
-            // skip this line
-            if (factory.getSkipFirstLine()) {
-                // Check if scanner is empty
-                if (scanner.hasNextLine()) {
-                    scanner.nextLine();
+            AtomicInteger count = new AtomicInteger(0);
+
+            // Use a Stream to stream a file across.
+            try (Stream<String> lines = new BufferedReader(in).lines()) {
+                int linesToSkip = 0;
+
+                // If the first line of the CSV file contains columns name, then we
+                // skip this line
+                if (factory.getSkipFirstLine()) {
+                    linesToSkip = 1;
+                }
+
+                // Consume the lines in the file via a consumer method, passing in state as necessary.
+                // If the internals of the consumer fail, we unrap the checked exception upstream.
+                try {
+                    lines.skip(linesToSkip)
+                            .forEachOrdered(consumeFile(factory, models, separator, quote, count));
+                } catch (WrappedException e) {
+                    throw e.getWrappedException();
+                }
+
+                // BigIntegerFormatFactory if models list is empty or not
+                // If this is the case (correspond to an empty stream, ...)
+                if (models.size() == 0) {
+                    throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
+                } else {
+                    return extractUnmarshalResult(models);
                 }
             }
-    
-            while (scanner.hasNextLine()) {
-    
-                // Read the line
-                String line = scanner.nextLine().trim();
-    
-                if (ObjectHelper.isEmpty(line)) {
-                    // skip if line is empty
-                    continue;
-                }
-    
+        } finally {
+            if (in != null) {
+                IOHelper.close(in, "in", LOG);
+            }
+        }
+
+    }
+
+    private Consumer<String> consumeFile(BindyCsvFactory factory, List<Map<String, Object>> models,
+                                         String separator, String quote, AtomicInteger count) {
+        return line -> {
+            try {
+                // Trim the line coming in to remove any trailing whitespace
+                String trimmedLine = line.trim();
                 // Increment counter
-                count++;
-    
+                count.incrementAndGet();
+                Map<String, Object> model;
+
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-    
+
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
                 Pattern pattern = Pattern.compile(separator);
-                Matcher matcher = pattern.matcher(line);
+                Matcher matcher = pattern.matcher(trimmedLine);
                 List<String> separators = new ArrayList<>();
-                
+
                 // Retrieve separators for each match
                 while (matcher.find()) {
                     separators.add(matcher.group());
@@ -198,49 +220,35 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 if (separators.size() > 0) {
                     separators.add(separators.get(separators.size() - 1));
                 }
-                
-                String[] tokens = pattern.split(line, factory.getAutospanLine() ? factory.getMaxpos() : -1);
+
+                String[] tokens = pattern.split(trimmedLine, factory.getAutospanLine() ? factory.getMaxpos() : -1);
                 List<String> result = Arrays.asList(tokens);
+
                 // must unquote tokens before use
                 result = unquoteTokens(result, separators, quote);
-    
-                if (result.size() == 0 || result.isEmpty()) {
-                    throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
+
+                if (result.isEmpty()) {
+                    throw new IllegalArgumentException("No records have been defined in the CSV");
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
                     }
-    
+
                     // Bind data from CSV record with model classes
-                    factory.bind(getCamelContext(), result, model, count);
-    
+                    factory.bind(getCamelContext(), result, model, count.get());
+
                     // Link objects together
                     factory.link(model);
-    
+
                     // Add objects graph to the list
                     models.add(model);
-    
+
                     LOG.debug("Graph of objects created: {}", model);
                 }
+            } catch (Exception e) {
+                throw new WrappedException(e);
             }
-    
-            // BigIntegerFormatFactory if models list is empty or not
-            // If this is the case (correspond to an empty stream, ...)
-            if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
-            } else {
-                return extractUnmarshalResult(models);
-            }
-
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
-            if (in != null) {
-                IOHelper.close(in, "in", LOG);
-            }
-        }
-
+        };
     }
 
     /**
