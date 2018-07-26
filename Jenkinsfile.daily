@@ -74,7 +74,7 @@ pipeline {
             steps {
                 dir("tests/camel-itest-spring-boot/") {
                     script {
-                        spring_boot_itests_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
+                        spring_boot_itests_result = sh script: "../../mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
                     }
                 }
             }
