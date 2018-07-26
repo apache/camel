@@ -31,6 +31,10 @@ import org.apache.camel.spi.RouteContext;
 @Metadata(label = "configuration") @AsPredicate
 @XmlRootElement(name = "whenSkipSendToEndpoint")
 public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
+    @Override
+    public String getShortName() {
+        return "whenSkipSendToEndpoint";
+    }
 
     @Override
     protected Predicate createPredicate(RouteContext routeContext) {

@@ -21,8 +21,8 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
-import org.apache.camel.util.LRUSoftCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class BeanComponent extends UriEndpointComponent {
     // use an internal soft cache for BeanInfo as they are costly to introspect
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
     @SuppressWarnings("unchecked")
-    private final LRUSoftCache<BeanInfoCacheKey, BeanInfo> cache = LRUCacheFactory.newLRUSoftCache(1000);
+    private final Map<BeanInfoCacheKey, BeanInfo> cache = LRUCacheFactory.newLRUSoftCache(1000);
 
     public BeanComponent() {
         super(BeanEndpoint.class);
@@ -68,7 +68,8 @@ public class BeanComponent extends UriEndpointComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled() && cache instanceof LRUCache) {
+            LRUCache cache = (LRUCache) this.cache;
             LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
         }
         cache.clear();

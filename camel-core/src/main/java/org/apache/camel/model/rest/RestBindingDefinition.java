@@ -428,6 +428,11 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     @Override
+    public String getShortName() {
+        return "restBinding";
+    }
+
+    @Override
     public String getLabel() {
         return "";
     }

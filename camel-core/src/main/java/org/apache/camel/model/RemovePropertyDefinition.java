@@ -50,6 +50,11 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     }
 
     @Override
+    public String getShortName() {
+        return "removeProperty";
+    }
+
+    @Override
     public String getLabel() {
         return "removeProperty[" + getPropertyName() + "]";
     }

@@ -68,28 +68,6 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         this.description = description;
     }
 
-    /**
-     * Returns a short name for this node which can be useful for ID generation or referring to related resources like images
-     *
-     * @return defaults to "node" but derived nodes should overload this to provide a unique name
-     */
-    @Override
-    public String getShortName() {
-        if (shortName == null) {
-            XmlRootElement root = getClass().getAnnotation(XmlRootElement.class);
-            if (root != null) {
-                shortName = root.name();
-            }
-            if (shortName == null) {
-                XmlType type = getClass().getAnnotation(XmlType.class);
-                if (type != null) {
-                    shortName = type.name();
-                }
-            }
-        }
-        return shortName;
-    }
-
     // Fluent API
     // -------------------------------------------------------------------------
 

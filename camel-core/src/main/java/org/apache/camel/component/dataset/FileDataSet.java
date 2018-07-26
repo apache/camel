@@ -22,7 +22,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
 
 /**
  * A DataSet that reads payloads from a file that are used to create each message exchange
@@ -80,9 +82,7 @@ public class FileDataSet extends ListDataSet {
 
     private void readSourceFile() throws IOException {
         List<Object> bodies = new LinkedList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(sourceFile))) {
-            Scanner scanner = new Scanner(br);
-            scanner.useDelimiter(delimiter);
+        try (Scanner scanner = new Scanner(sourceFile, null, delimiter)) {
             while (scanner.hasNext()) {
                 String nextPayload = scanner.next();
                 if ((nextPayload != null)  &&  (nextPayload.length() > 0)) {

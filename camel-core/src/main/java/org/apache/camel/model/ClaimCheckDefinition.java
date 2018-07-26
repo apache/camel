@@ -67,6 +67,11 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     }
 
     @Override
+    public String getShortName() {
+        return "claimCheck";
+    }
+
+    @Override
     public String getLabel() {
         return "claimCheck";
     }

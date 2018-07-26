@@ -165,6 +165,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     @Override
+    public String getShortName() {
+        return "aggregate";
+    }
+
+    @Override
     public String getLabel() {
         return "aggregate[" + description() + "]";
     }

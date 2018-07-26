@@ -143,6 +143,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
     
     @Override
+    public String getShortName() {
+        return "wireTap";
+    }
+
+    @Override
     public String getLabel() {
         return "wireTap[" + getUri() + "]";
     }

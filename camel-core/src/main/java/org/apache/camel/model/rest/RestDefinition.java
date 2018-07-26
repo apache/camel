@@ -86,6 +86,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private List<VerbDefinition> verbs = new ArrayList<>();
 
     @Override
+    public String getShortName() {
+        return "rest";
+    }
+
+    @Override
     public String getLabel() {
         return "rest";
     }

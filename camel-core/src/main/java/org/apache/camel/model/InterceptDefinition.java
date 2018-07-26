@@ -55,6 +55,11 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "intercept";
+    }
+
+    @Override
     public String getLabel() {
         return "intercept";
     }

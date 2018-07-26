@@ -20,7 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Scanner;
+import org.apache.camel.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -160,7 +160,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
         void init() {
             // use end token as delimiter
-            this.scanner = new Scanner(in, charset).useDelimiter(scanEndToken);
+            this.scanner = new Scanner(in, charset, scanEndToken);
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner

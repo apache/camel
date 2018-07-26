@@ -34,7 +34,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NoOutputExpressionNode extends ExpressionNode {
+public abstract class NoOutputExpressionNode extends ExpressionNode {
 
     public NoOutputExpressionNode() {
     }

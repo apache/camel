@@ -57,6 +57,11 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
     }
 
     @Override
+    public String getShortName() {
+        return "onFallback";
+    }
+
+    @Override
     public String getLabel() {
         String name = fallbackViaNetwork != null && fallbackViaNetwork ? "onFallbackViaNetwork" : "onFallback";
         CollectionStringBuffer buffer = new CollectionStringBuffer(name);

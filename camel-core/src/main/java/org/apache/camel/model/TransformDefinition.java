@@ -48,6 +48,11 @@ public class TransformDefinition extends NoOutputExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "transform";
+    }
+
+    @Override
     public String getLabel() {
         return "transform[" + getExpression() + "]";
     }

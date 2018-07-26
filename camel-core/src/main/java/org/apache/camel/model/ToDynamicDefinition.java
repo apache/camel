@@ -129,6 +129,11 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     @Override
+    public String getShortName() {
+        return "toD";
+    }
+
+    @Override
     public String toString() {
         return "DynamicTo[" + getLabel() + "]";
     }

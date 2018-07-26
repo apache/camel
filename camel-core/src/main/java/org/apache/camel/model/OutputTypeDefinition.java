@@ -93,6 +93,11 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
     }
 
     @Override
+    public String getShortName() {
+        return "outputType";
+    }
+
+    @Override
     public String getLabel() {
         return "outputType[" + urn + "]";
     }

@@ -44,6 +44,11 @@ public class StopDefinition extends NoOutputDefinition<StopDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "stop";
+    }
+
+    @Override
     public String getLabel() {
         return "stop";
     }
