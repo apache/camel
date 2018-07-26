@@ -23,7 +23,7 @@ def BUILD_JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
-def jdk9_result, jdk10_result, jdk11_result, karaf_itests_result
+def jdk9_result, jdk10_result, jdk11_result, karaf_itests_result, spring_boot_itests_result
 
 pipeline {
 
@@ -62,6 +62,19 @@ pipeline {
                     sh "./kill-karaf.sh"
                     script {
                         karaf_itests_result = sh script: "./run-tests.sh", returnStatus: true
+                    }
+                }
+            }
+        }
+
+        stage('spring-boot-itests') {
+            tools {
+                jdk BUILD_JDK_NAME
+            }
+            steps {
+                dir("tests/camel-itest-spring-boot/") {
+                    script {
+                        spring_boot_itests_result = sh script: "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test", returnStatus: true
                     }
                 }
             }
@@ -127,6 +140,7 @@ pipeline {
         always {
             script {
                 echo "Karaf Itests result is ${karaf_itests_result}"
+                echo "Spring-boot Itests result is ${spring_boot_itests_result}"
                 currentBuild.result = jdk9_result == 0 && jdk10_result == 0 && jdk11_result == 0 ? 'SUCCESS' : 'FAILURE'
             }
         }
