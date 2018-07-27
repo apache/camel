@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
-import org.dozer.Mapper;
-import org.dozer.metadata.ClassMappingMetadata;
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.core.metadata.ClassMappingMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
