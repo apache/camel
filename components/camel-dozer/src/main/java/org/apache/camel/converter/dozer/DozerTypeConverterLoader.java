@@ -22,6 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.core.metadata.ClassMappingMetadata;
+import com.github.dozermapper.core.metadata.MappingMetadata;
+import com.github.dozermapper.core.util.DozerClassLoader;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
@@ -30,10 +35,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import com.github.dozermapper.core.Mapper;
-import com.github.dozermapper.core.metadata.ClassMappingMetadata;
-import com.github.dozermapper.core.metadata.MappingMetadata;
-import com.github.dozermapper.core.util.DozerClassLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

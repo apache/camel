@@ -21,6 +21,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.dozermapper.core.CustomConverter;
+import com.github.dozermapper.core.Mapper;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,8 +34,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ResourceHelper;
-import com.github.dozermapper.core.CustomConverter;
-import com.github.dozermapper.core.Mapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
