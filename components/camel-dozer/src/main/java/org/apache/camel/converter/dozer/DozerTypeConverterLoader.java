@@ -30,14 +30,14 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.dozer.Mapper;
-import org.dozer.metadata.ClassMappingMetadata;
-import org.dozer.metadata.MappingMetadata;
-import org.dozer.util.DozerClassLoader;
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.core.metadata.ClassMappingMetadata;
+import com.github.dozermapper.core.metadata.MappingMetadata;
+import com.github.dozermapper.core.util.DozerClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.dozer.classmap.MappingDirection.ONE_WAY;
+import static com.github.dozermapper.core.classmap.MappingDirection.ONE_WAY;
 
 /**
  * <code>DozerTypeConverterLoader</code> provides the mechanism for registering
@@ -239,7 +239,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     /**
      * Sets the {@link CamelContext} <b>and also</b> initializes this loader.
      * <p/>
-     * The reason why {@link #init(org.apache.camel.CamelContext, org.dozer.Mapper)} is also called
+     * The reason why {@link #init(org.apache.camel.CamelContext, com.github.dozermapper.core.Mapper)} is also called
      * is because making using Dozer in Spring XML files easier, as no need to use the init-method attribute.
      *
      * @param camelContext the CamelContext

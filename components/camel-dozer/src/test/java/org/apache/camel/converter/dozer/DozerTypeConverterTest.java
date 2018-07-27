@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.service.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.dozer.Mapper;
+import com.github.dozermapper.core.Mapper;
 import org.junit.Test;
 
 import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createServiceCustomer;

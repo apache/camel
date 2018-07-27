@@ -23,7 +23,7 @@ import org.apache.camel.converter.dozer.dto.AddressDTO;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Address;
 import org.apache.camel.converter.dozer.service.Customer;
-import org.dozer.Mapper;
+import com.github.dozermapper.core.Mapper;
 
 public final class DozerTestArtifactsFactory {
 
