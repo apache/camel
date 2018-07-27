@@ -95,7 +95,7 @@
     <bndlib-version>2.4.0</bndlib-version>
     <bsh-version>2.0b6</bsh-version>
     <boon-version>0.34</boon-version>
-    <bouncycastle-version>1.57</bouncycastle-version>
+    <bouncycastle-version>1.60</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
     <braintree-gateway-version>2.83.1</braintree-gateway-version>
