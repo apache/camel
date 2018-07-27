@@ -18,12 +18,14 @@ package org.apache.camel.converter.dozer;
 
 import java.util.Arrays;
 
+import com.github.dozermapper.core.loader.api.BeanMappingBuilder;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import com.github.dozermapper.core.loader.api.BeanMappingBuilder;
+
 import org.junit.Test;
 
 import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createDtoCustomer;

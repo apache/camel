@@ -19,10 +19,12 @@ package org.apache.camel.converter.dozer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
 import com.github.dozermapper.core.util.DozerClassLoader;
 import com.github.dozermapper.core.util.MappingUtils;
+
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
