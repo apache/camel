@@ -439,7 +439,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void setupHandlers(ClientFactoryBean factoryBean, Client client)
         throws Exception {
 
-        if (factoryBean instanceof JaxWsClientFactoryBean && handlers != null) {
+        if (handlers != null) {
             AnnotationHandlerChainBuilder
                 builder = new AnnotationHandlerChainBuilder();
             Method m = factoryBean.getClass().getMethod("getServiceFactory");
@@ -629,28 +629,28 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             }
         }
 
-        Class<?> cls = null;
-        if (getServiceClass() != null) {
-            cls = getServiceClass();
+        Class<?> cls = getServiceClass();
+        ClientFactoryBean factoryBean;
+        if (cls != null) {
             // create client factory bean
-            ClientFactoryBean factoryBean = createClientFactoryBean(cls);
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, cls);
-            Client client = factoryBean.create();
-            // setup the handlers
-            setupHandlers(factoryBean, client);
-            return client;
+            factoryBean = createClientFactoryBean(cls);
         } else {
-            // create the client without service class
-
-            checkName(getPortName(), "endpoint/port name");
-            checkName(getServiceName(), "service name");
-
-            ClientFactoryBean factoryBean = createClientFactoryBean();
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, null);
-            return factoryBean.create();
+            factoryBean = createClientFactoryBean();
         }
+        
+        // setup client factory bean
+        setupClientFactoryBean(factoryBean, cls);
+        
+        if (cls == null) {
+            checkName(factoryBean.getEndpointName(), "endpoint/port name");
+            checkName(factoryBean.getServiceName(), "service name");
+        }
+        
+        Client client = factoryBean.create();
+
+        // setup the handlers
+        setupHandlers(factoryBean, client);
+        return client;
     }
 
     void checkName(Object value, String name) {
@@ -688,11 +688,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (cls == null) {
             checkName(portName, " endpoint/port name");
             checkName(serviceName, " service name");
-            answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean()) {
-                {
-                    doInit = false;
-                }
-            };
+            answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean());
             cls = Provider.class;
         } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             answer = new JaxWsServerFactoryBean();
