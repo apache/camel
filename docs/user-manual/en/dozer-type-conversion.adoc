@@ -8,7 +8,7 @@ Coupled with Camel's automatic type conversion, it's a formidable tool
 for dealing object to object mapping headaches that crop up in
 enterprise integration projects.
 
-To explain how Dozer can be uses within Camel we'll use the following
+To explain how Dozer can be used within Camel we'll use the following
 example of a simple Customer Support Service. The initial version of the
 Service defined a 'Customer' object used with a very flat structure.
 
@@ -43,8 +43,8 @@ public class Customer {
 -----------------------------------------------------------------------------------
 
 In the next version it was decided to structure the data better in the
-model by moving the address data into its own type, with the resultin
-domain object ending up looking like
+model by moving the address data into its own type, with the resulting
+domain object ending up looking like the below.
 
 *Next Gen Customer object*
 
@@ -87,18 +87,18 @@ may not be the only service/domain inconsistency and these tedious and
 error prone custom mappings could quickly start to add up, and bugs with
 them.
 
-To a large extent the two object share identical structure, with only
+To a large extent the two objects share an identical structure, with only
 the address representation being different. It would be very helpful if
 there were a practical way to to automate this kind of mapping, such
 that the similar properties could get mapped automatically and only the
 inconsistencies requiring custom mapping.
 
-This is where Dozer comes in; It uses reflection to map data between two
+This is where Dozer comes in; it uses reflection to map data between two
 bean types using a set of simple mapping rules. Where no rule is
-specified, dozer will attempt to map between them by using matching
-properties of two beans. In this way focus can be given to the
+specified, Dozer will attempt to map between them by using matching
+properties of two beans. In this way, focus can be given to the
 inconsistencies between the beans i.e. the address properties, knowing
-that dozer will automatically match and convert the others.
+that Dozer will automatically match and convert the others.
 
 [[DozerTypeConversion-ConfiguringDozer]]
 Configuring Dozer
@@ -112,8 +112,9 @@ For our simple example, the configuration looks like the following.
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------
-<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://dozer.sourceforge.net  http://dozer.sourceforge.net/schema/beanmapping.xsd">
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
   <mapping>
     <class-a>org.apache.camel.converter.dozer.service.Customer</class-a>
     <class-b>org.apache.camel.converter.dozer.model.Customer</class-b>
@@ -139,7 +140,7 @@ Conversion] framework. Its configured by creating an instance of
 `DozerTypeConverterLoader` providing it the camel context and an
 optional Dozer mapper. If no mapper is supplied, Camel's registry will
 be searched for suitable instances. The loader will query the Dozer
-Mapper for the types it converts and a register them with Camel's
+Mapper for the types it converts and register them with Camel's
 type conversion framework to be handled by the mapper.
 
 [NOTE]
@@ -154,45 +155,45 @@ In Java it can be configured as follows:
 
 [source,java]
 -----------------------------------------------------------------------------------------
-DozerBeanMapper mapper = new DozerBeanMapper(Arrays.asList(new String[]{"mapping.xml"}));
+Mapper mapper = DozerBeanMapperBuilder.create()
+                .withMappingFiles("mapping.xml")
+                .build();
+
 new DozerTypeConverterLoader(camelContext, mapper);
 -----------------------------------------------------------------------------------------
 
-Or in Spring
+Or in Spring:
 
 [source,xml]
-----------------------------------------------------------------------------------------------------
-<!-- the registry will be scanned and 'mapper' below will be found and installed -->
-<bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader" />
+--------------------------------------------------------------------------------------------------
+<bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader">
+  <argument index="0" ref="myCamel"/>
+  <argument index="1" ref="mapperConfiguration"/>
+</bean>
 
-<bean id="mapper" class="org.dozer.DozerBeanMapper">
+<bean id="mapperConfiguration" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
   <property name="mappingFiles">
     <list>
       <value>mapping.xml</value>
     </list>
   </property>
 </bean>
-----------------------------------------------------------------------------------------------------
+ 
+<camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+  ...
+</camelContext>
+--------------------------------------------------------------------------------------------------
 
-[[DozerTypeConversion-ConfiguringinOSGiblueprint]]
-Configuring in OSGi blueprint
------------------------------
-
-*Available as of Camel 2.12*
-
-When using Dozer with OSGi Blueprint then its works better by
-configuring Dozer using the
-`org.apache.camel.converter.dozer.DozerBeanMapperConfiguration` instead
-of `org.dozer.DozerBeanMapper`, as shown below:
+Or in OSGi Blueprints:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------
 <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader">
   <argument index="0" ref="myCamel"/>
-  <argument index="1" ref="mapper"/>
+  <argument index="1" ref="mapperConfiguration"/>
 </bean>
 
-<bean id="mapper" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
+<bean id="mapperConfiguration" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
   <property name="mappingFiles">
     <list>
       <value>mapping.xml</value>
@@ -205,7 +206,10 @@ of `org.dozer.DozerBeanMapper`, as shown below:
 </camelContext>
 --------------------------------------------------------------------------------------------------
 
-Now, where necessary, Camel will use Dozer to do conversions; In our
+You should of noticed that the configuration for Spring or OSGi Blueprints
+is the same, except for the 'xmlns' for the 'camelContext'.
+
+Now, where necessary, Camel will use Dozer to do conversions; in our
 case between the new domain and legacy Customer types e.g.
 
 [source,java]
@@ -223,5 +227,5 @@ public class CustomerProcessor {
 }
 
 // service objects can be sent to the processor and automagically converted by Camel & Dozer
-template.sendBody("direct:legacy-service-in",new org.apache.camel.converter.dozer.service.Customer("Bob", "Roberts", "12345", "1 Main st."));
+template.sendBody("direct:legacy-service-in", new org.apache.camel.converter.dozer.service.Customer("Bob", "Roberts", "12345", "1 Main st."));
 ---------------------------------------------------------------------------------------------------------------------------------------------
