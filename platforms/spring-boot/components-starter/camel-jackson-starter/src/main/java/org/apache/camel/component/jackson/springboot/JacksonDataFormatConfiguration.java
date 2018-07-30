@@ -69,7 +69,7 @@ public class JacksonDataFormatConfiguration
     /**
      * If you want to marshal a pojo to JSON, and the pojo has some fields with
      * null values. And you want to skip these null values, you can set this
-     * option to NOT_NULL
+     * option to NON_NULL
      */
     private String include;
     /**
