@@ -4366,6 +4366,11 @@
 
       <!-- optional hapi dependencies -->
       <dependency>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v21</artifactId>
+        <version>${hapi-version}</version>
+      </dependency>
+      <dependency>
           <groupId>ca.uhn.hapi</groupId>
           <artifactId>hapi-structures-v22</artifactId>
           <version>${hapi-version}</version>
