@@ -7,7 +7,7 @@ Validator performs declarative validation of the message according to the declar
 `Input Type` and/or `Output Type` on a route definition which declares the expected
 message type. Note that the validation is performed only if `validate` attribute on the
  type declaration is true.
-if `validate` attribute is true on a `Input Type` and/or `Output Type` declaration,
+If `validate` attribute is true on a `Input Type` and/or `Output Type` declaration,
 camel internal processor looks for a corresponding Validator from the registry and apply.
 
 
@@ -31,9 +31,9 @@ data type name.
 
 | Predicate Validator | Validate with using Expression or Predicate
 
-| Endpoint Transformer | Validate by forwarding to the Endpoint to be used with validation component such as Validation Component or Bean Validation Component.
+| Endpoint Validator | Validate by forwarding to the Endpoint to be used with validation component such as Validation Component or Bean Validation Component.
 
-| Custom Transformer | Validate with using custom validator class. Validator must be a subclass of `org.apache.camel.spi.Validator`
+| Custom Validator | Validate with using custom validator class. Validator must be a subclass of `org.apache.camel.spi.Validator`
 |===
 
 
@@ -73,7 +73,7 @@ XML DSL:
 [source,xml]
 ----
 <predicateValidator Type="csv:CSVOrder">
-    <simple>${body} contains '{name:XOrder'</simple>
+    <simple>${body} contains '{name:XOrder}'</simple>
 </predicateValidator>
 ----
 
@@ -105,7 +105,7 @@ And here is an example to specify endpoint ref in XML DSL:
 
 Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
 camel forwards the message to the `validator:` endpoint, which actually is a
-<<validator-component,Validation Component>>. You can also use any other validation component like
+link:validator-component.adoc[Validation Component]. You can also use any other validation component like
 Bean Validation Component.
 
 [[Validator-Custom]]
