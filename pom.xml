@@ -51,7 +51,7 @@
     <jdk.version>1.8</jdk.version>
     <compiler.fork>false</compiler.fork>
 
-    <maven-compiler-plugin-version>3.7.0</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
     <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
     <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
