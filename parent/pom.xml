@@ -456,7 +456,7 @@
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
-    <log4j2-version>2.11.0</log4j2-version>
+    <log4j2-version>2.11.1</log4j2-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
     <lucene-bundle-version>7.2.1_1</lucene-bundle-version>
