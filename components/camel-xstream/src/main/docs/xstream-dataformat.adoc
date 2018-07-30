@@ -87,7 +87,7 @@ The component supports 31 options, which are listed below.
 | *camel.dataformat.json-xstream.enabled* | Enable json-xstream dataformat | true | Boolean
 | *camel.dataformat.json-xstream.include* | If you want to marshal a pojo to JSON, and the pojo has some fields with
  null values. And you want to skip these null values, you can set this
- option to NOT_NULL |  | String
+ option to NON_NULL |  | String
 | *camel.dataformat.json-xstream.json-view* | When marshalling a POJO to JSON you might want to exclude certain fields
  from the JSON output. With Jackson you can use JSON views to accomplish
  this. This option is to refer to the class which has JsonView annotations |  | Class
