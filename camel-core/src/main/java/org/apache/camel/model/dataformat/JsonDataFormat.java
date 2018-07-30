@@ -181,7 +181,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     /**
      * If you want to marshal a pojo to JSON, and the pojo has some fields with
      * null values. And you want to skip these null values, you can set this
-     * option to <tt>NOT_NULL</tt>
+     * option to <tt>NON_NULL</tt>
      */
     public void setInclude(String include) {
         this.include = include;
