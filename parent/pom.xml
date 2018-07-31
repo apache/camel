@@ -332,7 +332,7 @@
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <jackson2-version>2.9.6</jackson2-version>
-    <jackrabbit-version>2.17.4</jackrabbit-version>
+    <jackrabbit-version>2.17.5</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasn1-version>1.10.0</jasn1-version>
