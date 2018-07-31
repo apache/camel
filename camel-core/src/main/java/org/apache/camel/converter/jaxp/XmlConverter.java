@@ -92,7 +92,7 @@ public class XmlConverter {
     private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
     private static final String XALAN_TRANSFORMER_FACTORY = "org.apache.xalan.processor.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
-    private static final ErrorHandler domLoggingErrorHandler = new DomLoggingErrorHandler();
+    private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
     private volatile TransformerFactory transformerFactory;
@@ -1159,7 +1159,7 @@ public class XmlConverter {
 
     public DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory) throws ParserConfigurationException {
         DocumentBuilder builder = factory.newDocumentBuilder();
-        builder.setErrorHandler(domLoggingErrorHandler);
+        builder.setErrorHandler(DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER);
         return builder;
     }
 
@@ -1268,7 +1268,7 @@ public class XmlConverter {
         return sfactory;
     }
 
-    private static class DomLoggingErrorHandler implements ErrorHandler {
+    private static class DocumentBuilderLoggingErrorHandler implements ErrorHandler {
 
         @Override
         public void warning(SAXParseException exception) throws SAXException {
