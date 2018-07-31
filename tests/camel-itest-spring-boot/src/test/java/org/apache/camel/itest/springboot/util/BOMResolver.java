@@ -59,7 +59,7 @@ public final class BOMResolver {
 
     private static final File CACHE_FILE = LocationUtils.camelRoot("tests/camel-itest-spring-boot/target/bom-versions-cache");
 
-    private static BOMResolver INSTANCE;
+    private static BOMResolver instance;
 
     private ITestConfig config;
 
@@ -143,7 +143,12 @@ public final class BOMResolver {
 
         this.versions = new TreeMap<>();
 
-        ArtifactDescriptorRequest springBootParentReq = new ArtifactDescriptorRequest(camelStarterParent, Arrays.asList(localRepoDist, mavenCentral, apacheSnapshots, springMilestones), null);
+        ArtifactDescriptorRequest springBootParentReq = new ArtifactDescriptorRequest(camelStarterParent, 
+                                                                                      Arrays.asList(localRepoDist, 
+                                                                                                    mavenCentral, 
+                                                                                                    apacheSnapshots, 
+                                                                                                    springMilestones), 
+                                                                                                    null);
         ArtifactDescriptorResult springBootParentRes = system.readArtifactDescriptor(session, springBootParentReq);
         for (Dependency dependency : springBootParentRes.getManagedDependencies()) {
             Artifact a = dependency.getArtifact();
@@ -152,7 +157,12 @@ public final class BOMResolver {
         }
 
         Artifact springBootDependencies = new DefaultArtifact("org.springframework.boot:spring-boot-dependencies:pom:" + config.getSpringBootVersion());
-        ArtifactDescriptorRequest springBootDependenciesReq = new ArtifactDescriptorRequest(springBootDependencies, Arrays.asList(localRepoDist, mavenCentral, apacheSnapshots, springMilestones), null);
+        ArtifactDescriptorRequest springBootDependenciesReq = new ArtifactDescriptorRequest(springBootDependencies, 
+                                                                                            Arrays.asList(localRepoDist, 
+                                                                                                          mavenCentral, 
+                                                                                                          apacheSnapshots, 
+                                                                                                          springMilestones), 
+                                                                                                          null);
         ArtifactDescriptorResult springBootDependenciesRes = system.readArtifactDescriptor(session, springBootDependenciesReq);
         for (Dependency dependency : springBootDependenciesRes.getManagedDependencies()) {
             Artifact a = dependency.getArtifact();
@@ -162,10 +172,10 @@ public final class BOMResolver {
     }
 
     public static BOMResolver getInstance(ITestConfig config) {
-        if (INSTANCE == null) {
-            INSTANCE = new BOMResolver(config);
+        if (instance == null) {
+            instance = new BOMResolver(config);
         }
-        return INSTANCE;
+        return instance;
     }
 
     public String getBOMVersion(String groupId, String artifactId) {

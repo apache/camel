@@ -87,6 +87,12 @@
       <version>${aether-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-connector-basic</artifactId>
+      <version>${aether-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
@@ -120,6 +126,12 @@
       <artifactId>shrinkwrap-resolver-api</artifactId>
       <version>${shrinkwrap-resolver-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.maven.resolver</groupId>
+          <artifactId>maven-resolver-connector-basic</artifactId>
+        </exclusion>
+      </exclusions> 
     </dependency>
 
     <dependency>
