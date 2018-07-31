@@ -32,6 +32,11 @@
     <dependencies>
       <dependency>
         <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v21</artifactId>
+        <version>2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi</groupId>
         <artifactId>hapi-structures-v22</artifactId>
         <version>2.3</version>
       </dependency>
