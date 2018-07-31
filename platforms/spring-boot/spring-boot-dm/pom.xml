@@ -41,13 +41,13 @@
 
   <properties>
     <!-- Spring-Boot target version -->
-    <spring-boot-version>2.0.3.RELEASE</spring-boot-version>
+    <spring-boot-version>2.0.4.RELEASE</spring-boot-version>
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <!-- Needed by BOM generator-->
     <avro-version>1.8.2</avro-version>
     <jackson-version>1.9.12</jackson-version>
-    <testcontainers-version>1.7.3</testcontainers-version>
+    <testcontainers-version>1.8.1</testcontainers-version>
 
     <!-- needed for testing -->
     <curator-version>2.12.0</curator-version>
