@@ -233,38 +233,43 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             final JsonNode node = response.get();
             final JsonNode sysId = node.findValue("sys_id");
 
-            if (sysId == null) {
-                response = context.getClient().reset()
-                    .types(MediaType.APPLICATION_JSON_TYPE)
-                    .path("now")
-                    .path(context.getConfiguration().getApiVersion())
-                    .path("table")
-                    .path("sys_db_object")
-                    .query("sysparm_exclude_reference_link", "true")
-                    .query("sysparm_fields", "name%2Csys_name")
-                    .trasform(HttpMethod.GET, this::findResultNode);
-            } else {
-                response = context.getClient().reset()
-                    .types(MediaType.APPLICATION_JSON_TYPE)
-                    .path("now")
-                    .path(context.getConfiguration().getApiVersion())
-                    .path("table")
-                    .path("sys_db_object")
-                    .query("sysparm_exclude_reference_link", "true")
-                    .query("sysparm_fields", "name%2Csys_name")
-                    .queryF("sysparm_query", "super_class!=%s", sysId.textValue())
-                    .trasform(HttpMethod.GET, this::findResultNode);
-            }
+            response = context.getClient().reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(context.getConfiguration().getApiVersion())
+                .path("table")
+                .path("sys_db_object")
+                .query("sysparm_exclude_reference_link", "true")
+                .query("sysparm_fields", "name%2Csys_name%2Csuper_class")
+                .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
                 final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
 
                 processResult(response.get(), n -> {
+                    final JsonNode superClass = n.findValue("super_class");
                     final JsonNode name = n.findValue("name");
                     final JsonNode label = n.findValue("sys_name");
 
+                    if (superClass != null) {
+                        final String impId = sysId != null ? sysId.textValue() : null;
+                        final String superId = superClass.textValue();
+
+                        if (impId != null && superId != null && ObjectHelper.equal(impId, superId)) {
+                            LOGGER.debug("skip table: name={}, label={} because it refers to an import set", name, label);
+                            return;
+                        }
+                    }
+
                     if (name != null && label != null) {
-                        root.put(name.textValue(), label.textValue());
+                        String key = name.textValue();
+                        String val = label.textValue();
+
+                        if (ObjectHelper.isEmpty(val)) {
+                            val = key;
+                        }
+
+                        root.put(key, val);
                     }
                 });
 
