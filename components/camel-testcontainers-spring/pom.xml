@@ -29,7 +29,7 @@
     <artifactId>camel-testcontainers-spring</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Testcontainers :: Spring</name>
-    <description>Camel unit testing with Spring and  testcontainers</description>
+    <description>Camel unit testing with Spring and testcontainers</description>
 
     <properties>
         <!-- use by camel-catalog -->
