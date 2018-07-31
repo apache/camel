@@ -1173,7 +1173,7 @@ Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 
 | link:camel-testcontainers/src/main/docs/testcontainers.adoc[Testcontainers] (camel-testcontainers) | 2.22 | Camel support for testcontainers
 
-| link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and  testcontainers
+| link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
 
 | link:camel-testng/src/main/docs/testng.adoc[TestNG] (camel-testng) | 2.8 | *deprecated* Camel unit testing with TestNG
 
