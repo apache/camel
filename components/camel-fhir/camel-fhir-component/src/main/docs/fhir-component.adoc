@@ -7,30 +7,27 @@ The FHIR component integrates with the
 http://hapifhir.io/[HAPI-FHIR] library which is an open-source implementation of the
 http://hl7.org/implement/standards/fhir/[FHIR] (Fast Healthcare Interoperability Resources) specification in Java.
 
-
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 
 [source,xml]
---------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-fhir</artifactId>
     <version>${camel-version}</version>
 </dependency>
---------------------------------------------
+----
 
-### URI Format
-
-'''''
+=== URI Format
 
 The FHIR Component uses the following URI format:
 
----------------------------------------------------------
-        fhir://endpoint-prefix/endpoint?[options]
-
----------------------------------------------------------
+[source,text]
+----
+fhir://endpoint-prefix/endpoint?[options]
+----
 
 Endpoint prefix can be one of:
 
@@ -47,9 +44,6 @@ Endpoint prefix can be one of:
 * update
 * validate
 
-### FhirComponent
-
-*Available as of Camel version 2.23*
 
 // component options: START
 The FHIR component supports 2 options, which are listed below.
