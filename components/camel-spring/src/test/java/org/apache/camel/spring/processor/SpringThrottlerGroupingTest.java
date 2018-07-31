@@ -18,8 +18,6 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ThrottlingGroupingTest;
-import org.junit.Ignore;
-
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringThrottlerGroupingTest extends ThrottlingGroupingTest {

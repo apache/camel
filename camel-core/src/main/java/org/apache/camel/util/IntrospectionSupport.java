@@ -44,9 +44,9 @@ import org.apache.camel.Component;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
 
 /**
@@ -133,8 +133,8 @@ public final class IntrospectionSupport {
      */
     public static void stop() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
-            LRUCache CACHE = (LRUCache) IntrospectionSupport.CACHE;
-            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{CACHE.size(), CACHE.getHits(), CACHE.getMisses(), CACHE.getEvicted()});
+            LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted()});
         }
         CACHE.clear();
 

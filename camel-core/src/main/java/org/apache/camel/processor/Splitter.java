@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.camel.util.Scanner;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -42,7 +41,6 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
