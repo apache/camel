@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = HealthConstants.HEALTH_CHECK_SERVICE_PREFIX)
 public class HealthCheckServiceConfiguration {
     /**
-     * Global option to enable/disable this ${@link org.apache.camel.health.HealthCheckService}, default is false.
+     * Global option to enable/disable extended Camel health checks, default is false.
      */
     private boolean enabled;
 
@@ -34,7 +34,7 @@ public class HealthCheckServiceConfiguration {
     private String checkInterval;
 
     /**
-     * Checks configuration.s
+     * Configuration of health checks
      */
     private Map<String, Check> checks = new HashMap<>();
 
@@ -64,7 +64,7 @@ public class HealthCheckServiceConfiguration {
 
     public class Check {
         /**
-         * Option for this check.
+         * Option for this health check.
          */
         private Map<String, Object> options;
 
