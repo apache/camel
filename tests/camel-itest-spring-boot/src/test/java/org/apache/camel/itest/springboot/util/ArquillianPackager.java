@@ -132,7 +132,7 @@ public final class ArquillianPackager {
         }
         if (version == null) {
             // It is missing when launching from IDE
-            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
+            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importCompileAndRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
             for (MavenResolvedArtifact dep : resolved) {
                 if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
                     version = dep.getCoordinate().getVersion();
@@ -667,10 +667,10 @@ public final class ArquillianPackager {
 
                 final URLPackageScanner.Callback callback = new URLPackageScanner.Callback() {
                     @Override
-                    public void classFound(String className) {
+                    public void classFound(String className, Asset asset) {
                         ArchivePath classNamePath = AssetUtil.getFullPathForClassResource(className);
 
-                        Asset asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
+                        asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
                         ArchivePath location = new BasicPath(CLASSES_FOLDER + "/", classNamePath);
                         ark.add(asset, location);
                     }

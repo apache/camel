@@ -24,17 +24,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = HealthConstants.HEALTH_CHECK_ROUTES_PREFIX)
 public class HealthCheckRoutesConfiguration {
     /**
-     * Global option to enable/disable this ${@link org.apache.camel.health.HealthCheckRepository}, default is false.
+     * Global option to enable/disable Camel extended health check for routes, default is false.
      */
     private boolean enabled;
 
     /**
-     * configuration
+     * Threshold healthc check configurations.
      */
     private ThresholdsConfiguration thresholds = new ThresholdsConfiguration();
 
     /**
-     * configurations
+     * General health check configurations.
      */
     private Map<String, RouteThresholdsConfiguration> threshold;
 
@@ -130,7 +130,6 @@ public class HealthCheckRoutesConfiguration {
          */
         protected ThresholdsWithFailuresConfiguration maxProcessingTime;
 
-
         public Long getExchangesFailed() {
             return exchangesFailed;
         }
@@ -206,7 +205,7 @@ public class HealthCheckRoutesConfiguration {
 
     public static class RouteThresholdsConfiguration extends ThresholdsConfiguration {
         /**
-         * Inherit from global from global configuration;
+         * Inherit from global from global configuration.
          */
         private boolean inherit = true;
 
@@ -221,12 +220,12 @@ public class HealthCheckRoutesConfiguration {
 
     public static class ThresholdsWithFailuresConfiguration {
         /**
-         * The Threshold
+         * The threshold value.
          */
         private String threshold;
 
         /**
-         * Failures
+         * The threshold of number of failures.
          */
         private Integer failures;
 

@@ -47,7 +47,7 @@
     <!-- Needed by BOM generator-->
     <avro-version>1.8.2</avro-version>
     <jackson-version>1.9.12</jackson-version>
-    <testcontainers-version>1.8.1</testcontainers-version>
+    <testcontainers-version>1.8.2</testcontainers-version>
 
     <!-- needed for testing -->
     <curator-version>2.12.0</curator-version>
