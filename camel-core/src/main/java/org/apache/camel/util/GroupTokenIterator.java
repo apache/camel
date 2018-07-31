@@ -21,8 +21,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import org.apache.camel.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

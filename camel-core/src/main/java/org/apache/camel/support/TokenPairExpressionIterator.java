@@ -20,13 +20,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import org.apache.camel.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body

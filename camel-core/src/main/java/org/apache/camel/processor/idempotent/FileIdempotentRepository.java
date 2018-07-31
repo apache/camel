@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.camel.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -35,6 +34,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

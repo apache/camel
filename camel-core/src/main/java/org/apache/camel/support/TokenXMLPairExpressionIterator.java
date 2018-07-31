@@ -20,13 +20,13 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.camel.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} XML body

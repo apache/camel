@@ -18,14 +18,21 @@ package org.apache.camel.processor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
 public class ThrottlingGroupingTest extends ContextTestSupport {
+    private static final int INTERVAL = 500;
+    private static final int MESSAGE_COUNT = 9;
+    private static final int TOLERANCE = 50;
 
     public void testGroupingWithSingleConstant() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
@@ -60,6 +67,127 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         
         assertMockEndpointsSatisfied();
     }
+    
+    public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(3);
+        resultEndpoint.setResultWaitTime(2000);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        for (int i = 0; i < 9; i++) {
+            if (i % 2 == 0) {
+                headers.put("key", "1");
+            } else {
+                headers.put("key", "2");
+            }
+            template.sendBodyAndHeaders("seda:ga", "<message>" + i + "</message>", headers);
+        }
+
+        // lets pause to give the requests time to be processed
+        // to check that the throttle really does kick in
+        resultEndpoint.assertIsSatisfied();
+    }
+    
+    private void assertThrottlerTiming(final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
+        // now assert that they have actually been throttled (use +/- 50 as slack)
+        long minimum = calculateMinimum(intervalMs, throttle, messageCount) - 50;
+        long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
+        // add 500 in case running on slow CI boxes
+        maximum += 500;
+        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", new Object[]{messageCount, elapsedTimeMs, throttle, intervalMs, minimum, maximum});
+
+        assertTrue("Should take at least " + minimum + "ms, was: " + elapsedTimeMs, elapsedTimeMs >= minimum);
+        assertTrue("Should take at most " + maximum + "ms, was: " + elapsedTimeMs, elapsedTimeMs <= maximum + TOLERANCE);
+    }
+
+    private long sendMessagesAndAwaitDelivery(final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint) throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
+        try {
+            if (receivingEndpoint != null) {
+                receivingEndpoint.expectedMessageCount(messageCount);
+            }
+
+            long start = System.nanoTime();
+            for (int i = 0; i < messageCount; i++) {
+                executor.execute(new Runnable() {
+                    public void run() {
+                        Map<String, Object> headers = new HashMap<String, Object>();
+                        if (messageCount % 2 == 0) {
+                            headers.put("key", "1");
+                        } else {
+                            headers.put("key", "2");
+                        }
+                        template.sendBodyAndHeaders(endpointUri, "<message>payload</message>", headers);
+                    }
+                });
+            }
+
+            // let's wait for the exchanges to arrive
+            if (receivingEndpoint != null) {
+                receivingEndpoint.assertIsSatisfied();
+            }
+            return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+    
+    public void testSendLotsOfMessagesSimultaneouslyButOnlyGetThroughAsConstantThrottleValue() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
+        long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", MESSAGE_COUNT, resultEndpoint);
+        assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
+    }
+    
+    public void testConfigurationWithHeaderExpression() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(MESSAGE_COUNT);
+
+        ExecutorService executor = Executors.newFixedThreadPool(MESSAGE_COUNT);
+        try {
+            sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+    
+    private long calculateMinimum(final long periodMs, final long throttleRate, final long messageCount) {
+        if (messageCount % throttleRate > 0) {
+            return (long) Math.floor((double)messageCount / (double)throttleRate) * periodMs;
+        } else {
+            return (long) (Math.floor((double)messageCount / (double)throttleRate) * periodMs) - periodMs;
+        }
+    }
+
+    private long calculateMaximum(final long periodMs, final long throttleRate, final long messageCount) {
+        return ((long)Math.ceil((double)messageCount / (double)throttleRate)) * periodMs;
+    }
+    
+    private void sendMessagesWithHeaderExpression(final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs, final int messageCount)
+            throws InterruptedException {
+        resultEndpoint.expectedMessageCount(messageCount);
+
+        long start = System.nanoTime();
+        for (int i = 0; i < messageCount; i++) {
+            executor.execute(new Runnable() {
+                public void run() {
+                    Map<String, Object> headers = new HashMap<String, Object>();
+                    headers.put("throttleValue", throttle);
+                    if (messageCount % 2 == 0) {
+                        headers.put("key", "1");
+                    } else {
+                        headers.put("key", "2");
+                    }
+                    template.sendBodyAndHeaders("direct:gexpressionHeader", "<message>payload</message>", headers);
+                }
+            });
+        }
+
+        // let's wait for the exchanges to arrive
+        resultEndpoint.assertIsSatisfied();
+        long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        assertThrottlerTiming(elapsed, throttle, intervalMs, messageCount);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -71,6 +199,12 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 from("seda:a").throttle(header("max"), 1).to("mock:result");
                 from("seda:b").throttle(header("max"), 2).to("mock:result2");
                 from("seda:c").throttle(header("max"), header("key")).to("mock:resultdynamic");
+                
+                from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(1000).to("log:gresult", "mock:gresult");
+                
+                from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult", "mock:gresult");
+                
+                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).timePeriodMillis(INTERVAL).to("log:gresult", "mock:gresult");
             }
         };
     }

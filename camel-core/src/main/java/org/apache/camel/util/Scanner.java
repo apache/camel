@@ -55,11 +55,11 @@ public final class Scanner implements Iterator<String>, Closeable {
     private Matcher matcher;
     private CharBuffer buf;
     private int position;
-    private boolean inputExhausted = false;
-    private boolean needInput = false;
-    private boolean skipped = false;
+    private boolean inputExhausted;
+    private boolean needInput;
+    private boolean skipped;
     private int savedPosition = -1;
-    private boolean closed = false;
+    private boolean closed;
     private IOException lastIOException;
 
     public Scanner(InputStream source, String charsetName, String pattern) {
@@ -194,7 +194,7 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     private void throwFor() {
         skipped = false;
-        if ((inputExhausted) && (position == buf.limit())) {
+        if (inputExhausted && position == buf.limit()) {
             throw new NoSuchElementException();
         } else {
             throw new InputMismatchException();

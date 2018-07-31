@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.apache.camel.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
@@ -71,6 +70,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.Scanner;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 

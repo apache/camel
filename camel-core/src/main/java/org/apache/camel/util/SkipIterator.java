@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
-import org.apache.camel.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;

@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import org.apache.camel.util.Scanner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
