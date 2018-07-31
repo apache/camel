@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.boot.health;
 
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;

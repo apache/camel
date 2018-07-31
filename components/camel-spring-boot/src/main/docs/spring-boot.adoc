@@ -108,29 +108,29 @@ The component supports 139 options, which are listed below.
 | *camel.cloud.service-registry.enabled* | Configure if service registry should be enabled or not, default true. | true | Boolean
 | *camel.cloud.service-registry.service-host* | Configure the service listening address. |  | String
 | *camel.clustered.controller.cluster-service* | The cluster service. |  | CamelClusterService
-| *camel.clustered.controller.enabled* | Global option to enable/disable this ${@link org.apache.camel.spi.RouteController}, default is false. | false | Boolean
-| *camel.clustered.controller.initial-delay* | Set the amount of time the route controller should wait before to start the routes after the camel context is started or after the route is initialized if the route is created after the camel context is started. |  | String
+| *camel.clustered.controller.enabled* | Global option to enable/disable Camel clustered route controller, default is false. | false | Boolean
+| *camel.clustered.controller.initial-delay* | Set the amount of time (in millis) the route controller should wait before to start the routes after the camel context is started or after the route is initialized if the route is created after the camel context is started. |  | String
 | *camel.clustered.controller.namespace* | The default namespace. |  | String
 | *camel.clustered.controller.routes* | Routes configuration. |  | Map
 | *camel.component.enabled* | Global option to enable/disable component auto-configuration, default is true. | true | Boolean
 | *camel.dataformat.enabled* | Global option to enable/disable dataformat auto-configuration, default is true. | true | Boolean
-| *camel.health.check.routes.enabled* | Global option to enable/disable this ${@link org.apache.camel.health.HealthCheckRepository}, default is false. | false | Boolean
-| *camel.health.check.routes.threshold* | configurations |  | Map
+| *camel.health.check.routes.enabled* | Global option to enable/disable Camel extended health check for routes, default is false. | false | Boolean
+| *camel.health.check.routes.threshold* | General health check configurations. |  | Map
 | *camel.health.check.routes.thresholds.exchanges-failed* | Number of failed exchanges. |  | Long
 | *camel.health.check.routes.thresholds.exchanges-inflight* | Number of inflight exchanges. |  | Long
 | *camel.health.check.routes.thresholds.external-redeliveries* | Number of external initiated redeliveries (such as from JMS broker). |  | Long
-| *camel.health.check.routes.thresholds.last-processing-time.failures* | Failures |  | Integer
-| *camel.health.check.routes.thresholds.last-processing-time.threshold* | The Threshold |  | String
-| *camel.health.check.routes.thresholds.max-processing-time.failures* | Failures |  | Integer
-| *camel.health.check.routes.thresholds.max-processing-time.threshold* | The Threshold |  | String
-| *camel.health.check.routes.thresholds.mean-processing-time.failures* | Failures |  | Integer
-| *camel.health.check.routes.thresholds.mean-processing-time.threshold* | The Threshold |  | String
-| *camel.health.check.routes.thresholds.min-processing-time.failures* | Failures |  | Integer
-| *camel.health.check.routes.thresholds.min-processing-time.threshold* | The Threshold |  | String
+| *camel.health.check.routes.thresholds.last-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.last-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.max-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.max-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.mean-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.mean-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.min-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.min-processing-time.threshold* | The threshold value. |  | String
 | *camel.health.check.routes.thresholds.redeliveries* | Number of redeliveries (internal only). |  | Long
 | *camel.health.check.service.check-interval* | The interval between checks. |  | String
-| *camel.health.check.service.checks* | Checks configuration.s |  | Map
-| *camel.health.check.service.enabled* | Global option to enable/disable this ${@link org.apache.camel.health.HealthCheckService}, default is false. | false | Boolean
+| *camel.health.check.service.checks* | Configuration of health checks |  | Map
+| *camel.health.check.service.enabled* | Global option to enable/disable extended Camel health checks, default is false. | false | Boolean
 | *camel.health.enabled* | Global option to enable/disable camel health bean, default is true. | true | Boolean
 | *camel.language.enabled* | Global option to enable/disable language auto-configuration, default is true. | true | Boolean
 | *camel.springboot.allow-use-original-message* | Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false. | false | Boolean
