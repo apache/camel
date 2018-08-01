@@ -86,25 +86,25 @@ The component supports 139 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.cloud.enabled* |  | true | Boolean
-| *camel.cloud.load-balancer.enabled* |  | true | Boolean
-| *camel.cloud.service-call.component* | The component to use. |  | String
+| *camel.cloud.enabled* | Global option to enable/disable Camel cloud support, default is true. | true | Boolean
+| *camel.cloud.load-balancer.enabled* | Global option to enable/disable Camel cloud load balancer, default is true. | true | Boolean
+| *camel.cloud.service-call.component* | The Camel component to use for calling the service. The default is http4 component. |  | String
 | *camel.cloud.service-call.default-load-balancer* | Determine if the default load balancer should be used instead of any auto discovered one. | false | Boolean
-| *camel.cloud.service-call.expression* | The {@link Expression} to use. |  | String
-| *camel.cloud.service-call.expression-language* | The {@link Expression} language to use, default is ref | ref | String
-| *camel.cloud.service-call.load-balancer* | A reference to the {@link ServiceLoadBalancer} to use. |  | String
-| *camel.cloud.service-call.service-chooser* | A reference to the {@link org.apache.camel.cloud.ServiceChooser} to use. |  | String
-| *camel.cloud.service-call.service-discovery* | A reference to the {@link org.apache.camel.cloud.ServiceDiscovery} to use. |  | String
-| *camel.cloud.service-call.service-filter* | A reference to the {@link org.apache.camel.cloud.ServiceFilter} to use. |  | String
-| *camel.cloud.service-call.uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the {@link org.apache.camel.language.simple.SimpleLanguage} expression. |  | String
-| *camel.cloud.service-chooser.enabled* |  | true | Boolean
-| *camel.cloud.service-discovery.cache-timeout* |  |  | String
-| *camel.cloud.service-discovery.configurations* |  |  | Map
-| *camel.cloud.service-discovery.enabled* |  | true | Boolean
-| *camel.cloud.service-discovery.services* |  |  | Map
-| *camel.cloud.service-filter.blacklist* |  |  | Map
-| *camel.cloud.service-filter.configurations* |  |  | Map
-| *camel.cloud.service-filter.enabled* |  | true | Boolean
+| *camel.cloud.service-call.expression* | The expression to use. |  | String
+| *camel.cloud.service-call.expression-language* | The expression language to use, default is ref. | ref | String
+| *camel.cloud.service-call.load-balancer* | A reference to the org.apache.camel.cloud.ServiceLoadBalancer to use. |  | String
+| *camel.cloud.service-call.service-chooser* | A reference to the org.apache.camel.cloud.ServiceChooser to use. |  | String
+| *camel.cloud.service-call.service-discovery* | A reference to the org.apache.camel.cloud.ServiceDiscovery to use. |  | String
+| *camel.cloud.service-call.service-filter* | A reference to the org.apache.camel.cloud.ServiceFilter to use. |  | String
+| *camel.cloud.service-call.uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the simple language expression. |  | String
+| *camel.cloud.service-chooser.enabled* | Global option to enable/disable Camel cloud service chooser, default is true. | true | Boolean
+| *camel.cloud.service-discovery.cache-timeout* | Configure cache timeout (in millis). |  | String
+| *camel.cloud.service-discovery.configurations* | Configure the service discovery rules. |  | Map
+| *camel.cloud.service-discovery.enabled* | Global option to enable/disable Camel cloud service discovery, default is true. | true | Boolean
+| *camel.cloud.service-discovery.services* | Configure service discoveries. |  | Map
+| *camel.cloud.service-filter.blacklist* | Configure service filter blacklists. |  | Map
+| *camel.cloud.service-filter.configurations* | Configure the service filtering rules. |  | Map
+| *camel.cloud.service-filter.enabled* | Global option to enable/disable Camel cloud service filter, default is true. | true | Boolean
 | *camel.cloud.service-registry.enabled* | Configure if service registry should be enabled or not, default true. | true | Boolean
 | *camel.cloud.service-registry.service-host* | Configure the service listening address. |  | String
 | *camel.clustered.controller.cluster-service* | The cluster service. |  | CamelClusterService
