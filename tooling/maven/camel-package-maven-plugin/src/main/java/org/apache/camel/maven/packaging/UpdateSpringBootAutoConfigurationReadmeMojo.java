@@ -161,7 +161,7 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                     }
 
                     if (files.size() == 1) {
-                        List models = parseSpringBootAutoConfigureModels(jsonFile, null);
+                        List<SpringBootAutoConfigureOptionModel> models = parseSpringBootAutoConfigureModels(jsonFile, null);
 
                         // special for other kind of JARs that is not a regular Camel component,dataformat,language
                         boolean onlyOther = files.size() == 1 && !hasComponentDataFormatOrLanguage;
@@ -170,6 +170,19 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                             return;
                         }
                         File docFile = files.get(0);
+
+                        // check for missing description on options
+                        boolean noDescription = false;
+                        for (SpringBootAutoConfigureOptionModel o : models) {
+                            if (StringHelper.isEmpty(o.getDescription())) {
+                                noDescription = true;
+                                getLog().warn("Option " + o.getName() + " has no description");
+                            }
+                        }
+                        if (noDescription && isFailOnNoDescription()) {
+                            throw new MojoExecutionException("Failed build due failOnMissingDescription=true");
+                        }
+
                         String options = templateAutoConfigurationOptions(models);
                         boolean updated = updateAutoConfigureOptions(docFile, options);
                         if (updated) {
@@ -281,7 +294,7 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
     private static boolean isValidStarter(String name) {
         // skip these
-        if ("camel-core-starter".equals(name) || "camel-spring-boot-starter".equals(name)) {
+        if ("camel-core-starter".equals(name)) {
             return false;
         }
         return true;
