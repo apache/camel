@@ -27,6 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.cloud")
 public class CamelCloudConfigurationProperties {
+    /**
+     * Global option to enable/disable Camel cloud support, default is true.
+     */
     private boolean enabled = true;
     private ServiceCall serviceCall = new ServiceCall();
     private LoadBalancer loadBalancer = new LoadBalancer();
@@ -72,34 +75,35 @@ public class CamelCloudConfigurationProperties {
     // *****************************************
 
     public class ServiceCall {
+
         /**
          * The uri of the endpoint to send to.
-         * The uri can be dynamic computed using the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+         * The uri can be dynamic computed using the simple language expression.
          */
         private String uri;
 
         /**
-         * The component to use.
+         * The Camel component to use for calling the service. The default is http4 component.
          */
         private String component = ServiceCallDefinitionConstants.DEFAULT_COMPONENT;
 
         /**
-         * A reference to the {@link org.apache.camel.cloud.ServiceDiscovery} to use.
+         * A reference to the org.apache.camel.cloud.ServiceDiscovery to use.
          */
         private String serviceDiscovery;
 
         /**
-         * A reference to the {@link org.apache.camel.cloud.ServiceFilter} to use.
+         * A reference to the org.apache.camel.cloud.ServiceFilter to use.
          */
         private String serviceFilter;
 
         /**
-         * A reference to the {@link org.apache.camel.cloud.ServiceChooser} to use.
+         * A reference to the org.apache.camel.cloud.ServiceChooser to use.
          */
         private String serviceChooser;
 
         /**
-         * A reference to the {@link ServiceLoadBalancer} to use.
+         * A reference to the org.apache.camel.cloud.ServiceLoadBalancer to use.
          */
         private String loadBalancer;
 
@@ -109,12 +113,12 @@ public class CamelCloudConfigurationProperties {
         private boolean defaultLoadBalancer;
 
         /**
-         * The {@link Expression} to use.
+         * The expression to use.
          */
         private String expression;
 
         /**
-         * The {@link Expression} language to use, default is ref
+         * The expression language to use, default is ref.
          */
         private String expressionLanguage = "ref";
 
@@ -196,6 +200,9 @@ public class CamelCloudConfigurationProperties {
     // *****************************************
 
     public static class LoadBalancer {
+        /**
+         * Global option to enable/disable Camel cloud load balancer, default is true.
+         */
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -212,7 +219,13 @@ public class CamelCloudConfigurationProperties {
     // *****************************************
 
     public static class ServiceDiscoveryConfiguration {
+        /**
+         * Configure service discoveries.
+         */
         private Map<String, List<String>> services = new HashMap<>();
+        /**
+         * Configure cache timeout (in millis).
+         */
         private String cacheTimeout;
 
         public Map<String, List<String>> getServices() {
@@ -229,7 +242,13 @@ public class CamelCloudConfigurationProperties {
     }
 
     public static class ServiceDiscovery extends ServiceDiscoveryConfiguration {
+        /**
+         * Global option to enable/disable Camel cloud service discovery, default is true.
+         */
         private boolean enabled = true;
+        /**
+         * Configure the service discovery rules.
+         */
         private Map<String, ServiceDiscoveryConfiguration> configurations = new HashMap<>();
 
         public boolean isEnabled() {
@@ -250,6 +269,9 @@ public class CamelCloudConfigurationProperties {
     // *****************************************
 
     public static class ServiceFilterConfiguration {
+        /**
+         * Configure service filter blacklists.
+         */
         private Map<String, List<String>> blacklist = new HashMap<>();
 
         public Map<String, List<String>> getBlacklist() {
@@ -258,7 +280,13 @@ public class CamelCloudConfigurationProperties {
     }
 
     public static class ServiceFilter extends ServiceFilterConfiguration {
+        /**
+         * Global option to enable/disable Camel cloud service filter, default is true.
+         */
         private boolean enabled = true;
+        /**
+         * Configure the service filtering rules.
+         */
         private Map<String, ServiceFilterConfiguration> configurations = new HashMap<>();
 
         public boolean isEnabled() {
@@ -279,6 +307,9 @@ public class CamelCloudConfigurationProperties {
     // *****************************************
 
     public static class ServiceChooser {
+        /**
+         * Global option to enable/disable Camel cloud service chooser, default is true.
+         */
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -299,7 +330,6 @@ public class CamelCloudConfigurationProperties {
          * Configure if service registry should be enabled or not, default true.
          */
         private boolean enabled = true;
-
         /**
          * Configure the service listening address.
          */
@@ -312,7 +342,6 @@ public class CamelCloudConfigurationProperties {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
-
 
         public String getServiceHost() {
             return serviceHost;
