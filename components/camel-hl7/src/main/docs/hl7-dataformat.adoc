@@ -235,15 +235,11 @@ The component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.dataformat.hl7.content-type-header* | Whether the data format should set the Content-Type header with the type
- from the data format if the data format is capable of doing so. For
- example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.hl7.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.hl7.enabled* | Enable hl7 dataformat | true | Boolean
 | *camel.dataformat.hl7.validate* | Whether to validate the HL7 message Is by default true. | true | Boolean
 | *camel.language.terser.enabled* | Enable terser language | true | Boolean
-| *camel.language.terser.trim* | Whether to trim the value to remove leading and trailing whitespaces and
- line breaks | true | Boolean
+| *camel.language.terser.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 ND

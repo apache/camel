@@ -105,9 +105,7 @@ The component supports 14 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.braintree.configuration.access-token* | The access token granted by a merchant to another in order to process
- transactions on their behalf. Used in place of environment, merchant
- id, public key and private key fields. |  | String
+| *camel.component.braintree.configuration.access-token* | The access token granted by a merchant to another in order to process transactions on their behalf. Used in place of environment, merchant id, public key and private key fields. |  | String
 | *camel.component.braintree.configuration.api-name* | What kind of operation to perform |  | BraintreeApiName
 | *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
 | *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, see java.util.logging.Level |  | Level
@@ -120,9 +118,7 @@ The component supports 14 options, which are listed below.
 | *camel.component.braintree.configuration.proxy-port* | The proxy port |  | Integer
 | *camel.component.braintree.configuration.public-key* | The public key provided by Braintree. |  | String
 | *camel.component.braintree.enabled* | Enable braintree component | true | Boolean
-| *camel.component.braintree.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.braintree.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

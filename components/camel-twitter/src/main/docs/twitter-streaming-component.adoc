@@ -115,15 +115,12 @@ The component supports 10 options, which are listed below.
 | *camel.component.twitter-streaming.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-streaming.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-streaming.consumer-secret* | The consumer secret |  | String
-| *camel.component.twitter-streaming.enabled* | Whether to enable auto configuration of the twitter-streaming component.
- This is enabled by default. |  | Boolean
+| *camel.component.twitter-streaming.enabled* | Whether to enable auto configuration of the twitter-streaming component. This is enabled by default. |  | Boolean
 | *camel.component.twitter-streaming.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-streaming.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-streaming.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-streaming.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
-| *camel.component.twitter-streaming.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.twitter-streaming.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

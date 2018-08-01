@@ -130,65 +130,34 @@ The component supports 30 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.ssh.cert-filename* | Sets the resource path of the certificate to use for Authentication. |  | String
-| *camel.component.ssh.cert-resource* | Sets the resource path of the certificate to use for Authentication. Will
- use ResourceHelperKeyPairProvider to resolve file based certificate, and
- depends on keyType setting. |  | String
-| *camel.component.ssh.channel-type* | Sets the channel type to pass to the Channel as part of command
- execution. Defaults to exec. |  | String
-| *camel.component.ssh.configuration.cert-filename* | @deprecated As of version 2.11, replaced by
-             {@link #setCertResource(String)} |  | String
-| *camel.component.ssh.configuration.cert-resource* | Sets the resource path of the certificate to use for Authentication.
- Will use ResourceHelperKeyPairProvider to resolve file based
- certificate, and depends on keyType setting. |  | String
-| *camel.component.ssh.configuration.channel-type* | Sets the channel type to pass to the Channel as part of command
- execution. Defaults to exec. | exec | String
-| *camel.component.ssh.configuration.fail-on-unknown-host* | Specifies whether a connection to an unknown host should fail or not.
- This value is only checked when the property knownHosts is set. | false | Boolean
+| *camel.component.ssh.cert-resource* | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
+| *camel.component.ssh.channel-type* | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. |  | String
+| *camel.component.ssh.configuration.cert-filename* | @deprecated As of version 2.11, replaced by             {@link #setCertResource(String)} |  | String
+| *camel.component.ssh.configuration.cert-resource* | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
+| *camel.component.ssh.configuration.channel-type* | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. | exec | String
+| *camel.component.ssh.configuration.fail-on-unknown-host* | Specifies whether a connection to an unknown host should fail or not. This value is only checked when the property knownHosts is set. | false | Boolean
 | *camel.component.ssh.configuration.host* | Sets the hostname of the remote SSH server. |  | String
-| *camel.component.ssh.configuration.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using
- Certificates to the remote SSH Server. |  | KeyPairProvider
-| *camel.component.ssh.configuration.key-type* | Sets the key type to pass to the KeyPairProvider as part of
- authentication. KeyPairProvider.loadKey(...) will be passed this
- value. Defaults to ssh-rsa. | ssh-rsa | String
+| *camel.component.ssh.configuration.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
+| *camel.component.ssh.configuration.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. | ssh-rsa | String
 | *camel.component.ssh.configuration.known-hosts-resource* | Sets the resource path for a known_hosts file |  | String
-| *camel.component.ssh.configuration.password* | Sets the password to use in connecting to remote SSH server. Requires
- keyPairProvider to be set to null. |  | String
-| *camel.component.ssh.configuration.poll-command* | Sets the command string to send to the remote SSH server during every
- poll cycle. Only works with camel-ssh component being used as a
- consumer, i.e. from(ssh://...) You may need to end your command with
- a newline, and that must be URL encoded %0A |  | String
+| *camel.component.ssh.configuration.password* | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
+| *camel.component.ssh.configuration.poll-command* | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from(ssh://...) You may need to end your command with a newline, and that must be URL encoded %0A |  | String
 | *camel.component.ssh.configuration.port* | Sets the port number for the remote SSH server. | 22 | Integer
-| *camel.component.ssh.configuration.shell-prompt* | Sets the shellPrompt to be dropped when response is read after
- command execution |  | String
-| *camel.component.ssh.configuration.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from
- shell prompt. Defaults to 100 milliseconds. | 100 | Long
-| *camel.component.ssh.configuration.timeout* | Sets the timeout in milliseconds to wait in establishing the remote
- SSH server connection. Defaults to 30000 milliseconds. | 30000 | Long
+| *camel.component.ssh.configuration.shell-prompt* | Sets the shellPrompt to be dropped when response is read after command execution |  | String
+| *camel.component.ssh.configuration.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. | 100 | Long
+| *camel.component.ssh.configuration.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. | 30000 | Long
 | *camel.component.ssh.configuration.username* | Sets the username to use in logging into the remote SSH server. |  | String
 | *camel.component.ssh.enabled* | Enable ssh component | true | Boolean
 | *camel.component.ssh.host* | Sets the hostname of the remote SSH server. |  | String
-| *camel.component.ssh.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using
- Certificates to the remote SSH Server. The option is a
- org.apache.sshd.common.keyprovider.KeyPairProvider type. |  | String
-| *camel.component.ssh.key-type* | Sets the key type to pass to the KeyPairProvider as part of
- authentication. KeyPairProvider.loadKey(...) will be passed this value.
- Defaults to ssh-rsa. |  | String
-| *camel.component.ssh.password* | Sets the password to use in connecting to remote SSH server. Requires
- keyPairProvider to be set to null. |  | String
-| *camel.component.ssh.poll-command* | Sets the command string to send to the remote SSH server during every
- poll cycle. Only works with camel-ssh component being used as a consumer,
- i.e. from(ssh://...). You may need to end your command with a newline,
- and that must be URL encoded %0A |  | String
+| *camel.component.ssh.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. The option is a org.apache.sshd.common.keyprovider.KeyPairProvider type. |  | String
+| *camel.component.ssh.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. |  | String
+| *camel.component.ssh.password* | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
+| *camel.component.ssh.poll-command* | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from(ssh://...). You may need to end your command with a newline, and that must be URL encoded %0A |  | String
 | *camel.component.ssh.port* | Sets the port number for the remote SSH server. |  | Integer
-| *camel.component.ssh.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.ssh.shell-prompt* | Sets the shellPrompt to be dropped when response is read after command
- execution |  | String
-| *camel.component.ssh.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell
- prompt. Defaults to 100 milliseconds. |  | Long
-| *camel.component.ssh.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH
- server connection. Defaults to 30000 milliseconds. |  | Long
+| *camel.component.ssh.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ssh.shell-prompt* | Sets the shellPrompt to be dropped when response is read after command execution |  | String
+| *camel.component.ssh.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | Long
+| *camel.component.ssh.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | Long
 | *camel.component.ssh.username* | Sets the username to use in logging into the remote SSH server. |  | String
 |===
 // spring-boot-auto-configure options: END

@@ -167,33 +167,23 @@ The component supports 18 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.disruptor-vm.buffer-size* | To configure the ring buffer size | 1024 | Integer
-| *camel.component.disruptor-vm.default-block-when-full* | To configure the default value for block when full The default value is
- true. | true | Boolean
+| *camel.component.disruptor-vm.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
 | *camel.component.disruptor-vm.default-concurrent-consumers* | To configure the default number of concurrent consumers | 1 | Integer
 | *camel.component.disruptor-vm.default-multiple-consumers* | To configure the default value for multiple consumers | false | Boolean
-| *camel.component.disruptor-vm.default-producer-type* | To configure the default value for DisruptorProducerType The default
- value is Multi. |  | DisruptorProducerType
-| *camel.component.disruptor-vm.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default
- value is Blocking. |  | DisruptorWaitStrategy
+| *camel.component.disruptor-vm.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
+| *camel.component.disruptor-vm.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor-vm.enabled* | Enable disruptor-vm component | true | Boolean
 | *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
-| *camel.component.disruptor-vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.disruptor-vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.disruptor.buffer-size* | To configure the ring buffer size | 1024 | Integer
-| *camel.component.disruptor.default-block-when-full* | To configure the default value for block when full The default value is
- true. | true | Boolean
+| *camel.component.disruptor.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
 | *camel.component.disruptor.default-concurrent-consumers* | To configure the default number of concurrent consumers | 1 | Integer
 | *camel.component.disruptor.default-multiple-consumers* | To configure the default value for multiple consumers | false | Boolean
-| *camel.component.disruptor.default-producer-type* | To configure the default value for DisruptorProducerType The default
- value is Multi. |  | DisruptorProducerType
-| *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default
- value is Blocking. |  | DisruptorWaitStrategy
+| *camel.component.disruptor.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
+| *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor.enabled* | Enable disruptor component | true | Boolean
 | *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
-| *camel.component.disruptor.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.disruptor.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

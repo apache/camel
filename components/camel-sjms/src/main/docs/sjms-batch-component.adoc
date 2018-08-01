@@ -195,28 +195,12 @@ The component supports 6 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.sjms-batch.async-start-listener* | Whether to startup the consumer message listener asynchronously, when
- starting a route. For example if a JmsConsumer cannot get a connection to
- a remote JMS broker, then it may block while retrying and/or failover.
- This will cause Camel to block while starting routes. By setting this
- option to true, you will let routes startup, while the JmsConsumer
- connects to the JMS broker using a dedicated thread in asynchronous mode.
- If this option is used, then beware that if the connection could not be
- established, then an exception is logged at WARN level, and the consumer
- will not be able to receive messages; You can then restart the route to
- retry. | false | Boolean
-| *camel.component.sjms-batch.connection-factory* | A ConnectionFactory is required to enable the SjmsBatchComponent. The
- option is a javax.jms.ConnectionFactory type. |  | String
+| *camel.component.sjms-batch.async-start-listener* | Whether to startup the consumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | Boolean
+| *camel.component.sjms-batch.connection-factory* | A ConnectionFactory is required to enable the SjmsBatchComponent. The option is a javax.jms.ConnectionFactory type. |  | String
 | *camel.component.sjms-batch.enabled* | Enable sjms-batch component | true | Boolean
-| *camel.component.sjms-batch.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
- header to and from Camel message. The option is a
- org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.sjms-batch.recovery-interval* | Specifies the interval between recovery attempts, i.e. when a connection
- is being refreshed, in milliseconds. The default is 5000 ms, that is, 5
- seconds. | 5000 | Integer
-| *camel.component.sjms-batch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.sjms-batch.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.sjms-batch.recovery-interval* | Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds. The default is 5000 ms, that is, 5 seconds. | 5000 | Integer
+| *camel.component.sjms-batch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

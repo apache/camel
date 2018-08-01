@@ -121,37 +121,23 @@ The component supports 17 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.cache.cache-manager-factory* | To use the given CacheManagerFactory for creating the CacheManager. By
- default the DefaultCacheManagerFactory is used. The option is a
- org.apache.camel.component.cache.CacheManagerFactory type. |  | String
-| *camel.component.cache.configuration-file* | Sets the location of the ehcache.xml file to load from classpath or file
- system. By default the file is loaded from classpath:ehcache.xml | classpath:ehcache.xml | String
+| *camel.component.cache.cache-manager-factory* | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used. The option is a org.apache.camel.component.cache.CacheManagerFactory type. |  | String
+| *camel.component.cache.configuration-file* | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml | classpath:ehcache.xml | String
 | *camel.component.cache.configuration.cache-loader-registry* | To configure cache loader using the CacheLoaderRegistry |  | CacheLoaderRegistry
 | *camel.component.cache.configuration.cache-name* | Name of the cache |  | String
 | *camel.component.cache.configuration.disk-expiry-thread-interval-seconds* | The number of seconds between runs of the disk expiry thread. |  | Long
 | *camel.component.cache.configuration.disk-persistent* | Whether the disk store persists between restarts of the application. | false | Boolean
-| *camel.component.cache.configuration.disk-store-path* | This parameter is ignored. CacheManager sets it using setter
- injection. |  | String
-| *camel.component.cache.configuration.eternal* | Sets whether elements are eternal. If eternal, timeouts are ignored
- and the element never expires. | false | Boolean
+| *camel.component.cache.configuration.disk-store-path* | This parameter is ignored. CacheManager sets it using setter injection. |  | String
+| *camel.component.cache.configuration.eternal* | Sets whether elements are eternal. If eternal, timeouts are ignored and the element never expires. | false | Boolean
 | *camel.component.cache.configuration.event-listener-registry* | To configure event listeners using the CacheEventListenerRegistry |  | CacheEventListener Registry
-| *camel.component.cache.configuration.max-elements-in-memory* | The number of elements that may be stored in the defined cache in
- memory. | 1000 | Integer
-| *camel.component.cache.configuration.memory-store-eviction-policy* | Which eviction strategy to use when maximum number of elements in
- memory is reached. The strategy defines which elements to be removed.
- LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In
- First Out |  | MemoryStoreEviction Policy
-| *camel.component.cache.configuration.object-cache* | Whether to turn on allowing to store non serializable objects in the
- cache. If this option is enabled then overflow to disk cannot be
- enabled as well. | false | Boolean
+| *camel.component.cache.configuration.max-elements-in-memory* | The number of elements that may be stored in the defined cache in memory. | 1000 | Integer
+| *camel.component.cache.configuration.memory-store-eviction-policy* | Which eviction strategy to use when maximum number of elements in memory is reached. The strategy defines which elements to be removed. LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In First Out |  | MemoryStoreEviction Policy
+| *camel.component.cache.configuration.object-cache* | Whether to turn on allowing to store non serializable objects in the cache. If this option is enabled then overflow to disk cannot be enabled as well. | false | Boolean
 | *camel.component.cache.configuration.overflow-to-disk* | Specifies whether cache may overflow to disk | true | Boolean
 | *camel.component.cache.configuration.time-to-idle-seconds* | The maximum amount of time between accesses before an element expires | 300 | Long
-| *camel.component.cache.configuration.time-to-live-seconds* | The maximum time between creation time and when an element expires.
- Is used only if the element is not eternal | 300 | Long
+| *camel.component.cache.configuration.time-to-live-seconds* | The maximum time between creation time and when an element expires. Is used only if the element is not eternal | 300 | Long
 | *camel.component.cache.enabled* | Enable cache component | true | Boolean
-| *camel.component.cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

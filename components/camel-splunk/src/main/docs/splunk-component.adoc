@@ -183,11 +183,8 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.splunk.enabled* | Enable splunk component | true | Boolean
-| *camel.component.splunk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.splunk.splunk-configuration-factory* | To use the SplunkConfigurationFactory. The option is a
- org.apache.camel.component.splunk.SplunkConfigurationFactory type. |  | String
+| *camel.component.splunk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.splunk.splunk-configuration-factory* | To use the SplunkConfigurationFactory. The option is a org.apache.camel.component.splunk.SplunkConfigurationFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
 

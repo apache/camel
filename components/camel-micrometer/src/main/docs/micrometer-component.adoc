@@ -106,13 +106,9 @@ The component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.micrometer.enabled* | Whether to enable auto configuration of the micrometer component. This is
- enabled by default. |  | Boolean
-| *camel.component.micrometer.metrics-registry* | To use a custom configured MetricRegistry. The option is a
- io.micrometer.core.instrument.MeterRegistry type. |  | String
-| *camel.component.micrometer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.micrometer.enabled* | Whether to enable auto configuration of the micrometer component. This is enabled by default. |  | Boolean
+| *camel.component.micrometer.metrics-registry* | To use a custom configured MetricRegistry. The option is a io.micrometer.core.instrument.MeterRegistry type. |  | String
+| *camel.component.micrometer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

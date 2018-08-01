@@ -39,18 +39,11 @@ The component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.dataformat.tarfile.allow-empty-directory* | If the tar file has more then one entry, setting this option to true,
- allows to get the iterator even if the directory is empty | false | Boolean
-| *camel.dataformat.tarfile.content-type-header* | Whether the data format should set the Content-Type header with the type
- from the data format if the data format is capable of doing so. For
- example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.tarfile.allow-empty-directory* | If the tar file has more then one entry, setting this option to true, allows to get the iterator even if the directory is empty | false | Boolean
+| *camel.dataformat.tarfile.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.tarfile.enabled* | Enable tarfile dataformat | true | Boolean
-| *camel.dataformat.tarfile.preserve-path-elements* | If the file name contains path elements, setting this option to true,
- allows the path to be maintained in the tar file. | false | Boolean
-| *camel.dataformat.tarfile.using-iterator* | If the tar file has more then one entry, the setting this option to true,
- allows to work with the splitter EIP, to split the data using an iterator
- in a streaming mode. | false | Boolean
+| *camel.dataformat.tarfile.preserve-path-elements* | If the file name contains path elements, setting this option to true, allows the path to be maintained in the tar file. | false | Boolean
+| *camel.dataformat.tarfile.using-iterator* | If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 ND

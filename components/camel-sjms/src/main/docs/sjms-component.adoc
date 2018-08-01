@@ -189,53 +189,21 @@ The component supports 15 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.sjms.connection-client-id* | The client ID to use when creating javax.jms.Connection when using the
- default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
-| *camel.component.sjms.connection-count* | The maximum number of connections available to endpoints started under
- this component | 1 | Integer
-| *camel.component.sjms.connection-factory* | A ConnectionFactory is required to enable the SjmsComponent. It can be
- set directly or set set as part of a ConnectionResource. The option is a
- javax.jms.ConnectionFactory type. |  | String
-| *camel.component.sjms.connection-max-wait* | The max wait time in millis to block and wait on free connection when the
- pool is exhausted when using the default
- org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | Long
-| *camel.component.sjms.connection-password* | The password to use when creating javax.jms.Connection when using the
- default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
-| *camel.component.sjms.connection-resource* | A ConnectionResource is an interface that allows for customization and
- container control of the ConnectionFactory. See Plugable Connection
- Resource Management for further details. The option is a
- org.apache.camel.component.sjms.jms.ConnectionResource type. |  | String
-| *camel.component.sjms.connection-test-on-borrow* | When using the default
- org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should
- each javax.jms.Connection be tested (calling start) before returned from
- the pool. | true | Boolean
-| *camel.component.sjms.connection-username* | The username to use when creating javax.jms.Connection when using the
- default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
-| *camel.component.sjms.destination-creation-strategy* | To use a custom DestinationCreationStrategy. The option is a
- org.apache.camel.component.sjms.jms.DestinationCreationStrategy type. |  | String
+| *camel.component.sjms.connection-client-id* | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
+| *camel.component.sjms.connection-count* | The maximum number of connections available to endpoints started under this component | 1 | Integer
+| *camel.component.sjms.connection-factory* | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource. The option is a javax.jms.ConnectionFactory type. |  | String
+| *camel.component.sjms.connection-max-wait* | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | Long
+| *camel.component.sjms.connection-password* | The password to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
+| *camel.component.sjms.connection-resource* | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details. The option is a org.apache.camel.component.sjms.jms.ConnectionResource type. |  | String
+| *camel.component.sjms.connection-test-on-borrow* | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool. | true | Boolean
+| *camel.component.sjms.connection-username* | The username to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
+| *camel.component.sjms.destination-creation-strategy* | To use a custom DestinationCreationStrategy. The option is a org.apache.camel.component.sjms.jms.DestinationCreationStrategy type. |  | String
 | *camel.component.sjms.enabled* | Enable sjms component | true | Boolean
-| *camel.component.sjms.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
- header to and from Camel message. The option is a
- org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.sjms.jms-key-format-strategy* | Pluggable strategy for encoding and decoding JMS keys so they can be
- compliant with the JMS specification. Camel provides one implementation
- out of the box: default. The default strategy will safely marshal dots
- and hyphens (. and -). Can be used for JMS brokers which do not care
- whether JMS header keys contain illegal characters. You can provide your
- own implementation of the
- org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using
- the notation. The option is a
- org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy type. |  | String
-| *camel.component.sjms.message-created-strategy* | To use the given MessageCreatedStrategy which are invoked when Camel
- creates new instances of javax.jms.Message objects when Camel is sending
- a JMS message. The option is a
- org.apache.camel.component.sjms.jms.MessageCreatedStrategy type. |  | String
-| *camel.component.sjms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.sjms.transaction-commit-strategy* | To configure which kind of commit strategy to use. Camel provides two
- implementations out of the box, default and batch. The option is a
- org.apache.camel.component.sjms.TransactionCommitStrategy type. |  | String
+| *camel.component.sjms.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.sjms.jms-key-format-strategy* | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation. The option is a org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy type. |  | String
+| *camel.component.sjms.message-created-strategy* | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message. The option is a org.apache.camel.component.sjms.jms.MessageCreatedStrategy type. |  | String
+| *camel.component.sjms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.sjms.transaction-commit-strategy* | To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch. The option is a org.apache.camel.component.sjms.TransactionCommitStrategy type. |  | String
 |===
 // spring-boot-auto-configure options: END
 

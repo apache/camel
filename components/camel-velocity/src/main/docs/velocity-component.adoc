@@ -99,11 +99,8 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.velocity.enabled* | Enable velocity component | true | Boolean
-| *camel.component.velocity.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.velocity.velocity-engine* | To use the VelocityEngine otherwise a new engine is created. The option
- is a org.apache.velocity.app.VelocityEngine type. |  | String
+| *camel.component.velocity.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.velocity.velocity-engine* | To use the VelocityEngine otherwise a new engine is created. The option is a org.apache.velocity.app.VelocityEngine type. |  | String
 |===
 // spring-boot-auto-configure options: END
 

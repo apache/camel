@@ -119,12 +119,8 @@ The component supports 6 options, which are listed below.
 | *camel.component.openshift.domain* | Domain name. If not specified then the default domain is used. |  | String
 | *camel.component.openshift.enabled* | Enable openshift component | true | Boolean
 | *camel.component.openshift.password* | The password for login to openshift server. |  | String
-| *camel.component.openshift.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.openshift.server* | Url to the openshift server. If not specified then the default value from
- the local openshift configuration file /.openshift/express.conf is used.
- And if that fails as well then openshift.redhat.com is used. |  | String
+| *camel.component.openshift.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.openshift.server* | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used. |  | String
 | *camel.component.openshift.username* | The username to login to openshift server. |  | String
 |===
 // spring-boot-auto-configure options: END
