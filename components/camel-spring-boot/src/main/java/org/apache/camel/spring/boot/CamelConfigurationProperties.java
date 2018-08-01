@@ -192,7 +192,7 @@ public class CamelConfigurationProperties {
     private int logDebugMaxChars;
 
     /**
-     * Sets whether stream caching is enabled or not.
+     * Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead).
      *
      * Default is false.
      */
@@ -435,7 +435,7 @@ public class CamelConfigurationProperties {
     private Integer tracerFormatterMaxChars = 10000;
     
     /**
-     * To turn on MDC logging
+     * To turn on MDC logging (deprecated use use-mdc-logging instead)
      */
     @Deprecated
     private boolean useMDCLogging;
