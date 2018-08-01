@@ -110,9 +110,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.aws-cw.configuration.value* | The metric value |  | Double
 | *camel.component.aws-cw.enabled* | Enable aws-cw component | true | Boolean
 | *camel.component.aws-cw.region* | The region in which CW client needs to work |  | String
-| *camel.component.aws-cw.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.aws-cw.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-cw.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END

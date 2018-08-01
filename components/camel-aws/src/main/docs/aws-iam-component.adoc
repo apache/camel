@@ -98,12 +98,9 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-iam.configuration.proxy-port* | To define a proxy port when instantiating the KMS client |  | Integer
 | *camel.component.aws-iam.configuration.region* | The region in which KMS client needs to work |  | String
 | *camel.component.aws-iam.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-iam.enabled* | Whether to enable auto configuration of the aws-iam component. This is
- enabled by default. |  | Boolean
+| *camel.component.aws-iam.enabled* | Whether to enable auto configuration of the aws-iam component. This is enabled by default. |  | Boolean
 | *camel.component.aws-iam.region* | The region in which IAM client needs to work |  | String
-| *camel.component.aws-iam.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.aws-iam.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-iam.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END

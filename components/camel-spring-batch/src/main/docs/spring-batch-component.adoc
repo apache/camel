@@ -104,13 +104,9 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.spring-batch.enabled* | Enable spring-batch component | true | Boolean
-| *camel.component.spring-batch.job-launcher* | Explicitly specifies a JobLauncher to be used. The option is a
- org.springframework.batch.core.launch.JobLauncher type. |  | String
-| *camel.component.spring-batch.job-registry* | Explicitly specifies a JobRegistry to be used. The option is a
- org.springframework.batch.core.configuration.JobRegistry type. |  | String
-| *camel.component.spring-batch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.spring-batch.job-launcher* | Explicitly specifies a JobLauncher to be used. The option is a org.springframework.batch.core.launch.JobLauncher type. |  | String
+| *camel.component.spring-batch.job-registry* | Explicitly specifies a JobRegistry to be used. The option is a org.springframework.batch.core.configuration.JobRegistry type. |  | String
+| *camel.component.spring-batch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

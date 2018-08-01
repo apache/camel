@@ -113,13 +113,9 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.spark.enabled* | Enable spark component | true | Boolean
-| *camel.component.spark.rdd* | RDD to compute against. The option is a
- org.apache.spark.api.java.JavaRDDLike type. |  | String
-| *camel.component.spark.rdd-callback* | Function performing action against an RDD. The option is a
- org.apache.camel.component.spark.RddCallback type. |  | String
-| *camel.component.spark.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.spark.rdd* | RDD to compute against. The option is a org.apache.spark.api.java.JavaRDDLike type. |  | String
+| *camel.component.spark.rdd-callback* | Function performing action against an RDD. The option is a org.apache.camel.component.spark.RddCallback type. |  | String
+| *camel.component.spark.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

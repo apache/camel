@@ -96,20 +96,15 @@ The component supports 9 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.atomix-multimap.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
- type. |  | String
+| *camel.component.atomix-multimap.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient type. |  | String
 | *camel.component.atomix-multimap.configuration-uri* | The path to the AtomixClient configuration |  | String
 | *camel.component.atomix-multimap.configuration.default-action* | The default action. |  | AtomixMultiMap$Action
-| *camel.component.atomix-multimap.configuration.key* | The key to use if none is set in the header or to listen for events
- for a specific key. |  | Object
+| *camel.component.atomix-multimap.configuration.key* | The key to use if none is set in the header or to listen for events for a specific key. |  | Object
 | *camel.component.atomix-multimap.configuration.result-header* | The header that wil carry the result. |  | String
 | *camel.component.atomix-multimap.configuration.ttl* | The resource ttl. |  | Long
-| *camel.component.atomix-multimap.enabled* | Whether to enable auto configuration of the atomix-multimap component.
- This is enabled by default. |  | Boolean
+| *camel.component.atomix-multimap.enabled* | Whether to enable auto configuration of the atomix-multimap component. This is enabled by default. |  | Boolean
 | *camel.component.atomix-multimap.nodes* | The nodes the AtomixClient should connect to |  | List
-| *camel.component.atomix-multimap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.atomix-multimap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

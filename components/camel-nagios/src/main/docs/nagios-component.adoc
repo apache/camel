@@ -112,9 +112,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.nagios.configuration.port* | The port number of the host. |  | Integer
 | *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
 | *camel.component.nagios.enabled* | Enable nagios component | true | Boolean
-| *camel.component.nagios.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.nagios.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

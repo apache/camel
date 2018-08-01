@@ -140,12 +140,8 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.cxfrs.enabled* | Enable cxfrs component | true | Boolean
-| *camel.component.cxfrs.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
- header to and from Camel message. The option is a
- org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.cxfrs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.cxfrs.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.cxfrs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.cxfrs.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

@@ -111,22 +111,13 @@ The component supports 7 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow
- subscriber. |  | ReactiveStreams BackpressureStrategy
+| *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreams BackpressureStrategy
 | *camel.component.reactive-streams.enabled* | Enable reactive-streams component | true | Boolean
-| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-max-size* | The maximum number of threads used by the reactive streams internal
- engine. |  | Integer
-| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-min-size* | The minimum number of threads used by the reactive streams internal
- engine. |  | Integer
-| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-name* | The name of the thread pool used by the reactive streams internal
- engine. |  | String
-| *camel.component.reactive-streams.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.reactive-streams.service-type* | Set the type of the underlying reactive streams implementation to use.
- The implementation is looked up from the registry or using a
- ServiceLoader, the default implementation is
- DefaultCamelReactiveStreamsService |  | String
+| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-max-size* | The maximum number of threads used by the reactive streams internal engine. |  | Integer
+| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-min-size* | The minimum number of threads used by the reactive streams internal engine. |  | Integer
+| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-name* | The name of the thread pool used by the reactive streams internal engine. |  | String
+| *camel.component.reactive-streams.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.reactive-streams.service-type* | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
 |===
 // spring-boot-auto-configure options: END
 

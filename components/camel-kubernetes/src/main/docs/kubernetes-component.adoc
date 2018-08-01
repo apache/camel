@@ -144,13 +144,9 @@ The component supports 16 options, which are listed below.
 | *camel.component.kubernetes.cluster.service.order* | Service lookup order/priority. |  | Integer
 | *camel.component.kubernetes.cluster.service.pod-name* | Set the name of the current pod (autodetected from container host name by default). |  | String
 | *camel.component.kubernetes.cluster.service.renew-deadline-millis* | The deadline after which the leader must stop its services because it may have lost the leadership. |  | Long
-| *camel.component.kubernetes.cluster.service.retry-period-millis* | The time between two subsequent attempts to check and acquire the leadership.
- It is randomized using the jitter factor. |  | Long
-| *camel.component.kubernetes.enabled* | Whether to enable auto configuration of the kubernetes component. This is
- enabled by default. |  | Boolean
-| *camel.component.kubernetes.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.kubernetes.cluster.service.retry-period-millis* | The time between two subsequent attempts to check and acquire the leadership. It is randomized using the jitter factor. |  | Long
+| *camel.component.kubernetes.enabled* | Whether to enable auto configuration of the kubernetes component. This is enabled by default. |  | Boolean
+| *camel.component.kubernetes.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

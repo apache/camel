@@ -231,17 +231,13 @@ The component supports 29 options, which are listed below.
 | *camel.component.facebook.configuration.o-auth-app-id* | The application Id |  | String
 | *camel.component.facebook.configuration.o-auth-app-secret* | The application Secret |  | String
 | *camel.component.facebook.configuration.o-auth-authorization-u-r-l* | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See
- https://developers.facebook.com/docs/reference/login/permissions for
- the detail |  | String
+| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/permissions for the detail |  | String
 | *camel.component.facebook.configuration.pretty-debug-enabled* | Prettify JSON debug output if set to true | false | Boolean
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String
 | *camel.component.facebook.configuration.use-s-s-l* | Use SSL | true | Boolean
 | *camel.component.facebook.configuration.video-base-u-r-l* | Video API base URL | https://graph-video.facebook.com/ | String
 | *camel.component.facebook.enabled* | Enable facebook component | true | Boolean
-| *camel.component.facebook.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.facebook.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

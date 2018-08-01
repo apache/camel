@@ -51,15 +51,11 @@ The component supports 12 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.dataformat.yaml-snakeyaml.allow-any-type* | Allow any class to be un-marshaled | false | Boolean
 | *camel.dataformat.yaml-snakeyaml.constructor* | BaseConstructor to construct incoming documents. |  | String
-| *camel.dataformat.yaml-snakeyaml.content-type-header* | Whether the data format should set the Content-Type header with the type
- from the data format if the data format is capable of doing so. For
- example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.yaml-snakeyaml.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.yaml-snakeyaml.dumper-options* | DumperOptions to configure outgoing objects. |  | String
 | *camel.dataformat.yaml-snakeyaml.enabled* | Enable yaml-snakeyaml dataformat | true | Boolean
 | *camel.dataformat.yaml-snakeyaml.library* | Which yaml library to use. By default it is SnakeYAML |  | YAMLLibrary
-| *camel.dataformat.yaml-snakeyaml.pretty-flow* | Force the emitter to produce a pretty YAML document when using the flow
- style. | false | Boolean
+| *camel.dataformat.yaml-snakeyaml.pretty-flow* | Force the emitter to produce a pretty YAML document when using the flow style. | false | Boolean
 | *camel.dataformat.yaml-snakeyaml.representer* | Representer to emit outgoing objects. |  | String
 | *camel.dataformat.yaml-snakeyaml.resolver* | Resolver to detect implicit type |  | String
 | *camel.dataformat.yaml-snakeyaml.type-filter* | Set the types SnakeYAML is allowed to un-marshall |  | List

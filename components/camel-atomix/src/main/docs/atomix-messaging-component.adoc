@@ -97,20 +97,16 @@ The component supports 10 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.atomix-messaging.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient
- type. |  | String
+| *camel.component.atomix-messaging.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient type. |  | String
 | *camel.component.atomix-messaging.configuration-uri* | The path to the AtomixClient configuration |  | String
 | *camel.component.atomix-messaging.configuration.broadcast-type* | The broadcast type. |  | AtomixMessaging$ BroadcastType
 | *camel.component.atomix-messaging.configuration.channel-name* | The messaging channel name |  | String
 | *camel.component.atomix-messaging.configuration.default-action* | The default action. |  | AtomixMessaging$Action
 | *camel.component.atomix-messaging.configuration.member-name* | The Atomix Group member name |  | String
 | *camel.component.atomix-messaging.configuration.result-header* | The header that wil carry the result. |  | String
-| *camel.component.atomix-messaging.enabled* | Whether to enable auto configuration of the atomix-messaging component.
- This is enabled by default. |  | Boolean
+| *camel.component.atomix-messaging.enabled* | Whether to enable auto configuration of the atomix-messaging component. This is enabled by default. |  | Boolean
 | *camel.component.atomix-messaging.nodes* | The nodes the AtomixClient should connect to |  | List
-| *camel.component.atomix-messaging.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.atomix-messaging.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

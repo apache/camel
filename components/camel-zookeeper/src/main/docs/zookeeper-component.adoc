@@ -133,14 +133,11 @@ The component supports 57 options, which are listed below.
 | *camel.component.zookeeper.configuration.list-children* | Whether the children of the node should be listed | false | Boolean
 | *camel.component.zookeeper.configuration.path* | The node in the ZooKeeper server (aka znode) |  | String
 | *camel.component.zookeeper.configuration.repeat* | Should changes to the znode be 'watched' and repeatedly processed. | false | Boolean
-| *camel.component.zookeeper.configuration.send-empty-message-on-delete* | Upon the delete of a znode, should an empty message be send to the
- consumer | true | Boolean
+| *camel.component.zookeeper.configuration.send-empty-message-on-delete* | Upon the delete of a znode, should an empty message be send to the consumer | true | Boolean
 | *camel.component.zookeeper.configuration.servers* | The zookeeper server hosts |  | List
 | *camel.component.zookeeper.configuration.timeout* | The time interval to wait on connection before timing out. | 5000 | Integer
 | *camel.component.zookeeper.enabled* | Enable zookeeper component | true | Boolean
-| *camel.component.zookeeper.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.zookeeper.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.zookeeper.service-registry.attributes* | Custom service attributes. |  | Map
 | *camel.component.zookeeper.service-registry.auth-info-list* |  |  | List
 | *camel.component.zookeeper.service-registry.base-path* |  |  | String

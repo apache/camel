@@ -78,15 +78,9 @@ The component supports 6 options, which are listed below.
 | *camel.component.hazelcast-set.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
 | *camel.component.hazelcast-set.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.hazelcast-set.enabled* | Enable hazelcast-set component | true | Boolean
-| *camel.component.hazelcast-set.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast
- endpoint. If you don't specify the instance reference, camel use the
- default hazelcast instance from the camel-hazelcast instance. The option
- is a com.hazelcast.core.HazelcastInstance type. |  | String
-| *camel.component.hazelcast-set.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If
- you don't specify the mode, then the node mode will be the default. | node | String
-| *camel.component.hazelcast-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.hazelcast-set.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
+| *camel.component.hazelcast-set.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *camel.component.hazelcast-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -207,14 +207,10 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.sql.data-source* | Sets the DataSource to use to communicate with the database. The option
- is a javax.sql.DataSource type. |  | String
+| *camel.component.sql.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
 | *camel.component.sql.enabled* | Enable sql component | true | Boolean
-| *camel.component.sql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.sql.use-placeholder* | Sets whether to use placeholder and replace all placeholder characters
- with sign in the SQL queries. This option is default true | true | Boolean
+| *camel.component.sql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.sql.use-placeholder* | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

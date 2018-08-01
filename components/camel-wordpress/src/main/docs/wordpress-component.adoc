@@ -80,11 +80,8 @@ The component supports 10 options, which are listed below.
 | *camel.component.wordpress.configuration.search-criteria* |  |  | SearchCriteria
 | *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
-| *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is
- enabled by default. |  | Boolean
-| *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
+| *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
