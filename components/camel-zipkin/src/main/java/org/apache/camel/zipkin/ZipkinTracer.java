@@ -757,24 +757,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                     serverRequest(brave, serviceName, exchange);
                 }
             }
+        }
 
-            // add on completion after the route is done, but before the consumer writes the response
-            // this allows us to track the zipkin event before returning the response which is the right time
-            exchange.addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onAfterRoute(Route route, Exchange exchange) {
-                    String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
-                    Brave brave = getBrave(serviceName);
-                    if (brave != null) {
-                        serverResponse(brave, serviceName, exchange);
-                    }
-                }
-
-                @Override
-                public String toString() {
-                    return "ZipkinTracerOnCompletion[" + routeId + "]";
-                }
-            });
+        // Report Server send after route has completed processing of the exchange.
+        @Override
+        public void onExchangeDone(Route route, Exchange exchange) {
+            String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                serverResponse(brave, serviceName, exchange);
+            }
         }
     }
 
