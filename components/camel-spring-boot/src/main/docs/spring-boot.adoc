@@ -143,8 +143,8 @@ The component supports 139 options, which are listed below.
 | *camel.springboot.file-configurations* | Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You must use either file: or classpath: as prefix to load from file system or classpath. Then you can specify a pattern to load from sub directories and a name pattern such as file:/var/app/secret/*.properties |  | String
 | *camel.springboot.handle-fault* | Sets whether fault handling is enabled or not. Default is false. | false | Boolean
 | *camel.springboot.include-non-singletons* | Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances. By default only singleton beans is included in the context scan. | false | Boolean
-| *camel.springboot.java-routes-exclude-pattern* | Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;/Bar* To exclude all routes form a specific package use: com/mycompany/bar/* To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/** And to exclude all routes from two specific packages use: com/mycompany/bar/*,com/mycompany/stuff/* |  | String
-| *camel.springboot.java-routes-include-pattern* | Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/* To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/** And to include all routes from two specific packages use: com/mycompany/foo/*,com/mycompany/stuff/* |  | String
+| *camel.springboot.java-routes-exclude-pattern* | Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;/Bar* To exclude all routes form a specific package use: com/mycompany/bar/* To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42; And to exclude all routes from two specific packages use: com/mycompany/bar/*,com/mycompany/stuff/* |  | String
+| *camel.springboot.java-routes-include-pattern* | Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/* To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42; And to include all routes from two specific packages use: com/mycompany/foo/*,com/mycompany/stuff/* |  | String
 | *camel.springboot.jmx-create-connector* | Whether JMX connector is created, allowing clients to connect remotely The default value is false. | false | Boolean
 | *camel.springboot.jmx-enabled* | Enable JMX in your Camel application. | true | Boolean
 | *camel.springboot.jmx-management-name-pattern* | The naming pattern for creating the CamelContext JMX management name. The default pattern is #name# | #name# | String
@@ -197,20 +197,20 @@ The component supports 139 options, which are listed below.
 | *camel.springboot.xml-rests* | Directory to scan for adding additional XML rests. You can turn this off by setting the value to false. | classpath:camel-rest/*.xml | String
 | *camel.springboot.xml-routes* | Directory to scan for adding additional XML routes. You can turn this off by setting the value to false. | classpath:camel/*.xml | String
 | *camel.springboot.xml-routes-reload-directory* | To watch the directory for file changes which triggers a live reload of the Camel routes on-the-fly. For example configure this to point to the source code where the Camel XML files are located such as: src/main/resources/camel/ |  | String
-| *camel.ssl.config.camel-context* |  |  | CamelContext
-| *camel.ssl.config.cert-alias* |  |  | String
-| *camel.ssl.config.cipher-suites* |  |  | CipherSuitesParameters
-| *camel.ssl.config.cipher-suites-filter* |  |  | FilterParameters
-| *camel.ssl.config.client-parameters* |  |  | SSLContextClient Parameters
-| *camel.ssl.config.key-managers* |  |  | KeyManagersParameters
-| *camel.ssl.config.provider* |  |  | String
-| *camel.ssl.config.secure-random* |  |  | SecureRandomParameters
-| *camel.ssl.config.secure-socket-protocol* |  |  | String
-| *camel.ssl.config.secure-socket-protocols* |  |  | SecureSocketProtocols Parameters
-| *camel.ssl.config.secure-socket-protocols-filter* |  |  | FilterParameters
-| *camel.ssl.config.server-parameters* |  |  | SSLContextServer Parameters
-| *camel.ssl.config.session-timeout* |  |  | String
-| *camel.ssl.config.trust-managers* |  |  | TrustManagersParameters
+| *camel.ssl.cert-alias* | An optional certificate alias to use. This is useful when the keystore has multiple certificates. |  | String
+| *camel.ssl.cipher-suites* | The optional explicitly configured cipher suites for this configuration. |  | CipherSuitesParameters
+| *camel.ssl.cipher-suites-filter* | The optional cipher suite filter configuration for this configuration. |  | FilterParameters
+| *camel.ssl.client-parameters* | The optional configuration options to be applied purely to the client side settings of the SSLContext. Settings specified here override any duplicate settings provided at the overall level by this class. These parameters apply to SSLSocketFactory and SSLEngine produced by the SSLContext produced from this class as well as to the SSLContext itself. |  | SSLContextClient Parameters
+| *camel.ssl.config* | Global Camel security configuration. |  | SSLContextParameters
+| *camel.ssl.key-managers* | The optional key manager configuration for creating the KeyManager used in constructing an SSLContext. |  | KeyManagersParameters
+| *camel.ssl.provider* | The optional provider identifier for the JSSE implementation to use when constructing an SSLContext. |  | String
+| *camel.ssl.secure-random* | The optional secure random configuration options to use for constructing the SecureRandom used in the creation of an SSLContext. |  | SecureRandomParameters
+| *camel.ssl.secure-socket-protocol* | The optional protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names. |  | String
+| *camel.ssl.secure-socket-protocols* | The optional explicitly configured secure socket protocol names for this configuration. |  | SecureSocketProtocols Parameters
+| *camel.ssl.secure-socket-protocols-filter* | The option secure socket protocol name filter configuration for this configuration. |  | FilterParameters
+| *camel.ssl.server-parameters* | The optional configuration options to be applied purely to the server side settings of the SSLContext. Settings specified here override any duplicate settings provided at the overall level by this class. These parameters apply to SSLServerSocketFactory and SSLEngine produced by the SSLContext produced from this class as well as to the SSLContext itself. |  | SSLContextServer Parameters
+| *camel.ssl.session-timeout* | The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in seconds. |  | String
+| *camel.ssl.trust-managers* | The optional trust manager configuration for creating the TrustManager used in constructing an SSLContext. |  | TrustManagersParameters
 | *camel.supervising.controller.default-back-off.delay* | The delay to wait before retry the operation. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
 | *camel.supervising.controller.default-back-off.max-attempts* | The maximum number of attempts after which the back-off is exhausted. |  | Long
 | *camel.supervising.controller.default-back-off.max-delay* | The maximum back-off time. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
