@@ -101,7 +101,7 @@ public class CamelConfigurationProperties {
      * Multiple patterns can be specified separated by comma.
      * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
      * To include all routes form a specific package use: com/mycompany/foo/*
-     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/**
+     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
      * And to include all routes from two specific packages use: com/mycompany/foo/*,com/mycompany/stuff/*
      */
     private String javaRoutesIncludePattern;
@@ -114,7 +114,7 @@ public class CamelConfigurationProperties {
      *
      * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar*
      * To exclude all routes form a specific package use: com/mycompany/bar/*
-     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/**
+     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
      * And to exclude all routes from two specific packages use: com/mycompany/bar/*,com/mycompany/stuff/*
      */
     private String javaRoutesExcludePattern;
