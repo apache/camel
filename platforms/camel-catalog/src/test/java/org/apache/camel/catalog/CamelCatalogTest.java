@@ -24,7 +24,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1177,6 +1179,17 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    @Ignore("CAMEL-12705") // TODO: Fix this bug
+    public void testNetty4Http4DynamicToIssue() throws Exception {
+        String uri = "netty4-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
+        Map<String, String> params = catalog.endpointProperties(uri);
+        params.remove("path");
+
+        String resolved = catalog.asEndpointUri("netty4-http", params, false);
+        assertEquals("netty4-http:http:10.192.1.10:8080", resolved);
     }
 
     @Test
