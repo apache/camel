@@ -66,7 +66,7 @@ public abstract class AbstractCamelCatalog {
 
     // CHECKSTYLE:OFF
 
-    private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+    private static final Pattern SYNTAX_PATTERN = Pattern.compile("([\\w.]+)");
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
     private SuggestionStrategy suggestionStrategy;
@@ -938,7 +938,7 @@ public abstract class AbstractCamelCatalog {
             // oh darn some options is missing, so we need a complex way of building the uri
 
             // the tokens between the options in the path
-            String[] tokens = syntax.split("\\w+");
+            String[] tokens = syntax.split("[\\w.]+");
 
             // parse the syntax into each options
             Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
