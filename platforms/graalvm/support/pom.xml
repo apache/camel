@@ -84,36 +84,4 @@
 
     </dependencies>
 
-    <!--<build>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<artifactId>maven-shade-plugin</artifactId>-->
-                <!--<version>3.1.1</version>-->
-                <!--<configuration>-->
-                    <!--<artifactSet>-->
-                        <!--<excludes>-->
-                            <!--<exclude>com.sun.xml.bind:*</exclude>-->
-                        <!--</excludes>-->
-                    <!--</artifactSet>-->
-                    <!--<filters>-->
-                        <!--<filter>-->
-                            <!--<artifact>org.apache.camel:camel-core</artifact>-->
-                            <!--<excludes>-->
-                            <!--</excludes>-->
-                        <!--</filter>-->
-                    <!--</filters>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>shade</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-
-    <!--</build>-->
-
 </project>
