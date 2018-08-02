@@ -82,11 +82,10 @@
                                 <argument>-cp</argument>
                                 <classpath/>
                                 <argument>-DCamelSimpleLRUCacheFactory=true</argument>
-                                <argument>-H:ReflectionConfigurationFiles=../src/graalvm/reflectionconfig.json</argument>
                                 <argument>-H:IncludeResources=META-INF/.*</argument>
                                 <argument>-H:Features=org.apache.camel.graalvm.support.CamelFeature</argument>
                                 <argument>-H:+JNI</argument>
-                                <argument>org.apache.camel.graalvm.Main</argument>
+                                <argument>org.apache.camel.graalvm.example.SimpleCamelRouteBuilder</argument>
                             </arguments>
                         </configuration>
                     </execution>

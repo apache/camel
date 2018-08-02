@@ -4,70 +4,37 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.function.Supplier;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.graalvm.CamelRuntime;
+import org.apache.camel.graalvm.Reflection;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
-public class SimpleCamelRouteBuilder extends RouteBuilder {
+public class SimpleCamelRouteBuilder extends CamelRuntime {
+
+    public static void main(String[] args) throws Exception {
+        new SimpleCamelRouteBuilder().run(args);
+    }
 
     @Override
     public void configure() {
-        Executors.newCachedThreadPool(new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread th = new Thread(r);
-                th.setDaemon(true);
-                return th;
-            }
-        });
 
-        from("file:./target/orders")
-            .setHeader(MyOrderService.class.getName(), newOrderService())
-            .split(body().tokenize("@"), new AggregationStrategy() {
-                @Override
-                public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                    return SimpleCamelRouteBuilder.this.aggregate(oldExchange, newExchange);
-                }
-            })
+        bind("orderService", new MyOrderService());
+
+        from("file:./target/orders?idempotent=true")
+            .setHeader("orderState", MyOrderState::new)
+            .split(body().tokenize("@"), SimpleCamelRouteBuilder.this::aggregate)
             // each splitted message is then send to this bean where we can process it
-            .process(stateless(MyOrderService.class.getName(), "handleOrder"))
+            .bean("orderService", "handleOrder(${header.orderState}, ${body})")
             // this is important to end the splitter route as we do not want to do more routing
             // on each splitted message
             .end()
             // after we have splitted and handled each message we want to send a single combined
             // response back to the original caller, so we let this bean build it for us
             // this bean will receive the result of the aggregate strategy: MyOrderStrategy
-            .process(stateless(MyOrderService.class.getName(), "buildCombinedResponse"))
+            .bean("orderService", "buildCombinedResponse(${header.orderState}, ${body})")
             // log out
             .to("log:out");
-    }
-
-    public Expression extractMessage() {
-        return new Expression() {
-            @Override
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                return type.cast(exchange.getIn().getBody(String.class));
-            }
-        };
-    }
-
-    public Supplier<Object> newOrderService() {
-        return new Supplier<Object>() {
-            @Override
-            public Object get() {
-                return new MyOrderService();
-            }
-        };
     }
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -92,27 +59,21 @@ public class SimpleCamelRouteBuilder extends RouteBuilder {
         return oldExchange;
     }
 
-    private Processor stateless(String header, String method) {
-        return new AsyncProcessor() {
-            @Override
-            public boolean process(Exchange exchange, AsyncCallback callback) {
-                return getBeanProcess(exchange).process(exchange, callback);
-            }
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                getBeanProcess(exchange).process(exchange);
-            }
-            protected BeanProcessor getBeanProcess(Exchange exchange) {
-                BeanProcessor bp = new BeanProcessor(
-                        exchange.getIn().getHeader(header),
-                        exchange.getContext());
-                bp.setMethod(method);
-                return bp;
-            }
-        };
+    public class MyOrderService {
+
+        @Reflection
+        public String handleOrder(MyOrderState state, String line) {
+            return state.handleOrder(line);
+        }
+
+        @Reflection
+        public Map<String, Object> buildCombinedResponse(MyOrderState state, List<String> lines) {
+            return state.buildCombinedResponse(lines);
+        }
+
     }
 
-    public class MyOrderService {
+    public class MyOrderState {
 
         private int counter;
 

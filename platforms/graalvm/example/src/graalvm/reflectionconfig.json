@@ -1,4 +1,0 @@
-[
-  { "name" : "org.apache.camel.graalvm.example.SimpleCamelRouteBuilder", "allPublicConstructors" : true },
-  { "name" : "org.apache.camel.graalvm.example.SimpleCamelRouteBuilder$MyOrderService", "allPublicMethods" : true }
-]
