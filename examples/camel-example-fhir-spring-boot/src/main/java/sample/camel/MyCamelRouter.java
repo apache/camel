@@ -16,16 +16,16 @@
  */
 package sample.camel;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.LoggingLevel;
-import org.apache.http.ProtocolException;
-import org.hl7.fhir.dstu3.model.Patient;
-import org.springframework.stereotype.Component;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.http.ProtocolException;
+
+import org.hl7.fhir.dstu3.model.Patient;
+import org.springframework.stereotype.Component;
 
 /**
  * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
