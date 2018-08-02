@@ -138,7 +138,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <skipTests>false</skipTests>
+              <skipTests>${skipTests}</skipTests>
               <systemPropertyVariables>
                 <visibleassertions.silence>true</visibleassertions.silence>
               </systemPropertyVariables>
@@ -161,7 +161,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <skipTests>false</skipTests>
+              <skipTests>${skipTests}</skipTests>
               <systemPropertyVariables>
                 <visibleassertions.silence>true</visibleassertions.silence>
               </systemPropertyVariables>
