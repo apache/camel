@@ -700,7 +700,6 @@
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>2.0</velocity-version>
     <vertx-version>3.5.3</vertx-version>
-    <vertx-jackson-version>2.9.0</vertx-jackson-version>
     <vysper-version>0.7</vysper-version>
     <web3j-version>3.5.0</web3j-version>
     <weld1-version>1.1.28.Final</weld1-version>
