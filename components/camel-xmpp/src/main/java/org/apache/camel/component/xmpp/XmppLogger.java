@@ -32,7 +32,7 @@ public class XmppLogger implements StanzaListener {
 
     public void processStanza(Stanza stanza) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("{} : {}", direction, stanza.toXML());
+            LOG.debug("{} : {}", direction, stanza.toXML(null));
         }
     }
 }
