@@ -1,3 +1,4 @@
+[[cdi-component]]
 == Camel CDI
 
 The Camel CDI component provides auto-configuration for Apache Camel

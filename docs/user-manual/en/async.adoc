@@ -215,7 +215,7 @@ just use plain Java but invoke `get()` on the `Future` handle.
 
 [[Async-TheClientAPIwithcallbacks]]
 The Async Client API with callbacks
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In addition to the Client API from above Camel provides a variation that
 uses callbacks when the message
