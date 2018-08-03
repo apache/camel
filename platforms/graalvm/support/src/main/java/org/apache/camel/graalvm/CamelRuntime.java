@@ -25,6 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.MainSupport;
+import org.apache.camel.model.ModelCamelContext;
 
 public abstract class CamelRuntime extends RouteBuilder {
 
@@ -43,6 +44,11 @@ public abstract class CamelRuntime extends RouteBuilder {
     public void run(String[] args) throws Exception {
         main.setRouteBuilders(Collections.singletonList(this));
         main.run(args);
+    }
+
+    @Override
+    protected ModelCamelContext createContainer() {
+        throw new IllegalStateException();
     }
 
     public SimpleRegistry getRegistry() {

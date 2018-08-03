@@ -80,7 +80,7 @@ public class SimpleCamelRouteBuilder extends CamelRuntime {
         /**
          * We just handle the order by returning a id line for the order
          */
-        public String handleOrder(String line) {
+        public synchronized String handleOrder(String line) {
             log.debug("HandleOrder: " + line);
             return "(id=" + ++counter + ",item=" + line + ")";
         }
@@ -89,7 +89,7 @@ public class SimpleCamelRouteBuilder extends CamelRuntime {
          * We use the same bean for building the combined response to send
          * back to the original caller
          */
-        public Map<String, Object> buildCombinedResponse(List<String> lines) {
+        public synchronized Map<String, Object> buildCombinedResponse(List<String> lines) {
             log.debug("BuildCombinedResponse: " + lines);
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("success", true);

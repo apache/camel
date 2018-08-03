@@ -63,7 +63,7 @@ public class RouteService extends ChildServiceSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteService.class);
 
-    private final DefaultCamelContext camelContext;
+    private final AbstractCamelContext camelContext;
     private final RouteDefinition routeDefinition;
     private final List<RouteContext> routeContexts;
     private final List<Route> routes;
@@ -73,7 +73,7 @@ public class RouteService extends ChildServiceSupport {
     private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
     private final AtomicBoolean endpointDone = new AtomicBoolean(false);
 
-    public RouteService(DefaultCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
+    public RouteService(AbstractCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
         this.camelContext = camelContext;
         this.routeDefinition = routeDefinition;
         this.routeContexts = routeContexts;
