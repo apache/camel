@@ -39,12 +39,12 @@
     * [Inversion Of Control With Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
     * [Lifecycle](lifecycle.adoc)
     * [OnCompletion](oncompletion.adoc)
+    * [Predicate](predicate.adoc)
     * [Registry](registry.adoc)
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
     * [Pluggable Class Resolvers](.adoc)
-    * [Predicate](.adoc)
     * [Processor](.adoc)
     * [RouteBuilder](.adoc)
     * [RoutePolicy](.adoc)
@@ -579,5 +579,5 @@
     * [How to run Camel in a osgi container]
     * [Using OSGi blueprint with Camel]
     * [Working with Camel and SCR]
-    * Working with REST and link:rest-dsl.html[Rest DSL]
+    * Working with REST and [Rest DSL]
     * [JSSE Utility](camel-configuration-utilities.adoc)
