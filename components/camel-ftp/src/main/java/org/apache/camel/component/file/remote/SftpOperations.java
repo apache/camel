@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
@@ -41,11 +44,13 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Proxy;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -356,6 +361,26 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // set proxy if configured
         if (proxy != null) {
             session.setProxy(proxy);
+        }
+
+        if (isNotEmpty(sftpConfig.getBindAddress())) {
+            session.setSocketFactory(new SocketFactory() {
+
+                @Override
+                public OutputStream getOutputStream(Socket socket) throws IOException {
+                    return socket.getOutputStream();
+                }
+
+                @Override
+                public InputStream getInputStream(Socket socket) throws IOException {
+                    return socket.getInputStream();
+                }
+
+                @Override
+                public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+                    return createSocketUtil(host, port, sftpConfig.getBindAddress(), session.getTimeout());
+                }
+            });
         }
 
         return session;
@@ -1073,5 +1098,65 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     public synchronized boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         // is not implemented
         return true;
+    }
+
+    /*
+     * adapted from com.jcraft.jsch.Util.createSocket(String, int, int)
+     *
+     * added possibility to specify the address of the local network interface, against the
+     * connection should bind
+     */
+    static Socket createSocketUtil(final String host, final int port, final String bindAddress, final int timeout) {
+        Socket socket = null;
+        if (timeout == 0) {
+            try {
+                socket = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
+                return socket;
+            } catch (Exception e) {
+                String message = e.toString();
+                if (e instanceof Throwable) {
+                    throw new RuntimeCamelException(message, (Throwable)e);
+                }
+                throw new RuntimeCamelException(message);
+            }
+        }
+        final Socket[] sockp = new Socket[1];
+        final Exception[] ee = new Exception[1];
+        String message = "";
+        Thread tmp = new Thread(new Runnable() {
+            public void run() {
+                sockp[0] = null;
+                try {
+                    sockp[0] = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
+                } catch (Exception e) {
+                    ee[0] = e;
+                    if (sockp[0] != null && sockp[0].isConnected()) {
+                        try {
+                            sockp[0].close();
+                        } catch (Exception eee) { }
+                    }
+                    sockp[0] = null;
+                }
+            }
+        });
+        tmp.setName("Opening Socket " + host);
+        tmp.start();
+        try {
+            tmp.join(timeout);
+            message = "timeout: ";
+        } catch (java.lang.InterruptedException eee) {
+        }
+        if (sockp[0] != null && sockp[0].isConnected()) {
+            socket = sockp[0];
+        } else {
+            message += "socket is not established";
+            if (ee[0] != null) {
+                message = ee[0].toString();
+            }
+            tmp.interrupt();
+            tmp = null;
+            throw new RuntimeCamelException(message, ee[0]);
+        }
+        return socket;
     }
 }

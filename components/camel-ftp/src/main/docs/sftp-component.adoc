@@ -51,7 +51,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (115 parameters):
+==== Query Parameters (116 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,6 +111,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *throwExceptionOnConnect Failed* (advanced) | Should an exception be thrown if connection failed (exhausted) By default exception is not thrown and a WARN is logged. You can use this to enable exception being thrown and handle the thrown exception from the org.apache.camel.spi.PollingConsumerPollStrategy rollback method. | false | boolean
 | *timeout* (advanced) | Sets the data timeout for waiting for reply Used only by FTPClient | 30000 | int
+| *bindAddress* (bindAddress) | Specifies the address of the local interface against which the connection should bind. |  | String
 | *antExclude* (filter) | Ant style filter exclusion. If both antInclude and antExclude are used, antExclude takes precedence over antInclude. Multiple exclusions may be specified in comma-delimited format. |  | String
 | *antFilterCaseSensitive* (filter) | Sets case sensitive flag on ant filter | true | boolean
 | *antInclude* (filter) | Ant style filter inclusion. Multiple inclusions may be specified in comma-delimited format. |  | String
