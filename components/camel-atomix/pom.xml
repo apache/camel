@@ -122,6 +122,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
