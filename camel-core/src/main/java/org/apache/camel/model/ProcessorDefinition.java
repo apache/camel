@@ -312,8 +312,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             log.trace("{} is part of OnException so no error handler is applied", defn);
             // do not use error handler for onExceptions blocks as it will handle errors itself
         } else if (defn instanceof HystrixDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixDefinition.class, defn, true)) {
-            log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
-            // do not use error handler for hystrixCircuitBreaker blocks as it will handle errors itself
+            // do not use error handler for hystrix as it offers circuit breaking with fallback for its outputs
+            // however if inherit error handler is enabled, we need to wrap an error handler on the hystrix parent
+            if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
+                // only wrap the parent (not the children of the hystrix)
+                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
+            } else {
+                log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
+            }
         } else if (defn instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
