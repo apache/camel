@@ -102,10 +102,10 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         // set original exchange if not already pre-configured
         if (strategy instanceof UseOriginalAggregationStrategy) {
+            // need to create a new private instance, as we can also have concurrency issue so we cannot store state
             UseOriginalAggregationStrategy original = (UseOriginalAggregationStrategy) strategy;
-            if (original.getOriginal() == null) {
-                original.setOriginal(exchange);
-            }
+            UseOriginalAggregationStrategy clone = original.newInstance(exchange);
+            setAggregationStrategyOnExchange(exchange, clone);
         }
 
         // if no custom aggregation strategy is being used then fallback to keep the original
