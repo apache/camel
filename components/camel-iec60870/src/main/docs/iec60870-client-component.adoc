@@ -110,11 +110,8 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.iec60870-client.default-connection-options.ignore-background-scan* | Whether background scan transmissions should be ignored. | true | Boolean
-| *camel.component.iec60870-client.enabled* | Whether to enable auto configuration of the iec60870-client component.
- This is enabled by default. |  | Boolean
-| *camel.component.iec60870-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.iec60870-client.enabled* | Whether to enable auto configuration of the iec60870-client component. This is enabled by default. |  | Boolean
+| *camel.component.iec60870-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

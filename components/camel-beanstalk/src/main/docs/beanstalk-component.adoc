@@ -137,15 +137,9 @@ The component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.beanstalk.connection-settings-factory* | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory
- to use to make connections to Beanstalkd. Especially useful for unit
- testing without beanstalkd daemon (you can mock ConnectionSettings). The
- option is a
- org.apache.camel.component.beanstalk.ConnectionSettingsFactory type. |  | String
+| *camel.component.beanstalk.connection-settings-factory* | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings). The option is a org.apache.camel.component.beanstalk.ConnectionSettingsFactory type. |  | String
 | *camel.component.beanstalk.enabled* | Enable beanstalk component | true | Boolean
-| *camel.component.beanstalk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.beanstalk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

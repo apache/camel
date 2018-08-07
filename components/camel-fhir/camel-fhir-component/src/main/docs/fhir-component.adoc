@@ -130,11 +130,8 @@ The component supports 23 options, which are listed below.
 | *camel.component.fhir.configuration.client-factory* | To use the custom client factory |  | IRestfulClientFactory
 | *camel.component.fhir.configuration.compress* | Compresses outgoing (POST/PUT) contents to the GZIP format | false | Boolean
 | *camel.component.fhir.configuration.connection-timeout* | How long to try and establish the initial TCP connection (in ms) | 10000 | Integer
-| *camel.component.fhir.configuration.defer-model-scanning* | When this option is set, model classes will not be scanned for
- children until the child list for the given type is actually
- accessed. | false | Boolean
-| *camel.component.fhir.configuration.fhir-context* | FhirContext is an expensive object to create. To avoid creating
- multiple instances, it can be set directly. |  | FhirContext
+| *camel.component.fhir.configuration.defer-model-scanning* | When this option is set, model classes will not be scanned for children until the child list for the given type is actually accessed. | false | Boolean
+| *camel.component.fhir.configuration.fhir-context* | FhirContext is an expensive object to create. To avoid creating multiple instances, it can be set directly. |  | FhirContext
 | *camel.component.fhir.configuration.force-conformance-check* | Force conformance check | false | Boolean
 | *camel.component.fhir.configuration.log* | Will log every requests and responses | false | Boolean
 | *camel.component.fhir.configuration.method-name* | What sub operation to use for the selected operation |  | String
@@ -148,10 +145,7 @@ The component supports 23 options, which are listed below.
 | *camel.component.fhir.configuration.session-cookie* | HTTP session cookie to add to every request |  | String
 | *camel.component.fhir.configuration.socket-timeout* | How long to block for individual read/write operations (in ms) | 10000 | Integer
 | *camel.component.fhir.configuration.username* | Username to use for basic authentication |  | String
-| *camel.component.fhir.enabled* | Whether to enable auto configuration of the fhir component. This is
- enabled by default. |  | Boolean
-| *camel.component.fhir.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.fhir.enabled* | Whether to enable auto configuration of the fhir component. This is enabled by default. |  | Boolean
+| *camel.component.fhir.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END

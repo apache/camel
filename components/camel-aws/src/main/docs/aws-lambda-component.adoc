@@ -100,18 +100,14 @@ The component supports 13 options, which are listed below.
 | *camel.component.aws-lambda.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-lambda.configuration.aws-lambda-client* | To use a existing configured AwsLambdaClient as client |  | AWSLambda
 | *camel.component.aws-lambda.configuration.function* | Name of the Lambda function. |  | String
-| *camel.component.aws-lambda.configuration.operation* | The operation to perform. It can be listFunctions, getFunction,
- createFunction, deleteFunction or invokeFunction |  | LambdaOperations
+| *camel.component.aws-lambda.configuration.operation* | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction |  | LambdaOperations
 | *camel.component.aws-lambda.configuration.proxy-host* | To define a proxy host when instantiating the Lambda client |  | String
 | *camel.component.aws-lambda.configuration.proxy-port* | To define a proxy port when instantiating the Lambda client |  | Integer
 | *camel.component.aws-lambda.configuration.region* | Amazon AWS Region |  | String
 | *camel.component.aws-lambda.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-lambda.enabled* | Whether to enable auto configuration of the aws-lambda component. This is
- enabled by default. |  | Boolean
+| *camel.component.aws-lambda.enabled* | Whether to enable auto configuration of the aws-lambda component. This is enabled by default. |  | Boolean
 | *camel.component.aws-lambda.region* | Amazon AWS Region |  | String
-| *camel.component.aws-lambda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.aws-lambda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-lambda.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END

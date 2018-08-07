@@ -1180,6 +1180,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testNetty4Http4DynamicToIssue() throws Exception {
+        String uri = "netty4-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
+        Map<String, String> params = catalog.endpointProperties(uri);
+        params.remove("path");
+        params.remove("throwExceptionOnFailure");
+
+        String resolved = catalog.asEndpointUri("netty4-http", params, false);
+        assertEquals("netty4-http:http:10.192.1.10:8080", resolved);
+    }
+
+    @Test
     public void testJSonSchemaHelper() throws Exception {
         String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy.json"));
         assertNotNull(json);

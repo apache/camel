@@ -32,7 +32,6 @@ import brave.propagation.TraceContext;
 import brave.propagation.TraceContext.Extractor;
 import brave.propagation.TraceContext.Injector;
 import brave.sampler.Sampler;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -55,7 +54,6 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -743,24 +741,17 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                     serverRequest(brave, serviceName, exchange);
                 }
             }
+        }
 
-            // add on completion after the route is done, but before the consumer writes the response
-            // this allows us to track the zipkin event before returning the response which is the right time
-            exchange.addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onAfterRoute(Route route, Exchange exchange) {
-                    String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
-                    Tracing brave = getTracing(serviceName);
-                    if (brave != null) {
-                        serverResponse(brave, serviceName, exchange);
-                    }
-                }
-
-                @Override
-                public String toString() {
-                    return "ZipkinTracerOnCompletion[" + routeId + "]";
-                }
-            });
+        // Report Server send after route has completed processing of the exchange.
+        @Override
+        public void onExchangeDone(Route route, Exchange exchange) {
+            String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+            Tracing brave = getTracing(serviceName);
+            if (brave != null) {
+                serverResponse(brave, serviceName, exchange);
+            }
         }
     }
+
 }

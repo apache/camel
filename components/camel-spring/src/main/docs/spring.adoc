@@ -1,3 +1,4 @@
+[[SpringSupport-SpringSupport]]
 ## Spring Support
 
 Apache Camel is designed to work nicely with the

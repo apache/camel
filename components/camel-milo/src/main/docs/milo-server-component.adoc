@@ -121,33 +121,22 @@ The component supports 21 options, which are listed below.
 | *camel.component.milo-server.application-uri* | The application URI |  | String
 | *camel.component.milo-server.bind-addresses* | Set the addresses of the local addresses the server should bind to |  | String
 | *camel.component.milo-server.bind-port* | The TCP port the server binds to |  | Integer
-| *camel.component.milo-server.build-info* | Server build info. The option is a
- org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo type. |  | String
-| *camel.component.milo-server.certificate-manager* | Server certificate manager. The option is a
- org.eclipse.milo.opcua.stack.core.application.CertificateManager type. |  | String
-| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a
- java.util.function.Supplier
- <org.eclipse.milo.opcua.stack.core.application.CertificateValidator>
- type. |  | String
+| *camel.component.milo-server.build-info* | Server build info. The option is a org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo type. |  | String
+| *camel.component.milo-server.certificate-manager* | Server certificate manager. The option is a org.eclipse.milo.opcua.stack.core.application.CertificateManager type. |  | String
+| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a java.util.function.Supplier <org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type. |  | String
 | *camel.component.milo-server.default-certificate-validator* | Validator for client certificates using default file based approach |  | File
 | *camel.component.milo-server.enable-anonymous-authentication* | Enable anonymous authentication, disabled by default | false | Boolean
 | *camel.component.milo-server.enabled* | Enable milo-server component | true | Boolean
 | *camel.component.milo-server.hostname* | Server hostname |  | String
 | *camel.component.milo-server.namespace-uri* | The URI of the namespace, defaults to urn:org:apache:camel |  | String
 | *camel.component.milo-server.product-uri* | The product URI |  | String
-| *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.milo-server.security-policies* | Security policies. The option is a
- java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy>
- type. |  | String
+| *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.milo-server.security-policies* | Security policies. The option is a java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy> type. |  | String
 | *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | String>
-| *camel.component.milo-server.server-certificate* | Server certificate. The option is a
- org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String
+| *camel.component.milo-server.server-certificate* | Server certificate. The option is a org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String
 | *camel.component.milo-server.server-name* | Server name |  | String
 | *camel.component.milo-server.strict-endpoint-urls-enabled* | Set whether strict endpoint URLs are enforced | false | Boolean
-| *camel.component.milo-server.user-authentication-credentials* | Set user password combinations in the form of user1:pwd1,user2:pwd2
- Usernames and passwords will be URL decoded |  | String
+| *camel.component.milo-server.user-authentication-credentials* | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
 | *camel.component.milo-server.username-security-policy-uri* | Set the UserTokenPolicy used when |  | SecurityPolicy
 |===
 // spring-boot-auto-configure options: END

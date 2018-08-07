@@ -106,15 +106,12 @@ The component supports 16 options, which are listed below.
 | *camel.component.aws-sns.configuration.proxy-port* | To define a proxy port when instantiating the SNS client |  | Integer
 | *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work |  | String
 | *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject'
- is not present. |  | String
+| *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *camel.component.aws-sns.configuration.topic-arn* | The Amazon Resource Name (ARN) assigned to the created topic. |  | String
 | *camel.component.aws-sns.configuration.topic-name* | The name of the topic |  | String
 | *camel.component.aws-sns.enabled* | Enable aws-sns component | true | Boolean
 | *camel.component.aws-sns.region* | The region in which SNS client needs to work |  | String
-| *camel.component.aws-sns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.aws-sns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-sns.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END

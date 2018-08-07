@@ -134,9 +134,7 @@ The component supports 5 options, which are listed below.
 | *camel.component.kestrel.configuration.concurrent-consumers* | How many concurrent listeners to schedule for the thread pool | 1 | Integer
 | *camel.component.kestrel.configuration.wait-time-ms* | How long a given wait should block (server side), in milliseconds | 100 | Integer
 | *camel.component.kestrel.enabled* | Enable kestrel component | true | Boolean
-| *camel.component.kestrel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.kestrel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -23,7 +23,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
-import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.StringHelper;
 
 /**

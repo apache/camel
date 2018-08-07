@@ -153,11 +153,8 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.hdfs.enabled* | Enable hdfs component | true | Boolean
-| *camel.component.hdfs.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a
- javax.security.auth.login.Configuration type. |  | String
-| *camel.component.hdfs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.hdfs.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a javax.security.auth.login.Configuration type. |  | String
+| *camel.component.hdfs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

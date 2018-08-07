@@ -3332,7 +3332,7 @@
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>jempbox</artifactId>
-        <version>1.8.13</version>
+        <version>1.8.15</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
@@ -3449,7 +3449,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.8</version>
+        <version>4.3.9</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>

@@ -123,12 +123,8 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.scp.enabled* | Enable scp component | true | Boolean
-| *camel.component.scp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.scp.verbose-logging* | JSCH is verbose logging out of the box. Therefore we turn the logging
- down to DEBUG logging by default. But setting this option to true turns
- on the verbose logging again. | false | Boolean
+| *camel.component.scp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.scp.verbose-logging* | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

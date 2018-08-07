@@ -215,7 +215,7 @@ just use plain Java but invoke `get()` on the `Future` handle.
 
 [[Async-TheClientAPIwithcallbacks]]
 The Async Client API with callbacks
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In addition to the Client API from above Camel provides a variation that
 uses callbacks when the message
@@ -297,7 +297,7 @@ messages that differs:
 
 [[Async-UsingtheAPIwithcallbacks]]
 Using the Async API with callbacks
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Suppose we want to call a <<http-component,HTTP>> service but it is usually
 slow and thus we do not want to block and wait for the response, but
@@ -326,7 +326,7 @@ to get the response.
 
 [[Async-UsingtheAPIwiththeCamelclassicAPI]]
 Using the Async API with the Camel classic API
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When using the Camel API to create a producer and send an
 Exchange we do it like this:
@@ -509,11 +509,10 @@ See Also
 * Asynchronous Processing
 * Request Reply
 * Request Only
-*
-http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
+* http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
 entry on using async for concurrent file processing]
 * <<seda-component,SEDA>>
 * <<direct-component,Direct>>
-* ToAsync for non blocking
+* To Async for non blocking
 Request Reply
 

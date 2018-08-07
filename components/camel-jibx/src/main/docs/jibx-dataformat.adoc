@@ -54,10 +54,7 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.dataformat.jibx.binding-name* | To use a custom binding factory |  | String
-| *camel.dataformat.jibx.content-type-header* | Whether the data format should set the Content-Type header with the type
- from the data format if the data format is capable of doing so. For
- example application/xml for data formats marshalling to XML, or
- application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.jibx.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.jibx.enabled* | Enable jibx dataformat | true | Boolean
 | *camel.dataformat.jibx.unmarshall-class* | Class name to use when unmarshalling from XML to Java. |  | String
 |===

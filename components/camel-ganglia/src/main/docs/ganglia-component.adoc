@@ -120,9 +120,7 @@ The component supports 16 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.ganglia.configuration.dmax* | Minumum time in seconds before Ganglia will purge the metric value if
- it expires. Set to 0 and the value will remain in Ganglia
- indefinitely until a gmond agent restart. | 0 | Integer
+| *camel.component.ganglia.configuration.dmax* | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | Integer
 | *camel.component.ganglia.configuration.group-name* | The group that the metric belongs to. | java | String
 | *camel.component.ganglia.configuration.host* | Host name for Ganglia server | 239.2.11.71 | String
 | *camel.component.ganglia.configuration.metric-name* | The name to use for the metric. | metric | String
@@ -131,19 +129,13 @@ The component supports 16 options, which are listed below.
 | *camel.component.ganglia.configuration.prefix* | Prefix the metric name with this string and an underscore. |  | String
 | *camel.component.ganglia.configuration.slope* | The slope |  | GMetricSlope
 | *camel.component.ganglia.configuration.spoof-hostname* | Spoofing information IP:hostname |  | String
-| *camel.component.ganglia.configuration.tmax* | Maximum time in seconds that the value can be considered current.
- After this, Ganglia considers the value to have expired. | 60 | Integer
+| *camel.component.ganglia.configuration.tmax* | Maximum time in seconds that the value can be considered current. After this, Ganglia considers the value to have expired. | 60 | Integer
 | *camel.component.ganglia.configuration.ttl* | If using multicast, set the TTL of the packets | 5 | Integer
 | *camel.component.ganglia.configuration.type* | The type of value |  | GMetricType
-| *camel.component.ganglia.configuration.units* | Any unit of measurement that qualifies the metric, e.g. widgets,
- litres, bytes. Do not include a prefix such as k (kilo) or m (milli),
- other tools may scale the units later. The value should be unscaled. |  | String
-| *camel.component.ganglia.configuration.wire-format31x* | Use the wire format of Ganglia 3.1.0 and later versions. Set this to
- false to use Ganglia 3.0.x or earlier. | true | Boolean
+| *camel.component.ganglia.configuration.units* | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
+| *camel.component.ganglia.configuration.wire-format31x* | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | Boolean
 | *camel.component.ganglia.enabled* | Enable ganglia component | true | Boolean
-| *camel.component.ganglia.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.ganglia.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

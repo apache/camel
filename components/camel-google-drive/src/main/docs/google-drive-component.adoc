@@ -134,27 +134,17 @@ The component supports 11 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.google-drive.client-factory* | To use the GoogleCalendarClientFactory as factory for creating the
- client. Will by default use BatchGoogleDriveClientFactory. The option is
- a org.apache.camel.component.google.drive.GoogleDriveClientFactory type. |  | String
-| *camel.component.google-drive.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so
- refreshToken is recommended for long term usage. |  | String
+| *camel.component.google-drive.client-factory* | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory. The option is a org.apache.camel.component.google.drive.GoogleDriveClientFactory type. |  | String
+| *camel.component.google-drive.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-drive.configuration.api-name* | What kind of operation to perform |  | GoogleDriveApiName
-| *camel.component.google-drive.configuration.application-name* | Google drive application name. Example would be
- camel-google-drive/1.0 |  | String
+| *camel.component.google-drive.configuration.application-name* | Google drive application name. Example would be camel-google-drive/1.0 |  | String
 | *camel.component.google-drive.configuration.client-id* | Client ID of the drive application |  | String
 | *camel.component.google-drive.configuration.client-secret* | Client secret of the drive application |  | String
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String
-| *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can
- obtain a new accessToken whenever the current one expires - a
- necessity if the application is long-lived. |  | String
-| *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to
- have to a user account. See
- https://developers.google.com/drive/web/scopes for more info. |  | List
+| *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See https://developers.google.com/drive/web/scopes for more info. |  | List
 | *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
-| *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
+| *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

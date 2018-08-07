@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
@@ -68,7 +67,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the URI to be used for the endpoint {@link Validator}.
-     * @see {@link EndpointValidatorDefinition}, {@link ProcessorValidator}
+     * @see EndpointValidatorDefinition, ProcessorValidator
      * 
      * @param uri endpoint URI
      */
@@ -80,7 +79,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the {@link Expression} to be used for the predicate {@link Validator}.
-     * @see {@link PredicateValidatorDefinition}, {@link ProcessorValidator}
+     * @see PredicateValidatorDefinition, ProcessorValidator
      * 
      * @param expression validation expression
      */
@@ -92,7 +91,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the {@link Predicate} to be used for the predicate {@link Validator}.
-     * @see {@link PredicateValidatorDefinition}, {@link ProcessorValidator}
+     * @see PredicateValidatorDefinition, ProcessorValidator
      * 
      * @param predicate validation predicate
      */
@@ -104,7 +103,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the Java {@code Class} represents a custom {@code Validator} implementation class.
-     * @see {@code CustomValidatorDefinition}
+     * @see CustomValidatorDefinition
      * 
      * @param clazz {@code Class} object represents custom validator implementation
      */
@@ -116,7 +115,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the Java Bean name to be used for custom {@code Validator}.
-     * @see {@code CustomValidatorDefinition}
+     * @see CustomValidatorDefinition
      * 
      * @param ref bean name for the custom {@code Validator}
      */
@@ -134,10 +133,10 @@ public class ValidatorBuilder {
     }
 
     /**
-     * Configure a Validator according to the configurations built on this builder
-     * and register it into given {@code CamelContext}.
+     * Configures a new Validator according to the configurations built on this builder
+     * and register it into the given {@code CamelContext}.
      * 
-     * @param camelContext {@code CamelContext}
+     * @param camelContext the given CamelContext
      */
     public void configure(CamelContext camelContext) {
         ValidatorDefinition validator;

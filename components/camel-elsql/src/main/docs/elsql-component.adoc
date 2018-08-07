@@ -151,21 +151,12 @@ The component supports 6 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.elsql.data-source* | Sets the DataSource to use to communicate with the database. The option
- is a javax.sql.DataSource type. |  | String
+| *camel.component.elsql.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
 | *camel.component.elsql.database-vendor* | To use a vendor specific com.opengamma.elsql.ElSqlConfig |  | ElSqlDatabaseVendor
-| *camel.component.elsql.el-sql-config* | To use a specific configured ElSqlConfig. It may be better to use the
- databaseVendor option instead. The option is a
- com.opengamma.elsql.ElSqlConfig type. |  | String
+| *camel.component.elsql.el-sql-config* | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. The option is a com.opengamma.elsql.ElSqlConfig type. |  | String
 | *camel.component.elsql.enabled* | Enable elsql component | true | Boolean
-| *camel.component.elsql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.elsql.resource-uri* | The resource file which contains the elsql SQL statements to use. You can
- specify multiple resources separated by comma. The resources are loaded
- on the classpath by default, you can prefix with file: to load from file
- system. Notice you can set this option on the component and then you do
- not have to configure this on the endpoint. |  | String
+| *camel.component.elsql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.elsql.resource-uri* | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
 |===
 // spring-boot-auto-configure options: END
 

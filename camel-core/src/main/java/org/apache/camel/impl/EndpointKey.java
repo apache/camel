@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.ValueHolder;
 

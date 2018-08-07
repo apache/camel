@@ -99,7 +99,7 @@
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
     <braintree-gateway-version>2.83.1</braintree-gateway-version>
-    <brave-zipkin-version>5.1.4</brave-zipkin-version>
+    <brave-zipkin-version>5.1.5</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <c3p0-bundle-version>0.9.5.2_2</c3p0-bundle-version>
@@ -119,14 +119,14 @@
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <cglib-bundle-version>3.2.6_1</cglib-bundle-version>
     <cglib-version>3.2.6</cglib-version>
-    <chronicle-bytes-version>1.16.20</chronicle-bytes-version>
-    <chronicle-core-version>1.16.15</chronicle-core-version>
+    <chronicle-bytes-version>1.16.21</chronicle-bytes-version>
+    <chronicle-core-version>1.16.16</chronicle-core-version>
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
     <chronicle-map-version>2.4.17</chronicle-map-version>
     <chronicle-network-version>1.16.3</chronicle-network-version>
     <chronicle-queue-version>4.16.5</chronicle-queue-version>
     <chronicle-threads-version>1.16.3</chronicle-threads-version>
-    <chronicle-wire-version>1.16.13</chronicle-wire-version>
+    <chronicle-wire-version>1.16.15</chronicle-wire-version>
     <chunk-templates-version>3.3.1</chunk-templates-version>
     <chunk-templates-bundle-version>3.3.1_1</chunk-templates-bundle-version>
     <cmis-version>1.1.0</cmis-version>
@@ -212,7 +212,7 @@
     <etcd4j-version>2.16.0</etcd4j-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
-    <fabric8-maven-plugin-version>3.5.40</fabric8-maven-plugin-version>
+    <fabric8-maven-plugin-version>3.5.41</fabric8-maven-plugin-version>
     <facebook4j-core-version>2.4.11</facebook4j-core-version>
     <facebook4j-core-bundle-version>2.4.11_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
@@ -388,7 +388,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jettison-version>1.4.0</jettison-version>
-    <jgit-version>5.0.1.201806211838-r</jgit-version>
+    <jgit-version>5.0.2.201807311906-r</jgit-version>
     <jgroups-version>4.0.13.Final</jgroups-version>
     <libthrift-version>0.11.0</libthrift-version>
     <jibx-version>1.2.6</jibx-version>
@@ -500,6 +500,7 @@
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.17</mina2-version>
+    <minidns-version>0.3.1</minidns-version>
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockwebserver-version>0.0.17</mockwebserver-version>
@@ -518,7 +519,7 @@
     <nekohtml-version>1.9.22</nekohtml-version>
     <neoscada-version>0.4.0</neoscada-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.27.Final</netty-version>
+    <netty-version>4.1.28.Final</netty-version>
     <netty40-version>4.0.56.Final</netty40-version>
     <networknt-json-schema-validator-version>0.1.19</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
@@ -560,7 +561,7 @@
     <pax-exam-version>4.11.0</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
     <pax-logging-version>1.8.6</pax-logging-version>
-    <pdfbox18-version>1.8.13</pdfbox18-version>
+    <pdfbox18-version>1.8.15</pdfbox18-version>
     <pdfbox-version>2.0.11</pdfbox-version>
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
     <protobuf-version>3.5.1</protobuf-version>
@@ -620,7 +621,7 @@
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.25</slf4j-api-version>
     <slf4j-version>1.7.25</slf4j-version>
-    <smack-version>4.2.4</smack-version>
+    <smack-version>4.3.0</smack-version>
     <snakeyaml-version>1.21</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.2_1</snmp4j-version>
@@ -635,9 +636,9 @@
     <spring-batch-version>4.0.1.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>4.0.1.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>2.0.4.RELEASE</spring-boot-version>
-    <spring-cloud-commons-version>2.0.0.RELEASE</spring-cloud-commons-version>
-    <spring-cloud-consul-version>2.0.0.RELEASE</spring-cloud-consul-version>
-    <spring-cloud-netflix-version>2.0.0.RELEASE</spring-cloud-netflix-version>
+    <spring-cloud-commons-version>2.0.1.RELEASE</spring-cloud-commons-version>
+    <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
+    <spring-cloud-netflix-version>2.0.1.RELEASE</spring-cloud-netflix-version>
     <spring-cloud-zookeeper-version>2.0.0.RELEASE</spring-cloud-zookeeper-version>
     <spring-data-commons-version>2.0.8.RELEASE</spring-data-commons-version>
     <spring-data-commons-bundle-version>2.0.8.RELEASE_1</spring-data-commons-bundle-version>
@@ -689,7 +690,7 @@
     <twitter4j-version>4.0.6</twitter4j-version>
     <uberfire-maven-support-version>1.3.0.Final</uberfire-maven-support-version>
     <undertow-version>1.4.25.Final</undertow-version>
-    <univocity-parsers-version>2.7.2</univocity-parsers-version>
+    <univocity-parsers-version>2.7.3</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
@@ -700,12 +701,11 @@
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>2.0</velocity-version>
     <vertx-version>3.5.3</vertx-version>
-    <vertx-jackson-version>2.9.0</vertx-jackson-version>
     <vysper-version>0.7</vysper-version>
     <web3j-version>3.5.0</web3j-version>
     <weld1-version>1.1.28.Final</weld1-version>
     <weld2-version>2.4.7.Final</weld2-version>
-    <weld3-version>3.0.4.Final</weld3-version>
+    <weld3-version>3.0.5.Final</weld3-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <wiremock-version>2.18.0</wiremock-version>
     <woodstox-version>4.4.1</woodstox-version>
@@ -718,7 +718,7 @@
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-    <xchange-version>4.3.8</xchange-version>
+    <xchange-version>4.3.9</xchange-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
     <xerces-version>2.11.0</xerces-version>
     <!-- needed to manage the xml-apis version in camel-xmljson -->
@@ -742,9 +742,8 @@
     <xstream-version>1.4.10</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zendesk-client-version>0.6.2</zendesk-client-version>
-    <zipkin-libthrift-version>0.9.3</zipkin-libthrift-version>
     <zipkin-reporter-version>2.7.6</zipkin-reporter-version>
-    <zipkin-version>2.10.4</zipkin-version>
+    <zipkin-version>2.11.0</zipkin-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>

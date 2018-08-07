@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Testing the ssl configuration
  */
-
 public class CamelSSLAutoConfigurationTest {
     @Test
     public void checkSSLPropertiesPresent() {

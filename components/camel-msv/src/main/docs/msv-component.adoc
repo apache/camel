@@ -120,15 +120,9 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.msv.enabled* | Enable msv component | true | Boolean
-| *camel.component.msv.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when
- starting. Only properties which are of String type can use property
- placeholders. | true | Boolean
-| *camel.component.msv.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint
- resource URI. The option is a
- org.apache.camel.component.validator.ValidatorResourceResolverFactory
- type. |  | String
-| *camel.component.msv.schema-factory* | To use the javax.xml.validation.SchemaFactory. The option is a
- javax.xml.validation.SchemaFactory type. |  | String
+| *camel.component.msv.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.msv.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The option is a org.apache.camel.component.validator.ValidatorResourceResolverFactory type. |  | String
+| *camel.component.msv.schema-factory* | To use the javax.xml.validation.SchemaFactory. The option is a javax.xml.validation.SchemaFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
 
