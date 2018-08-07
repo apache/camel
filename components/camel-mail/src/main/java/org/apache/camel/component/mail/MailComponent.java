@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.mail.search.SearchTerm;
 
+import com.sun.mail.imap.SortTerm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
@@ -81,6 +82,21 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
                 st = getCamelContext().getTypeConverter().mandatoryConvertTo(SearchTerm.class, searchTerm);
             }
             endpoint.setSearchTerm(st);
+        }
+
+        // special for sort term
+        Object sortTerm = getAndRemoveOrResolveReferenceParameter(parameters, "sortTerm", Object.class);
+        if (sortTerm != null) {
+            SortTerm[] st;
+            if (sortTerm instanceof String) {
+                // okay its a String then lets convert that to SortTerm
+                st = MailConverters.toSortTerm((String) sortTerm);
+            } else if (sortTerm instanceof SortTerm[]) {
+                st = (SortTerm[]) sortTerm;
+            } else {
+                throw new IllegalArgumentException("SortTerm must either be SortTerm[] or a String value");
+            }
+            endpoint.setSortTerm(st);
         }
 
         endpoint.setContentTypeResolver(contentTypeResolver);
