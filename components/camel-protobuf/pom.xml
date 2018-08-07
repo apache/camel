@@ -128,7 +128,13 @@
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <artifactId>groovy</artifactId>
+            <version>${groovy-version}</version>
+            <scope>runtime</scope>
+          </dependency>
+	  <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
             <version>${groovy-version}</version>
             <scope>runtime</scope>
           </dependency>

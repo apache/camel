@@ -116,10 +116,16 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
+                        <artifactId>groovy-ant</artifactId>
                         <version>${groovy-version}</version>
                         <scope>runtime</scope>
-                    </dependency>
+		    </dependency>
+	            <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-xml</artifactId>
+                        <version>${groovy-version}</version>
+                        <scope>runtime</scope>
+		    </dependency>
                 </dependencies>
             </plugin>
             <plugin>

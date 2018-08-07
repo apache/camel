@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.grape
 
-import groovy.transform.Immutable
+import groovy.transform.ImmutableBase
 
-@Immutable
+@ImmutableBase
 class MavenCoordinates {
 
     private final String groupId
