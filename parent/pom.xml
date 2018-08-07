@@ -4484,6 +4484,11 @@
       <!-- optional scripting support -->
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>${groovy-2415-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy</artifactId>
         <version>${groovy-version}</version>
       </dependency>

@@ -21,13 +21,13 @@ import groovy.transform.ImmutableBase
 @ImmutableBase
 class MavenCoordinates {
 
-    private final String groupId
+    private String groupId
 
-    private final String artifactId
+    private String artifactId
 
-    private final String version
+    private String version
 
-    private final String classifier
+    private String classifier
 
     static MavenCoordinates parseMavenCoordinates(String coordinates) {
         def coordinatesParts = coordinates.split('/')

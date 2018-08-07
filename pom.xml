@@ -64,6 +64,7 @@
     <mycila-license-version>3.0</mycila-license-version>
     <gmavenplus-plugin-version>1.5</gmavenplus-plugin-version>
     <groovy-version>2.5.1</groovy-version>
+    <groovy-2415-version>2.4.15</groovy-2415-version>
   </properties>
 
   <mailingLists>
