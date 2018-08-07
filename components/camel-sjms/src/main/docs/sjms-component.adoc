@@ -382,10 +382,6 @@ camelContext.addComponent("sjms", component);
 To see the full example of its usage please refer to the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionResourceIT`].
 
-#### Session, Consumer, & Producer Pooling & Caching Management
-
-Coming soon ...
-
 #### Batch Message Support
 
 The SjmsProducer supports publishing a collection of messages by
