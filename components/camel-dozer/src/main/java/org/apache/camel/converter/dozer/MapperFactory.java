@@ -77,10 +77,6 @@ public class MapperFactory {
 
     private void configureSettings() {
         System.setProperty(SettingsKeys.CLASS_LOADER_BEAN, DozerThreadContextClassLoader.class.getName());
-
-        // TODO: Remove next version, see:
-        // https://github.com/DozerMapper/dozer/issues/680
-        System.setProperty(SettingsKeys.USE_JAXB_MAPPING_ENGINE, Boolean.FALSE.toString());
     }
 
     private ELEngine createELEngine() {
