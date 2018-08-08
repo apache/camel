@@ -26,8 +26,8 @@ import javax.xml.ws.Provider;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.EndpointException;
-import org.apache.cxf.endpoint.EndpointImpl;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.factory.FactoryBeanListener.Event;
 import org.apache.cxf.service.invoker.Invoker;
@@ -102,7 +102,7 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
         super.buildServiceFromWSDL(url);
     }
     public Endpoint createEndpoint(EndpointInfo ei) throws EndpointException {
-        Endpoint ep = new EndpointImpl(getBus(), getService(), ei);
+        Endpoint ep = new JaxWsEndpointImpl(getBus(), getService(), ei);
         sendEvent(Event.ENDPOINT_CREATED, ei, ep, getServiceClass());
         return ep;
     }
