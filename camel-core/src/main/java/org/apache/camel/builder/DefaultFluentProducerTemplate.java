@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Future;
@@ -139,7 +138,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withHeader(String key, Object value) {
         Map<String, Object> map = headers.get();
         if (map == null) {
-            map = new LinkedHashMap<>();
+            map = new HashMap<>();
             headers.set(map);
         }
 
@@ -347,7 +346,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private Processor defaultAsyncProcessor() {
-        final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers.get()) ? new LinkedHashMap<>(this.headers.get()) : null;
+        final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers.get()) ? new HashMap<>(this.headers.get()) : null;
         final Object bodyCopy = this.body.get();
 
         return exchange -> {
