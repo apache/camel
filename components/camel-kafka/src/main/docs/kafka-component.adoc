@@ -526,7 +526,7 @@ In XML:
 === Using manual commit with Kafka consumer
 *Available as of Camel 2.21*
 
-By default the Kafka consumer will use auto commit, where the offset will be committed automaticcally in the background using a given interval.
+By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
 In case you want to force manual commits, you can use `KafkaManualCommit` API from the Camel Exchange, stored on the message header.
 This requires to turn on manual commits by either setting the option `allowManualCommit` to `true` on the `KafkaComponent`
