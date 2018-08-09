@@ -708,7 +708,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         // add bogus field for enabled so spring boot tooling can get the javadoc as description in its metadata
         PropertySource<JavaClassSource> bogus = javaClass.addProperty("java.lang.Boolean", "enabled");
-        bogus.getField().getJavaDoc().setText("Whether to enable auto configuration of the " + model.getScheme() + " component. This is enabled by default.");
+        String scheme = overrideComponentName != null ? overrideComponentName : model.getScheme();
+        bogus.getField().getJavaDoc().setText("Whether to enable auto configuration of the " + scheme + " component. This is enabled by default.");
         bogus.removeAccessor();
         bogus.removeMutator();
 
