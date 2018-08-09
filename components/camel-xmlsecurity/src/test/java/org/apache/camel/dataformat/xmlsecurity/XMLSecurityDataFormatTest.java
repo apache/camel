@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.xmlsecurity;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.commons.codec.Charsets;
 import org.apache.xml.security.encryption.XMLCipher;
 
 import org.junit.Assert;
@@ -151,12 +153,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             (byte)0x30, (byte)0xd4, (byte)0x3d, (byte)0xf5,
             (byte)0x6d, (byte)0xaa, (byte)0x7d, (byte)0xc2,
             (byte)0x85, (byte)0x32, (byte)0x2a, (byte)0xb6,
-            (byte)0xfe, (byte)0xed, (byte)0xbe, (byte)0xef  
-        };
-        
+            (byte)0xfe, (byte)0xed, (byte)0xbe, (byte)0xef};
 
-        final String passCode = new String(bits192);
-        byte[] bytes = passCode.getBytes();
+        final Charset passCodeCharset = Charsets.UTF_8;
+        final String passCode = new String(bits192, passCodeCharset);
+        byte[] bytes = passCode.getBytes(passCodeCharset);
         assertTrue(bits192.length != bytes.length);
         context.addRoutes(new RouteBuilder() {
             public void configure() {
