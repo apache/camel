@@ -4,9 +4,9 @@
 *Available as of Camel version 2.12*
 
 The *vertx* component is for working with the http://vertx.io/[Vertx]
-http://vertx.io/core_manual_js.html#the-event-bus[EventBus].
+https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].
 
-The vertx http://vertx.io/core_manual_js.html#the-event-bus[EventBus]
+The vertx https://vertx.io/docs/vertx-core/java/#event_bus[EventBus]
 sends and receives JSON events.
 
 INFO:From *Camel 2.16* onwards vertx 3 is in use which requires Java 1.8 at

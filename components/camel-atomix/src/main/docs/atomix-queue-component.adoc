@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.20*
 
-The camel atomix-queue component allows you to work with http://atomix.io/atomix/[Atomix's] http://atomix.io/atomix/docs/collections/#distributedqueue[Distributed Queue] collection.
+The camel atomix-queue component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedQueue/[Distributed Queue] collection.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
