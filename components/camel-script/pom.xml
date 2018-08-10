@@ -78,23 +78,14 @@
             <version>${jython-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- for camel-script groovy upgrade requires rework as camel-itest-karaf fails to succeed 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <scope>test</scope>
         </dependency>
-         -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
-            <version>${groovy-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovy-2415-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
