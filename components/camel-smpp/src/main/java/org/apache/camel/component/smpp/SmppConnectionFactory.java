@@ -111,7 +111,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
             return new SocketConnection(socket);
         } catch (Exception e) {
-            throw new IOException(e.getMessage());
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -179,7 +179,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             throw re;
         } catch (Exception e) {
             closeSocket(socket);
-            throw new RuntimeException("SmppConnectionFactory: " + e.getMessage());
+            throw new RuntimeException("SmppConnectionFactory: " + e.getMessage(), e);
         }
     }
 
