@@ -4,12 +4,12 @@
 *Available as of Camel version 2.10*
 
 The
-http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/package-summary.html[Google
+https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] allows publish-subscribe-style communication between
 components without requiring the components to explicitly register with
 one another (and thus be aware of each other). The *guava-eventbus:*
 component provides integration bridge between Camel and
-http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/package-summary.html[Google
+https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] infrastructure. With the latter component, messages
 exchanged with the Guava `EventBus` can be transparently forwarded to
 the Camel routes. EventBus component allows also to route body of Camel
