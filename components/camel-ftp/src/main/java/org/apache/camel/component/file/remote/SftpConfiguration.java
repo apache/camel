@@ -69,7 +69,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
     @UriParam(label = "advanced")
     private Integer bulkRequests;
-    @UriParam(label = "bindAddress")
+    @UriParam(label = "advanced")
     private String bindAddress;
 
     public SftpConfiguration() {
