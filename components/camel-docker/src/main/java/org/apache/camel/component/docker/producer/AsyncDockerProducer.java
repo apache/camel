@@ -487,7 +487,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
      */
     private ExecStartCmd executeExecStartRequest(DockerClient client, Message message) {
 
-        LOGGER.debug("Executing Docker Exec Create Request");
+        LOGGER.debug("Executing Docker Exec Start Request");
 
         String execId = DockerHelper.getProperty(DockerConstants.DOCKER_EXEC_ID, configuration, message, String.class);
 
