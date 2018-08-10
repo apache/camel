@@ -686,7 +686,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        OutputStream os = null;
         String currentDir = null;
         try {
             GenericFile<ChannelSftp.LsEntry> target =
@@ -715,18 +714,19 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 target.setBody(is);
                 exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
             } else {
-                os = new ByteArrayOutputStream();
-                target.setBody(os);
-                IOHelper.copyAndCloseInput(is, os);
+                // read the entire file into memory in the byte array
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                IOHelper.copyAndCloseInput(is, bos);
+                // close the stream after done
+                IOHelper.close(bos);
+
+                target.setBody(bos.toByteArray());
             }
 
             return true;
-        } catch (IOException e) {
-            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
-        } catch (SftpException e) {
+        } catch (IOException | SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
-            IOHelper.close(os, "retrieve: " + name, LOG);
             // change back to current directory if we changed directory
             if (currentDir != null) {
                 changeCurrentDirectory(currentDir);
