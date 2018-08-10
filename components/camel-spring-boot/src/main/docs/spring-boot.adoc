@@ -216,7 +216,7 @@ The component supports 139 options, which are listed below.
 | *camel.supervising.controller.default-back-off.max-delay* | The maximum back-off time. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
 | *camel.supervising.controller.default-back-off.max-elapsed-time* | The maximum elapsed time after which the back-off is exhausted. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
 | *camel.supervising.controller.default-back-off.multiplier* | The value to multiply the current interval by for each retry attempt. |  | Double
-| *camel.supervising.controller.enabled* | Global option to enable/disable this ${@link org.apache.camel.spi.RouteController}, default is false. | false | Boolean
+| *camel.supervising.controller.enabled* | Global option to enable/disable this org.apache.camel.spi.RouteController, default is false. | false | Boolean
 | *camel.supervising.controller.initial-delay* | Set the amount of time the route controller should wait before to start the routes after the camel context is started or after the route is initialized if the route is created after the camel context is started. |  | String
 | *camel.supervising.controller.routes* | Routes configuration. |  | Map
 | *management.endpoint.camelroutecontroller.cache.time-to-live* | Maximum time that a response can be cached. | 0ms | Duration
