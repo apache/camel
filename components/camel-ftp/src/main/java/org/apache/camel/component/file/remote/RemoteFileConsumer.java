@@ -113,7 +113,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             exchange.addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
-                    log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                    log.trace("processExchange disconnect from: {}", getEndpoint());
                     disconnect();
                 }
 
