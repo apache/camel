@@ -201,7 +201,7 @@ public class BoxFoldersManager {
      */
     public BoxFolder createFolder(String parentFolderId, String... path) {
         try {
-            LOG.debug("Creating folder with path '" + path + "' in parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Creating folder with path '" + Arrays.toString(path) + "' in parent_folder(id=" + parentFolderId + ")");
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }

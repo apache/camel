@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -259,7 +260,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 try {
                     jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
-                    throw new GenericFileOperationFailedException("Cannot load private key bytes: " + config.getPrivateKeyBytes(), e);
+                    throw new GenericFileOperationFailedException("Cannot load private key bytes: " + Arrays.toString(config.getPrivateKeyBytes()), e);
                 }                
             }
 
