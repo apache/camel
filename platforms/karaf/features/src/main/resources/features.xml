@@ -1940,7 +1940,8 @@
   </feature>
   <feature name='camel-script-groovy' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-2415-version}</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy-jsr223/${groovy-version}</bundle>
   </feature>
   <feature name='camel-script' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
