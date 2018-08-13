@@ -333,8 +333,8 @@
             <dependencies>
                 <dependency>
                     <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-all</artifactId>
-                    <version>${groovy-2415-version}</version>
+                    <artifactId>groovy</artifactId>
+                    <version>${groovy-version}</version>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
