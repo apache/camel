@@ -273,9 +273,9 @@ public class KafkaComponentConfiguration
         private Integer fetchWaitMaxMs = 500;
         /**
          * What to do when there is no initial offset in ZooKeeper or if an
-         * offset is out of range: smallest : automatically reset the offset to
-         * the smallest offset largest : automatically reset the offset to the
-         * largest offset fail: throw exception to the consumer
+         * offset is out of range: earliest : automatically reset the offset to
+         * the earliest offset latest : automatically reset the offset to the
+         * latest offset fail: throw exception to the consumer
          */
         private String autoOffsetReset = "latest";
         /**
