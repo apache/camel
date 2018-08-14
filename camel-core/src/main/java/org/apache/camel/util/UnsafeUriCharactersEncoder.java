@@ -28,10 +28,30 @@ import java.util.regex.Pattern;
  * A good source for details is <a href="http://en.wikipedia.org/wiki/Url_encode">wikipedia url encode</a> article.
  */
 public final class UnsafeUriCharactersEncoder {
+    private static BitSet unsafeCharactersRfc1738;
     private static BitSet unsafeCharactersHttp;
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
                                               'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final Pattern RAW_PATTERN = Pattern.compile("RAW\\([^\\)]+\\)");
+
+    static {
+        unsafeCharactersRfc1738 = new BitSet(256);
+        unsafeCharactersRfc1738.set(' ');
+        unsafeCharactersRfc1738.set('"');
+        unsafeCharactersRfc1738.set('<');
+        unsafeCharactersRfc1738.set('>');
+        unsafeCharactersRfc1738.set('#');
+        unsafeCharactersRfc1738.set('%');
+        unsafeCharactersRfc1738.set('{');
+        unsafeCharactersRfc1738.set('}');
+        unsafeCharactersRfc1738.set('|');
+        unsafeCharactersRfc1738.set('\\');
+        unsafeCharactersRfc1738.set('^');
+        unsafeCharactersRfc1738.set('~');
+        unsafeCharactersRfc1738.set('[');
+        unsafeCharactersRfc1738.set(']');
+        unsafeCharactersRfc1738.set('`');
+    }
     
     static {
         unsafeCharactersHttp = new BitSet(256);
@@ -53,9 +73,9 @@ public final class UnsafeUriCharactersEncoder {
     private UnsafeUriCharactersEncoder() {
         // util class
     }
-    
+
     public static String encode(String s) {
-        return encodeHttpURI(s);
+        return encode(s, unsafeCharactersRfc1738);
     }
     
     public static String encodeHttpURI(String s) {
@@ -67,7 +87,7 @@ public final class UnsafeUriCharactersEncoder {
     }
     
     public static String encode(String s, boolean checkRaw) {
-        return encodeHttpURI(s, checkRaw);
+        return encode(s, unsafeCharactersRfc1738, checkRaw);
     }
     
     public static String encodeHttpURI(String s, boolean checkRaw) {
