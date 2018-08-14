@@ -128,6 +128,7 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(BigInteger.valueOf(0), ObjectConverter.toBigInteger(Double.NaN));
         assertEquals(BigInteger.valueOf(0), ObjectConverter.toBigInteger(Float.NaN));
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Long.valueOf("4")));
+        assertEquals(new BigInteger("14350442579497085228"), ObjectConverter.toBigInteger("14350442579497085228"));
     }
 
     public void testToString() {
