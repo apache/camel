@@ -56,7 +56,11 @@
             <artifactId>parity</artifactId>
             <version>${web3j-version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>quorum</artifactId>
+            <version>${web3j-quorum-version}</version>
+        </dependency>
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

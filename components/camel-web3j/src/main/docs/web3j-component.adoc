@@ -63,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (36 parameters):
+==== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,6 +74,8 @@ with the following path and query parameters:
 | *fromBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
 | *fullTransactionObjects* (common) | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | boolean
 | *gasLimit* (common) | The maximum gas allowed in this block. |  | BigInteger
+| *privateFor* (common) | A transaction privateFor nodes with public keys in a Quorum network |  | List
+| *quorumAPI* (common) | If true, this will support Quorum API. | false | boolean
 | *toAddress* (common) | The address the transaction is directed to. |  | String
 | *toBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
 | *topics* (common) | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | String

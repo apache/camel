@@ -703,6 +703,7 @@
     <vertx-version>3.5.3</vertx-version>
     <vysper-version>0.7</vysper-version>
     <web3j-version>3.5.0</web3j-version>
+    <web3j-quorum-version>0.8.0</web3j-quorum-version>
     <weld1-version>1.1.28.Final</weld1-version>
     <weld2-version>2.4.7.Final</weld2-version>
     <weld3-version>3.0.5.Final</weld3-version>

@@ -37,6 +37,7 @@ import org.web3j.protocol.core.methods.request.ShhFilter;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.protocol.ipc.UnixIpcService;
 import org.web3j.protocol.ipc.WindowsIpcService;
+import org.web3j.quorum.Quorum;
 
 /**
  * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
@@ -97,6 +98,10 @@ public class Web3jEndpoint extends DefaultEndpoint {
             web3jService = new WindowsIpcService(clientAddress);
         } else {
             web3jService = new UnixIpcService(clientAddress);
+        }
+
+        if (configuration.isQuorumAPI()) {
+            return Quorum.build(web3jService);
         }
 
         return Web3j.build(web3jService);
