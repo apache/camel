@@ -40,7 +40,11 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
     @Override
     protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        FtpConfiguration config = new FtpConfiguration(new URI(uri.substring(0, uri.indexOf(":") + 1) + "//" + remaining));
+        String baseUri = getBaseUri(uri);
+
+        // lets make sure we create a new configuration as each endpoint can customize its own version
+        // must pass on baseUri to the configuration (see above)
+        FtpConfiguration config = new FtpConfiguration(new URI(baseUri));
 
         FtpUtils.ensureRelativeFtpDirectory(this, config);
 
