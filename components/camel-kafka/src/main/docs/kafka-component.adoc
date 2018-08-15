@@ -239,9 +239,11 @@ camelContext.addRoutes(new RouteBuilder() {
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------
 // Create the repository in which the Kafka offsets will be persisted using Spring @Bean annotation
-@Bean(name = "offsetRepo")
-private FileStateRepository fileStateRepository() {
-        FileStateRepository fileStateRepository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
+private FileStateRepository fileStateRepository;
+
+@PostConstruct
+public void init() {
+        fileStateRepository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
 
         try {
             // Init repo
@@ -249,6 +251,10 @@ private FileStateRepository fileStateRepository() {
         } catch (Exception e) {
             e.printStackTrace();
         }
+}
+
+@Bean(name = "offsetRepo")
+private FileStateRepository fileStateRepository() {
         return fileStateRepository;
 }
 
