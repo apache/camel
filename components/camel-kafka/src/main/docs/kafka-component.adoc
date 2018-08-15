@@ -236,6 +236,33 @@ camelContext.addRoutes(new RouteBuilder() {
     }
 });
 ----------------------------------------------------------------------------------------------------------------------------
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------
+// Create the repository in which the Kafka offsets will be persisted using Spring @Bean annotation
+@Bean(name = "offsetRepo")
+private FileStateRepository fileStateRepository() {
+        FileStateRepository fileStateRepository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
+
+        try {
+            // Init repo
+            fileStateRepository.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileStateRepository;
+}
+
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
+                     "&groupId=A" +                            //
+                     "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
+                     "&offsetRepository=#offsetRepo")          // Keep the offsets in the previously configured repository
+                .to("mock:result");
+    }
+});
+----------------------------------------------------------------------------------------------------------------------------
  
 
 #### Producing messages to Kafka
