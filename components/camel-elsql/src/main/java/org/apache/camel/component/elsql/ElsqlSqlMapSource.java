@@ -49,7 +49,7 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
     public boolean hasValue(String paramName) {
         if ("body".equals(paramName)) {
             return true;
-        } else if (paramName.startsWith("${") && paramName.endsWith("}")) {
+        } else if ((paramName.startsWith("$simple{") || paramName.startsWith("${")) && paramName.endsWith("}")) {
             return true;
         } else {
             return bodyMap.containsKey(paramName) || headersMap.containsKey(paramName);
@@ -61,8 +61,14 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
         Object answer;
         if ("body".equals(paramName)) {
             answer = exchange.getIn().getBody();
-        } else if (paramName.startsWith("${") && paramName.endsWith("}")) {
+        } else if ((paramName.startsWith("$simple{") || paramName.startsWith("${")) && paramName.endsWith("}")) {
             // its a simple language expression
+
+            // spring org.springframework.jdbc.core.namedparam.NamedParameterUtils.PARAMETER_SEPARATORS
+            // uses : as parameter separator and we may use colon in simple languages as well such as bean:foo
+            // so we have to use # instead and replace them back
+            paramName = paramName.replace('#', ':');
+
             answer = SimpleLanguage.expression(paramName).evaluate(exchange, Object.class);
         } else {
             answer = bodyMap.get(paramName);

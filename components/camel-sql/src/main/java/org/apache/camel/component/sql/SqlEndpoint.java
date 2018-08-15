@@ -56,6 +56,8 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
         consumer.setExpectedUpdateCount(getExpectedUpdateCount());
         consumer.setUseIterator(isUseIterator());
         consumer.setRouteEmptyResultSet(isRouteEmptyResultSet());
+        consumer.setParametersCount(getParametersCount());
+        consumer.setAlwaysPopulateStatement(isAlwaysPopulateStatement());
         configureConsumer(consumer);
         return consumer;
     }

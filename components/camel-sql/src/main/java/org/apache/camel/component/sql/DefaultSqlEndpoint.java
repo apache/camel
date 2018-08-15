@@ -80,7 +80,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private boolean breakBatchOnConsumeFail;
     @UriParam(defaultValue = "true", description = "Whether to allow using named parameters in the queries.")
     private boolean allowNamedParameters = true;
-    @UriParam(label = "producer,advanced",
+    @UriParam(label = "advanced",
             description = "If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, "
                     + "also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1"
                     + " or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters.")
@@ -99,7 +99,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam(description = "Specify the full package and class name to use as conversion when outputType=SelectOne.")
     private String outputClass;
-    @UriParam(label = "producer,advanced", description = "If set greater than zero, then Camel will use this count value of parameters to replace instead of"
+    @UriParam(label = "advanced", description = "If set greater than zero, then Camel will use this count value of parameters to replace instead of"
             + " querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead.")
     private int parametersCount;
     @UriParam(label = "producer", description = "If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing")
