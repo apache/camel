@@ -128,6 +128,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     //Consumer configuration properties
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autoCommitStateEnable = true;
     @UriParam(label = "consumer")
     private boolean allowManualCommit;
     @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
@@ -403,6 +405,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getAutoOffsetReset());
         addPropertyIfNotNull(props, ConsumerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, getConnectionMaxIdleMs());
         addPropertyIfNotNull(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, isAutoCommitEnable());
+        addPropertyIfNotNull(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, isAutoCommitStateEnable());
         addPropertyIfNotNull(props, ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, getPartitionAssignor());
         addPropertyIfNotNull(props, ConsumerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, getConsumerRequestTimeoutMs());
@@ -641,6 +644,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setAutoCommitEnable(Boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
+    }
+
+    public boolean isAutoCommitStateEnable() {
+        return autoCommitStateEnable;
+    }
+
+    /**
+     * If false this will disable the autocommit of the state
+     */
+    public void setAutoCommitStateEnable(boolean autoCommitStateEnable) {
+        this.autoCommitStateEnable = autoCommitStateEnable;
     }
 
     public boolean isAllowManualCommit() {
