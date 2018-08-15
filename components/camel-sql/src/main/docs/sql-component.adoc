@@ -15,14 +15,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-sql</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 The SQL component also supports:
 
@@ -32,7 +32,7 @@ further below.
 * a JDBC based repository for the Aggregator EIP
 pattern. See further below.
 
-### URI format
+=== URI format
 
 WARNING:From Camel 2.11 onwards this component can create both consumer (e.g.
 `from()`) and producer endpoints (e.g. `to()`).
@@ -43,18 +43,18 @@ http://camel.apache.org/transactional-client.html[Transactional Client].
 
 The SQL component uses the following endpoint URI notation:
 
-[source,java]
-----------------------------------------------------------
+[source,text]
+----
 sql:select * from table where id=# order by name[?options]
-----------------------------------------------------------
+----
 
 From Camel 2.11 onwards you can use named parameters by using
 :`#name_of_the_parameter` style as shown:
 
-[source,java]
----------------------------------------------------------------
+[source,text]
+----
 sql:select * from table where id=:#myId order by name[?options]
----------------------------------------------------------------
+----
 
 When using named parameters, Camel will lookup the names from, in the
 given precedence: +
@@ -66,10 +66,10 @@ If a named parameter cannot be resolved, then an exception is thrown.
 From *Camel 2.14* onward you can use Simple expressions as parameters as
 shown:
 
-[source,java]
----------------------------------------------------------------------------
+[source,text]
+----
 sql:select * from table where id=:#${property.myId} order by name[?options]
----------------------------------------------------------------------------
+----
 
 Notice that the standard `?` symbol that denotes the parameters to an
 SQL query is substituted with the `pass:[#]` symbol, because the `?` symbol is
@@ -79,15 +79,15 @@ be configured on endpoint basis.
 From *Camel 2.17* onwards you can externalize your SQL queries to files
 in the classpath or file system as shown:
 
-[source,java]
----------------------------------------
+[source,text]
+----
 sql:classpath:sql/myquery.sql[?options]
----------------------------------------
+----
 
 And the myquery.sql file is in the classpath and is just a plain text
 
-[source,java]
--------------------------
+[source,sql]
+----
 -- this is a comment
 select *
 from table
@@ -95,7 +95,7 @@ where
   id = :#${property.myId}
 order by
   name
--------------------------
+----
 
 In the file you can use multilines and format the SQL as you wish. And
 also use comments such as the – dash line.
@@ -103,7 +103,7 @@ also use comments such as the – dash line.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 
 
@@ -174,8 +174,8 @@ with the following path and query parameters:
 | *batch* (producer) | Enables or disables batch mode | false | boolean
 | *noop* (producer) | If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *useMessageBodyForSql* (producer) | Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used. | false | boolean
-| *alwaysPopulateStatement* (producer) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
-| *parametersCount* (producer) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
+| *alwaysPopulateStatement* (advanced) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
+| *parametersCount* (advanced) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
 | *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
 | *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatement Strategy
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -216,7 +216,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Treatment of the message body
+=== Treatment of the message body
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
@@ -241,7 +241,7 @@ parameters must be provided in a header with the
 key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
 more dynamic as the SQL query is from the message body.
 
-### Result of the query
+=== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -257,13 +257,13 @@ other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
 [source,java]
--------------------------------------------------------------------------------------------
+----
 from("jms:order.inbox")
     .to("sql:select order_seq.nextval from dual?outputHeader=OrderId&outputType=SelectOne")
     .to("jms:order.booking");
--------------------------------------------------------------------------------------------
+----
 
-### Using StreamList
+=== Using StreamList
 
 From*Camel 2.18* onwards the producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
@@ -272,7 +272,7 @@ the Splitter EIP to process each row one at a time,
 and load data from the database as needed.
 
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:withSplitModel")
         .to("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel")
         .to("log:stream")
@@ -280,17 +280,16 @@ from("direct:withSplitModel")
             .to("log:row")
             .to("mock:result")
         .end();
------------------------------------------------------------------------------------------------------------------------------------
-
+----
  
 
-### Header values
+=== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Header |Description
 
 |`CamelSqlUpdateCount` |The number of rows updated for `update` operations, returned as an
@@ -304,22 +303,22 @@ outputType=StreamList.
 |`CamelSqlQuery` |*Camel 2.8:* Query to execute. This query takes precedence over the
 query specified in the endpoint URI. Note that query parameters in the
 header _are_ represented by a `?` instead of a `pass:[#]` symbol
-|=======================================================================
+|===
 
 When performing `insert` operations, the SQL Component stores the rows
 with the generated keys and number of these rown in the following
 message headers (*Available as of Camel 2.12.4, 2.13.1*):
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Header |Description
 
 |CamelSqlGeneratedKeysRowCount |The number of rows in the header that contains generated keys.
 
 |CamelSqlGeneratedKeyRows |Rows that contains the generated keys (a list of maps of keys).
-|=======================================================================
+|===
 
-### Generated keys
+=== Generated keys
 
 *Available as of Camel 2.12.4, 2.13.1 and 2.14 *
 
@@ -333,45 +332,16 @@ the table above.
 You can see more details in this
 https://gitbox.apache.org/repos/asf?p=camel.git;a=blob;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;h=54c19b7332bb0aa81ee24ff3d3a66885a6b9e9aa;hb=HEAD[unit test].
 
-### Configuration
+=== DataSource
 
 You can now set a reference to a `DataSource` in the URI directly:
 
-[source,java]
-----------------------------------------------------------------
+[source,text]
+----
 sql:select * from table where id=# order by name?dataSource=myDS
-----------------------------------------------------------------
+----
 
-### Sample
-
-In the sample below we execute a query and retrieve the result as a
-`List` of rows, where each row is a `Map<String, Object` and the key is
-the column name.
-
-First, we set up a table to use for our sample. As this is based on an
-unit test, we do it in java:
-
-The SQL script `createAndPopulateDatabase.sql` we execute looks like as
-described below:
-
-Then we configure our route and our `sql` component. Notice that we use
-a `direct` endpoint in front of the `sql` endpoint. This allows us to
-send an exchange to the `direct` endpoint with the URI, `direct:simple`,
-which is much easier for the client to use than the long `sql:` URI.
-Note that the `DataSource` is looked up up in the registry, so we can
-use standard Spring XML to configure our `DataSource`.
-
-And then we fire the message into the `direct` endpoint that will route
-it to our `sql` component that queries the database.
-
-We could configure the `DataSource` in Spring XML as follows:
-
-[source,xml]
------------------------------------------------------------
- <jee:jndi-lookup id="myDS" jndi-name="jdbc/myDataSource"/>
------------------------------------------------------------
-
-#### Using named parameters
+=== Using named parameters
 
 *Available as of Camel 2.11*
 
@@ -384,23 +354,23 @@ constant value +
  for the named parameters:
 
 [source,java]
----------------------------------------------------------------------------------------
+----
    from("direct:projects")
      .setHeader("lic", constant("ASF"))
      .setHeader("min", constant(123))
      .to("sql:select * from projects where license = :#lic and id > :#min order by id")
----------------------------------------------------------------------------------------
+----
 
 Though if the message body is a `java.util.Map` then the named
 parameters will be taken from the body.
 
 [source,java]
----------------------------------------------------------------------------------------
+----
    from("direct:projects")
      .to("sql:select * from projects where license = :#lic and id > :#min order by id")
----------------------------------------------------------------------------------------
+----
 
-#### Using expression parameters
+=== Using expression parameters in producers
 
 *Available as of Camel 2.14*
 
@@ -409,14 +379,46 @@ database. It uses the body of the exchange for defining the license and
 uses the value of a property as the second parameter.
 
 [source,java]
-----------------------------------------------------------------------------------------------------
+----
 from("direct:projects")
   .setBody(constant("ASF"))
   .setProperty("min", constant(123))
   .to("sql:select * from projects where license = :#${body} and id > :#${property.min} order by id")
-----------------------------------------------------------------------------------------------------
+----
 
-#### Using IN queries with dynamic values
+==== Using expression parameters in consumers
+
+*Available as of Camel 2.23*
+
+When using the SQL component as consumer, you can now also use expression parameters (simple language)
+to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
+
+For example in the sample below we call the nextId method on the bean myIdGenerator:
+
+[source,java]
+----
+from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}")
+    .to("mock:result");
+----
+
+And the bean has the following method:
+
+[source,java]
+----
+public static class MyIdGenerator {
+
+    private int id = 1;
+
+    public int nextId() {
+        return id++;
+    }
+----
+
+Notice that there is no existing `Exchange` with message body and headers, so
+the simple expression you can use in the consumer are most useable for calling
+bean methods as in this example.
+
+=== Using IN queries with dynamic values
 
 *Available as of Camel 2.17*
 
@@ -431,33 +433,32 @@ To use IN you need to:
 
 An example explains this better. The following query is used:
 
-[source,java]
------------------------------
+[source,sql]
+----
 -- this is a comment
 select *
 from projects
 where project in (:#in:names)
 order by id
------------------------------
+----
 
 In the following route:
 
 [source,java]
--------------------------------------------------
+----
 from("direct:query")
     .to("sql:classpath:sql/selectProjectsIn.sql")
     .to("log:query")
     .to("mock:query");
--------------------------------------------------
+----
 
 Then the IN query can use a header with the key names with the dynamic
 values such as:
 
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 // use an array
 template.requestBodyAndHeader("direct:query", "Hi there!", "names", new String[]{"Camel", "AMQ"});
-
 
 // use a list
 List<String> names = new ArrayList<String>();
@@ -466,55 +467,51 @@ names.add("AMQ");
 
 template.requestBodyAndHeader("direct:query", "Hi there!", "names", names);
 
-
 // use a string separated values with comma
 template.requestBodyAndHeader("direct:query", "Hi there!", "names", "Camel,AMQ");
---------------------------------------------------------------------------------------------------
+----
 
 The query can also be specified in the endpoint instead of being
 externalized (notice that externalizing makes maintaining the SQL
 queries easier)
 
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:query")
     .to("sql:select * from projects where project in (:#in:names) order by id")
     .to("log:query")
     .to("mock:query");
--------------------------------------------------------------------------------
-
+----
  
 
-### Using the JDBC based idempotent repository
+=== Using the JDBC based idempotent repository
 
 *Available as of Camel 2.7*: In this section we will use the JDBC based
 idempotent repository.
-
 
 TIP:*Abstract class*
 From Camel 2.9 onwards there is an abstract class
 `org.apache.camel.processor.idempotent.jdbc.AbstractJdbcMessageIdRepository`
 you can extend to build custom JDBC idempotent repository.
 
- 
 
 First we have to create the database table which will be used by the
 idempotent repository. For *Camel 2.7*, we use the following schema:
 
 [source,sql]
--------------------------------------------------------------------------------
+----
 CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
 messageId VARCHAR(100) )
--------------------------------------------------------------------------------
+----
  
 
 In *Camel 2.8*, we added the createdAt column:
 
 [source,sql]
--------------------------------------------------------------------------------
+----
 CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
 messageId VARCHAR(100), createdAt TIMESTAMP )
--------------------------------------------------------------------------------
+----
 
 WARNING:The SQL Server *TIMESTAMP* type is a fixed-length binary-string type. It
 does not map to any of the JDBC time types: *DATE*, *TIME*, or
@@ -527,7 +524,7 @@ Starting with *Camel 2.9.1* you have a few options to tune the
 your needs:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter |Default Value |Description
 
 |createTableIfNotExists |true |Defines whether or not Camel should try to create the table if it
@@ -552,13 +549,12 @@ second one is the message id (`String`) and the third one is the
 timestamp (`java.sql.Timestamp`) when this entry was added to the
 repository.
 
-|deleteString |DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId
-= ? |The statement which is used to delete the entry from the database. It
-takes two parameter. This first one is the processor name (`String`) and
+|deleteString |DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ? |The statement which is used to delete the entry from the database.
+It takes two parameter. This first one is the processor name (`String`) and
 the second one is the message id (`String`).
-|=======================================================================
+|===
 
-Using the JDBC based aggregation repository
+=== Using the JDBC based aggregation repository
 
 *Available as of Camel 2.6*
 
@@ -590,7 +586,7 @@ You can see some examples in the unit tests of camel-sql, for example
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sql/src/test/java/org/apache/camel/processor/aggregate/jdbc/JdbcAggregateRecoverDeadLetterChannelTest.java[this
 test].
 
-Database
+==== Database
 
 To be operational, each aggregator uses two table: the aggregation and
 completed one. By convention the completed has the same name as the
@@ -611,7 +607,7 @@ Here is the SQL query used to create the tables, just replace
 `"aggregation"` with your aggregator repository name.
 
 [source,sql]
--------------------------------------------------------------------------------
+-----
 CREATE TABLE aggregation (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
@@ -622,10 +618,10 @@ CREATE TABLE aggregation_completed (
  exchange blob NOT NULL,
  constraint aggregation_completed_pk PRIMARY KEY (id)
 );
--------------------------------------------------------------------------------
+-----
 
 
-Storing body and headers as text
+=== Storing body and headers as text
 
 *Available as of Camel 2.11*
 
@@ -635,7 +631,7 @@ store the body, and the following two headers `companyName` and
 `accountName` use the following SQL:
 
 [source,sql]
--------------------------------------------------------------------------------
+----
 CREATE TABLE aggregationRepo3 (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
@@ -652,14 +648,13 @@ CREATE TABLE aggregationRepo3_completed (
  accountName varchar(1000),
  constraint aggregationRepo3_completed_pk PRIMARY KEY (id)
 );
--------------------------------------------------------------------------------
+----
  
-
 And then configure the repository to enable this behavior as shown
 below:
 
 [source,xml]
--------------------------------------------------------------------------------
+----
 <bean id="repo3"
   class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   <property name="repositoryName" value="aggregationRepo3"/>
@@ -674,9 +669,9 @@ below:
     </list>
   </property>
 </bean>
--------------------------------------------------------------------------------
+----
 
-Codec (Serialization)
+==== Codec (Serialization)
 
 Since they can contain any type of payload, Exchanges are not
 serializable by design. It is converted into a byte array to be stored
@@ -691,18 +686,18 @@ the `currentThread` one. The benefit is to be able to load classes
 exposed by other bundles. This allows the exchange body and headers to
 have custom types object references.
 
-Transaction
+==== Transaction
 
 A Spring `PlatformTransactionManager` is required to orchestrate
 transaction.
 
-Service (Start/Stop)
+===== Service (Start/Stop)
 
 The `start` method verify the connection of the database and the
 presence of the required tables. If anything is wrong it will fail
 during starting.
 
-Aggregator configuration
+==== Aggregator configuration
 
 Depending on the targeted environment, the aggregator might need some
 configuration. As you already know, each aggregator should have its own
@@ -713,7 +708,7 @@ your database system, it can be injected with the `lobHandler` property.
 Here is the declaration for Oracle:
 
 [source,xml]
--------------------------------------------------------------------------------
+----
 <bean id="lobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler">
   <property name="nativeJdbcExtractor" ref="nativeJdbcExtractor"/>
 </bean>
@@ -727,9 +722,9 @@ Here is the declaration for Oracle:
   <!-- Only with Oracle, else use default -->
   <property name="lobHandler" ref="lobHandler"/>
 </bean>
--------------------------------------------------------------------------------
+----
  
-Optimistic locking
+==== Optimistic locking
 
 From *Camel 2.12* onwards you can turn on `optimisticLocking` and use
 this JDBC based aggregation repository in a clustered environment where
@@ -766,7 +761,7 @@ Here is an example, where we define 2 extra FQN class names from the
 JDBC vendor.
 
 [source,xml]
--------------------------------------------------------------------------------
+-----
 <bean id="repo"
 class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   <property name="transactionManager" ref="transactionManager"/>
@@ -783,26 +778,26 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
     </util:set>
   </property>
 </bean>
--------------------------------------------------------------------------------
+-----
 
-### Camel Sql Starter
+=== Camel Sql Starter
 
 A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.
 
-[source]
-------------------------------------------------------
+[source,text]
+-----
 # Example for a mysql datasource
 spring.datasource.url=jdbc:mysql://localhost/test
 spring.datasource.username=dbuser
 spring.datasource.password=dbpass
 spring.datasource.driver-class-name=com.mysql.jdbc.Driver
-------------------------------------------------------
+----
 
 To use this feature, add the following dependencies to your spring boot pom.xml file:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-sql-starter</artifactId>
@@ -814,17 +809,7 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
     <artifactId>spring-boot-starter-jdbc</artifactId>
     <version>${spring-boot-version}</version>
 </dependency>
-------------------------------------------------------
+----
 
 You should also include the specific database driver, if needed.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-SQL Stored Procedure
-
-<<jdbc-component,JDBC>>

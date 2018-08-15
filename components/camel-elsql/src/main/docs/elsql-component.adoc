@@ -17,21 +17,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-elsql</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 The SQL component uses the following endpoint URI notation:
 
-[source,java]
------------------------------------
+[source,text]
+----
 sql:elSqlName:resourceUri[?options]
------------------------------------
+----
 
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
@@ -47,7 +47,7 @@ expression.
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-### Options
+=== Options
 
 // component options: START
 The ElSQL component supports 5 options, which are listed below.
@@ -117,9 +117,9 @@ with the following path and query parameters:
 | *batch* (producer) | Enables or disables batch mode | false | boolean
 | *noop* (producer) | If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *useMessageBodyForSql* (producer) | Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used. | false | boolean
-| *alwaysPopulateStatement* (producer) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
-| *parametersCount* (producer) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
+| *alwaysPopulateStatement* (advanced) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
 | *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
+| *parametersCount* (advanced) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
 | *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
 | *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatement Strategy
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -161,7 +161,7 @@ The component supports 6 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Result of the query
+=== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -175,13 +175,13 @@ headers, it provides a concise syntax for querying a sequence or some
 other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
-### Header values
+=== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Header |Description
 
 |`CamelSqlUpdateCount` |The number of rows updated for `update` operations, returned as an
@@ -189,9 +189,9 @@ count in the following message headers:
 
 |`CamelSqlRowCount` |The number of rows returned for `select` operations, returned as an
 `Integer` object.
-|=======================================================================
+|===
 
-#### Sample
+==== Sample
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -203,53 +203,85 @@ constant value +
  for the named parameters:
 
 [source,java]
------------------------------------------------
+----
    from("direct:projects")
      .setHeader("lic", constant("ASF"))
      .setHeader("min", constant(123))
      .to("elsql:projects:com/foo/orders.elsql")
------------------------------------------------
+----
 
 And the https://github.com/OpenGamma/ElSql[elsql] mapping file
 
-[source,java]
-------------------------------------
+[source,sql]
+----
 @NAME(projects)
   SELECT *
   FROM projects
   WHERE license = :lic AND id > :min
   ORDER BY id
-------------------------------------
+----
 
 Though if the message body is a `java.util.Map` then the named
 parameters will be taken from the body.
 
 [source,java]
------------------------------------------------
+----
    from("direct:projects")
      .to("elsql:projects:com/foo/orders.elsql")
------------------------------------------------
+----
+
+=== Using expression parameters in producers
 
 In from Camel 2.16.1 onwards you can use Simple expressions as well,
 which allows to use an OGNL like notation on the message body, where it
 assumes to have `getLicense` and `getMinimum` methods:
 
-[source,java]
-------------------------------------------------------------
+[source,sql]
+----
 @NAME(projects)
   SELECT *
   FROM projects
   WHERE license = :${body.license} AND id > :${body.minimum}
   ORDER BY id
-------------------------------------------------------------
+----
 
-### See Also
+==== Using expression parameters in consumers
 
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
+*Available as of Camel 2.23*
 
-* <<sql-component,SQL Component>>
-* <<mybatis-component,MyBatis>>
-* <<jdbc-component,JDBC>>
+When using the ElSql component as consumer, you can now also use expression parameters (simple language)
+to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
+
+For example in the sample below we call the nextId method on the bean myIdGenerator:
+
+[source,sql]
+----
+@NAME(projectsByIdBean)
+  SELECT *
+  FROM projects
+  WHERE id = :${bean#myIdGenerator.nextId}
+----
+
+IMPORTANT: Notice in the bean syntax above, we must use `#` instead of `:` in the simple expression.
+This is because Spring query parameter parser is in-use which will separate parameters on colon.
+Also pay attention that Spring query parser will invoke the bean twice for each query.
+
+And the bean has the following method:
+
+[source,java]
+----
+public static class MyIdGenerator {
+
+    private int id = 1;
+
+    public int nextId() {
+        // spring will call this twice, one for initializing query and 2nd for actual value
+        id++;
+        return id / 2;
+    }
+----
+
+Notice that there is no existing `Exchange` with message body and headers, so
+the simple expression you can use in the consumer are most useable for calling
+bean methods as in this example.
+
