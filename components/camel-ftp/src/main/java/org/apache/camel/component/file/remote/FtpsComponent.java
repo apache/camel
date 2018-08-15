@@ -49,7 +49,11 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
 
     @Override
     protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        FtpsConfiguration config = new FtpsConfiguration(new URI(uri.substring(0, uri.indexOf(":") + 1) + "//" + remaining));
+        String baseUri = getBaseUri(uri);
+
+        // lets make sure we create a new configuration as each endpoint can customize its own version
+        // must pass on baseUri to the configuration (see above)
+        FtpsConfiguration config = new FtpsConfiguration(new URI(baseUri));
 
         FtpUtils.ensureRelativeFtpDirectory(this, config);
 
