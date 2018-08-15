@@ -98,7 +98,7 @@ public class CaffeineLoadCacheComponentConfiguration
          */
         private String valueType = "java.lang.Object";
         /**
-         * To configure the default an already instantianted cache to be used
+         * To configure an already instantiated cache to be used
          */
         private Cache cache;
         /**

@@ -124,7 +124,7 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * To configure the default an already instantianted cache to be used
+     * To configure an already instantiated cache to be used
      */
     public void setCache(Cache cache) {
         this.cache = cache;
