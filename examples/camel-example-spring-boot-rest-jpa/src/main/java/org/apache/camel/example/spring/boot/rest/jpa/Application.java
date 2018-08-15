@@ -28,13 +28,13 @@ import org.springframework.stereotype.Component;
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
+    @Autowired
+    private Environment env;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
     
-    @Autowired
-    private Environment env;
-
     @Component
     class RestApi extends RouteBuilder {
 
