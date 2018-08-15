@@ -309,7 +309,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
             }
 
             if (newThrottle != null) {
-                if (newThrottle != throttleRate) {
+                if (!newThrottle.equals(throttleRate)) {
                     // get the queue from the cache
                     // decrease
                     if (throttleRate > newThrottle) {
@@ -357,7 +357,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
             }
 
             if (newThrottle != null) {
-                if (newThrottle != throttleRatesMap.get(key)) {
+                if (!newThrottle.equals(throttleRatesMap.get(key))) {
                     // get the queue from the cache
                     // decrease
                     if (throttleRatesMap.get(key) > newThrottle) {
