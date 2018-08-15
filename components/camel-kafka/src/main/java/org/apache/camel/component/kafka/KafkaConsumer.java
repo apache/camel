@@ -378,15 +378,19 @@ public class KafkaConsumer extends DefaultConsumer {
 
         private void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset, boolean forceCommit) {
             if (partitionLastOffset != -1) {
-                if (offsetRepository != null) {
+                boolean autoCommitEnable = endpoint.getConfiguration().isAutoCommitEnable();
+                Optional<StateRepository<String, String>> offsetRepositoryOptional = Optional.ofNullable(offsetRepository);
+                BiConsumer<TopicPartition, Long> topicPartitionLongBiConsumer = (partition1, partitionLastOffset1) -> consumer.commitSync(Collections.singletonMap(partition1, new OffsetAndMetadata(partitionLastOffset1 + 1)));
+
+                if (autoCommitEnable && offsetRepositoryOptional.isPresent()) {
                     log.debug("Saving offset repository state {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
                     offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
                 } else if (forceCommit) {
                     log.debug("Forcing commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
-                    consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
-                } else if (endpoint.getConfiguration().isAutoCommitEnable()) {
+                    topicPartitionLongBiConsumer.accept(partition, partitionLastOffset);
+                } else if (autoCommitEnable) {
                     log.debug("Auto commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
-                    consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
+                    topicPartitionLongBiConsumer.accept(partition, partitionLastOffset);
                 }
             }
         }
