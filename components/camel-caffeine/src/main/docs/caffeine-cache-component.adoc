@@ -4,7 +4,7 @@
 *Available as of Camel version 2.20*
 
 The *caffeine-cache* component enables you to perform caching operations using
-The simple cache from Caffeine.
+the simple cache from Caffeine.
 
 Maven users will need to add the following dependency to
 their `pom.xml` for this component:
@@ -136,8 +136,8 @@ You can use your cache with the following code:
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .toF("caffeine-loadcache://%s?cache=#cache&action=PUT&key=1", "test")
-                    .toF("caffeine-loadcache://%s?cache=#cache&key=1&action=GET", "test")
+                    .toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")
+                    .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test")
                     .log("Test! ${body}")
                     .to("mock:result");
             }
