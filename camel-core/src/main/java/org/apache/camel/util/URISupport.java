@@ -549,11 +549,7 @@ public final class URISupport {
             path = path.substring(0, idx);
         }
 
-        if (u.getScheme().startsWith("http")) {
-            path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
-        } else {
-            path = UnsafeUriCharactersEncoder.encode(path);
-        }
+        path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
 
         // okay if we have user info in the path and they use @ in username or password,
         // then we need to encode them (but leave the last @ sign before the hostname)
