@@ -16,6 +16,7 @@
  */
 package org.apache.camel.example.springboot;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,6 @@ import org.springframework.stereotype.Component;
 
 import static org.apache.camel.model.rest.RestParamType.body;
 import static org.apache.camel.model.rest.RestParamType.path;
-
-import org.apache.camel.Exchange;
 
 /**
  * A simple Camel REST DSL route with Swagger API documentation.
