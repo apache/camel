@@ -126,12 +126,16 @@ public final class XmlLineNumberParser {
                     }
                 }
 
+                // strip namespace prefix
+                int pos = qName.indexOf(':');
+                String lNane = pos > 0 ? qName.substring(pos + 1) : qName;
+
                 if (found) {
                     Element el;
                     if (forceNamespace != null) {
-                        el = doc.createElementNS(forceNamespace, qName);
+                        el = doc.createElementNS(forceNamespace, lNane);
                     } else {
-                        el = doc.createElement(qName);
+                        el = doc.createElement(lNane);
                     }
 
                     for (int i = 0; i < attributes.getLength(); i++) {

@@ -18,8 +18,13 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
     <!-- START SNIPPET: e1 -->
+
     <!-- camelContext is the Camel runtime, where we can host Camel routes -->
     <camel:camelContext id="camelContext-4456db4f-45bb-4aa4-8698-10823e239dbc" xmlns:camel="http://camel.apache.org/schema/spring">
         <camel:route id="myRoute">
