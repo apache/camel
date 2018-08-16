@@ -549,7 +549,7 @@ public final class URISupport {
             path = path.substring(0, idx);
         }
 
-        if (u.getScheme().startsWith("http") || u.getScheme().startsWith("ftp")) {
+        if (u.getScheme().startsWith("http") || u.getScheme().contains("ftp")) {
             path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
         } else {
             path = UnsafeUriCharactersEncoder.encode(path);
