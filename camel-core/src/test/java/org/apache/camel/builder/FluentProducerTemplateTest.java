@@ -260,6 +260,30 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testWithExchange() throws Exception {
+        Exchange exchange = ExchangeBuilder.anExchange(context)
+            .withBody("Hello!")
+            .withPattern(ExchangePattern.InOut)
+            .build();
+
+        exchange = context.createFluentProducerTemplate()
+                .withExchange(exchange)
+                .to("direct:in")
+                .send();
+
+        assertEquals("Bye World", exchange.getMessage().getBody());
+
+        try {
+            String out = context.createFluentProducerTemplate()
+                .withExchange(exchange)
+                .to("direct:in")
+                .request(String.class);
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.", e.getMessage());
+        }
+    }
+
     public void testRequestBody() throws Exception {
         // with endpoint as string uri
         FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
