@@ -230,6 +230,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     @SuppressWarnings("unchecked")
     public <T> T request(Class<T> type) throws CamelExecutionException {
+        if (exchangeSupplier.isPresent()) {
+            throw new IllegalArgumentException("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.");
+        }
+
         // Determine the target endpoint
         final Endpoint target = target();
 

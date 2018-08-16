@@ -201,6 +201,8 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Set the exchange to use for send.
      *
+     * When using withExchange then you must use the send method (request is not supported).
+     *
      * @param exchange the exchange
      */
     FluentProducerTemplate withExchange(Exchange exchange);
@@ -208,6 +210,8 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Set the exchangeSupplier which will be invoke to get the exchange to be
      * used for send.
+     *
+     * When using withExchange then you must use the send method (request is not supported).
      *
      * @param exchangeSupplier the supplier
      */
