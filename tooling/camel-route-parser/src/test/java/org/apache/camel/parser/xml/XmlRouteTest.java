@@ -17,7 +17,6 @@
 package org.apache.camel.parser.xml;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,19 +34,19 @@ public class XmlRouteTest {
 
     @Test
     public void testXml() throws Exception {
-    	test("mycamel");
+        test("mycamel");
     }
 
     @Test
     public void testXmlWithNamespacePrefix() throws Exception {
-    	test("mycamel-withNamespacePrefix");
+        test("mycamel-withNamespacePrefix");
     }
-    
-	private void test(String filename) throws FileNotFoundException, Exception {
-		List<CamelEndpointDetails> endpoints = new ArrayList<>();
 
-		InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/"+filename+".xml");
-        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/"+filename+".xml";
+    private void test(String filename) throws Exception {
+        List<CamelEndpointDetails> endpoints = new ArrayList<>();
+
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/" + filename + ".xml");
+        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/" + filename + ".xml";
         String baseDir = "src/test/resources";
         XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, endpoints);
 
