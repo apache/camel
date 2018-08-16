@@ -316,7 +316,6 @@ public class KafkaConsumer extends DefaultConsumer {
                                     KafkaManualCommit manual = endpoint.getComponent().getKafkaManualCommitFactory().newInstance(exchange, consumer, topicName, threadId,
                                             offsetRepository, partition, record.offset());
                                     exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, manual);
-
                                 }
 
                                 try {
