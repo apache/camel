@@ -136,6 +136,14 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean ignoreIncapable;
 
     /**
+     * Whether to ignore deprecated options being used in the endpoint uri
+     *
+     * @parameter property="camel.ignoreDeprecated"
+     *            default-value="true"
+     */
+    private boolean ignoreDeprecated;
+
+    /**
      * Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter
      * but would fail on properties that are not part of the component but in the uri because of using lenient properties.
      * For example using the HTTP components to provide query parameters in the endpoint uri.
@@ -322,9 +330,12 @@ public class ValidateMojo extends AbstractExecMojo {
         int endpointErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
+        int deprecatedOptions = 0;
         for (CamelEndpointDetails detail : endpoints) {
             getLog().debug("Validating endpoint: " + detail.getEndpointUri());
             EndpointValidationResult result = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
+            int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
+            deprecatedOptions += deprecated;
 
             boolean ok = result.isSuccess();
             if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
@@ -337,6 +348,10 @@ public class ValidateMojo extends AbstractExecMojo {
                 incapableErrors++;
                 ok = true;
             }
+            if (ok && !ignoreDeprecated && deprecated > 0) {
+                ok = false;
+            }
+
             if (!ok) {
                 if (result.getUnknownComponent() != null) {
                     unknownComponents++;
@@ -370,7 +385,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getFileName());
                 }
                 sb.append("\n\n");
-                String out = result.summaryErrorMessage(false);
+                String out = result.summaryErrorMessage(false, ignoreDeprecated);
                 sb.append(out);
                 sb.append("\n\n");
 
@@ -409,12 +424,12 @@ public class ValidateMojo extends AbstractExecMojo {
         String endpointSummary;
         if (endpointErrors == 0) {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)",
-                    ok, endpointErrors, incapableErrors, unknownComponents);
+            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         } else {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)",
-                    ok, endpointErrors, incapableErrors, unknownComponents);
+            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         }
 
         if (endpointErrors > 0) {
