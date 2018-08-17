@@ -47,6 +47,7 @@ import static org.apache.camel.catalog.JSonSchemaHelper.isComponentLenientProper
 import static org.apache.camel.catalog.JSonSchemaHelper.isComponentProducerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyConsumerOnly;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyDeprecated;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyMultiValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
@@ -200,6 +201,12 @@ public abstract class AbstractCamelCatalog {
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {
                     result.addRequired(name);
+                }
+
+                // is the option deprecated
+                boolean deprecated = isPropertyDeprecated(rows, name);
+                if (deprecated) {
+                    result.addDeprecated(name);
                 }
 
                 // is enum but the value is not within the enum range
@@ -430,6 +437,12 @@ public abstract class AbstractCamelCatalog {
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {
                     result.addRequired(name);
+                }
+
+                // is the option deprecated
+                boolean deprecated = isPropertyDeprecated(rows, name);
+                if (deprecated) {
+                    result.addDeprecated(name);
                 }
 
                 // is enum but the value is not within the enum range

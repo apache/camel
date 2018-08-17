@@ -47,6 +47,7 @@ import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isComponentLenien
 import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isComponentProducerOnly;
 import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyConsumerOnly;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyDeprecated;
 import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyMultiValue;
 import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyNumber;
@@ -200,6 +201,12 @@ public abstract class AbstractCamelCatalog {
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {
                     result.addRequired(name);
+                }
+
+                // is the option deprecated
+                boolean deprecated = isPropertyDeprecated(rows, name);
+                if (deprecated) {
+                    result.addDeprecated(name);
                 }
 
                 // is enum but the value is not within the enum range
@@ -430,6 +437,12 @@ public abstract class AbstractCamelCatalog {
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {
                     result.addRequired(name);
+                }
+
+                // is the option deprecated
+                boolean deprecated = isPropertyDeprecated(rows, name);
+                if (deprecated) {
+                    result.addDeprecated(name);
                 }
 
                 // is enum but the value is not within the enum range
