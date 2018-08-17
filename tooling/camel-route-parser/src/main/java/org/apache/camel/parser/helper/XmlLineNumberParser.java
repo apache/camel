@@ -19,6 +19,8 @@ package org.apache.camel.parser.helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,6 +29,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -99,6 +102,7 @@ public final class XmlLineNumberParser {
         final DefaultHandler handler = new DefaultHandler() {
             private Locator locator;
             private boolean found;
+            private final Map<String, String> localNs = new HashMap<>();
 
             @Override
             public void setDocumentLocator(final Locator locator) {
@@ -125,16 +129,30 @@ public final class XmlLineNumberParser {
                     }
                 }
 
-                // strip namespace prefix
-                int pos = qName.indexOf(':');
-                String lNane = pos > 0 ? qName.substring(pos + 1) : qName;
-
                 if (found) {
                     Element el;
                     if (forceNamespace != null) {
-                        el = doc.createElementNS(forceNamespace, lNane);
+                        el = doc.createElementNS(forceNamespace, qName);
                     } else {
-                        el = doc.createElement(lNane);
+                        String ns = null;
+                        // are we using namespace prefixes
+                        int pos = qName.indexOf(':');
+                        if (pos > 0) {
+                            if (attributes != null) {
+                                String prefix = qName.substring(0, pos);
+                                ns = attributes.getValue("xmlns:" + prefix);
+                                if (ns != null) {
+                                    localNs.put(prefix, ns);
+                                } else {
+                                    ns = localNs.get(prefix);
+                                }
+                            }
+                        }
+                        if (ns != null) {
+                            el = doc.createElementNS(ns, qName);
+                        } else {
+                            el = doc.createElement(qName);
+                        }
                     }
 
                     for (int i = 0; i < attributes.getLength(); i++) {
