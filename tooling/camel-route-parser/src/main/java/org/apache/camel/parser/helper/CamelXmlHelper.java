@@ -35,6 +35,9 @@ import org.jboss.forge.roaster.model.util.Strings;
  */
 public final class CamelXmlHelper {
 
+    private static final String CAMEL_NS_SPRING = "http://camel.apache.org/schema/spring";
+    private static final String CAMEL_NS_BLUEPRINT = "http://camel.apache.org/schema/blueprint";
+
     private CamelXmlHelper() {
         // utility class
     }
@@ -52,10 +55,10 @@ public final class CamelXmlHelper {
     public static List<Node> findAllEndpoints(Document dom) {
         List<Node> nodes = new ArrayList<>();
 
-        NodeList list = dom.getElementsByTagName("endpoint");
+        NodeList list = getElementsByTagName(dom, "endpoint");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
-            if ("endpoint".equals(child.getNodeName())) {
+            if (isNodeName("endpoint", child)) {
                 // it may not be a camel namespace, so skip those
                 String ns = child.getNamespaceURI();
                 if (ns == null) {
@@ -74,42 +77,42 @@ public final class CamelXmlHelper {
             }
         }
 
-        list = dom.getElementsByTagName("onException");
+        list = getElementsByTagName(dom, "onException");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
             findAllUrisRecursive(child, nodes);
         }
-        list = dom.getElementsByTagName("onCompletion");
+        list = getElementsByTagName(dom, "onCompletion");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
             findAllUrisRecursive(child, nodes);
         }
-        list = dom.getElementsByTagName("intercept");
+        list = getElementsByTagName(dom, "intercept");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
             findAllUrisRecursive(child, nodes);
         }
-        list = dom.getElementsByTagName("interceptFrom");
+        list = getElementsByTagName(dom, "interceptFrom");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
             findAllUrisRecursive(child, nodes);
         }
-        list = dom.getElementsByTagName("interceptSendToEndpoint");
+        list = getElementsByTagName(dom, "interceptSendToEndpoint");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
             findAllUrisRecursive(child, nodes);
         }
-        list = dom.getElementsByTagName("rest");
+        list = getElementsByTagName(dom, "rest");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
-            if ("route".equals(child.getNodeName()) || "to".equals(child.getNodeName())) {
+            if (isNodeName("route", child) || isNodeName("to", child)) {
                 findAllUrisRecursive(child, nodes);
             }
         }
-        list = dom.getElementsByTagName("route");
+        list = getElementsByTagName(dom, "route");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
-            if ("route".equals(child.getNodeName())) {
+            if (isNodeName("route", child)) {
                 findAllUrisRecursive(child, nodes);
             }
         }
@@ -138,10 +141,10 @@ public final class CamelXmlHelper {
     public static List<Node> findAllRoutes(Document dom) {
         List<Node> nodes = new ArrayList<>();
 
-        NodeList list = dom.getElementsByTagName("route");
+        NodeList list = getElementsByTagName(dom, "route");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
-            if ("route".equals(child.getNodeName())) {
+            if (isNodeName("route", child)) {
                 nodes.add(child);
             }
         }
@@ -152,10 +155,10 @@ public final class CamelXmlHelper {
     public static List<Node> findAllSimpleExpressions(Document dom) {
         List<Node> nodes = new ArrayList<>();
 
-        NodeList list = dom.getElementsByTagName("route");
+        NodeList list = getElementsByTagName(dom, "route");
         for (int i = 0; i < list.getLength(); i++) {
             Node child = list.item(i);
-            if ("route".equals(child.getNodeName())) {
+            if (isNodeName("route", child)) {
                 findAllSimpleExpressionsRecursive(child, nodes);
             }
         }
@@ -165,7 +168,7 @@ public final class CamelXmlHelper {
 
     private static void findAllSimpleExpressionsRecursive(Node node, List<Node> nodes) {
         // okay its a route so grab if its <simple>
-        if ("simple".equals(node.getNodeName())) {
+        if (isNodeName("simple", node)) {
             nodes.add(node);
         }
 
@@ -257,7 +260,7 @@ public final class CamelXmlHelper {
                 elementName = "camelContext";
             }
             Integer countObject = nodeCounts.get(elementName);
-            int count = countObject != null ? countObject.intValue() : 0;
+            int count = countObject != null ? countObject : 0;
             nodeCounts.put(elementName, ++count);
             answer = element.getAttribute("id");
             if (Strings.isBlank(answer)) {
@@ -275,8 +278,23 @@ public final class CamelXmlHelper {
         return camels;
     }
 
+    private static NodeList getElementsByTagName(Document dom, String tagName) {
+        NodeList list = dom.getElementsByTagName(tagName);
+        if (list.getLength() == 0) {
+            list = dom.getElementsByTagNameNS(CAMEL_NS_SPRING, tagName);
+        }
+        if (list.getLength() == 0) {
+            list = dom.getElementsByTagNameNS(CAMEL_NS_BLUEPRINT, tagName);
+        }
+        return list;
+    }
+
+    private static boolean isNodeName(String name, Node node) {
+        return name.equals(node.getLocalName()) || name.equals(node.getNodeName());
+    }
+
     private static boolean equal(Object a, Object b) {
-        return a == b ? true : a != null && b != null && a.equals(b);
+        return a == b || a != null && a.equals(b);
     }
 
 }
