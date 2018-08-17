@@ -379,9 +379,9 @@ public class CdiCamelExtension implements Extension {
         }
 
         // Add type converters to Camel contexts
-        CdiTypeConverterLoader loader = new CdiTypeConverterLoader();
-        for (Class<?> converter : converters) {
-            for (CamelContext context : contexts) {
+        for (CamelContext context : contexts) {
+            CdiTypeConverterLoader loader = new CdiTypeConverterLoader();
+            for (Class<?> converter : converters) {
                 loader.loadConverterMethods(context.getTypeConverterRegistry(), converter);
             }
         }
