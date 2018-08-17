@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.cdi.test;
+
+import java.util.concurrent.TimeUnit;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
@@ -36,10 +40,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.cdi.expression.ExchangeExpression.fromCamelContext;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
@@ -83,17 +83,17 @@ public class InjectedTypeConverterMultipleContextsTest {
     @Test
     public void sendMessageToInboundFirst(@ContextName("first") @Uri("direct:inbound") ProducerTemplate inbound,
                                           @ContextName("first") @Uri("mock:outbound") MockEndpoint outbound) throws InterruptedException {
-        _sendMessageToInbound(inbound, outbound, "first");
+        sendMessageToInbound(inbound, outbound, "first");
     }
 
     @Test
     public void sendMessageToInboundSecond(@ContextName("second") @Uri("direct:inbound") ProducerTemplate inbound,
                                            @ContextName("second") @Uri("mock:outbound") MockEndpoint outbound) throws InterruptedException {
-        _sendMessageToInbound(inbound, outbound, "second");
+        sendMessageToInbound(inbound, outbound, "second");
     }
 
 
-    private void _sendMessageToInbound(ProducerTemplate inbound, MockEndpoint outbound, String contextName) throws InterruptedException {
+    private void sendMessageToInbound(ProducerTemplate inbound, MockEndpoint outbound, String contextName) throws InterruptedException {
         outbound.expectedMessageCount(1);
         outbound.message(0).exchange().matches(fromCamelContext(contextName));
 
