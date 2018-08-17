@@ -39,6 +39,7 @@ import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipar
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.entity.TextPlainEntity;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
@@ -207,7 +208,7 @@ public class AS2MessageTest {
                     org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
-                    LOG.debug(Util.printMessage(request));
+                    LOG.debug(AS2Utils.printMessage(request));
                 } catch (Exception e) {
                     throw new HttpException("Failed to parse AS2 Message Entity", e);
                 }
@@ -447,7 +448,7 @@ public class AS2MessageTest {
         HttpMessageUtils.setHeaderValue(request, AS2Header.DATE, httpdate);
         HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_TO, AS2_NAME);
         HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_FROM, AS2_NAME);
-        String originalMessageId = Util.createMessageId(SERVER_FQDN);
+        String originalMessageId = AS2Utils.createMessageId(SERVER_FQDN);
         HttpMessageUtils.setHeaderValue(request, AS2Header.MESSAGE_ID, originalMessageId);
         HttpMessageUtils.setHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS,
                 DISPOSITION_NOTIFICATION_OPTIONS);
@@ -500,7 +501,7 @@ public class AS2MessageTest {
         ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
         assertEquals("Unexpected value for Recieved Content Mic", expectedMic.getEncodedMessageDigest(),
                 mdnMic.getEncodedMessageDigest());
-        LOG.debug("\r\n" + Util.printMessage(mndRequest));
+        LOG.debug("\r\n" + AS2Utils.printMessage(mndRequest));
     }
 
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.as2.api;
+package org.apache.camel.component.as2.api.util;
 
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.component.as2.api.InvalidAS2NameException;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -38,7 +39,7 @@ import org.apache.http.StatusLine;
 /**
  * Utility Methods used in AS2 Component
  */
-public final class Util {
+public final class AS2Utils {
 
     public static final String DQUOTE = "\"";
     public static final String BACKSLASH = "\\\\";
@@ -54,7 +55,7 @@ public final class Util {
 
     private static Random generator = new Random();
 
-    private Util() {
+    private AS2Utils() {
     }
 
     /**

@@ -28,13 +28,13 @@ import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
-import org.apache.camel.component.as2.api.Util;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
@@ -139,7 +139,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             /* AS2-From header */
             String as2From = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
             try {
-                Util.validateAS2Name(as2From);
+                AS2Utils.validateAS2Name(as2From);
             } catch (InvalidAS2NameException e) {
                 throw new HttpException("Invalid AS-From name", e);
             }
@@ -148,7 +148,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             /* AS2-To header */
             String as2To = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
             try {
-                Util.validateAS2Name(as2To);
+                AS2Utils.validateAS2Name(as2To);
             } catch (InvalidAS2NameException e) {
                 throw new HttpException("Invalid AS-To name", e);
             }
@@ -156,7 +156,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
             /* Message-Id header*/
             // RFC4130 - 7.3 -  A Message-ID header is added to support message reconciliation
-            response.addHeader(AS2Header.MESSAGE_ID, Util.createMessageId(serverFQDN));
+            response.addHeader(AS2Header.MESSAGE_ID, AS2Utils.createMessageId(serverFQDN));
 
             AS2SignedDataGenerator gen = null;
             if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null
@@ -182,7 +182,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             }
         }
 
-        LOG.debug(Util.printMessage(response));
+        LOG.debug(AS2Utils.printMessage(response));
     }
 
 }
