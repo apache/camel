@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
-import org.apache.camel.component.as2.api.Util;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -51,7 +51,7 @@ public class RequestAsynchronousMDN implements HttpRequestInterceptor {
 
         /* Message-Id header */
         // SHOULD be set to aid in message reconciliation
-        request.addHeader(AS2Header.MESSAGE_ID, Util.createMessageId(senderFQDN));
+        request.addHeader(AS2Header.MESSAGE_ID, AS2Utils.createMessageId(senderFQDN));
 
         /* Recipient-Address header */
         String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS, String.class);
