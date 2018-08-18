@@ -799,6 +799,16 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
         }
 
+        createComponentConfigurationSourceInnerClass(javaClass, nestedTypes, model);
+
+        sortImports(javaClass);
+
+        String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
+
+        writeSourceIfChanged(javaClass, fileName);
+    }
+
+    private void createComponentConfigurationSourceInnerClass(JavaClassSource javaClass, Set<JavaClassSource> nestedTypes, ComponentModel model) throws MojoFailureException {
         // add inner classes for nested AutoConfiguration options
         ClassLoader projectClassLoader = getProjectClassLoader();
         for (JavaClassSource nestedType : nestedTypes) {
@@ -950,12 +960,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
             }
         }
-
-        sortImports(javaClass);
-
-        String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-
-        writeSourceIfChanged(javaClass, fileName);
     }
 
     private boolean isComplexType(ComponentOptionModel option) {

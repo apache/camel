@@ -44,22 +44,22 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
     @Mock
     protected Quorum mockQuorum;
 
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+
+    @Mock
+    protected Request request;
+
+    protected String getUrl() {
+        return "web3j://http://127.0.0.1:8545?web3j=#mockQuorum&quorumAPI=true&";
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("mockQuorum", mockQuorum);
         return registry;
     }
-
-    protected String getUrl() {
-        return "web3j://http://127.0.0.1:8545?web3j=#mockQuorum&quorumAPI=true&";
-    }
-
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
-
-    @Mock
-    private Request request;
 
     @Override
     public boolean isUseAdviceWith() {

@@ -36,7 +36,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
-    MyIdGenerator idGenerator = new MyIdGenerator();
+    private MyIdGenerator idGenerator = new MyIdGenerator();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
