@@ -40,7 +40,6 @@ import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
-import org.apache.camel.component.as2.api.Util;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
@@ -50,6 +49,7 @@ import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
@@ -378,7 +378,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         HttpMessageUtils.setHeaderValue(request, AS2Header.DATE, httpdate);
         HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_TO, AS2_NAME);
         HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_FROM, AS2_NAME);
-        String originalMessageId = Util.createMessageId(SERVER_FQDN);
+        String originalMessageId = AS2Utils.createMessageId(SERVER_FQDN);
         HttpMessageUtils.setHeaderValue(request, AS2Header.MESSAGE_ID, originalMessageId);
         HttpMessageUtils.setHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS,
                 DISPOSITION_NOTIFICATION_OPTIONS);
