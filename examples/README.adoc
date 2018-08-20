@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 107 (8 deprecated)
+Number of Examples: 109 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -28,6 +28,8 @@ Number of Examples: 107 (8 deprecated)
 | link:camel-example-cdi-xml/README.md[CDI Camel XML] (camel-example-cdi-xml) | Beginner | CDI and Camel XML example
 
 | link:camel-example-console/README.md[Console] (camel-example-console) | Beginner | An example that reads input from the console
+
+| link:camel-example-fhir-auth-tx-spring-boot/readme.adoc[Fhir Auth Tx Spring Boot] (camel-example-fhir-auth-tx-spring-boot) | Beginner | An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot
 
 | link:camel-example-fhir-spring-boot/readme.adoc[Fhir Spring Boot] (camel-example-fhir-spring-boot) | Beginner | An example showing how to work with Camel, Fhir and Spring Boot
 
@@ -170,6 +172,8 @@ Number of Examples: 107 (8 deprecated)
 | link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
+
+| link:camel-example-ehcache-blueprint/README.md[Ehcache Blueprint] (camel-example-ehcache-blueprint) | OSGi | An example using Ehcache with OSGi Blueprint
 
 | link:camel-example-fhir-osgi/README.md[Fhir Osgi] (camel-example-fhir-osgi) | OSGi | An example running Camel FHIR in Apache Karaf
 

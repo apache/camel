@@ -46,6 +46,7 @@
     <module>camel-example-cdi-aws-s3</module>
     <module>camel-example-cdi-cassandraql</module>
     <module>camel-example-fhir</module>
+    <module>camel-example-fhir-auth-tx-spring-boot</module>
     <module>camel-example-fhir-osgi</module>
     <module>camel-example-fhir-spring-boot</module>
     <module>camel-example-cdi-kubernetes</module>
