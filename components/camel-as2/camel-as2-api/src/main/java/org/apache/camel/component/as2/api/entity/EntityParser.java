@@ -752,7 +752,7 @@ public final class EntityParser {
 
             String charsetName = charset.toString();
             ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(
-                    charsetName, contentTransferEncoding, signature, false);
+                    signature, charsetName, contentTransferEncoding, false);
             return applicationPkcs7SignatureEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Signature entity");
