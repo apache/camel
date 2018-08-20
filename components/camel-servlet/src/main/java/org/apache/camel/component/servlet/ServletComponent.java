@@ -47,6 +47,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
     private boolean attachmentMultipartBinding;
+    private String fileNameExtWhitelist;
 
     public ServletComponent() {
         super(ServletEndpoint.class);
@@ -89,6 +90,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
+        endpoint.setFileNameExtWhitelist(fileNameExtWhitelist);
         if (async != null) {
             endpoint.setAsync(async);
         }
@@ -220,6 +222,19 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     @Override

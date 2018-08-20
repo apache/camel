@@ -43,7 +43,7 @@ You can append query options to the URI in the following format,
 ### Options
 
 // component options: START
-The Servlet component supports 8 options, which are listed below.
+The Servlet component supports 9 options, which are listed below.
 
 
 
@@ -53,6 +53,7 @@ The Servlet component supports 8 options, which are listed below.
 | *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. |  | String
 | *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
 | *attachmentMultipart Binding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
 | *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
@@ -80,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,6 +102,7 @@ with the following path and query parameters:
 | *eagerCheckContentAvailable* (consumer) | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
 | *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
