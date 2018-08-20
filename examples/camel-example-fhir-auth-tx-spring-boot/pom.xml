@@ -33,7 +33,7 @@
   <description>An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot</description>
 
   <properties>
-    <category>Beginner</category>
+    <category>Health Care</category>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

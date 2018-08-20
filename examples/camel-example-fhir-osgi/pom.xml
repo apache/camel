@@ -34,7 +34,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <category>OSGi</category>
+    <category>Health Care</category>
   </properties>
 
   <dependencies>
