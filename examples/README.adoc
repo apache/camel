@@ -17,8 +17,6 @@ Number of Examples: 109 (8 deprecated)
 |===
 | Example | Category | Description
 
-| link:camel-example-fhir/README.md[FHIR] (camel-example-fhir) |  | An example running Camel FHIR using Camel CDI 
-
 | link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
@@ -28,10 +26,6 @@ Number of Examples: 109 (8 deprecated)
 | link:camel-example-cdi-xml/README.md[CDI Camel XML] (camel-example-cdi-xml) | Beginner | CDI and Camel XML example
 
 | link:camel-example-console/README.md[Console] (camel-example-console) | Beginner | An example that reads input from the console
-
-| link:camel-example-fhir-auth-tx-spring-boot/readme.adoc[Fhir Auth Tx Spring Boot] (camel-example-fhir-auth-tx-spring-boot) | Beginner | An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot
-
-| link:camel-example-fhir-spring-boot/readme.adoc[Fhir Spring Boot] (camel-example-fhir-spring-boot) | Beginner | An example showing how to work with Camel, Fhir and Spring Boot
 
 | link:camel-example-ftp/README.md[FTP] (camel-example-ftp) | Beginner | An example for showing Camel FTP integration
 
@@ -61,12 +55,6 @@ Number of Examples: 109 (8 deprecated)
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
 | link:camel-example-spring-xquery/README.md[Spring XQuery] (camel-example-spring-xquery) | Beginner | An example using Spring XML to transform a message using XQuery
-
-| link:camel-example-widget-gadget-cdi/README.md[Widget Gadget CDI] (camel-example-widget-gadget-cdi) | Beginner | The widget and gadget example from the EIP book
-
-| link:camel-example-widget-gadget-java/README.md[Widget Gadget Java] (camel-example-widget-gadget-java) | Beginner | The widget and gadget example from the EIP book
-
-| link:camel-example-widget-gadget-xml/README.md[Widget Gadget XML] (camel-example-widget-gadget-xml) | Beginner | The widget and gadget example from the EIP book
 
 | link:camel-example-cassandra-kubernetes/ReadMe.md[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) | Cloud | An example with Camel and Cassandra running on Kubernetes
 
@@ -115,6 +103,20 @@ Number of Examples: 109 (8 deprecated)
 | link:camel-example-route-throttling/README.md[Route Throttling] (camel-example-route-throttling) | EIP | A client-server example using JMS transport where we on the server side can throttle the Camel
     route dynamically based on the flow of messages
   
+
+| link:camel-example-widget-gadget-cdi/README.md[Widget Gadget CDI] (camel-example-widget-gadget-cdi) | EIP | The widget and gadget example from the EIP book
+
+| link:camel-example-widget-gadget-java/README.md[Widget Gadget Java] (camel-example-widget-gadget-java) | EIP | The widget and gadget example from the EIP book
+
+| link:camel-example-widget-gadget-xml/README.md[Widget Gadget XML] (camel-example-widget-gadget-xml) | EIP | The widget and gadget example from the EIP book
+
+| link:camel-example-fhir/README.md[FHIR] (camel-example-fhir) | Health Care | An example running Camel FHIR using Camel CDI 
+
+| link:camel-example-fhir-auth-tx-spring-boot/readme.adoc[Fhir Auth Tx Spring Boot] (camel-example-fhir-auth-tx-spring-boot) | Health Care | An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot
+
+| link:camel-example-fhir-osgi/README.md[Fhir Osgi] (camel-example-fhir-osgi) | Health Care | An example running Camel FHIR in Apache Karaf
+
+| link:camel-example-fhir-spring-boot/readme.adoc[Fhir Spring Boot] (camel-example-fhir-spring-boot) | Health Care | An example showing how to work with Camel, Fhir and Spring Boot
 
 | link:camel-example-transformer-blueprint/README.md[Transformer OSGi Blueprint] (camel-example-transformer-blueprint) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using OSGi Blueprint XML
 
@@ -174,8 +176,6 @@ Number of Examples: 109 (8 deprecated)
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
 | link:camel-example-ehcache-blueprint/README.md[Ehcache Blueprint] (camel-example-ehcache-blueprint) | OSGi | An example using Ehcache with OSGi Blueprint
-
-| link:camel-example-fhir-osgi/README.md[Fhir Osgi] (camel-example-fhir-osgi) | OSGi | An example running Camel FHIR in Apache Karaf
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 

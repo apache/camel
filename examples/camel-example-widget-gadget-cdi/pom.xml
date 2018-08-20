@@ -34,7 +34,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <category>Beginner</category>
+    <category>EIP</category>
     <title>Widget Gadget CDI</title>
   </properties>
 
