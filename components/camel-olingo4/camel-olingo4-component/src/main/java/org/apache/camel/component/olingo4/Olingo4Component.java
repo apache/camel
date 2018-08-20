@@ -162,6 +162,8 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
             } catch (IOException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
+
+            clientBuilder = asyncClientBuilder;
         }
 
         Olingo4AppImpl olingo4App;
