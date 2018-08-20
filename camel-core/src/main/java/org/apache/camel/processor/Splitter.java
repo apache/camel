@@ -36,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -98,13 +99,20 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
-        final AggregationStrategy strategy = getAggregationStrategy();
+        AggregationStrategy strategy = getAggregationStrategy();
+
+        if (strategy instanceof DelegateAggregationStrategy) {
+            strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+        }
 
         // set original exchange if not already pre-configured
         if (strategy instanceof UseOriginalAggregationStrategy) {
             // need to create a new private instance, as we can also have concurrency issue so we cannot store state
             UseOriginalAggregationStrategy original = (UseOriginalAggregationStrategy) strategy;
-            UseOriginalAggregationStrategy clone = original.newInstance(exchange);
+            AggregationStrategy clone = original.newInstance(exchange);
+            if (isShareUnitOfWork()) {
+                clone = new ShareUnitOfWorkAggregationStrategy(clone);
+            }
             setAggregationStrategyOnExchange(exchange, clone);
         }
 
