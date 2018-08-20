@@ -88,6 +88,11 @@ public class SjmsMessage extends DefaultMessage {
             setMessageId(that.getMessageId());
         }
 
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
         // copy body and fault flag
         setBody(that.getBody());
         setFault(that.isFault());

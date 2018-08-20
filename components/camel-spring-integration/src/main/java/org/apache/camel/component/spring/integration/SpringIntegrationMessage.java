@@ -56,6 +56,11 @@ public class SpringIntegrationMessage extends DefaultMessage {
             this.setCamelContext(((CamelContextAware) that).getCamelContext());
         }
 
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
         setMessageId(that.getMessageId());
         setBody(that.getBody());
         super.getHeaders().putAll(that.getHeaders());
