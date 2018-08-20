@@ -143,7 +143,7 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 
     @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
-        ComponentMeterRegistry registry = ...;
+        CompositeMeterRegistry registry = ...;
         registry.add(...);
         // ...
         return registry;
@@ -167,7 +167,7 @@ class MyBean extends RouteBuilder {
     // If multiple MetricRegistry beans
     // @Named(MicrometerComponent.METRIC_REGISTRY_NAME)
     MetricRegistry registry() {
-        ComponentMeterRegistry registry = ...;
+        CompositeMeterRegistry registry = ...;
         registry.add(...);
         // ...
         return registry;
@@ -563,7 +563,7 @@ and add a `JmxMeterRegistry` instance:
 
     @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
-        ComponentMeterRegistry meterRegistry = new CompositeMeterRegistry();
+        CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(...);
         meterRegistry.add(new JmxMeterRegistry(
            CamelJmxConfig.DEFAULT,
