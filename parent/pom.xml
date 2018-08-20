@@ -123,7 +123,7 @@
     <chronicle-core-version>1.16.21</chronicle-core-version>
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
     <chronicle-map-version>2.4.17</chronicle-map-version>
-    <chronicle-network-version>1.16.3</chronicle-network-version>
+    <chronicle-network-version>1.16.4</chronicle-network-version>
     <chronicle-queue-version>4.16.5</chronicle-queue-version>
     <chronicle-threads-version>1.16.3</chronicle-threads-version>
     <chronicle-wire-version>1.16.16</chronicle-wire-version>
