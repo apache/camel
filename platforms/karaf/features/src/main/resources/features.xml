@@ -2372,7 +2372,7 @@
     <bundle dependency='true'>wrap:mvn:org.web3j/core/${web3j-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.web3j/geth/${web3j-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.web3j/parity/${web3j-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.web3j/quorum/0.9.0</bundle>
+    <bundle dependency='true'>wrap:mvn:org.web3j/quorum/${web3j-quorum-version}</bundle>
     <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-web3j/${project.version}</bundle>
   </feature>
