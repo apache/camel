@@ -47,8 +47,8 @@ public class MyCamelApplicationTest {
 
     @Test
     public void shouldPushConvertedCsvtoFhir() throws Exception {
-    	mock.expectedMessageCount(1);
-    	
+        mock.expectedMessageCount(1);
+
         mock.assertIsSatisfied();
     }
 

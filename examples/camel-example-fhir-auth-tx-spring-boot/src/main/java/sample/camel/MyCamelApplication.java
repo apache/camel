@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * A sample Spring Boot application that starts the Camel routes.
  */
+// CHECKSTYLE:OFF
 @SpringBootApplication
 public class MyCamelApplication {
 
@@ -33,3 +34,4 @@ public class MyCamelApplication {
     }
 
 }
+// CHECKSTYLE:ON

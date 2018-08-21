@@ -16,16 +16,14 @@
  */
 package sample.camel;
 
-import org.apache.camel.builder.RouteBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.ProtocolException;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.springframework.stereotype.Component;
-
 
 /**
  * A simple Camel route that triggers from a file and pushes to a FHIR server.
@@ -38,29 +36,29 @@ public class MyCamelRouter extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("file:{{input}}").routeId("fhir-example")
-                .onException(ProtocolException.class)
-                    .handled(true)
-                    .log(LoggingLevel.ERROR, "Error connecting to FHIR server with URL:{{serverUrl}}, please check the application.properties file ${exception.message}")
-                    .end()
-                .log("Converting ${file:name}")
-                .unmarshal().csv()
-                .process(exchange -> {
-                	List<Patient> bundle = new ArrayList<>();
-                	@SuppressWarnings("unchecked")
-					List<List<String>> patients = (List<List<String>>) exchange.getIn().getBody();
-                    for (List<String> patient: patients) {
-                    	Patient fhirPatient = new Patient();
-                    	fhirPatient.setId(patient.get(0));
-                    	fhirPatient.addName().addGiven(patient.get(1));
-                    	fhirPatient.getNameFirstRep().setFamily(patient.get(2));
-                    	bundle.add(fhirPatient);
-                    }
-                    exchange.getIn().setBody(bundle);
-                })
-                // create Patient in our FHIR server
-                .to("fhir://transaction/withResources?inBody=resources&serverUrl={{serverUrl}}&username={{serverUser}}&password={{serverPassword}}&fhirVersion={{fhirVersion}}")
-                // log the outcome
-                .log("Patients created successfully: ${body}");
+            .onException(ProtocolException.class)
+                .handled(true)
+                .log(LoggingLevel.ERROR, "Error connecting to FHIR server with URL:{{serverUrl}}, please check the application.properties file ${exception.message}")
+            .end()
+            .log("Converting ${file:name}")
+            .unmarshal().csv()
+            .process(exchange -> {
+                List<Patient> bundle = new ArrayList<>();
+                @SuppressWarnings("unchecked")
+                List<List<String>> patients = (List<List<String>>) exchange.getIn().getBody();
+                for (List<String> patient: patients) {
+                    Patient fhirPatient = new Patient();
+                    fhirPatient.setId(patient.get(0));
+                    fhirPatient.addName().addGiven(patient.get(1));
+                    fhirPatient.getNameFirstRep().setFamily(patient.get(2));
+                    bundle.add(fhirPatient);
+                }
+                exchange.getIn().setBody(bundle);
+            })
+            // create Patient in our FHIR server
+            .to("fhir://transaction/withResources?inBody=resources&serverUrl={{serverUrl}}&username={{serverUser}}&password={{serverPassword}}&fhirVersion={{fhirVersion}}")
+            // log the outcome
+            .log("Patients created successfully: ${body}");
     }
 
 }
