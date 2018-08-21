@@ -55,6 +55,11 @@ public class WebsocketComponentConfiguration
      */
     private Boolean attachmentMultipartBinding = false;
     /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    private String fileNameExtWhitelist;
+    /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient. The option is a org.apache.camel.http.common.HttpBinding
      * type.
@@ -108,6 +113,14 @@ public class WebsocketComponentConfiguration
 
     public void setAttachmentMultipartBinding(Boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     public String getHttpBinding() {
