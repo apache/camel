@@ -22,64 +22,53 @@ import java.io.OutputStream;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
-import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
-import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.Args;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.operator.OutputEncryptor;
 
-public class ApplicationPkcs7SignatureEntity extends MimeEntity {
-
-    private static final String CONTENT_DISPOSITION = "attachment; filename=\"smime.p7s\"";
-
-    private static final String CONTENT_DESCRIPTION = "S/MIME Cryptographic Signature";
-
-    private byte[] signature;
-
-    public ApplicationPkcs7SignatureEntity(MimeEntity data, CMSSignedDataGenerator signer, String charset, String contentTransferEncoding, boolean isMainBody) throws HttpException {
-        Args.notNull(data, "Data");
-        Args.notNull(signer, "Signer");
-
-        ContentType contentType = ContentType.parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset",  charset));
-        setContentType(contentType.toString());
-        setContentTransferEncoding(contentTransferEncoding);
+public class ApplicationPkcs7Mime extends MimeEntity {
+    
+    private static final String CONTENT_DISPOSITION = "attachment; filename=\"smime.p7m\"";
+    
+    private byte[] encryptedData;
+    
+    public ApplicationPkcs7Mime(MimeEntity entity2Encrypt,
+                                CMSEnvelopedDataGenerator dataGenerator,
+                                OutputEncryptor encryptor,
+                                String encryptedContentTransferEncoding,
+                                boolean isMainBody)
+            throws HttpException {
+        setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-datat"),
+                new BasicNameValuePair("name", "smime.p7m")));
+        setContentTransferEncoding(encryptedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
-        addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
         setMainBody(isMainBody);
         try {
-            this.signature = createSignature(data, signer);
+            this.encryptedData = createEncryptedData(entity2Encrypt, dataGenerator, encryptor);
         } catch (Exception e) {
-            throw new HttpException("Failed to create signed data", e);
+            throw new HttpException("Failed to create encrypted data");
         }
     }
-
-    public ApplicationPkcs7SignatureEntity(byte[] signature,
-                                           String charset,
-                                           String contentTransferEncoding,
-                                           boolean isMainBody)
-            throws HttpException {
-        this.signature = Args.notNull(signature, "signature");
+    
+    public ApplicationPkcs7Mime(byte[] encryptedData, String encryptedContentTransferEncoding, boolean isMainBody) {
+        this.encryptedData = Args.notNull(encryptedData, "encryptedData");
         
-        ContentType contentType = ContentType
-                .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));
-        setContentType(contentType.toString());
-        setContentTransferEncoding(contentTransferEncoding);
+        setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-datat"),
+                new BasicNameValuePair("name", "smime.p7m")));
+        setContentTransferEncoding(encryptedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
-        addHeader(AS2Header.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION);
         setMainBody(isMainBody);
     }
-
-    public byte[] getSignature() {
-        return signature;
-    }
-
+    
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
@@ -98,29 +87,20 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
                                               // 5.1.1
             }
         }
-
-        // Write out signed data.
-        String transferEncoding = getContentTransferEncoding() == null ? null : getContentTransferEncoding().getValue();
-        try (OutputStream transferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
-
-            transferEncodedStream.write(signature);
-        } catch (Exception e) {
-            throw new IOException("Failed to write to output stream", e);
-        }
+        
     }
-
-    private byte[] createSignature(MimeEntity data, CMSSignedDataGenerator signer) throws Exception {
+    
+    private byte[] createEncryptedData(MimeEntity entity2Encrypt, CMSEnvelopedDataGenerator dataGenerator, OutputEncryptor encryptor) throws Exception {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            data.writeTo(bos);
+            entity2Encrypt.writeTo(bos);
             bos.flush();
 
             CMSTypedData contentData = new CMSProcessableByteArray(bos.toByteArray());
-            CMSSignedData  signedData = signer.generate(contentData, false);
-            return signedData.getEncoded();
+            CMSEnvelopedData  envelopedData = dataGenerator.generate(contentData, encryptor);
+            return envelopedData.getEncoded();
         } catch (Exception e) {
             throw new Exception("", e);
         }
-
     }
 
 }
