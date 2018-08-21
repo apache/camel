@@ -26,6 +26,7 @@ import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
+import io.fabric8.kubernetes.client.dsl.ServiceResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -91,7 +92,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         
         @Override
         public void run() {
-            MixedOperation<Service, ServiceList, DoneableService, Resource<Service, DoneableService>> w = getEndpoint().getKubernetesClient().services();
+            MixedOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> w = getEndpoint().getKubernetesClient().services();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
