@@ -37,7 +37,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.http.common.CamelServlet;
-import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
