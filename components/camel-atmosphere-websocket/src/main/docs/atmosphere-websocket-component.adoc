@@ -42,10 +42,17 @@ The Atmosphere Websocket component supports 9 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+<<<<<<< HEAD
 | *servletName* (common) | Default name of servlet to use. The default name is CamelServlet. |  | String
 | *httpRegistry* (common) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
 | *attachmentMultipart Binding* (common) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
 | *fileNameExtWhitelist* (common) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+=======
+| *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
+| *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
+| *attachmentMultipart Binding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+>>>>>>> Regen and updated component docs
 | *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
@@ -142,7 +149,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.atmosphere-websocket.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
 | *camel.component.atmosphere-websocket.http-registry* | To use a custom org.apache.camel.component.servlet.HttpRegistry. The option is a org.apache.camel.component.servlet.HttpRegistry type. |  | String
 | *camel.component.atmosphere-websocket.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.atmosphere-websocket.servlet-name* | Default name of servlet to use. The default name is CamelServlet. |  | String
+| *camel.component.atmosphere-websocket.servlet-name* | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
 |===
 // spring-boot-auto-configure options: END
 
