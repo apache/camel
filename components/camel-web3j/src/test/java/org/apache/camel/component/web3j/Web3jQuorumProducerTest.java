@@ -87,12 +87,12 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         CanonicalHash response = Mockito.mock(CanonicalHash.class);
         Mockito.when(mockQuorum.quorumCanonicalHash(any())).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getCanonicalHash()).thenReturn("test");
+        Mockito.when(response.getCanonicalHash()).thenReturn("4444");
 
-        Exchange exchange = createExchangeWithBodyAndHeader("test-hash", OPERATION, Web3jConstants.QUORUM_CANONICAL_HASH);
+        Exchange exchange = createExchangeWithBodyAndHeader("1234567890", OPERATION, Web3jConstants.QUORUM_CANONICAL_HASH);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("4444", body);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_VOTE);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_MAKE_BLOCK);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader("foo", OPERATION, Web3jConstants.QUORUM_GET_PRIVATE_PAYLOAD);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("secret"));
+        assertEquals("secret", body);
     }
 
     @Test
@@ -196,7 +196,7 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_ETH_SEND_TRANSACTION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Override
