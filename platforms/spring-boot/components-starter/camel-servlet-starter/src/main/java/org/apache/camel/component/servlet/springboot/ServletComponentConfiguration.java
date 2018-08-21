@@ -40,7 +40,7 @@ public class ServletComponentConfiguration
     /**
      * Default name of servlet to use. The default name is CamelServlet.
      */
-    private String servletName;
+    private String servletName = "CamelServlet";
     /**
      * To use a custom org.apache.camel.component.servlet.HttpRegistry. The
      * option is a org.apache.camel.component.servlet.HttpRegistry type.
