@@ -70,7 +70,9 @@ public final class IOHelper {
     public static void close(Closeable... closeables) {
         for (Closeable closeable : closeables) {
             try {
-                closeable.close();
+                if (closeable != null) {
+                    closeable.close();
+                }
             } catch (IOException e) {
                 // ignore
             }
