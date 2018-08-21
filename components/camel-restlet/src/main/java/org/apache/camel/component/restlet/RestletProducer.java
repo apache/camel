@@ -23,14 +23,19 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
@@ -38,6 +43,8 @@ import org.restlet.Response;
 import org.restlet.Uniform;
 import org.restlet.data.Cookie;
 import org.restlet.data.CookieSetting;
+import org.restlet.data.Parameter;
+import org.restlet.engine.ssl.SslContextFactory;
 import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +55,24 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class RestletProducer extends DefaultAsyncProducer {
+    private static final class PredefinedSslContextFactory extends SslContextFactory {
+        private final SSLContext sslContext;
+
+        private PredefinedSslContextFactory(SSLContext sslContext) {
+            this.sslContext = sslContext;
+        }
+
+        @Override
+        public void init(Series<Parameter> parameters) {
+            // nop
+        }
+
+        @Override
+        public SSLContext createSslContext() throws Exception {
+            return sslContext;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);
     private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
@@ -57,17 +82,27 @@ public class RestletProducer extends DefaultAsyncProducer {
         super(endpoint);
         this.throwException = endpoint.isThrowExceptionOnFailure();
         client = new Client(endpoint.getProtocol());
-        client.setContext(new Context());
-        client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
-        client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
+        final Context context = new Context();
+        final Series<Parameter> parameters = context.getParameters();
+        parameters.add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
+        parameters.add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
 
         RestletComponent component = (RestletComponent) endpoint.getComponent();
         if (component.getMaxConnectionsPerHost() != null && component.getMaxConnectionsPerHost() > 0) {
-            client.getContext().getParameters().add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
+            parameters.add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
         }
         if (component.getMaxTotalConnections() != null && component.getMaxTotalConnections() > 0) {
-            client.getContext().getParameters().add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
+            parameters.add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
         }
+        final ConcurrentMap<String, Object> attributes = context.getAttributes();
+        final CamelContext camelContext = endpoint.getCamelContext();
+        final SSLContextParameters sslContextParameters = endpoint.getSslContextParameters();
+        if (sslContextParameters != null) {
+            final SSLContext sslContext = sslContextParameters.createSSLContext(camelContext);
+            attributes.put("sslContextFactory", new PredefinedSslContextFactory(sslContext));
+        }
+
+        client.setContext(context);
     }
 
     @Override
