@@ -152,6 +152,10 @@ public class MailMessage extends DefaultMessage {
             this.mailMessage = mailMessage.mailMessage;
             this.mapMailMessage = mailMessage.mapMailMessage;
         }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
     }
 
 }

@@ -187,6 +187,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
             setDataType(((DataTypeAware)that).getDataType());
         }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
 
         copyFromWithNewBody(that, that.getBody());
     }
@@ -202,6 +206,11 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         if (that instanceof CamelContextAware) {
             setCamelContext(((CamelContextAware) that).getCamelContext());
         }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
         // should likely not set DataType as the new body may be a different type than the original body
 
         setMessageId(that.getMessageId());
