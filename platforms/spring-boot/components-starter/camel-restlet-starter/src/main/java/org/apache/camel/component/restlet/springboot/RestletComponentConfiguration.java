@@ -103,7 +103,7 @@ public class RestletComponentConfiguration
     private Boolean useForwardedForHeader;
     /**
      * Enable/disable the SO_REUSEADDR socket option. See
-     * java.io.ServerSocketreuseAddress property for additional details.
+     * java.io.ServerSocket#reuseAddress property for additional details.
      */
     private Boolean reuseAddress;
     /**

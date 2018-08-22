@@ -75,7 +75,7 @@ public class JmsComponentConfiguration
      * Whether the DefaultMessageListenerContainer used in the reply managers
      * for request-reply messaging allow the
      * DefaultMessageListenerContainer.runningAllowed flag to quick stop in case
-     * JmsConfigurationisAcceptMessagesWhileStopping is enabled, and
+     * JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and
      * org.apache.camel.CamelContext is currently being stopped. This quick stop
      * ability is enabled by default in the regular JMS consumers but to enable
      * for reply managers you must enable this flag.
@@ -426,13 +426,12 @@ public class JmsComponentConfiguration
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on link org.apache.camel.MessageisFault() will be
-     * send back in the response as a JMS header with the key link
-     * JmsConstantsJMS_TRANSFER_FAULT. If the client is Camel, the returned
-     * fault flag will be set on the link
-     * org.apache.camel.MessagesetFault(boolean). You may want to enable this
-     * when using Camel components that support faults such as SOAP based such
-     * as cxf or spring-ws.
+     * then the fault flag on org.apache.camel.Message#isFault() will be send
+     * back in the response as a JMS header with the key
+     * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
+     * fault flag will be set on the org.apache.camel.Message#setFault(boolean).
+     * You may want to enable this when using Camel components that support
+     * faults such as SOAP based such as cxf or spring-ws.
      */
     private Boolean transferFault = false;
     /**
@@ -526,7 +525,7 @@ public class JmsComponentConfiguration
      * key as is. Can be used for JMS brokers which do not care whether JMS
      * header keys contain illegal characters. You can provide your own
      * implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
-     * and refer to it using the notation. The option is a
+     * and refer to it using the # notation. The option is a
      * org.apache.camel.component.jms.JmsKeyFormatStrategy type.
      */
     private String jmsKeyFormatStrategy;
@@ -1301,8 +1300,8 @@ public class JmsComponentConfiguration
         private ConsumerType consumerType = ConsumerType.Default;
         /**
          * Sets the default connection factory to be used if a connection
-         * factory is not specified for either link
-         * setTemplateConnectionFactory(ConnectionFactory) or link
+         * factory is not specified for either
+         * setTemplateConnectionFactory(ConnectionFactory) or
          * setListenerConnectionFactory(ConnectionFactory)
          */
         private ConnectionFactory connectionFactory;
@@ -1343,9 +1342,9 @@ public class JmsComponentConfiguration
         private Boolean acceptMessagesWhileStopping = false;
         /**
          * Whether the DefaultMessageListenerContainer used in the reply
-         * managers for request-reply messaging allow the link
-         * DefaultMessageListenerContainerrunningAllowed() flag to quick stop in
-         * case link JmsConfigurationisAcceptMessagesWhileStopping() is enabled,
+         * managers for request-reply messaging allow the
+         * DefaultMessageListenerContainer#runningAllowed() flag to quick stop
+         * in case JmsConfiguration#isAcceptMessagesWhileStopping() is enabled,
          * and org.apache.camel.CamelContext is currently being stopped. This
          * quick stop ability is enabled by default in the regular JMS consumers
          * but to enable for reply managers you must enable this flag.
@@ -1709,7 +1708,7 @@ public class JmsComponentConfiguration
          * brokers which do not care whether JMS header keys contain illegal
          * characters. You can provide your own implementation of the
          * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
-         * using the notation.
+         * using the # notation.
          */
         private JmsKeyFormatStrategy jmsKeyFormatStrategy;
         /**
@@ -1725,9 +1724,9 @@ public class JmsComponentConfiguration
         private Boolean transferExchange = false;
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when link isTransferExchange() is true. This requires that the
-         * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * when isTransferExchange() is true. This requires that the objects are
+         * serializable. Camel will exclude any non-serializable objects and log
+         * it at WARN level.
          */
         private Boolean allowSerializedHeaders = false;
         /**
@@ -1746,11 +1745,11 @@ public class JmsComponentConfiguration
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on link org.apache.camel.MessageisFault()
-         * will be send back in the response as a JMS header with the key link
-         * JmsConstantsJMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the link
-         * org.apache.camel.MessagesetFault(boolean). You may want to enable
+         * side, then the fault flag on org.apache.camel.Message#isFault() will
+         * be send back in the response as a JMS header with the key
+         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
+         * fault flag will be set on the
+         * org.apache.camel.Message#setFault(boolean). You may want to enable
          * this when using Camel components that support faults such as SOAP
          * based such as cxf or spring-ws.
          */

@@ -63,7 +63,7 @@ public class Sjms2ComponentConfiguration
      * whether JMS header keys contain illegal characters. You can provide your
      * own implementation of the
      * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using
-     * the notation. The option is a
+     * the # notation. The option is a
      * org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy type.
      */
     private String jmsKeyFormatStrategy;

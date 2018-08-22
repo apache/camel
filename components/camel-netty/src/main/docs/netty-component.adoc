@@ -153,10 +153,10 @@ with the following path and query parameters:
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
 | *decoder* (codec) | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. Must override org.jboss.netty.channel.ChannelUpStreamHandler. |  | ChannelHandler
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
-| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | String
+| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
 | *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. | LINE | TextLineDelimiter
 | *encoder* (codec) | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. Must override org.jboss.netty.channel.ChannelDownStreamHandler. |  | ChannelHandler
-| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | String
+| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | boolean
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
@@ -197,13 +197,13 @@ The component supports 70 options, which are listed below.
 | *camel.component.netty.configuration.connect-timeout* | Time to wait for a socket connection to be available. Value is in millis. | 10000 | Long
 | *camel.component.netty.configuration.decoder* | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. Must override org.jboss.netty.channel.ChannelUpStreamHandler. |  | ChannelHandler
 | *camel.component.netty.configuration.decoder-max-line-length* | The max line length to use for the textline codec. | 1024 | Integer
-| *camel.component.netty.configuration.decoders* | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | List
+| *camel.component.netty.configuration.decoders* | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *camel.component.netty.configuration.delimiter* | The delimiter to use for the textline codec. Possible values are LINE and NULL. |  | TextLineDelimiter
 | *camel.component.netty.configuration.disconnect* | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | Boolean
 | *camel.component.netty.configuration.disconnect-on-no-reply* | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | Boolean
 | *camel.component.netty.configuration.enabled-protocols* | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
 | *camel.component.netty.configuration.encoder* | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. Must override org.jboss.netty.channel.ChannelDownStreamHandler. |  | ChannelHandler
-| *camel.component.netty.configuration.encoders* | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | List
+| *camel.component.netty.configuration.encoders* | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *camel.component.netty.configuration.encoding* | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *camel.component.netty.configuration.host* | The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to |  | String
 | *camel.component.netty.configuration.keep-alive* | Setting to ensure socket is not closed due to inactivity | true | Boolean

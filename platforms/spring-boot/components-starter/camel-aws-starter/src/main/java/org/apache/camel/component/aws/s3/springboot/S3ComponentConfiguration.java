@@ -166,9 +166,8 @@ public class S3ComponentConfiguration
          * the object is not deleted. If this option is false, then the same
          * objects will be retrieve over and over again on the polls. Therefore
          * you need to use the Idempotent Consumer EIP in the route to filter
-         * out duplicates. You can filter using the link S3ConstantsBUCKET_NAME
-         * and link S3ConstantsKEY headers, or only the link S3ConstantsKEY
-         * header.
+         * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
+         * S3Constants#KEY headers, or only the S3Constants#KEY header.
          */
         private Boolean deleteAfterRead = true;
         /**
@@ -177,7 +176,7 @@ public class S3ComponentConfiguration
         private Boolean deleteAfterWrite = false;
         /**
          * The policy for this queue to set in the
-         * com.amazonaws.services.s3.AmazonS3setBucketPolicy() method.
+         * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          */
         private String policy;
         /**

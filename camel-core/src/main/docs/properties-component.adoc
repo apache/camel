@@ -24,7 +24,7 @@ The Properties component supports 17 options, which are listed below.
 | Name | Description | Default | Type
 | *locations* (common) | A list of locations to load properties. This option will override any default locations and only use the locations from this option. |  | List
 | *location* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
-| *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream) |  | String
+| *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
 | *propertiesResolver* (common) | To use a custom PropertiesResolver |  | PropertiesResolver
 | *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser
 | *cache* (common) | Whether or not to cache loaded properties. The default value is true. | true | boolean
@@ -33,8 +33,8 @@ The Properties component supports 17 options, which are listed below.
 | *fallbackToUnaugmented Property* (advanced) | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | boolean
 | *defaultFallbackEnabled* (common) | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
 | *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
-| *prefixToken* (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN). | {{ | String
-| *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN). | }} | String
+| *prefixToken* (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String
+| *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
 | *systemPropertiesMode* (common) | Sets the system property mode. | 2 | int

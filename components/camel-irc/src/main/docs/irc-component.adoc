@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *autoRejoin* (common) | Whether to auto re-join when being kicked | true | boolean
-| *namesOnJoin* (common) | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
+| *namesOnJoin* (common) | Sends NAMES command to channel after joining it. onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
 | *nickname* (common) | The nickname used in chat. |  | String
 | *persistent* (common) | *Deprecated* Use persistent messages. | true | boolean
 | *realname* (common) | The IRC user's actual name. |  | String

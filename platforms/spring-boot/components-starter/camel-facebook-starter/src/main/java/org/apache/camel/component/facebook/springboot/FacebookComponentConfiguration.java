@@ -158,7 +158,7 @@ public class FacebookComponentConfiguration
         private Boolean mbeanEnabled = false;
         /**
          * Default OAuth permissions. Comma separated permission names. See
-         * https://developers.facebook.com/docs/reference/login/permissions for
+         * https://developers.facebook.com/docs/reference/login/#permissions for
          * the detail
          */
         private String oAuthPermissions;

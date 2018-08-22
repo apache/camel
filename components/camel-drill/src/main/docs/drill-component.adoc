@@ -67,7 +67,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *clusterId* (producer) | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id |  | String
+| *clusterId* (producer) | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id |  | String
 | *directory* (producer) | Drill directory in ZooKeeper |  | String
 | *mode* (producer) | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/ | ZK | DrillConnectionMode
 | *port* (producer) | ZooKeeper port number |  | Integer

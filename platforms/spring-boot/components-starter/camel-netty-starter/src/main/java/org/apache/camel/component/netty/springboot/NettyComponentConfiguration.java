@@ -148,14 +148,14 @@ public class NettyComponentConfiguration
         /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with so Camel knows it should
+         * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          */
         private List decoders;
         /**
          * A list of encoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with so Camel knows it should
+         * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          */
         private List encoders;

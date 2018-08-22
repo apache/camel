@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *algorithm* (producer) | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
-| *alias* (producer) | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto.DigitalSignatureConstantsKEYSTORE_ALIAS |  | String
+| *alias* (producer) | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS |  | String
 | *certificateName* (producer) | Sets the reference name for a PrivateKey that can be fond in the registry. |  | String
 | *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
 | *keystoreName* (producer) | Sets the reference name for a Keystore that can be fond in the registry. |  | String
@@ -152,7 +152,7 @@ The component supports 33 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
-| *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto. DigitalSignatureConstantsKEYSTORE_ALIAS |  | String
+| *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants #KEYSTORE_ALIAS |  | String
 | *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *camel.component.crypto.configuration.certificate* | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
 | *camel.component.crypto.configuration.certificate-name* | Sets the reference name for a PrivateKey that can be fond in the registry. |  | String

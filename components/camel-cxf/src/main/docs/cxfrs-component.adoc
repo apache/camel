@@ -111,8 +111,8 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
-| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
-| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the notation to reference the SSL Context. |  | SSLContextParameters
+| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
+| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *throwExceptionOnFailure* (producer) | This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207. | true | boolean
 | *httpClientAPI* (producer) | If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service | true | boolean
 | *ignoreDeleteMethodMessage Body* (producer) | This option is used to tell CxfRsProducer to ignore the message body of the DELETE method when using HTTP API. | false | boolean

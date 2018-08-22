@@ -161,8 +161,8 @@ with the following path and query parameters:
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *defaultOperationName* (producer) | This option will set the default operationName that will be used by the CxfProducer which invokes the remote service. |  | String
 | *defaultOperationNamespace* (producer) | This option will set the default operationNamespace that will be used by the CxfProducer which invokes the remote service. |  | String
-| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
-| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the notation to reference the SSL Context. |  | SSLContextParameters
+| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
+| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *wrapped* (producer) | Which kind of operation that CXF endpoint producer will invoke | false | boolean
 | *allowStreaming* (advanced) | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
 | *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
