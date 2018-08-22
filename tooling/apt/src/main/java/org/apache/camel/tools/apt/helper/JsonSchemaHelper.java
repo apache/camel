@@ -34,7 +34,7 @@ import org.json.simple.Jsoner;
  */
 public final class JsonSchemaHelper {
 
-    private static final String VALID_CHARS = ".,-='/\\!&%():;";
+    private static final String VALID_CHARS = ".,-='/\\!&%():;#";
 
     private JsonSchemaHelper() {
     }
@@ -263,6 +263,15 @@ public final class JsonSchemaHelper {
         for (String line : lines) {
             line = line.trim();
 
+            if (line.startsWith("**")) {
+                continue;
+            }
+            // remove leading javadoc *
+            if (line.startsWith("*")) {
+                line = line.substring(1);
+                line = line.trim();
+            }
+
             // terminate if we reach @param, @return or @deprecated as we only want the javadoc summary
             if (line.startsWith("@param") || line.startsWith("@return") || line.startsWith("@deprecated")) {
                 break;
@@ -277,7 +286,8 @@ public final class JsonSchemaHelper {
             line = line.replaceAll("<.*?>", "");
 
             // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
-            line = line.replaceAll("\\{\\@\\w+\\s([\\w.]+)\\}", "$1");
+            // use #? to remove leading # in case its a local reference
+            line = line.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
 
             // we are starting from a new line, so add a whitespace
             if (!first) {
