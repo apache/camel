@@ -94,6 +94,18 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             if (answer != null) {
                 return answer;
             }
+        } else if (camelContext != null) {
+            TypeConverter converter = camelContext.getTypeConverter();
+
+            T answer = converter.convertTo(type, body);
+            if (answer != null) {
+                return answer;
+            }
+
+            answer = converter.tryConvertTo(type, this);
+            if (answer != null) {
+                return answer;
+            }
         }
 
         // not possible to convert

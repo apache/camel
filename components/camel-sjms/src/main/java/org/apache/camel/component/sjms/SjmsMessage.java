@@ -101,6 +101,8 @@ public class SjmsMessage extends DefaultMessage {
         if (that.hasAttachments()) {
             getAttachmentObjects().putAll(that.getAttachmentObjects());
         }
+
+        setExchange(that.getExchange());
     }
 
     public JmsBinding getBinding() {
