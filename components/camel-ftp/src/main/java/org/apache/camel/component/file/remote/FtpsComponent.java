@@ -24,6 +24,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -45,6 +46,11 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     public FtpsComponent(CamelContext context) {
         super(context);
         setEndpointClass(FtpsEndpoint.class);
+    }
+    
+    @Override
+    protected String preProcessUri(String uri) {
+        return UnsafeUriCharactersEncoder.encodeHttpURI(uri);
     }
 
     @Override

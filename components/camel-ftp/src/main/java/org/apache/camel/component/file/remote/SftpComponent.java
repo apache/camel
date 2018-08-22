@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * Secure FTP Component
@@ -34,6 +35,11 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
     public SftpComponent(CamelContext context) {
         super(context);
         setEndpointClass(SftpEndpoint.class);
+    }
+    
+    @Override
+    protected String preProcessUri(String uri) {
+        return UnsafeUriCharactersEncoder.encodeHttpURI(uri);
     }
 
     @Override

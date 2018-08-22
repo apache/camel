@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -36,6 +37,11 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     public FtpComponent(CamelContext context) {
         super(context);
         setEndpointClass(FtpEndpoint.class);
+    }
+    
+    @Override
+    protected String preProcessUri(String uri) {
+        return UnsafeUriCharactersEncoder.encodeHttpURI(uri);
     }
 
     @Override

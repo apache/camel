@@ -23,13 +23,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore
 public class FtpConsumerIPV6BodyAsStringTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
