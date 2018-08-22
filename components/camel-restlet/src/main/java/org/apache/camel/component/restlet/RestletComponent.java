@@ -45,6 +45,7 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
 import org.restlet.data.ChallengeScheme;
@@ -111,6 +112,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
+    private SSLContextParameters sslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -190,7 +192,11 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         }
 
         if (result.getSslContextParameters() == null) {
-            result.setSslContextParameters(retrieveGlobalSslContextParameters());
+            if (sslContextParameters == null) {
+                result.setSslContextParameters(retrieveGlobalSslContextParameters());
+            } else {
+                result.setSslContextParameters(sslContextParameters);
+            }
         }
 
         // any additional query parameters from parameters then we need to include them as well
@@ -695,6 +701,11 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    @Metadata(description = "To configure security using SSLContextParameters", label = "security")
+    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     @Override

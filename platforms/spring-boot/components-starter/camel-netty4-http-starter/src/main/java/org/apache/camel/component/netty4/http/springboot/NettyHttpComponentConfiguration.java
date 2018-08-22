@@ -75,6 +75,11 @@ public class NettyHttpComponentConfiguration
      */
     private String executorService;
     /**
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
+     */
+    private String sslContextParameters;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -138,6 +143,14 @@ public class NettyHttpComponentConfiguration
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
+    }
+
+    public String getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(String sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
