@@ -106,7 +106,7 @@ public class LinkedInComponentConfiguration
         private String clientSecret;
         /**
          * List of LinkedIn scopes as specified at
-         * https://developer.linkedin.com/documents/authenticationgranting
+         * https://developer.linkedin.com/documents/authentication#granting
          */
         private OAuthScope[] scopes;
         /**

@@ -228,8 +228,8 @@ public class NettyHttpComponentConfiguration
         private String path;
         /**
          * Determines whether or not the raw input stream from Netty
-         * HttpRequestgetContent() or HttpResponsetgetContent() is cached or not
-         * (Camel will read the stream into a in light-weight memory based
+         * HttpRequest#getContent() or HttpResponset#getContent() is cached or
+         * not (Camel will read the stream into a in light-weight memory based
          * Stream caching) cache. By default Camel will cache the Netty input
          * stream to support reading it multiple times to ensure it Camel can
          * retrieve all data from the stream. However you can set this option to

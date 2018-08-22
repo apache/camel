@@ -71,12 +71,12 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *callback* (producer) | The name of the JavaScript callback function for JSONP format. If callback is set and if format=json, then the response format is JSON. For more information on using XML instead of JSON, see JSONP-X. https://developer.yahoo.com/yql/guide/response.html |  | String
-| *crossProduct* (producer) | When given the value optimized, the projected fields in SELECT statements that may be returned in separate item elements in the response are optimized to be in a single item element instead. The only allowed value is optimized. More information https://developer.yahoo.com/yql/guide/response.htmlresponse-optimizing= |  | String
-| *debug* (producer) | If true, and if diagnostic is set to true, debug data is returned with the response. More information: https://developer.yahoo.com/yql/guide/dev-external_tables.htmlodt-enable-logging= | false | boolean
+| *crossProduct* (producer) | When given the value optimized, the projected fields in SELECT statements that may be returned in separate item elements in the response are optimized to be in a single item element instead. The only allowed value is optimized. More information https://developer.yahoo.com/yql/guide/response.html#response-optimizing= |  | String
+| *debug* (producer) | If true, and if diagnostic is set to true, debug data is returned with the response. More information: https://developer.yahoo.com/yql/guide/dev-external_tables.html#odt-enable-logging= | false | boolean
 | *diagnostics* (producer) | If true, diagnostic information is returned with the response. | false | boolean
-| *env* (producer) | Allows you to use multiple Open Data Tables through a YQL environment file. More information https://developer.yahoo.com/yql/guide/yql_storage.htmlusing-records-env-files= |  | String
+| *env* (producer) | Allows you to use multiple Open Data Tables through a YQL environment file. More information https://developer.yahoo.com/yql/guide/yql_storage.html#using-records-env-files= |  | String
 | *format* (producer) | The expected format. Allowed values: xml or json. | json | String
-| *jsonCompat* (producer) | Enables lossless JSON processing. The only allowed value is new. More information https://developer.yahoo.com/yql/guide/response.htmljson-to-json |  | String
+| *jsonCompat* (producer) | Enables lossless JSON processing. The only allowed value is new. More information https://developer.yahoo.com/yql/guide/response.html#json-to-json |  | String
 | *throwExceptionOnFailure* (producer) | Option to disable throwing the YqlHttpException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *https* (security) | Option to use HTTPS to communicate with YQL. | true | boolean

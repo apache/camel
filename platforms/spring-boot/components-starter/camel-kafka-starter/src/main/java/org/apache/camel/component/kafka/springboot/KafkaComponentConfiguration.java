@@ -487,14 +487,14 @@ public class KafkaComponentConfiguration
         private Integer bufferMemorySize = 33554432;
         /**
          * The record key (or null if no key is specified). If this option has
-         * been configured then it take precedence over header link
-         * KafkaConstantsKEY
+         * been configured then it take precedence over header
+         * KafkaConstants#KEY
          */
         private String key;
         /**
          * The partition to which the record will be sent (or null if no
          * partition was specified). If this option has been configured then it
-         * take precedence over header link KafkaConstantsPARTITION_KEY
+         * take precedence over header KafkaConstants#PARTITION_KEY
          */
         private Integer partitionKey;
         /**
@@ -638,7 +638,7 @@ public class KafkaComponentConfiguration
         private Integer heartbeatIntervalMs = 3000;
         /**
          * The maximum amount of data per-partition the server will return. The
-         * maximum total memory used for a request will be partitions
+         * maximum total memory used for a request will be #partitions
          * max.partition.fetch.bytes. This size must be at least as large as the
          * maximum message size the server allows or else it is possible for the
          * producer to send messages larger than the consumer can fetch. If that
@@ -726,7 +726,7 @@ public class KafkaComponentConfiguration
          * Whether the producer should store the RecordMetadata results from
          * sending to Kafka. The results are stored in a List containing the
          * RecordMetadata metadata's. The list is stored on a header with the
-         * key link KafkaConstantsKAFKA_RECORDMETA
+         * key KafkaConstants#KAFKA_RECORDMETA
          */
         private Boolean recordMetadata = true;
         /**

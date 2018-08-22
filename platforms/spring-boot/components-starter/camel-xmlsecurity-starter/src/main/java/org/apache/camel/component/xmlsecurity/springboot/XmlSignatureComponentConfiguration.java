@@ -114,14 +114,14 @@ public class XmlSignatureComponentConfiguration
          * Transforms which are executed on the message body before the digest
          * is calculated. By default, C14n is added and in the case of enveloped
          * signature (see option parentLocalName) also
-         * http://www.w3.org/2000/09/xmldsigenveloped-signature is added at
+         * http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at
          * position 0 of the list. Use methods in XmlSignatureHelper to create
          * the transform methods.
          */
         private List transformMethods;
         /**
          * Signature algorithm. Default value is
-         * http://www.w3.org/2000/09/xmldsigrsa-sha1.
+         * http://www.w3.org/2000/09/xmldsig#rsa-sha1.
          */
         private String signatureAlgorithm = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
         /**
@@ -129,38 +129,37 @@ public class XmlSignatureComponentConfiguration
          * used for calculating the digest of the input message. If this digest
          * algorithm is not specified then the digest algorithm is calculated
          * from the signature algorithm. Example:
-         * http://www.w3.org/2001/04/xmlencsha256
+         * http://www.w3.org/2001/04/xmlenc#sha256
          */
         private String digestAlgorithm;
         /**
          * In order to protect the KeyInfo element from tampering you can add a
          * reference to the signed info element so that it is protected via the
          * signature value. The default value is true. Only relevant when a
-         * KeyInfo is returned by KeyAccessor. and link KeyInfogetId() is not
-         * null.
+         * KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null.
          */
         private Boolean addKeyInfoReference = true;
         /**
          * Namespace prefix for the XML signature namespace
-         * http://www.w3.org/2000/09/xmldsig. Default value is ds. If null or an
-         * empty value is set then no prefix is used for the XML signature
+         * http://www.w3.org/2000/09/xmldsig#. Default value is ds. If null or
+         * an empty value is set then no prefix is used for the XML signature
          * namespace. See best practice
-         * http://www.w3.org/TR/xmldsig-bestpractices/signing-xml-
+         * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
          * without-namespaces
          */
         private String prefixForXmlSignatureNamespace = "ds";
         /**
          * Local name of the parent element to which the XML signature element
          * will be added. Only relevant for enveloped XML signature.
-         * Alternatively you can also use link
+         * Alternatively you can also use
          * setParentXpath(XPathFilterParameterSpec). Default value is null. The
          * value must be null for enveloping and detached XML signature. This
-         * parameter or the parameter link
-         * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
-         * the parameter link setXpathsToIdAttributes(List) for detached
-         * signature must not be set in the same configuration. If the
-         * parameters parentXpath and parentLocalName are specified in the same
-         * configuration then an exception is thrown.
+         * parameter or the parameter setParentXpath(XPathFilterParameterSpec)
+         * for enveloped signature and the parameter
+         * setXpathsToIdAttributes(List) for detached signature must not be set
+         * in the same configuration. If the parameters parentXpath and
+         * parentLocalName are specified in the same configuration then an
+         * exception is thrown.
          */
         private String parentLocalName;
         /**
@@ -184,28 +183,28 @@ public class XmlSignatureComponentConfiguration
         /**
          * Reference URI for the content to be signed. Only used in the
          * enveloped case. If the reference URI contains an ID attribute value,
-         * then the resource schema URI ( link setSchemaResourceUri(String))
-         * must also be set because the schema validator will then find out
-         * which attributes are ID attributes. Will be ignored in the enveloping
-         * or detached case.
+         * then the resource schema URI ( setSchemaResourceUri(String)) must
+         * also be set because the schema validator will then find out which
+         * attributes are ID attributes. Will be ignored in the enveloping or
+         * detached case.
          */
         private String contentReferenceUri;
         /**
          * Type of the content reference. The default value is null. This value
-         * can be overwritten by the header link
-         * XmlSignatureConstantsHEADER_CONTENT_REFERENCE_TYPE.
+         * can be overwritten by the header
+         * XmlSignatureConstants#HEADER_CONTENT_REFERENCE_TYPE.
          */
         private String contentReferenceType;
         /**
          * Indicator whether the message body contains plain text. The default
          * value is false, indicating that the message body contains XML. The
-         * value can be overwritten by the header link
-         * XmlSignatureConstantsHEADER_MESSAGE_IS_PLAIN_TEXT.
+         * value can be overwritten by the header
+         * XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT.
          */
         private Boolean plainText = false;
         /**
          * Encoding of the plain text. Only relevant if the message body is
-         * plain text (see parameter link plainText. Default value is UTF-8.
+         * plain text (see parameter plainText. Default value is UTF-8.
          */
         private String plainTextEncoding = "UTF-8";
         /**
@@ -223,11 +222,11 @@ public class XmlSignatureComponentConfiguration
          * expressions to ID attributes (attributes of type ID). For each
          * element found via the XPATH expression a detached signature is
          * created whose reference URI contains the corresponding attribute
-         * value (preceded by ''). The signature becomes the last sibling of the
-         * signed element. Elements with deeper hierarchy level are signed
+         * value (preceded by '#'). The signature becomes the last sibling of
+         * the signed element. Elements with deeper hierarchy level are signed
          * first. You can also set the XPATH list dynamically via the header
-         * link XmlSignatureConstantsHEADER_XPATHS_TO_ID_ATTRIBUTES. The
-         * parameter link setParentLocalName(String) or link
+         * XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES. The parameter
+         * setParentLocalName(String) or
          * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
          * this parameter for detached signature must not be set in the same
          * configuration.
@@ -236,12 +235,11 @@ public class XmlSignatureComponentConfiguration
         /**
          * Sets the XPath to find the parent node in the enveloped case. Either
          * you specify the parent node via this method or the local name and
-         * namespace of the parent with the methods link
-         * setParentLocalName(String) and link setParentNamespace(String).
-         * Default value is null. The value must be null for enveloping and
-         * detached XML signature. If the parameters parentXpath and
-         * parentLocalName are specified in the same configuration then an
-         * exception is thrown.
+         * namespace of the parent with the methods setParentLocalName(String)
+         * and setParentNamespace(String). Default value is null. The value must
+         * be null for enveloping and detached XML signature. If the parameters
+         * parentXpath and parentLocalName are specified in the same
+         * configuration then an exception is thrown.
          */
         private XPathFilterParameterSpec parentXpath;
         /**
@@ -259,24 +257,24 @@ public class XmlSignatureComponentConfiguration
         private String baseUri;
         /**
          * Sets the crypto context properties. See link
-         * XMLCryptoContextsetProperty(String, Object). Possible properties are
+         * XMLCryptoContext#setProperty(String, Object). Possible properties are
          * defined in XMLSignContext an XMLValidateContext (see Supported
          * Properties). The following properties are set by default to the value
-         * link BooleanTRUE for the XML validation. If you want to switch these
-         * features off you must set the property value to link BooleanFALSE.
+         * Boolean#TRUE for the XML validation. If you want to switch these
+         * features off you must set the property value to Boolean#FALSE.
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference
          */
         private Map cryptoContextProperties;
         /**
          * Disallows that the incoming XML document contains DTD DOCTYPE
-         * declaration. The default value is link BooleanTRUE.
+         * declaration. The default value is Boolean#TRUE.
          */
         private Boolean disallowDoctypeDecl = true;
         /**
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is false. Can be overwritten by the
-         * header link XmlSignatureConstantsHEADER_OMIT_XML_DECLARATION.
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          */
         private Boolean omitXmlDeclaration = false;
         /**
@@ -289,8 +287,8 @@ public class XmlSignatureComponentConfiguration
          * Signature case for determining the ID attributes, might be set in the
          * enveloped and enveloping case. If set, then the XML document is
          * validated with the specified XML schema. The schema resource URI can
-         * be overwritten by the header link
-         * XmlSignatureConstantsHEADER_SCHEMA_RESOURCE_URI.
+         * be overwritten by the header
+         * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI.
          */
         private String schemaResourceUri;
         /**
@@ -552,7 +550,7 @@ public class XmlSignatureComponentConfiguration
         /**
          * This interface allows the application to check the XML signature
          * before the validation is executed. This step is recommended in
-         * http://www.w3.org/TR/xmldsig-bestpractices/check-what-is-signed
+         * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
          */
         private XmlSignatureChecker xmlSignatureChecker;
         /**
@@ -572,7 +570,7 @@ public class XmlSignatureComponentConfiguration
          * If the output node search type is Default then the following rules
          * apply: In the enveloped XML signature case (there is a reference with
          * URI= and transform
-         * http://www.w3.org/2000/09/xmldsigenveloped-signature), the incoming
+         * http://www.w3.org/2000/09/xmldsig#enveloped-signature), the incoming
          * XML document without the Signature element is set to the output
          * message body. In the non-enveloped XML signature case, the message
          * body is determined from a referenced Object; this is explained in
@@ -600,20 +598,20 @@ public class XmlSignatureComponentConfiguration
         private Object outputNodeSearch;
         /**
          * Determines the search type for determining the output node which is
-         * serialized into the output message bodyF. See link
+         * serialized into the output message bodyF. See
          * setOutputNodeSearch(Object). The supported default search types you
          * can find in DefaultXmlSignature2Message.
          */
         private String outputNodeSearchType = "Default";
         /**
          * Indicator whether the XML signature elements (elements with local
-         * name Signature and namesapce http://www.w3.org/2000/09/xmldsig) shall
-         * be removed from the document set to the output message. Normally,
-         * this is only necessary, if the XML signature is enveloped. The
-         * default value is link BooleanFALSE. This parameter is forwarded to
+         * name Signature and namesapce http://www.w3.org/2000/09/xmldsig#)
+         * shall be removed from the document set to the output message.
+         * Normally, this is only necessary, if the XML signature is enveloped.
+         * The default value is Boolean#FALSE. This parameter is forwarded to
          * XmlSignature2Message. This indicator has no effect if the output node
-         * search is of type link
-         * DefaultXmlSignature2MessageOUTPUT_NODE_SEARCH_TYPE_DEFAULT.F
+         * search is of type
+         * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F
          */
         private Boolean removeSignatureElements = false;
         /**
@@ -641,24 +639,24 @@ public class XmlSignatureComponentConfiguration
         private String baseUri;
         /**
          * Sets the crypto context properties. See link
-         * XMLCryptoContextsetProperty(String, Object). Possible properties are
+         * XMLCryptoContext#setProperty(String, Object). Possible properties are
          * defined in XMLSignContext an XMLValidateContext (see Supported
          * Properties). The following properties are set by default to the value
-         * link BooleanTRUE for the XML validation. If you want to switch these
-         * features off you must set the property value to link BooleanFALSE.
+         * Boolean#TRUE for the XML validation. If you want to switch these
+         * features off you must set the property value to Boolean#FALSE.
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference
          */
         private Map cryptoContextProperties;
         /**
          * Disallows that the incoming XML document contains DTD DOCTYPE
-         * declaration. The default value is link BooleanTRUE.
+         * declaration. The default value is Boolean#TRUE.
          */
         private Boolean disallowDoctypeDecl = true;
         /**
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is false. Can be overwritten by the
-         * header link XmlSignatureConstantsHEADER_OMIT_XML_DECLARATION.
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          */
         private Boolean omitXmlDeclaration = false;
         /**
@@ -671,8 +669,8 @@ public class XmlSignatureComponentConfiguration
          * Signature case for determining the ID attributes, might be set in the
          * enveloped and enveloping case. If set, then the XML document is
          * validated with the specified XML schema. The schema resource URI can
-         * be overwritten by the header link
-         * XmlSignatureConstantsHEADER_SCHEMA_RESOURCE_URI.
+         * be overwritten by the header
+         * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI.
          */
         private String schemaResourceUri;
         /**

@@ -139,7 +139,7 @@ with the following path and query parameters:
 | *clientConfig* (advanced) | To use the given XmlRpcClientConfigImpl as configuration for the client. |  | XmlRpcClientConfig Impl
 | *clientConfigurer* (advanced) | To use a custom XmlRpcClientConfigurer to configure the client |  | XmlRpcClientConfigurer
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *timeZone* (advanced) | The timezone, which is used to interpret date/time. Defaults to link TimeZonegetDefault(). |  | TimeZone
+| *timeZone* (advanced) | The timezone, which is used to interpret date/time. Defaults to TimeZone#getDefault(). |  | TimeZone
 | *userAgent* (advanced) | The http user agent header to set when doing xmlrpc requests |  | String
 | *xmlRpcServer* (advanced) | To use a custom XmlRpcRequestProcessor as server. |  | XmlRpcRequestProcessor
 | *basicPassword* (security) | The password for basic authentication. |  | String

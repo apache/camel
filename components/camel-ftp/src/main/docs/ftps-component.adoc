@@ -184,7 +184,7 @@ with the following path and query parameters:
 | *isImplicit* (security) | Set the security mode(Implicit/Explicit). true - Implicit Mode / False - Explicit Mode | false | boolean
 | *password* (security) | Password to use for login |  | String
 | *securityProtocol* (security) | Set the underlying security protocol. | TLS | String
-| *sslContextParameters* (security) | Gets the JSSE configuration that overrides any settings in link FtpsEndpointftpClientKeyStoreParameters, link ftpClientTrustStoreParameters, and link FtpsConfigurationgetSecurityProtocol(). |  | SSLContextParameters
+| *sslContextParameters* (security) | Gets the JSSE configuration that overrides any settings in FtpsEndpoint#ftpClientKeyStoreParameters, ftpClientTrustStoreParameters, and FtpsConfiguration#getSecurityProtocol(). |  | SSLContextParameters
 | *username* (security) | Username to use for login |  | String
 |===
 // endpoint options: END

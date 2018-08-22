@@ -734,8 +734,7 @@ public class SalesforceComponentConfiguration
          */
         private Long maxBackoff;
         /**
-         * Default replayId setting if no value is found in link
-         * initialReplayIdMap
+         * Default replayId setting if no value is found in initialReplayIdMap
          */
         private Long defaultReplayId;
         /**
@@ -797,9 +796,9 @@ public class SalesforceComponentConfiguration
         private Boolean approvalSkipEntryCriteria;
         /**
          * Sets the behaviour of 404 not found status received from Salesforce
-         * API. Should the body be set to NULL link NotFoundBehaviourNULL or
-         * should a exception be signaled on the exchange link
-         * NotFoundBehaviourEXCEPTION - the default.
+         * API. Should the body be set to NULL NotFoundBehaviour#NULL or should
+         * a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION -
+         * the default.
          */
         private NotFoundBehaviour notFoundBehaviour;
 

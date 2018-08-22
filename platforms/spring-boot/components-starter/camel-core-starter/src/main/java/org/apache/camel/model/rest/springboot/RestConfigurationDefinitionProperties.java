@@ -104,9 +104,9 @@ public class RestConfigurationDefinitionProperties {
     /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest
      * services within CamelContext's which name matches the pattern. The
-     * pattern name refers to the CamelContext name, to match on the current
+     * pattern #name# refers to the CamelContext name, to match on the current
      * CamelContext only. For any other value, the pattern uses the rules from
-     * link org.apache.camel.util.EndpointHelpermatchPattern(String, String)
+     * link org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
     private String apiContextIdPattern;
     /**

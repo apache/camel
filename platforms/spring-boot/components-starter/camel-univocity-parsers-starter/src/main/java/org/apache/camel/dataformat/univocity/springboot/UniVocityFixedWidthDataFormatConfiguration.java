@@ -98,7 +98,7 @@ public class UniVocityFixedWidthDataFormatConfiguration
      */
     private String normalizedLineSeparator;
     /**
-     * The comment symbol. The default value is
+     * The comment symbol. The default value is #
      */
     private String comment = "#";
     /**

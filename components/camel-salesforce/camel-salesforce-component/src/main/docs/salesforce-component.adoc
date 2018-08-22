@@ -713,7 +713,7 @@ with the following path and query parameters:
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
 | *batchId* (common) | Bulk API Batch ID |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
-| *defaultReplayId* (common) | Default replayId setting if no value is found in link initialReplayIdMap |  | Long
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
@@ -722,7 +722,7 @@ with the following path and query parameters:
 | *jobId* (common) | Bulk API Job ID |  | String
 | *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL link NotFoundBehaviourNULL or should a exception be signaled on the exchange link NotFoundBehaviourEXCEPTION - the default. |  | NotFoundBehaviour
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
 | *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
@@ -781,7 +781,7 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.config.backoff-increment* | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | Long
 | *camel.component.salesforce.config.batch-id* | Bulk API Batch ID |  | String
 | *camel.component.salesforce.config.content-type* | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
-| *camel.component.salesforce.config.default-replay-id* | Default replayId setting if no value is found in link initialReplayIdMap |  | Long
+| *camel.component.salesforce.config.default-replay-id* | Default replayId setting if no value is found in initialReplayIdMap |  | Long
 | *camel.component.salesforce.config.format* | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
 | *camel.component.salesforce.config.http-client* | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *camel.component.salesforce.config.include-details* | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
@@ -790,7 +790,7 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.config.job-id* | Bulk API Job ID |  | String
 | *camel.component.salesforce.config.limit* | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *camel.component.salesforce.config.max-backoff* | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | Long
-| *camel.component.salesforce.config.not-found-behaviour* | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL link NotFoundBehaviourNULL or should a exception be signaled on the exchange link NotFoundBehaviourEXCEPTION - the default. |  | NotFoundBehaviour
+| *camel.component.salesforce.config.not-found-behaviour* | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
 | *camel.component.salesforce.config.notify-for-fields* | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
 | *camel.component.salesforce.config.notify-for-operation-create* | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *camel.component.salesforce.config.notify-for-operation-delete* | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean

@@ -65,13 +65,13 @@ public class FhirXmlDataFormatConfiguration
     private Boolean omitResourceId = false;
     /**
      * If provided, tells the parse which resource types to apply link
-     * setEncodeElements(Set) encode elements to. Any resource types not
+     * #setEncodeElements(Set) encode elements to. Any resource types not
      * specified here will be encoded completely, with no elements excluded. The
      * option is a java.util.Set<java.lang.String> type.
      */
     private String encodeElementsAppliesToResourceTypes;
     /**
-     * If set to true (default is false), the values supplied to link
+     * If set to true (default is false), the values supplied to
      * setEncodeElements(Set) will not be applied to the root resource
      * (typically a Bundle), but will be applied to any sub-resources contained
      * within it (i.e. search result resources in that bundle)
@@ -108,7 +108,7 @@ public class FhirXmlDataFormatConfiguration
      * version. In some cases though, it may be desirable to preserve the
      * version in resource links. In that case, this value should be set to
      * false. This method provides the ability to globally disable reference
-     * encoding. If finer-grained control is needed, use link
+     * encoding. If finer-grained control is needed, use
      * setDontStripVersionsFromReferencesAtPaths(List)
      */
     private Boolean stripVersionsFromReferences = false;
@@ -136,8 +136,8 @@ public class FhirXmlDataFormatConfiguration
      * have their resource versions encoded instead of being automatically
      * stripped during the encoding process. This setting has no effect on the
      * parsing process. This method provides a finer-grained level of control
-     * than link setStripVersionsFromReferences(Boolean) and any paths specified
-     * by this method will be encoded even if link
+     * than setStripVersionsFromReferences(Boolean) and any paths specified by
+     * this method will be encoded even if
      * setStripVersionsFromReferences(Boolean) has been set to true (which is
      * the default)
      */
