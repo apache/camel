@@ -50,7 +50,7 @@ The Slack component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *webhookUrl* (producer) | The incoming webhook URL |  | String
+| *webhookUrl* (common) | The incoming webhook URL |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -77,12 +77,17 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *maxResults* (consumer) | The Max Result for the poll | 10 | String
+| *token* (consumer) | The token to use |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *iconEmoji* (producer) | Use a Slack emoji as an avatar |  | String
 | *iconUrl* (producer) | The avatar that the component will use when sending message to a channel or user. |  | String
 | *username* (producer) | This is the username that the bot will have when sending messages to a channel or user. |  | String
@@ -146,6 +151,18 @@ A CamelContext with Blueprint could be as:
 
 </blueprint>
 ---------------------------------------------------------------------------------------------------------------------------
+
+### Consumer
+
+You can use also a consumer for messages in channel
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------
+from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
+    .to("mock:result");
+---------------------------------------------------------------------------------------------------------------------------
+
+In this way you'll get the last message from general channel. The consumer will take track of the timestamp of the last message consumed and in the next poll it will check from that timestamp.
 
 ### See Also
 

@@ -61,6 +61,7 @@
       <artifactId>camel-test-blueprint</artifactId>
       <scope>test</scope>
     </dependency>  
+    <!-- logging -->   
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
