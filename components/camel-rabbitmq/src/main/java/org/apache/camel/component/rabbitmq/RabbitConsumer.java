@@ -30,10 +30,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RabbitConsumer implements com.rabbitmq.client.Consumer {
+class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consumer {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final RabbitMQConsumer consumer;
     private Channel channel;
@@ -167,21 +169,16 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         }
     }
 
-    /**
-     * Bind consumer to channel
-     */
-    public void start() throws IOException {
+    @Override
+    protected void doStart() throws Exception {
         if (channel == null) {
             throw new IOException("The RabbitMQ channel is not open");
         }
         tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), "", false, consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
-    /**
-     * Unbind consumer from channel
-     */
-    public void stop() throws IOException, TimeoutException {
-        stopping = true;
+    @Override
+    protected void doStop() throws Exception {
         if (channel == null) {
             return;
         }
@@ -200,7 +197,6 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
             log.error("Thread Interrupted!");
         } finally {
             lock.release();
-
         }
     }
 
@@ -250,7 +246,12 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         }
 
         this.consumer.getEndpoint().declareExchangeAndQueue(channel);
-        this.start();
+
+        try {
+            this.start();
+        } catch (Exception e) {
+            throw new IOException("Error starting consumer", e);
+        }
     }
 
     /**
@@ -263,11 +264,11 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         if (!sig.isInitiatedByApplication()) {
             // Something else closed the connection so reconnect
             boolean connected = false;
-            while (!connected && !stopping) {
+            while (!connected && !isStopping()) {
                 try {
                     reconnect();
                     connected = true;
-                } catch (IOException | TimeoutException e) {
+                } catch (Exception e) {
                     log.warn("Unable to obtain a RabbitMQ channel. Will try again. Caused by: " + e.getMessage() + ". Stacktrace logged at DEBUG logging level.");
                     // include stacktrace in DEBUG logging
                     log.debug(e.getMessage(), e);
@@ -297,8 +298,10 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
      * If the RabbitMQ connection is good this returns without changing
      * anything. If the connection is down it will attempt to reconnect
      */
-    public void reconnect() throws IOException, TimeoutException {
+    public void reconnect() throws Exception {
         if (isChannelOpen()) {
+            // ensure we are started
+            start();
             // The connection is good, so nothing to do
             return;
         } else if (channel != null && !channel.isOpen() && isAutomaticRecoveryEnabled()) {
