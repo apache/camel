@@ -83,4 +83,18 @@ public class MessageSupportTest extends ContextTestSupport {
         assertEquals(123, in.getHeader("foo"));
         assertEquals(123, out.getHeader("foo"));
     }
+
+    public void testCopyOverExchange() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        Message in = exchange.getIn();
+        in.setBody("Bye World");
+
+        Message two = in.copy();
+        assertSame(exchange, two.getExchange());
+
+        Message three = new DefaultMessage(context);
+        three.copyFrom(two);
+        assertSame(exchange, three.getExchange());
+    }
+
 }
