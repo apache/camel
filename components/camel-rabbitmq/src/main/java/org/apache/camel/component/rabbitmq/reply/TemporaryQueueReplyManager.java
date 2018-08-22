@@ -136,7 +136,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
          * Bind consumer to channel
          */
         private void start() throws IOException {
-            tag = channel.basicConsume(getReplyTo(), endpoint.isAutoAck(), this);
+            tag = channel.basicConsume(getReplyTo(), true, this);
         }
 
         /**
