@@ -87,6 +87,16 @@ public class RestSwaggerComponentConfiguration
      */
     private URI specificationUri;
     /**
+     * Customize TLS parameters used by the component. If not set defaults to
+     * the TLS parameters set in the Camel context. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
+     */
+    private String sslContextParameters;
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -139,6 +149,23 @@ public class RestSwaggerComponentConfiguration
 
     public void setSpecificationUri(URI specificationUri) {
         this.specificationUri = specificationUri;
+    }
+
+    public String getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(String sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
