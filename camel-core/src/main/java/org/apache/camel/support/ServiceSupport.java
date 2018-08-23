@@ -32,6 +32,11 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService}
  * in case they support suspend/resume.
+ * <p/>
+ * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()}},
+ * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
+ * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+ * invoke the operation in a safe manner.
  *
  * @version 
  */
@@ -49,6 +54,12 @@ public abstract class ServiceSupport implements StatefulService {
 
     private String version;
 
+    /**
+     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
+     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
+     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * invoke the operation in a safe manner.
+     */
     public void start() throws Exception {
         if (isStarting() || isStarted()) {
             // only start service if not already started
@@ -87,7 +98,13 @@ public abstract class ServiceSupport implements StatefulService {
             } 
         }
     }
-    
+
+    /**
+     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
+     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
+     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * invoke the operation in a safe manner.
+     */
     public void stop() throws Exception {
         if (isStopped()) {
             LOG.trace("Service already stopped");
@@ -112,6 +129,12 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
+    /**
+     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
+     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
+     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * invoke the operation in a safe manner.
+     */
     @Override
     public void suspend() throws Exception {
         if (!suspended.get()) {
@@ -134,6 +157,12 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
+    /**
+     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
+     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
+     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * invoke the operation in a safe manner.
+     */
     @Override
     public void resume() throws Exception {
         if (suspended.get()) {
@@ -154,6 +183,12 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
+    /**
+     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
+     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
+     * <b>NOT</b> be overriden as they are used internally to keep track of the state of this service and properly
+     * invoke the operation in a safe manner.
+     */
     @Override
     public void shutdown() throws Exception {
         if (shutdown.get()) {
