@@ -62,7 +62,7 @@ public final class AS2Utils {
      * Validates if the given <code>name</code> is a valid AS2 Name
      *
      * @param name - the name to validate.
-     * @throws InvalidAS2NameException
+     * @throws InvalidAS2NameException - If <code>name</code> is invalid.
      */
     public static void validateAS2Name(String name) throws InvalidAS2NameException {
         Matcher matcher = AS_NAME_PATTERN.matcher(name);
@@ -126,7 +126,7 @@ public final class AS2Utils {
      *            - the stream printed to.
      * @param request
      *            - the request printed.
-     * @throws IOException
+     * @throws IOException - If failed to print request.
      */
     public static void printRequest(PrintStream out, HttpRequest request) throws IOException {
         // Print request line
@@ -152,7 +152,7 @@ public final class AS2Utils {
      *
      * @param out - the stream printed to.
      * @param message - the request printed.
-     * @throws IOException
+     * @throws IOException - If failed to print message.
      */
     public static void printMessage(PrintStream out, HttpMessage message) throws IOException {
         // Print request line

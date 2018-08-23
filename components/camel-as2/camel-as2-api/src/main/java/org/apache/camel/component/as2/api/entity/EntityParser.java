@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.component.as2.api.AS2Charset;
@@ -44,6 +49,11 @@ import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.Recipient;
+import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.RecipientInformationStore;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +174,71 @@ public final class EntityParser {
         }
 
     }
+    
+    public static MimeEntity parseEnvelopedEntity(byte[] envelopedContent, PrivateKey privateKey) {
+        
+        try {
+            byte[] decryptedContent = decryptData(envelopedContent, privateKey);
+            
+            InputStream is = new ByteArrayInputStream(decryptedContent);
+            AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE);
+            inbuffer.bind(is);
 
+            // Read Text Report Body Part Headers
+            Header[] headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
+                    new ArrayList<CharArrayBuffer>());
+
+            // Get Content-Type and Content-Transfer-Encoding
+            ContentType envelopedEntityContentType = null;
+            String envelopedEntityContentTransferEncoding = null;
+            for (Header header : headers) {
+                switch (header.getName()) {
+                case AS2Header.CONTENT_TYPE:
+                    envelopedEntityContentType = ContentType.parse(header.getValue());
+                    break;
+                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                    envelopedEntityContentTransferEncoding = header.getValue();
+                    break;
+                default:
+                    continue;
+                }
+            }
+            if (envelopedEntityContentType == null) {
+                throw new HttpException("Failed to find Content-Type header in enveloped entity");
+            }
+
+            MimeEntity entity = parseEntityBody(inbuffer, null, envelopedEntityContentType, envelopedEntityContentTransferEncoding, headers);
+            entity.removeAllHeaders();
+            entity.setHeaders(headers);
+            
+            return entity;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) throws Exception {
+        // Create enveloped data from encrypted data
+        CMSEnvelopedData cmsEnvelopedData = new CMSEnvelopedData(encryptedData);
+        
+        // Extract recipient information form enveloped data.
+        RecipientInformationStore recipientsInformationStore = cmsEnvelopedData.getRecipientInfos();
+        Collection<RecipientInformation> recipients = recipientsInformationStore.getRecipients();
+        Iterator<RecipientInformation> it = recipients.iterator();
+        
+        // Decrypt if enveloped data contains recipient information
+        if (it.hasNext()) {
+            // Create recipient from private key.
+            Recipient recipient = new JceKeyTransEnvelopedRecipient(privateKey);
+
+            // Extract decrypted data from recipient information
+            RecipientInformation recipientInfo = it.next();
+            return recipientInfo.getContent(recipient);
+        }
+        
+        return null;
+    }
+    
     public static void parseMultipartSignedEntity(HttpMessage message)
             throws HttpException {
         MultipartSignedEntity multipartSignedEntity = null;
@@ -756,6 +830,39 @@ public final class EntityParser {
             return applicationPkcs7SignatureEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Signature entity");
+            parseException.initCause(e);
+            throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+        }
+    }
+
+    public static ApplicationPkcs7MimeEntity parseApplicationPkcs7MimeEntityBody(AS2SessionInputBuffer inbuffer,
+                                                                                      String boundary,
+                                                                                      ContentType contentType,
+                                                                                      String contentTransferEncoding)
+            throws ParseException {
+
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+
+        try {
+            Charset charset = contentType.getCharset();
+            if (charset == null) {
+                charset = Charset.forName(AS2Charset.US_ASCII);
+            }
+            CharsetDecoder charsetDecoder = charset.newDecoder();
+
+            inbuffer.setCharsetDecoder(charsetDecoder);
+
+            String pkcs7EncryptedBodyContent = parseBodyPartText(inbuffer, boundary);
+
+            byte[] encryptedContent = EntityUtils.decode(pkcs7EncryptedBodyContent.getBytes(charset), contentTransferEncoding);
+
+            ApplicationPkcs7MimeEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEntity(
+                    encryptedContent, contentTransferEncoding, false);
+            return applicationPkcs7MimeEntity;
+        } catch (Exception e) {
+            ParseException parseException = new ParseException("failed to parse PKCS7 Mime entity");
             parseException.initCause(e);
             throw parseException;
         } finally {
