@@ -275,4 +275,20 @@ public class AS2ClientManager {
 
     }
 
+    public AS2SignedDataGenerator createEncryptingGenerator(HttpCoreContext httpContext) throws HttpException {
+
+        Certificate[] certificateChain = httpContext.getAttribute(SIGNING_CERTIFICATE_CHAIN, Certificate[].class);
+        if (certificateChain == null) {
+            throw new HttpException("Signing certificate chain missing");
+        }
+
+        PrivateKey privateKey = httpContext.getAttribute(SIGNING_PRIVATE_KEY, PrivateKey.class);
+        if (privateKey == null) {
+            throw new HttpException("Signing private key missing");
+        }
+
+        return SigningUtils.createSigningGenerator(certificateChain, privateKey);
+
+    }
+
 }

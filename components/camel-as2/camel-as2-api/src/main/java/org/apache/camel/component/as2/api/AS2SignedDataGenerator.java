@@ -108,6 +108,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     /**
      * Creates a <code>multipart/signed</code> content type containing the algorithms used by this generator.
      *
+     * @param boundary - boundary to use to demarcate content.
      * @return A <code>multipart/signed</code> content type
      */
     public ContentType createMultipartSignedContentType(String boundary) {
