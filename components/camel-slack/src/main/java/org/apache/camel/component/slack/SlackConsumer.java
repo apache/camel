@@ -50,17 +50,18 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
     private SlackEndpoint slackEndpoint;
     private String timestamp;
+    private String channelId;
 
-    public SlackConsumer(SlackEndpoint endpoint, Processor processor) {
+    public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, ParseException {
         super(endpoint, processor);
         this.slackEndpoint = endpoint;
+        this.channelId = getChannelId(slackEndpoint.getChannel());
     }
 
     @Override
     protected int poll() throws Exception {
         Queue<Exchange> exchanges;
 
-        String channelId = getChannelId(slackEndpoint.getChannel());
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost("https://slack.com/api/channels.history");
         List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
