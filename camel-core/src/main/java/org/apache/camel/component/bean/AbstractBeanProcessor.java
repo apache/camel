@@ -42,6 +42,7 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
     private transient boolean lookupProcessorDone;
     private final Object lock = new Object();
     private boolean multiParameterArray;
+    private Boolean cache;
     private String method;
     private boolean shorthandMethod;
 
@@ -94,19 +95,28 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
         // but only do this if allowed
         // we need to check beanHolder is Processor is support, to avoid the bean cached issue
         if (allowProcessor(explicitMethodName, beanInfo)) {
-            processor = getProcessor();
-            if (processor == null && !lookupProcessorDone) {
+            Processor target = getProcessor();
+            if (target == null) {
                 // only attempt to lookup the processor once or nearly once
-                synchronized (lock) {
-                    lookupProcessorDone = true;
+                boolean allowCache = cache == null || cache; // allow cache by default
+                if (allowCache) {
+                    if (!lookupProcessorDone) {
+                        synchronized (lock) {
+                            lookupProcessorDone = true;
+                            // so if there is a custom type converter for the bean to processor
+                            target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+                            processor = target;
+                        }
+                    }
+                } else {
                     // so if there is a custom type converter for the bean to processor
-                    processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+                    target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
                 }
             }
-            if (processor != null) {
-                LOG.trace("Using a custom adapter as bean invocation: {}", processor);
+            if (target != null) {
+                LOG.trace("Using a custom adapter as bean invocation: {}", target);
                 try {
-                    processor.process(exchange);
+                    target.process(exchange);
                 } catch (Throwable e) {
                     exchange.setException(e);
                 }
@@ -213,6 +223,14 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
 
     public void setMultiParameterArray(boolean mpArray) {
         multiParameterArray = mpArray;
+    }
+
+    public Boolean getCache() {
+        return cache;
+    }
+
+    public void setCache(Boolean cache) {
+        this.cache = cache;
     }
 
     /**
