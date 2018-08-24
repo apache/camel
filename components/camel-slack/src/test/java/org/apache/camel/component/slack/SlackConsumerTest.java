@@ -28,7 +28,7 @@ public class SlackConsumerTest extends CamelTestSupport {
     @Test
     public void testConsumePrefixedMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(9);
         
         assertMockEndpointsSatisfied();
     }
