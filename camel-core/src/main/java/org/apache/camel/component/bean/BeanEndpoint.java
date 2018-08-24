@@ -42,7 +42,7 @@ public class BeanEndpoint extends DefaultEndpoint {
     private String method;
     @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
             + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
-    private boolean cache;
+    private Boolean cache;
     @UriParam(label = "advanced", description = "How to treat the parameters which are passed from the message body."
             + "true means the message body should be an array of parameters.")
     @Deprecated @Metadata(deprecationNode = "This option is used internally by Camel, and is not intended for end users to use.")
@@ -92,7 +92,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             BeanHolder holder = getBeanHolder();
             if (holder == null) {
                 RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
-                if (cache) {
+                if (isCache()) {
                     holder = registryBean.createCacheHolder();
                 } else {
                     holder = registryBean;
@@ -103,6 +103,7 @@ public class BeanEndpoint extends DefaultEndpoint {
                 processor.setMethod(method);
             }
             processor.setMultiParameterArray(isMultiParameterArray());
+            processor.setCache(cache);
             if (parameters != null) {
                 setProperties(processor, parameters);
             }
@@ -147,6 +148,10 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     public boolean isCache() {
+        return cache != null ? cache : false;
+    }
+
+    public Boolean getCache() {
         return cache;
     }
 
@@ -154,7 +159,7 @@ public class BeanEndpoint extends DefaultEndpoint {
      * If enabled, Camel will cache the result of the first Registry look-up.
      * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      */
-    public void setCache(boolean cache) {
+    public void setCache(Boolean cache) {
         this.cache = cache;
     }
 
