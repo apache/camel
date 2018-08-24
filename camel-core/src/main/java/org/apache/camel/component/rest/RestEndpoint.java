@@ -322,7 +322,7 @@ public class RestEndpoint extends DefaultEndpoint {
         // try all components
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
-                Component comp = setupComponent(getComponentName(), getCamelContext(), (Map<String, Object>) parameters.get("component"));
+                Component comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory) {
                     factory = (RestProducerFactory) comp;
                     cname = name;
