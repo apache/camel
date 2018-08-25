@@ -247,12 +247,12 @@ Currently custom functions in XQuery might result in a NullPointerException (Cam
 ### Examples
 
 Here is a simple
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
+https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
 using an XQuery expression as a predicate in a
 Message Filter
 
 This
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
+https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
 uses XQuery with namespaces as a predicate in a
 Message Filter
 
