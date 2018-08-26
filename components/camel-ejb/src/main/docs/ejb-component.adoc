@@ -33,7 +33,7 @@ the Application Server JNDI Registry
 
 
 // component options: START
-The EJB component supports 3 options, which are listed below.
+The EJB component supports 4 options, which are listed below.
 
 
 
@@ -42,6 +42,7 @@ The EJB component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *context* (producer) | The Context to use for looking up the EJBs |  | Context
 | *properties* (producer) | Properties for creating javax.naming.Context if a context has not been configured. |  | Properties
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -75,7 +76,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *method* (producer) | Sets the name of the method to invoke on the bean |  | String
-| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. | false | boolean
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
 | *multiParameterArray* (advanced) | *Deprecated* How to treat the parameters which are passed from the message body.true means the message body should be an array of parameters.. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. | false | boolean
 | *parameters* (advanced) | Used for configuring additional properties on the bean |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
