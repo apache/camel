@@ -78,5 +78,4 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         return restrict == null || restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
     }
 
-
 }
