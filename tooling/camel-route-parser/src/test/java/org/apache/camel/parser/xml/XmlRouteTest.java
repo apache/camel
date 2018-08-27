@@ -55,6 +55,6 @@ public class XmlRouteTest {
         }
         Assert.assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(0).getEndpointUri());
         Assert.assertEquals("stream:out", endpoints.get(1).getEndpointUri());
-	}
+    }
 
 }
