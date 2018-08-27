@@ -382,8 +382,7 @@
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty92-version>9.2.22.v20170606</jetty92-version>
-    <!-- Jetty 9.4.7 is buggy, do not use -->
-    <jetty9-version>9.4.6.v20170531</jetty9-version>
+    <jetty9-version>9.4.11.v20180605</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
