@@ -413,67 +413,9 @@ return the configured CORS headers in the rest-dsl in all the
 supported link:rest-dsl.html[Rest DSL] components.
 * The `options` verb in the link:rest-dsl.html[Rest DSL] has been
 deprecated and are not in use if CORS is enabled.
-* camel-gae is deprecated and will be removed from Camel 2.18 onwards. +
- +
- +
+* camel-gae is deprecated and will be removed from Camel 2.18 onwards. 
 
-[[Camel2.17.0Release-GettingtheDistributions]]
-Getting the Distributions
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-[[Camel2.17.0Release-BinaryDistributions]]
-Binary Distributions
-^^^^^^^^^^^^^^^^^^^^
-
-Description
-
-Download Link
-
-PGP Signature file of download
-
-Windows Distribution
-
-http://www.apache.org/dyn/closer.cgi/camel/apache-camel/2.17.0/apache-camel-2.17.0.zip[apache-camel-2.17.0.zip]
-
-http://www.apache.org/dist/camel/apache-camel/2.17.0/apache-camel-2.17.0.zip.asc[apache-camel-2.17.0.zip.asc]
-
-Unix/Linux/Cygwin Distribution
-
-http://www.apache.org/dyn/closer.cgi/camel/apache-camel/2.17.0/apache-camel-2.17.0.tar.gz[apache-camel-2.17.0.tar.gz]
-
-http://www.apache.org/dist/camel/apache-camel/2.17.0/apache-camel-2.17.0.tar.gz.asc[apache-camel-2.17.0.tar.gz.asc]
-
-[Info]
-====
- *The above URLs use redirection*
-
-The above URLs use the Apache Mirror system to redirect you to a
-suitable mirror for your download. Some users have experienced issues
-with some versions of browsers (e.g. some Safari browsers). If the
-download doesn't seem to work for you from the above URL then try using
-http://www.mozilla.com/en-US/firefox/[FireFox]
-
-====
-
-[[Camel2.17.0Release-SourceDistributions]]
-Source Distributions
-^^^^^^^^^^^^^^^^^^^^
-
-Description
-
-Download Link
-
-PGP Signature file of download
-
-Source for Windows
-
-http://www.apache.org/dyn/closer.cgi/camel/apache-camel/2.17.0/apache-camel-2.17.0-src.zip[apache-camel-2.17.0-src.zip]
-
-http://www.apache.org/dist/camel/apache-camel/2.17.0/apache-camel-2.17.0-src.zip.asc[apache-camel-2.17.0-src.zip.asc]
-
-[[Camel2.17.0Release-GettingtheBinariesusingMaven2]]
-Getting the Binaries using Maven 2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Getting the Binaries using Maven 
 
 To use this release in your maven project, the proper dependency
 configuration that you should use in your
@@ -489,26 +431,11 @@ POM] is:
 </dependency>
 -------------------------------------
 
-[[Camel2.17.0Release-SVNTagCheckout]]
-SVN Tag Checkout
-^^^^^^^^^^^^^^^^
 
-[source,java]
---------------------------------------------------------------
-svn co http://svn.apache.org/repos/asf/camel/tags/camel-2.17.0
---------------------------------------------------------------
-
-[[Camel2.17.0Release-Changelog]]
-Changelog
-~~~~~~~~~
+### Changelog
 
 For a more detailed view of new features and bug fixes, see the:
 
-*
 https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12311211&version=12333368[Release
 notes for 2.17.0]
-
- +
-
- +
 
