@@ -625,8 +625,15 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             state = new ZipkinState();
             exchange.setProperty(ZipkinState.KEY, state);
         }
-
-        Span span = brave.tracer().nextSpan(EXTRACTOR.extract(exchange.getIn()));
+        
+        Span span = null;
+        if (ObjectHelper.isEmpty(EXTRACTOR.extract(exchange.getIn()))) {
+            span = brave.tracer().nextSpan();
+            INJECTOR.inject(span.context(), exchange.getIn()); 
+            
+        } else {
+            span = brave.tracer().nextSpan(EXTRACTOR.extract(exchange.getIn()));
+        }
         span.kind(Span.Kind.SERVER).start();
         ZipkinServerRequestAdapter parser = new ZipkinServerRequestAdapter(this, exchange);
         parser.onRequest(exchange, span.customizer());
@@ -734,13 +741,12 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             // use route policy to track events when Camel a Camel route begins/end the lifecycle of an Exchange
             // these events corresponds to Zipkin server events
 
-            if (hasZipkinTraceId(exchange)) {
-                String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
-                Tracing brave = getTracing(serviceName);
-                if (brave != null) {
-                    serverRequest(brave, serviceName, exchange);
-                }
+            String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+            Tracing brave = getTracing(serviceName);
+            if (brave != null) {
+                serverRequest(brave, serviceName, exchange);
             }
+          
         }
 
         // Report Server send after route has completed processing of the exchange.
