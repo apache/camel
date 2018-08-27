@@ -19,8 +19,11 @@ package org.apache.camel.component.netty4.http.handlers;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -43,6 +46,7 @@ import org.apache.camel.component.netty4.http.HttpPrincipal;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
+import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -91,24 +95,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
 
-        // if its an OPTIONS request then return which methods is allowed
-        boolean isRestrictedToOptions = consumer.getEndpoint().getHttpMethodRestrict() != null
-                && consumer.getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
-        if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
-            String s;
-            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
-            } else {
-                // allow them all
-                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
-            }
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-            response.headers().set("Allow", s);
-            // do not include content-type as that would indicate to the caller that we can only do text/plain
-            response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            ctx.writeAndFlush(response);
-            return;
-        }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.method().name())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);

@@ -34,12 +34,26 @@ public class RestNettyHttpOptionsTest extends BaseNettyTest {
         });
 
         assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("OPTIONS,GET", exchange.getOut().getHeader("ALLOW"));
+        assertEquals("GET,OPTIONS", exchange.getOut().getHeader("ALLOW"));
         assertEquals("", exchange.getOut().getBody(String.class));
 
-        exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
+        exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/id/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
         assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("OPTIONS,PUT", exchange.getOut().getHeader("ALLOW"));
+        assertEquals("PUT,OPTIONS", exchange.getOut().getHeader("ALLOW"));
+        assertEquals("", exchange.getOut().getBody(String.class));
+    }
+
+    @Test
+    public void testNettyServerMultipleOptions() throws Exception {
+        Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v2/options", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
+            }
+        });
+
+        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("GET,POST,OPTIONS", exchange.getOut().getHeader("ALLOW"));
         assertEquals("", exchange.getOut().getBody(String.class));
     }
 
@@ -55,8 +69,12 @@ public class RestNettyHttpOptionsTest extends BaseNettyTest {
                 rest("/users/")
                     .get("v1/customers")
                         .to("mock:customers")
-                    .put("v1/{id}")
-                        .to("mock:id");
+                    .put("v1/id/{id}")
+                        .to("mock:id")
+                    .get("v2/options")
+                        .to("mock:options")
+                    .post("v2/options")
+                        .to("mock:options");
             }
         };
     }
