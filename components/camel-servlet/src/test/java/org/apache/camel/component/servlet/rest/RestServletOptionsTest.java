@@ -42,14 +42,26 @@ public class RestServletOptionsTest extends ServletCamelRouterTestSupport {
         WebResponse response = client.getResponse(req);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals("OPTIONS,GET", response.getHeaderField("ALLOW"));
+        assertEquals("GET,OPTIONS", response.getHeaderField("ALLOW"));
         assertEquals("", response.getText());
 
-        req = new OptionsMethodWebRequest(CONTEXT_URL + "/services/users/v1/123");
+        req = new OptionsMethodWebRequest(CONTEXT_URL + "/services/users/v1/id/123");
         response = client.getResponse(req);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals("OPTIONS,PUT", response.getHeaderField("ALLOW"));
+        assertEquals("PUT,OPTIONS", response.getHeaderField("ALLOW"));
+        assertEquals("", response.getText());
+    }
+
+    @Test
+    public void testMultipleServletOptions() throws Exception {
+        WebRequest req = new OptionsMethodWebRequest(CONTEXT_URL + "/services/users/v2/options");
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        WebResponse response = client.getResponse(req);
+
+        assertEquals(200, response.getResponseCode());
+        assertEquals("GET,POST,OPTIONS", response.getHeaderField("ALLOW"));
         assertEquals("", response.getText());
     }
 
@@ -65,8 +77,12 @@ public class RestServletOptionsTest extends ServletCamelRouterTestSupport {
                 rest("/users/")
                     .get("v1/customers")
                         .to("mock:customers")
-                    .put("v1/{id}")
-                        .to("mock:id");
+                    .put("v1/id/{id}")
+                        .to("mock:id")
+                    .get("v2/options")
+                        .to("mock:options")
+                    .post("v2/options")
+                        .to("mock:options");
             }
         };
     }
