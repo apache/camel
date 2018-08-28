@@ -29,7 +29,7 @@
 
   <artifactId>camel-xmlrpc</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: XML RPC</name>
+  <name>Camel :: XML RPC (deprecated)</name>
   <description>Camel XML RPC support</description>
 
   <properties>
