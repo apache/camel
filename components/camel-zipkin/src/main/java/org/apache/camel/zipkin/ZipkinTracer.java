@@ -31,6 +31,7 @@ import brave.propagation.Propagation.Setter;
 import brave.propagation.TraceContext;
 import brave.propagation.TraceContext.Extractor;
 import brave.propagation.TraceContext.Injector;
+import brave.propagation.TraceContextOrSamplingFlags;
 import brave.sampler.Sampler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -625,14 +626,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             state = new ZipkinState();
             exchange.setProperty(ZipkinState.KEY, state);
         }
-        
         Span span = null;
-        if (ObjectHelper.isEmpty(EXTRACTOR.extract(exchange.getIn()))) {
+        TraceContextOrSamplingFlags sampleFlag = EXTRACTOR.extract(exchange.getIn());
+        if (ObjectHelper.isEmpty(sampleFlag)) {
             span = brave.tracer().nextSpan();
             INJECTOR.inject(span.context(), exchange.getIn()); 
-            
         } else {
-            span = brave.tracer().nextSpan(EXTRACTOR.extract(exchange.getIn()));
+            span = brave.tracer().nextSpan(sampleFlag);
         }
         span.kind(Span.Kind.SERVER).start();
         ZipkinServerRequestAdapter parser = new ZipkinServerRequestAdapter(this, exchange);

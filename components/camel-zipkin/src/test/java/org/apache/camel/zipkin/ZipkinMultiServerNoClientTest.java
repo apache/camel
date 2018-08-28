@@ -30,30 +30,22 @@ public class ZipkinMultiServerNoClientTest extends CamelTestSupport {
     protected void setSpanReporter(ZipkinTracer zipkin) {
         zipkin.setSpanReporter(Reporter.NOOP);
     }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
         zipkin = new ZipkinTracer();
         // we have one route as service
         zipkin.addServerServiceMapping("seda:abc", "abc");
         zipkin.addServerServiceMapping("seda:xyz", "xyz");
-       
-       
         setSpanReporter(zipkin);
-
         // attaching ourself to CamelContext
         zipkin.init(context);
-
         return context;
     }
-
     @Test
     public void testZipkinRoute() throws Exception {
         template.requestBody("direct:start", "Hello abc");
     }
-
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -61,19 +53,16 @@ public class ZipkinMultiServerNoClientTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("seda:abc");
                 
-                
                 from("seda:abc").routeId("abc")
                 .log("routing at ${routeId}")
                 .multicast()
-                    .to("seda:xyz")
+                .to("seda:xyz")
                 .end()
                 .log("End of routing");
                 
                 from("seda:xyz").routeId("xyz")
                 .log("routing at ${routeId}")
                 .delay(simple("${random(1000,2000)}")); 
-                
-                
             }
         };
     }
