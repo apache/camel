@@ -745,7 +745,7 @@
     <zipkin-reporter-version>2.7.7</zipkin-reporter-version>
     <zipkin-version>2.11.3</zipkin-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
-    <zookeeper-version>3.4.10</zookeeper-version>
+    <zookeeper-version>3.4.13</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
     <zxing-version>3.3.3</zxing-version>
     <zxing-bundle-version>3.3.3_1</zxing-bundle-version>
