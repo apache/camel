@@ -16,35 +16,25 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.PrivateKey;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
-import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSTypedData;
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.RecipientInformationStore;
-import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.operator.OutputEncryptor;
 
 public class ApplicationPkcs7MimeEntity extends MimeEntity {
