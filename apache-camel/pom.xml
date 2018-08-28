@@ -1779,6 +1779,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jclouds-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jcr-starter</artifactId>
       <version>${project.version}</version>
     </dependency>

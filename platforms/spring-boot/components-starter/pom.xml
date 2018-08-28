@@ -213,6 +213,7 @@
     <module>camel-jaxb-starter</module>
     <module>camel-jbpm-starter</module>
     <module>camel-jcache-starter</module>
+    <module>camel-jclouds-starter</module>
     <module>camel-jcr-starter</module>
     <module>camel-jdbc-starter</module>
     <module>camel-jetty-common-starter</module>

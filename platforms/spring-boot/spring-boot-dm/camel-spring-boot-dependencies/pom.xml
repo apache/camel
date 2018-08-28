@@ -1481,6 +1481,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jclouds-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jcr</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3367,7 +3372,7 @@
       <dependency>
         <groupId>org.apache.zookeeper</groupId>
         <artifactId>zookeeper</artifactId>
-        <version>3.4.10</version>
+        <version>3.4.13</version>
       </dependency>
       <dependency>
         <groupId>org.awaitility</groupId>
