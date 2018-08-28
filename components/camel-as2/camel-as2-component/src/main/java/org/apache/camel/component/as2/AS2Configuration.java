@@ -105,6 +105,15 @@ public class AS2Configuration {
     @UriParam
     private String[] signedReceiptMicAlgorithms;
 
+    @UriParam
+    private String encryptingAlgorithmName;
+
+    @UriParam
+    private Certificate[] encryptingCertificateChain;
+
+    @UriParam
+    private PrivateKey encryptingPrivateKey;
+
     public AS2ApiName getApiName() {
         return apiName;
     }
@@ -404,4 +413,36 @@ public class AS2Configuration {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
 
+    public String getEncryptingingAlgorithmName() {
+        return signingAlgorithmName;
+    }
+
+    /**
+     * The name of algorithm used to encrypt EDI message.
+     */
+    public void setEncryptingAlgorithmName(String signingAlgorithmName) {
+        this.encryptingAlgorithmName = signingAlgorithmName;
+    }
+
+    public Certificate[] getEncryptingCertificateChain() {
+        return encryptingCertificateChain;
+    }
+
+    /**
+     * The chain of certificates used to encrypt EDI message.
+     */
+    public void setEncryptingCertificateChain(Certificate[] signingCertificateChain) {
+        this.encryptingCertificateChain = signingCertificateChain;
+    }
+
+    public PrivateKey getEncryptingPrivateKey() {
+        return encryptingPrivateKey;
+    }
+
+    /**
+     * The key used to encrypt the EDI message.
+     */
+    public void setEncryptingPrivateKey(PrivateKey signingPrivateKey) {
+        this.encryptingPrivateKey = signingPrivateKey;
+    }
 }

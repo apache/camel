@@ -17,7 +17,20 @@
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
@@ -31,6 +44,23 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.message.BasicHttpResponse;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.bc.BcX509ExtensionUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.cms.CMSAlgorithm;
+import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
+import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
+import org.bouncycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.OutputEncryptor;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,6 +180,11 @@ public class EntityParserTest {
 
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
 
+    //
+    // certificate serial number seed.
+    //
+    int  serialNo = 1;
+
     @Before
     public void setUp() throws Exception {
     }
@@ -237,4 +272,89 @@ public class EntityParserTest {
         assertEquals("Unexpected Digest Algorithm ID", EXPECTED_DIGEST_ALGORITHM_ID, messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId());
     }
 
+    @Test
+    public void parseEnvelopedBodyTest() throws Exception {
+        
+        Security.addProvider(new BouncyCastleProvider());
+        
+        //
+        // set up our certificates
+        //
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
+
+        kpg.initialize(1024, new SecureRandom());
+
+        String issueDN = "O=Punkhorn Software, C=US";
+        KeyPair issueKP = kpg.generateKeyPair();
+        X509Certificate issuerCertificate = makeCertificate(issueKP, issueDN, issueKP, issueDN);
+
+        //
+        // certificate we encrypt against
+        //
+        String encryptDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";
+        KeyPair encryptKP = kpg.generateKeyPair();
+        X509Certificate encryptionCertificate = makeCertificate(encryptKP, encryptDN, issueKP, issueDN);
+
+        List<X509Certificate> certList = new ArrayList<>();
+
+        certList.add(encryptionCertificate);
+        certList.add(issuerCertificate);
+        
+        //
+        // Create generator
+        //
+        CMSEnvelopedDataGenerator cmsEnvelopeDataGenerator = new CMSEnvelopedDataGenerator();
+        
+        JceKeyTransRecipientInfoGenerator recipientInfoGenerator = new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
+        cmsEnvelopeDataGenerator.addRecipientInfoGenerator(recipientInfoGenerator);
+
+        //
+        // Create encryptor
+        //
+        OutputEncryptor contentEncryptor = new JceCMSContentEncryptorBuilder(CMSAlgorithm.AES128_CCM).build();
+        
+        //
+        // Build Enveloped Entity
+        //
+        TextPlainEntity textEntity = new TextPlainEntity("This is a super secret messatge!", "US-ASCII", "7bit", false);
+        ApplicationPkcs7MimeEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEntity(textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
+        
+        MimeEntity decryptedMimeEntity = applicationPkcs7MimeEntity.getEncryptedEntity(encryptKP.getPrivate());
+        assertEquals("Decrypted entity has unexpected content type", "text/plain; charset=US-ASCII", decryptedMimeEntity.getContentTypeValue());
+        assertEquals("Decrypted entity has unexpected content", "This is a super secret messatge!", ((TextPlainEntity)decryptedMimeEntity).getText());
+    }
+
+    /**
+     * create a basic X509 certificate from the given keys
+     */
+    private X509Certificate makeCertificate(KeyPair subKP, String subDN, KeyPair issKP, String issDN)
+            throws GeneralSecurityException, IOException, OperatorCreationException {
+        PublicKey subPub = subKP.getPublic();
+        PrivateKey issPriv = issKP.getPrivate();
+        PublicKey issPub = issKP.getPublic();
+
+        X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(new X500Name(issDN),
+                BigInteger.valueOf(serialNo++), new Date(System.currentTimeMillis()),
+                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)), new X500Name(subDN), subPub);
+
+        v3CertGen.addExtension(Extension.subjectKeyIdentifier, false, createSubjectKeyId(subPub));
+
+        v3CertGen.addExtension(Extension.authorityKeyIdentifier, false, createAuthorityKeyId(issPub));
+
+        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(
+                v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(issPriv)));
+    }
+
+    private AuthorityKeyIdentifier createAuthorityKeyId(PublicKey pub) throws IOException {
+        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
+
+        BcX509ExtensionUtils utils = new BcX509ExtensionUtils();
+        return utils.createAuthorityKeyIdentifier(info);
+    }
+
+    static SubjectKeyIdentifier createSubjectKeyId(PublicKey pub) throws IOException {
+        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
+
+        return new BcX509ExtensionUtils().createSubjectKeyIdentifier(info);
+    }
 }
