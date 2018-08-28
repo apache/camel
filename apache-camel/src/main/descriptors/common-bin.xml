@@ -30,6 +30,7 @@
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-apns</include>
         <include>org.apache.camel:camel-asn1</include>
+        <include>org.apache.camel:camel-as2</include>
         <include>org.apache.camel:camel-asterisk</include>
         <include>org.apache.camel:camel-atmos</include>
         <include>org.apache.camel:camel-atmosphere-websocket</include>
@@ -357,6 +358,7 @@
         <include>org.apache.camel:camel-amqp-starter</include>
         <include>org.apache.camel:camel-apns-starter</include>
         <include>org.apache.camel:camel-asn1-starter</include>
+        <include>org.apache.camel:camel-as2-starter</include>
         <include>org.apache.camel:camel-asterisk-starter</include>
         <include>org.apache.camel:camel-atmosphere-websocket-starter</include>
         <include>org.apache.camel:camel-atmos-starter</include>
