@@ -441,7 +441,7 @@
     <kafka-version>2.0.0</kafka-version>
     <kafka-bundle-version>2.0.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
-    <karaf4-version>4.2.0</karaf4-version>
+    <karaf4-version>4.2.1</karaf4-version>
     <kie-version>7.3.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>4.0.4</kubernetes-client-version>
