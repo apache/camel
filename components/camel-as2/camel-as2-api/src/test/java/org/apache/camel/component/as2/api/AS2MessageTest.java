@@ -270,7 +270,7 @@ public class AS2MessageTest {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
-                null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+                null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -314,7 +314,66 @@ public class AS2MessageTest {
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
                 null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+
+        HttpRequest request = httpContext.getRequest();
+        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
+        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
+        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
+                request.getRequestLine().getProtocolVersion());
+
+        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
+        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
+        assertEquals("Unexpected AS2 version value", AS2_VERSION,
+                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
+        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
+        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
+        assertTrue("Unexpected message id value",
+                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
+        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
+                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
+        assertEquals("Unexpected user agent value", USER_AGENT,
+                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
+        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
+        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
+        assertTrue("Unexpected content type for message",
+                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
+
+        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
+        assertNotNull("Request does not contain entity", entity);
+        assertTrue("Unexpected request entity type", entity instanceof MultipartSignedEntity);
+        MultipartSignedEntity signedEntity = (MultipartSignedEntity) entity;
+        assertTrue("Entity not set as main body of request", signedEntity.isMainBody());
+        assertTrue("Request contains invalid number of mime parts", signedEntity.getPartCount() == 2);
+
+        // Validated first mime part.
+        assertTrue("First mime part incorrect type ", signedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) signedEntity.getPart(0);
+        assertTrue("Unexpected content type for first mime part",
+                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
+        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
+
+        // Validate second mime part.
+        assertTrue("Second mime part incorrect type ",
+                signedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
+        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) signedEntity.getPart(1);
+        assertTrue("Unexpected content type for second mime part",
+                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
+        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
+
+    }
+
+//    @Test
+    public void envelopeddMessageTest() throws Exception {
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
+                TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -373,7 +432,7 @@ public class AS2MessageTest {
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
                 null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
@@ -401,7 +460,7 @@ public class AS2MessageTest {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
-                null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+                null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
 
         HttpResponse response = httpContext.getResponse();
         assertEquals("Unexpected method value", HttpVersion.HTTP_1_1, response.getStatusLine().getProtocolVersion());
