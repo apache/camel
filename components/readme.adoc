@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 301 in 204 JAR artifacts (21 deprecated)
+Number of Components: 301 in 204 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -882,7 +882,7 @@ Number of Components: 301 in 204 JAR artifacts (21 deprecated)
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
 | link:camel-xmlrpc/src/main/docs/xmlrpc-component.adoc[XML RPC] (camel-xmlrpc) +
-`xmlrpc:address` | 2.11 | The xmlrpc component is used for sending messages to a XML RPC service.
+`xmlrpc:address` | 2.11 | *deprecated* The xmlrpc component is used for sending messages to a XML RPC service.
 
 | link:camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) +
 `xmlsecurity:command:name` | 2.12 | Used to sign and verify exchanges using the XML signature specification.
