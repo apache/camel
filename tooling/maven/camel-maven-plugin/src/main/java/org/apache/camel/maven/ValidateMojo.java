@@ -27,7 +27,7 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
-import org.apache.camel.catalog.SimpleValidationResult;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
 import org.apache.camel.catalog.maven.MavenVersionManager;
 import org.apache.camel.maven.helper.EndpointHelper;
@@ -440,14 +440,14 @@ public class ValidateMojo extends AbstractExecMojo {
 
         int simpleErrors = 0;
         for (CamelSimpleExpressionDetails detail : simpleExpressions) {
-            SimpleValidationResult result;
+            LanguageValidationResult result;
             boolean predicate = detail.isPredicate();
             if (predicate) {
                 getLog().debug("Validating simple predicate: " + detail.getSimple());
-                result = catalog.validateSimplePredicate(detail.getSimple());
+                result = catalog.validateSimplePredicate(null, detail.getSimple());
             } else {
                 getLog().debug("Validating simple expression: " + detail.getSimple());
-                result = catalog.validateSimpleExpression(detail.getSimple());
+                result = catalog.validateSimpleExpression(null, detail.getSimple());
             }
             if (!result.isSuccess()) {
                 simpleErrors++;
@@ -508,7 +508,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getFileName());
                 }
                 sb.append("\n");
-                sb.append("\n\t").append(result.getSimple());
+                sb.append("\n\t").append(result.getText());
                 sb.append("\n\n");
 
                 getLog().info(sb.toString());
