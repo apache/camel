@@ -52,6 +52,11 @@ public abstract class TestSupport extends Assert {
     @Rule
     public TestName name = new TestName();
 
+    @Override
+    public String toString() {
+        return getName() + "(" + getClass().getName() + ")";
+    }
+
     public String getName() {
         return name.getMethodName();
     }
