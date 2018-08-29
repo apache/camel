@@ -36,30 +36,49 @@ public class DirectProducer extends DefaultAsyncProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        endpoint.addProducer(this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        endpoint.removeProducer(this);
+        super.doStop();
+    }
+
     public void process(Exchange exchange) throws Exception {
-        if (endpoint.getConsumer() == null) {
+        DirectConsumer consumer = endpoint.getConsumer();
+        if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             } else {
                 LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
         } else {
-            endpoint.getConsumer().getProcessor().process(exchange);
+            consumer.getProcessor().process(exchange);
         }
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (endpoint.getConsumer() == null) {
-            if (endpoint.isFailIfNoConsumers()) {
-                // indicate its done synchronously
-                exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+        try {
+            DirectConsumer consumer = endpoint.getConsumer();
+            if (consumer == null) {
+                if (endpoint.isFailIfNoConsumers()) {
+                    exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+                } else {
+                    LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                }
+                callback.done(true);
+                return true;
             } else {
-                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                return consumer.getAsyncProcessor().process(exchange, callback);
             }
+        } catch (Exception e) {
+            exchange.setException(e);
             callback.done(true);
             return true;
-        } else {
-            return endpoint.getConsumer().getAsyncProcessor().process(exchange, callback);
         }
     }
 

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.direct;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Component;
@@ -29,6 +31,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
@@ -38,7 +42,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectEndpoint extends DefaultEndpoint {
 
-    private volatile Map<String, DirectConsumer> consumers;
+    private final Map<String, DirectConsumer> consumers;
+    private final List<DirectProducer> producers = new ArrayList<>();
 
     @UriPath(description = "Name of direct endpoint") @Metadata(required = "true")
     private String name;
@@ -55,7 +60,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public DirectEndpoint(String endpointUri, Component component) {
-        this(endpointUri, component, new HashMap<String, DirectConsumer>());
+        this(endpointUri, component, new HashMap<>());
     }
 
     public DirectEndpoint(String uri, Component component, Map<String, DirectConsumer> consumers) {
@@ -64,11 +69,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        if (block) {
-            return new DirectBlockingProducer(this);
-        } else {
-            return new DirectProducer(this);
-        }
+        return new DirectProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -82,23 +83,58 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public void addConsumer(DirectConsumer consumer) {
-        String key = consumer.getEndpoint().getKey();
-        consumers.put(key, consumer);
+        String key = getKey();
+        synchronized (consumers) {
+            if (consumers.putIfAbsent(key, consumer) != null) {
+                throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + this + " only allows one consumer.");
+            }
+            consumers.notifyAll();
+        }
     }
 
     public void removeConsumer(DirectConsumer consumer) {
-        String key = consumer.getEndpoint().getKey();
-        consumers.remove(key);
-    }
-
-    public boolean hasConsumer(DirectConsumer consumer) {
-        String key = consumer.getEndpoint().getKey();
-        return consumers.containsKey(key);
-    }
-
-    public DirectConsumer getConsumer() {
         String key = getKey();
-        return consumers.get(key);
+        synchronized (consumers) {
+            consumers.remove(key, consumer);
+            consumers.notifyAll();
+        }
+    }
+
+    public void addProducer(DirectProducer producer) {
+        synchronized (consumers) {
+            producers.add(producer);
+        }
+    }
+
+    public void removeProducer(DirectProducer producer) {
+        synchronized (consumers) {
+            producers.remove(producer);
+        }
+    }
+
+    protected DirectConsumer getConsumer() throws InterruptedException {
+        String key = getKey();
+        synchronized (consumers) {
+            DirectConsumer answer = consumers.get(key);
+            if (answer == null && block) {
+                StopWatch watch = new StopWatch();
+                for (;;) {
+                    answer = consumers.get(key);
+                    if (answer != null) {
+                        break;
+                    }
+                    long rem = timeout - watch.taken();
+                    if (rem <= 0) {
+                        break;
+                    }
+                    consumers.wait(rem);
+                }
+            }
+//            if (answer != null && answer.getEndpoint() != this) {
+//                throw new IllegalStateException();
+//            }
+            return answer;
+        }
     }
 
     public boolean isBlock() {
@@ -140,7 +176,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     protected String getKey() {
         String uri = getEndpointUri();
         if (uri.indexOf('?') != -1) {
-            return ObjectHelper.before(uri, "?");
+            return StringHelper.before(uri, "?");
         } else {
             return uri;
         }
