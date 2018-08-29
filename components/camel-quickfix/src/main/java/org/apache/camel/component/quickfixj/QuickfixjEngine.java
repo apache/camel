@@ -418,15 +418,11 @@ public class QuickfixjEngine extends ServiceSupport {
         boolean hasRole = false;
         Iterator<SessionID> sessionIdItr = settings.sectionIterator();
         while (sessionIdItr.hasNext()) {
-            try {
-                if (connectorRole.equals(settings.getString(sessionIdItr.next(),
-                        SessionFactory.SETTING_CONNECTION_TYPE))) {
-                    hasRole = true;
-                    break;
-                }
-            } catch (FieldConvertError e) {
-                throw new ConfigError(e);
-            }
+            if (connectorRole.equals(settings.getString(sessionIdItr.next(),
+			        SessionFactory.SETTING_CONNECTION_TYPE))) {
+			    hasRole = true;
+			    break;
+			}
         }
         return hasRole;
     }
