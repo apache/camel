@@ -438,6 +438,42 @@ public class ValidateMojo extends AbstractExecMojo {
             getLog().info(endpointSummary);
         }
 
+        int simpleErrors = validateSimple(catalog, simpleExpressions);
+        String simpleSummary;
+        if (simpleErrors == 0) {
+            int ok = simpleExpressions.size() - simpleErrors;
+            simpleSummary = String.format("Simple validation success: (%s = passed, %s = invalid)", ok, simpleErrors);
+        } else {
+            int ok = simpleExpressions.size() - simpleErrors;
+            simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
+        }
+        if (simpleErrors > 0) {
+            getLog().warn(simpleSummary);
+        } else {
+            getLog().info(simpleSummary);
+        }
+
+        int duplicateRouteIdErrors = validateDuplicateRouteId(routeIds);
+        String routeIdSummary = "";
+        if (duplicateRouteId) {
+            if (duplicateRouteIdErrors == 0) {
+                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
+            } else {
+                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
+            }
+            if (duplicateRouteIdErrors > 0) {
+                getLog().warn(routeIdSummary);
+            } else {
+                getLog().info(routeIdSummary);
+            }
+        }
+
+        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0)) {
+            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary);
+        }
+    }
+
+    private int validateSimple(CamelCatalog catalog, List<CamelSimpleExpressionDetails> simpleExpressions) {
         int simpleErrors = 0;
         for (CamelSimpleExpressionDetails detail : simpleExpressions) {
             LanguageValidationResult result;
@@ -514,25 +550,12 @@ public class ValidateMojo extends AbstractExecMojo {
                 getLog().info(sb.toString());
             }
         }
+        return simpleErrors;
+    }
 
-        String simpleSummary;
-        if (simpleErrors == 0) {
-            int ok = simpleExpressions.size() - simpleErrors;
-            simpleSummary = String.format("Simple validation success: (%s = passed, %s = invalid)", ok, simpleErrors);
-        } else {
-            int ok = simpleExpressions.size() - simpleErrors;
-            simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
-        }
-
-        if (simpleErrors > 0) {
-            getLog().warn(simpleSummary);
-        } else {
-            getLog().info(simpleSummary);
-        }
-
+    private int validateDuplicateRouteId(List<CamelRouteDetails> routeIds) {
         int duplicateRouteIdErrors = 0;
         if (duplicateRouteId) {
-
             // filter out all non uniques
             for (CamelRouteDetails detail : routeIds) {
                 // skip empty route ids
@@ -603,25 +626,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 }
             }
         }
-
-        String routeIdSummary = "";
-        if (duplicateRouteId) {
-            if (duplicateRouteIdErrors == 0) {
-                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
-            } else {
-                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
-            }
-
-            if (duplicateRouteIdErrors > 0) {
-                getLog().warn(routeIdSummary);
-            } else {
-                getLog().info(routeIdSummary);
-            }
-        }
-
-        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0)) {
-            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary);
-        }
+        return duplicateRouteIdErrors;
     }
     // CHECKSTYLE:ON
 
