@@ -25,9 +25,11 @@ import java.util.Set;
 
 import brave.Span;
 import brave.Tracing;
+import brave.context.slf4j.MDCScopeDecorator;
 import brave.propagation.B3Propagation;
 import brave.propagation.Propagation.Getter;
 import brave.propagation.Propagation.Setter;
+import brave.propagation.ThreadLocalCurrentTraceContext;
 import brave.propagation.TraceContext;
 import brave.propagation.TraceContext.Extractor;
 import brave.propagation.TraceContext.Injector;
@@ -61,6 +63,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.Reporter;
 import zipkin2.reporter.libthrift.LibthriftSender;
@@ -534,10 +537,21 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     private Tracing newTracing(String serviceName) {
-        return Tracing.newBuilder()
-            .localServiceName(serviceName)
-            .sampler(Sampler.create(rate))
-            .spanReporter(spanReporter).build();
+        Tracing brave = null;
+        if (camelContext.isUseMDCLogging()) {
+            brave = Tracing.newBuilder()
+                     .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
+                     .addScopeDecorator(MDCScopeDecorator.create()).build())        
+                     .localServiceName(serviceName)
+                     .sampler(Sampler.create(rate))
+                     .spanReporter(spanReporter).build();
+        } else {
+            brave = Tracing.newBuilder()
+                    .localServiceName(serviceName)
+                    .sampler(Sampler.create(rate))
+                    .spanReporter(spanReporter).build();
+        }
+        return brave;
     }
 
     private Tracing getTracing(String serviceName) {
@@ -578,12 +592,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         // store span after request
         state.pushClientSpan(span);
-
+        TraceContext context = span.context();
+        String traceId = "" + context.traceIdString();
+        String spanId = "" + context.spanId();
+        String parentId = context.parentId() != null ? "" + context.parentId() : null;
+        if (camelContext.isUseMDCLogging()) {
+            MDC.put("traceId", traceId);
+            MDC.put("spanId", spanId);
+            MDC.put("parentId", parentId);
+        }
         if (LOG.isDebugEnabled()) {
-            TraceContext context = span.context();
-            String traceId = "" + context.traceIdString();
-            String spanId = "" + context.spanId();
-            String parentId = context.parentId() != null ? "" + context.parentId() : null;
             if (parentId != null) {
                 LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
             } else {
@@ -604,12 +622,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             ZipkinClientResponseAdaptor parser = new ZipkinClientResponseAdaptor(this, event.getEndpoint());
             parser.onResponse(event.getExchange(), span.customizer());
             span.finish();
-
+            TraceContext context = span.context();
+            String traceId = "" + context.traceIdString();
+            String spanId = "" + context.spanId();
+            String parentId = context.parentId() != null ? "" + context.parentId() : null;
+            if (camelContext.isUseMDCLogging()) {
+                MDC.put("traceId", traceId);
+                MDC.put("spanId", spanId);
+                MDC.put("parentId", parentId);
+            }
             if (LOG.isDebugEnabled()) {
-                TraceContext context = span.context();
-                String traceId = "" + context.traceIdString();
-                String spanId = "" + context.spanId();
-                String parentId = context.parentId() != null ? "" + context.parentId() : null;
                 if (parentId != null) {
                     LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
                 } else {
@@ -640,12 +662,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         // store span after request
         state.pushServerSpan(span);
-
+        TraceContext context = span.context();
+        String traceId = "" + context.traceIdString();
+        String spanId = "" + context.spanId();
+        String parentId = context.parentId() != null ? "" + context.parentId() : null;
+        if (camelContext.isUseMDCLogging()) {
+            MDC.put("traceId", traceId);
+            MDC.put("spanId", spanId);
+            MDC.put("parentId", parentId);
+        }
         if (LOG.isDebugEnabled()) {
-            TraceContext context = span.context();
-            String traceId = "" + context.traceIdString();
-            String spanId = "" + context.spanId();
-            String parentId = context.parentId() != null ? "" + context.parentId() : null;
             if (parentId != null) {
                 LOG.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
             } else {
@@ -668,12 +694,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             ZipkinServerResponseAdapter parser = new ZipkinServerResponseAdapter(this, exchange);
             parser.onResponse(exchange, span.customizer());
             span.finish();
-
+            TraceContext context = span.context();
+            String traceId = "" + context.traceIdString();
+            String spanId = "" + context.spanId();
+            String parentId = context.parentId() != null ? "" + context.parentId() : null;
+            if (camelContext.isUseMDCLogging()) {
+                MDC.put("traceId", traceId);
+                MDC.put("spanId", spanId);
+                MDC.put("parentId", parentId);
+            }
             if (LOG.isDebugEnabled()) {
-                TraceContext context = span.context();
-                String traceId = "" + context.traceIdString();
-                String spanId = "" + context.spanId();
-                String parentId = context.parentId() != null ? "" + context.parentId() : null;
                 if (parentId != null) {
                     LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
                 } else {
