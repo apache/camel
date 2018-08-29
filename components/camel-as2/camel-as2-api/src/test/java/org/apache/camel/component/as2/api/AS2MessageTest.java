@@ -33,6 +33,7 @@ import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
@@ -364,16 +365,17 @@ public class AS2MessageTest {
 
     }
 
-//    @Test
+    @Test
     public void envelopeddMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                AS2MessageStructure.ENCRYPTED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
                 null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, AS2AlgorithmConstants.AES128_CCM, certList.toArray(new Certificate[0]),
+                signingKP.getPrivate());
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -396,30 +398,22 @@ public class AS2MessageTest {
         assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
         assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
         assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
+                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
 
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
         assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof MultipartSignedEntity);
-        MultipartSignedEntity signedEntity = (MultipartSignedEntity) entity;
-        assertTrue("Entity not set as main body of request", signedEntity.isMainBody());
-        assertTrue("Request contains invalid number of mime parts", signedEntity.getPartCount() == 2);
+        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEntity);
+        ApplicationPkcs7MimeEntity envelopedEntity = (ApplicationPkcs7MimeEntity) entity;
+        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
 
-        // Validated first mime part.
-        assertTrue("First mime part incorrect type ", signedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
-        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) signedEntity.getPart(0);
-        assertTrue("Unexpected content type for first mime part",
+        // Validated enveloped part.
+        MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
+        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof ApplicationEDIFACTEntity);
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) encryptedEntity;
+        assertTrue("Unexpected content type for enveloped mime part",
                 ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
-
-        // Validate second mime part.
-        assertTrue("Second mime part incorrect type ",
-                signedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
-        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) signedEntity.getPart(1);
-        assertTrue("Unexpected content type for second mime part",
-                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
-        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
+        assertFalse("Enveloped mime type set as main body of request", ediEntity.isMainBody());
 
     }
 
