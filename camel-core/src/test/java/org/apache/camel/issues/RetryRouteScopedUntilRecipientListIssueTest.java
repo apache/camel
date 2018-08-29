@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -101,6 +103,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         return context;
     }
 
+    @Test
     public void testRetryUntilRecipientListOkOnly() throws Exception {
         invoked.set(0);
 
@@ -116,6 +119,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListOkNotFail() throws Exception {
         invoked.set(0);
 
@@ -131,6 +135,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListFailOnly() throws Exception {
         invoked.set(0);
 
@@ -152,6 +157,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListFailAndOk() throws Exception {
         invoked.set(0);
 
@@ -173,6 +179,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListOkAndFail() throws Exception {
         invoked.set(0);
 
@@ -194,6 +201,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientNotFail() throws Exception {
         invoked.set(0);
 
@@ -209,6 +217,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientFailAndNotFail() throws Exception {
         invoked.set(0);
 
@@ -230,6 +239,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientNotFailAndFail() throws Exception {
         invoked.set(0);
 

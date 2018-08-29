@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 public class MyAuditServiceProxyTest extends ContextTestSupport {
 
+    @Test
     public void testMyAuditServiceProxy() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("uuid", "1234");

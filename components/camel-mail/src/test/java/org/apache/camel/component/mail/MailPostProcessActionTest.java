@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -39,7 +40,8 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private TestPostProcessAction action;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         prepareMailbox();
         action = new TestPostProcessAction();
         super.setUp();

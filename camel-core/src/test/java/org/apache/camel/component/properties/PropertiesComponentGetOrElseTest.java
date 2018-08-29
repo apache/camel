@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPropertiesComponentFoundKey() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -46,6 +49,7 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentUseDefaultValue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -62,6 +66,7 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentSimpleLanguage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -76,6 +81,7 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         assertEquals("Hi Claus do you think Camel rocks?", reply);
     }
 
+    @Test
     public void testPropertiesComponentSimpleLanguageUsingDefaultValue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

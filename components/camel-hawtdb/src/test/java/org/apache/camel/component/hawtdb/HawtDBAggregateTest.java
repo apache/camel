@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,8 @@ import org.junit.Test;
 public class HawtDBAggregateTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
     }

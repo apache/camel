@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ehcache.processor.aggregate;
+import org.junit.After;
 
 import java.util.Set;
 
@@ -36,7 +37,8 @@ public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSuppor
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         aggregationRepository.stop();
         super.tearDown();
     }

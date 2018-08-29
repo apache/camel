@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub.integration;
+import org.junit.Before;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;

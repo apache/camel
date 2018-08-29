@@ -16,11 +16,14 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.NoSuchLanguageException;
 
 public class NoSuchLanguageTest extends LanguageTestSupport {
 
+    @Test
     public void testNoSuchLanguage() throws Exception {
         try {
             assertPredicate("foo");

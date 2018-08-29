@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.language;
 
+import org.junit.Test;
+
 import java.net.URLEncoder;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ public class LanguageCacheScriptTest extends ContextTestSupport {
 
     private LanguageEndpoint endpoint;
 
+    @Test
     public void testCache() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("World", "Camel");
 

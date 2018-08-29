@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
@@ -30,6 +32,7 @@ public class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceS
     }
 
     @Override
+   @Test
     public void testTokenXMLPair2() throws Exception {
         // noop
     }

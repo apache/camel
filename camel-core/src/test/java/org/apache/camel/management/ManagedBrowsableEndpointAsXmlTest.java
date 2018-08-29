@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
+    @Test
     public void testBrowseableEndpointAsXmlIncludeBody() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -103,6 +106,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 + "  <body type=\"java.lang.String\">&lt;animal&gt;&lt;name&gt;Donkey&lt;/name&gt;&lt;age&gt;17&lt;/age&gt;&lt;/animal&gt;</body>\n</message>", out);
     }
 
+    @Test
     public void testBrowseableEndpointAsXml() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -134,6 +138,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n</message>", out);
     }
 
+    @Test
     public void testBrowseableEndpointAsXmlAllIncludeBody() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -162,6 +167,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 + "  <body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>", out);
     }
 
+    @Test
     public void testBrowseableEndpointAsXmlAll() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -191,6 +197,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 + "</message>\n</messages>", out);
     }
 
+    @Test
     public void testBrowseableEndpointAsXmlRangeIncludeBody() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -220,6 +227,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 + "  <body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>", out);
     }
 
+    @Test
     public void testBrowseableEndpointAsXmlRange() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -250,6 +258,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 + "</message>\n</messages>", out);
     }
 
+    @Test
     public void testBrowseableEndpointAsXmlRangeInvalidIndex() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

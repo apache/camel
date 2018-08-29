@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
@@ -28,6 +30,7 @@ public class IdempotentConsumerRepoExceptionTest extends ContextTestSupport {
 
     private IdempotentRepository myRepo = new MyRepo();
 
+    @Test
     public void testRepoException() throws Exception {
         getMockEndpoint("mock:dead").expectedBodiesReceived("nineninenine");
         getMockEndpoint("mock:result").expectedBodiesReceived("one", "two", "three");

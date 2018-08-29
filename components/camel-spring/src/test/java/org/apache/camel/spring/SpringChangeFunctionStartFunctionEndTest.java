@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+import org.junit.After;
+
+import org.junit.Test;
 
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -29,6 +32,7 @@ public class SpringChangeFunctionStartFunctionEndTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringChangeFunctionStartFunctionEndTest.xml");
     }
 
+   @Test
     public void testSimpleWithPrefix() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Custom tokens is cool");
 
@@ -38,7 +42,8 @@ public class SpringChangeFunctionStartFunctionEndTest extends SpringTestSupport 
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         // change the tokens back to default after testing
         SimpleLanguage.changeFunctionStartToken("${", "$simple{");
         SimpleLanguage.changeFunctionEndToken("}");

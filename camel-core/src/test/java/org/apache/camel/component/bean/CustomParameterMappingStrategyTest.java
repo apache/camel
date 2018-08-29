@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -36,6 +38,7 @@ public class CustomParameterMappingStrategyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testExchange() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("You said: Hello Claus");
         template.sendBody("direct:a", "Claus");

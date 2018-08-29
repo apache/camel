@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,6 +41,7 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
         return false;
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionNoEndlessLoopTest() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);

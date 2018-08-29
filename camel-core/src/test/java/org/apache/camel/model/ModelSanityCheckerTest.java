@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -25,7 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.util.IntrospectionSupport;
@@ -35,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Performs sanity check on the model classes that their JAXB annotations and getter/setter match up.
  */
-public class ModelSanityCheckerTest extends TestCase {
+public class ModelSanityCheckerTest extends Assert {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelSanityCheckerTest.class);
 
@@ -46,6 +48,7 @@ public class ModelSanityCheckerTest extends TestCase {
         return resolver.findAnnotated(XmlAccessorType.class, packages);
     }
 
+    @Test
     public void testSanity() throws Exception {
         Set<Class<?>> classes = discoverJaxbClasses();
         assertNotNull(classes);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSendThatIsCaught() {
         String out = template.requestBody("direct:test", "test", String.class);
         assertEquals("Forced by me but I fixed it", out);

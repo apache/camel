@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import org.apache.camel.model.ClaimCheckOperation;
 
 public class ClaimCheckEipPushPopHeadersPatternTest extends ContextTestSupport {
 
+    @Test
     public void testPushPopHeadersPattern() throws Exception {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.zipfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +35,8 @@ import org.junit.Test;
 public class ZipFileSplitOneFileTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/zip-unmarshal");
         super.setUp();
     }

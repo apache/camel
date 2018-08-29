@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.example;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -31,6 +35,7 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
     private CamelContext camel2;
     private ApplicationContext ac;
 
+   @Test
     public void testCamel1() throws Exception {
         String body = "<hello>world!</hello>";
 
@@ -45,6 +50,7 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         result.assertIsSatisfied();
     }
 
+   @Test
     public void testCamel2() throws Exception {
         String body = "<bye>world!</bye>";
 
@@ -59,6 +65,7 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         result.assertIsSatisfied();
     }
 
+   @Test
     public void testCamel1RecipientList() throws Exception {
         String body = "<hello>world!</hello>";
 
@@ -75,6 +82,7 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         result.assertIsSatisfied();
     }
 
+   @Test
     public void testCamel2RecipientList() throws Exception {
         String body = "<bye>world!</bye>";
 
@@ -94,7 +102,8 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
 
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoDualCamelContextConsumer.xml");
@@ -103,7 +112,8 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         camel1.stop();
         camel2.stop();

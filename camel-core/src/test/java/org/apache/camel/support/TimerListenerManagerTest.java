@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,6 +38,7 @@ public class TimerListenerManagerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testTimerListenerManager() throws Exception {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         TimerListenerManager manager = new TimerListenerManager();

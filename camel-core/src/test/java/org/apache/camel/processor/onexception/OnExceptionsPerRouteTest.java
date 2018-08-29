@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.ConnectException;
 
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionsPerRouteTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionsPerRouteDamn() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Damn");
 
@@ -35,6 +38,7 @@ public class OnExceptionsPerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionsPerRouteConnect() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Connect");
 

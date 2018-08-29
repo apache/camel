@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testNoError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -39,6 +42,7 @@ public class ErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         MockEndpoint result = getMockEndpoint("mock:result");

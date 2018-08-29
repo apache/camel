@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.braintree;
+import org.junit.After;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +69,8 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         if (this.gateway != null && customer != null) {
             for (String id : this.addressIds) {
                 if (this.gateway.address().delete(customer.getId(), id).isSuccess()) {

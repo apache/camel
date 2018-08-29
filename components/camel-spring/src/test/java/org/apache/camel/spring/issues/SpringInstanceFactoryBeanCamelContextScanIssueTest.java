@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class SpringInstanceFactoryBeanCamelContextScanIssueTest extends SpringTe
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringInstanceFactoryBeanCamelContextScanIssueTest.xml");
     }
 
+   @Test
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

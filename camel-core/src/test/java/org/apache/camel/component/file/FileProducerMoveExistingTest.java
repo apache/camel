@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -28,11 +31,13 @@ import org.apache.camel.Exchange;
 public class FileProducerMoveExistingTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
     }
 
+    @Test
     public void testExistingFileDoesNotExists() throws Exception {
         template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -41,6 +46,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertFileNotExists("target/file/renamed-hello.txt");
     }
 
+    @Test
     public void testExistingFileExists() throws Exception {
         template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -54,6 +60,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello.txt")));
     }
 
+    @Test
     public void testExistingFileExistsTempFileName() throws Exception {
         template.sendBodyAndHeader("file://target/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -67,6 +74,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello.txt")));
     }
 
+    @Test
     public void testExistingFileExistsMoveSubDir() throws Exception {
         template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -79,6 +87,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/backup/hello.txt")));
     }
 
+    @Test
     public void testFailOnMoveExistingFileExistsEagerDeleteTrue() throws Exception {
         template.sendBodyAndHeader("file://target/file", "Old file", Exchange.FILE_NAME, "renamed-hello.txt");
 
@@ -97,6 +106,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello.txt")));
     }
 
+    @Test
     public void testFailOnMoveExistingFileExistsEagerDeleteFalse() throws Exception {
         template.sendBodyAndHeader("file://target/file", "Old file", Exchange.FILE_NAME, "renamed-hello.txt");
 

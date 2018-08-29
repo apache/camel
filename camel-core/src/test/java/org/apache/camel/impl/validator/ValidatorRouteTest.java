@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.validator;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -46,6 +48,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(ValidatorRouteTest.class);
     private static final String VALIDATOR_INVOKED = "validator-invoked";
 
+    @Test
     public void testPredicateValidator() throws Exception {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getIn().setBody("{name:XOrder}");
@@ -56,6 +59,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         assertEquals("{name:XOrderResponse}", answerEx.getIn().getBody(String.class));
     }
 
+    @Test
     public void testEndpointValidator() throws Exception {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getIn().setBody("<XOrder/>");
@@ -67,6 +71,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         assertEquals(MyXmlEndpoint.class, answerEx.getProperty(VALIDATOR_INVOKED));
     }
 
+    @Test
     public void testCustomValidator() throws Exception {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getIn().setBody("name=XOrder");

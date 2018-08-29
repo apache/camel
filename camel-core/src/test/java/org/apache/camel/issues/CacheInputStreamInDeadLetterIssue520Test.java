@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -31,16 +33,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport {
     private int count;
 
+    @Test
     public void testSendingInputStream() throws Exception {
         InputStream message = new ByteArrayInputStream("<hello>Willem</hello>".getBytes());
         sendingMessage(message);
     }
 
+    @Test
     public void testSendingReader() throws Exception {
         StringReader message = new StringReader("<hello>Willem</hello>");
         sendingMessage(message);
     }
 
+    @Test
     public void testSendingSource() throws Exception {
         StreamSource message = new StreamSource(new StringReader("<hello>Willem</hello>"));
         sendingMessage(message);

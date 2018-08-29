@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.util.Calendar;
 
@@ -36,6 +38,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
         return "file";
     }
 
+    @Test
     public void testFileNoSingleExt() throws Exception {
         assertExpression("${file:name}", "test" + File.separator + "bye.def.txt");
         assertExpression("${file:name.noext}", "test" + File.separator + "bye");

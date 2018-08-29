@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,11 +27,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileRecursiveDepthTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/depth");
         super.setUp();
     }
 
+    @Test
     public void testDepth() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2");
@@ -44,6 +49,7 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDepthMin2Max99() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 
@@ -59,6 +65,7 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMin1Max1() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 

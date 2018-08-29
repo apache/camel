@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.idempotent.hazelcast;
+import org.junit.Before;
+import org.junit.After;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -33,7 +35,8 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     private String key01 = "123";
     private String key02 = "456";
 
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         hazelcastInstance = Hazelcast.newHazelcastInstance(null);
         cache = hazelcastInstance.getMap("myRepo");
         repo = new HazelcastIdempotentRepository(hazelcastInstance, "myRepo");
@@ -42,7 +45,8 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         repo.start();
     }
 
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         repo.stop();
         super.tearDown();
         cache.clear();

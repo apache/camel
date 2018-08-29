@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.file;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -34,6 +35,7 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     private String path;
     
     @Override
+    @Before
     public void setUp() throws Exception {
         File dir = new File("target/reports/dosnovol");
         deleteDirectory(dir);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +35,7 @@ public class ClaimCheckTest extends ContextTestSupport {
     // in memory data store for testing only!
     public static Map<String, Object> dataStore = new HashMap<>();
     
+    @Test
     public void testClaimCheck() throws Exception {
         String body = "<order custId=\"123\"><lotsOfContent/></order>";
         

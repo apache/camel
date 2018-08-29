@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz;
+import org.junit.After;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -35,7 +36,8 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         quartz.stop();
         super.tearDown();
     }

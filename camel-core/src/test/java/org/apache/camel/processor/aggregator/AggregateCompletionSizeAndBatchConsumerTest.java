@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,6 +26,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 
 public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionSize() throws Exception {
         MockEndpoint result =  getMockEndpoint("mock:result");
         // A+A+A gets completed by size, the others by consumer

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,7 @@ public class ThrottlerTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
         if (!canTest()) {
             return;
@@ -52,6 +55,7 @@ public class ThrottlerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testSendLotsOfMessagesWithRejectExecution() throws Exception {
         if (!canTest()) {
             return;
@@ -72,6 +76,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         if (!canTest()) {
             return;
@@ -82,6 +87,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
 
+    @Test
     public void testConfigurationWithConstantExpression() throws Exception {
         if (!canTest()) {
             return;
@@ -92,6 +98,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
 
+    @Test
     public void testConfigurationWithHeaderExpression() throws Exception {
         if (!canTest()) {
             return;
@@ -108,6 +115,7 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConfigurationWithChangingHeaderExpression() throws Exception {
         if (!canTest()) {
             return;

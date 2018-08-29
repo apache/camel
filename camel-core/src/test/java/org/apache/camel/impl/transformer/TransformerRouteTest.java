@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.transformer;
 
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +57,7 @@ public class TransformerRouteTest extends ContextTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(TransformerRouteTest.class);
 
+    @Test
     public void testJavaTransformer() throws Exception {
         MockEndpoint abcresult = getMockEndpoint("mock:abcresult");
         abcresult.expectedMessageCount(1);
@@ -87,6 +90,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDataFormatTransformer() throws Exception {
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
         xyzresult.expectedMessageCount(1);
@@ -108,6 +112,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointTransformer() throws Exception {
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
         xyzresult.expectedMessageCount(1);
@@ -129,6 +134,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCustomTransformer() throws Exception {
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
         xyzresult.expectedMessageCount(1);

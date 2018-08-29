@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +35,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
 
     private String uri = "seda:in?size=2000&concurrentConsumers=10";
 
+    @Test
     public void testConcurrentPipeline() throws Exception {
         int total = 200;
         final int group = total / 20;

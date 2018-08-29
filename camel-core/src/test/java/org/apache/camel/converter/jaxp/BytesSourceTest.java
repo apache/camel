@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import org.junit.Test;
+
 import org.apache.camel.BytesSource;
 import org.apache.camel.ContextTestSupport;
 
@@ -24,6 +26,7 @@ import org.apache.camel.ContextTestSupport;
  */
 public class BytesSourceTest extends ContextTestSupport {
 
+    @Test
     public void testBytesSourceCtr() {
         BytesSource bs = new BytesSource("foo".getBytes());
         assertNotNull(bs.getData());
@@ -34,6 +37,7 @@ public class BytesSourceTest extends ContextTestSupport {
         assertNotNull(bs.getReader());
     }
 
+    @Test
     public void testBytesSourceCtrSystemId() {
         BytesSource bs = new BytesSource("foo".getBytes(), "Camel");
         assertNotNull(bs.getData());

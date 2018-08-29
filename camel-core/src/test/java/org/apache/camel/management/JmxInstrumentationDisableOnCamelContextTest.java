@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -43,6 +45,7 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
     }
 
     @Override
+    @Test
     public void testMBeansRegistered() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

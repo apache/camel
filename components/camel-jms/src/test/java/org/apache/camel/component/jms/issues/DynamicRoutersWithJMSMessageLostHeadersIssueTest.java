@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms.issues;
+import org.junit.Before;
 
 import javax.jms.ConnectionFactory;
 
@@ -34,7 +35,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
         super.setUp();

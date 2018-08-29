@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ref;
 
+import org.junit.Test;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -45,6 +47,7 @@ public class RefComponentTest extends ContextTestSupport {
         jndi.bind("foo", slow);
     }
 
+    @Test
     public void testRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

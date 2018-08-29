@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.management;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -33,6 +35,7 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
     }
 
+   @Test
     public void testDualCamelContextManaged() throws Exception {
 
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

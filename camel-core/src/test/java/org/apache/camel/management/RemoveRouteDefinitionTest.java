@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +33,7 @@ import org.apache.camel.model.RouteDefinition;
 public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
     @SuppressWarnings("deprecation")
+    @Test
     public void testShutdownRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -57,6 +60,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals(0, set.size());
     }
     
+    @Test
     public void testStopAndRemoveRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -85,6 +89,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals(0, set.size());
     }
 
+    @Test
     public void testStopRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

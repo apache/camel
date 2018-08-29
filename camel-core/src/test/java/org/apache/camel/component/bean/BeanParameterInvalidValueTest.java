@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -30,6 +32,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanParameterInvalidValueTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterInvalidValueA() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -46,6 +49,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterInvalidValueB() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -62,6 +66,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterNullC() throws Exception {
         // should be an empty string
         getMockEndpoint("mock:result").expectedBodiesReceived("");
@@ -71,6 +76,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterInvalidValueD() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

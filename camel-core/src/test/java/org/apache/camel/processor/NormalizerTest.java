@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +27,7 @@ import org.apache.camel.util.jndi.JndiContext;
 
 public class NormalizerTest extends ContextTestSupport {
    
+    @Test
     public void testSendToFirstWhen() throws Exception {
         String employeeBody1 = "<employee><name>Jon</name></employee>";
         String employeeBody2 = "<employee><name>Hadrian</name></employee>";

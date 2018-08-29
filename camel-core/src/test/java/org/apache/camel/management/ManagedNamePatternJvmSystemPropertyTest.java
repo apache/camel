@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,17 +31,20 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedNamePatternJvmSystemPropertyTest extends ManagementTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN, "cool-#name#");
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN);
         super.tearDown();
     }
 
+    @Test
     public void testManagedNamePattern() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

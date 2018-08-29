@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xquery;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,7 +47,8 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/xquery");
         super.setUp();
     }

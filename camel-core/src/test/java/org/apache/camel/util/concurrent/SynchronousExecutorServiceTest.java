@@ -16,19 +16,22 @@
  */
 package org.apache.camel.util.concurrent;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  * @version 
  */
-public class SynchronousExecutorServiceTest extends TestCase {
+public class SynchronousExecutorServiceTest extends Assert {
 
     private static boolean invoked;
     private static String name1;
     private static String name2;
 
+    @Test
     public void testSynchronousExecutorService() throws Exception {
         name1 = Thread.currentThread().getName();
 
@@ -44,6 +47,7 @@ public class SynchronousExecutorServiceTest extends TestCase {
         assertEquals("Should use same thread", name1, name2);
     }
 
+    @Test
     public void testSynchronousExecutorServiceShutdown() throws Exception {
         ExecutorService service = new SynchronousExecutorService();
         service.execute(new Runnable() {

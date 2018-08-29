@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptFromUriRegexTest extends ContextTestSupport {
 
+    @Test
     public void testNoIntercept() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -33,6 +36,7 @@ public class InterceptFromUriRegexTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptFoo() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -42,6 +46,7 @@ public class InterceptFromUriRegexTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptBar() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -51,6 +56,7 @@ public class InterceptFromUriRegexTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptCheese() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);

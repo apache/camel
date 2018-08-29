@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.catalog;
+import org.junit.Before;
 
 import org.junit.BeforeClass;
 

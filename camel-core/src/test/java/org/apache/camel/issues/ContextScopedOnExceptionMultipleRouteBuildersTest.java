@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class ContextScopedOnExceptionMultipleRouteBuildersTest extends ContextTestSupport {
 
+    @Test
     public void testFoo() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handle-foo").expectedMessageCount(1);
@@ -34,6 +37,7 @@ public class ContextScopedOnExceptionMultipleRouteBuildersTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBar() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:handle-foo").expectedMessageCount(0);

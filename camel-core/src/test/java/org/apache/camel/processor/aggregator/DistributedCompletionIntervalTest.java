@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
@@ -30,6 +32,7 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
 
     private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
+    @Test
     public void testCamelContext1Wins() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Message 19");
@@ -44,6 +47,7 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
         mock2.assertIsSatisfied();
     }
 
+    @Test
     public void testCamelContext2Wins() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

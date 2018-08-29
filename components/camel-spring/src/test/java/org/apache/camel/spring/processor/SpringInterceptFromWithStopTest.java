@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +27,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringInterceptFromWithStopTest extends ContextTestSupport {
 
+   @Test
     public void testSetInterceptorWithStop() throws Exception {
         MockEndpoint inteceptorEndpoint = getMockEndpoint("mock:middle1");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");

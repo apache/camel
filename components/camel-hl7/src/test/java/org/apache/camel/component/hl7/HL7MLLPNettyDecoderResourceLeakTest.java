@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hl7;
+import org.junit.Before;
 
 import ca.uhn.hl7v2.model.Message;
 import io.netty.util.ResourceLeakDetector;

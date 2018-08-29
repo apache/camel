@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -29,6 +31,7 @@ import static org.apache.camel.builder.PredicateBuilder.isNotNull;
  */
 public class RetryWhilePredicateExpressionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testRetryWhilePredicate() throws Exception {
         MyCoolDude dude = new MyCoolDude();
         template.sendBodyAndHeader("direct:start", dude, "foo", 123);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,7 @@ public class DefaultCamelContextAllowUseOriginalMessageFalseTest extends Context
         return context;
     }
 
+    @Test
     public void testUseOriginalMessageFalse() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedHeaderReceived("HasOriginal", "false");

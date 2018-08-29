@@ -16,19 +16,24 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.header.HeaderLanguage;
 
 public class HeaderTest extends LanguageTestSupport {
 
+    @Test
     public void testHeaderExpressions() throws Exception {
         assertExpression("foo", "abc");
     }
 
+    @Test
     public void testPredicates() throws Exception {
         assertPredicate("foo");
     }
 
+    @Test
     public void testSingleton() {
         HeaderLanguage prop = new HeaderLanguage();
         assertTrue(prop.isSingleton());

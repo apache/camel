@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.handler;
+import org.junit.Before;
+import org.junit.After;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -27,17 +31,20 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ErrorHandlerDefinitionParserTest extends TestCase {
+public class ErrorHandlerDefinitionParserTest extends Assert {
     protected ClassPathXmlApplicationContext ctx;
     
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         ctx =  new ClassPathXmlApplicationContext("org/apache/camel/spring/handler/ErrorHandlerDefinitionParser.xml");
     }
 
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         IOHelper.close(ctx);
     }
     
+   @Test
     public void testLoggingErrorHandler() {
         LoggingErrorHandlerBuilder errorHandler = ctx.getBean("loggingErrorHandler", LoggingErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
@@ -45,6 +52,7 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
         assertEquals("The log name should be foo", "foo", errorHandler.getLogName());
     }
     
+   @Test
     public void testDefaultErrorHandler() {
         DefaultErrorHandlerBuilder errorHandler = ctx.getBean("defaultErrorHandler", DefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
@@ -58,6 +66,7 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
         assertNotNull(errorHandler);
     }
     
+   @Test
     public void testTransactionErrorHandler() {
         TransactionErrorHandlerBuilder errorHandler = ctx.getBean("transactionErrorHandler", TransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
@@ -66,12 +75,14 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
         assertTrue("It should be MyErrorProcessor", processor instanceof MyErrorProcessor);
     }
     
+   @Test
     public void testTXErrorHandler() {
         TransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", TransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
     }
 
+   @Test
     public void testDeadLetterErrorHandler() {
         DeadLetterChannelBuilder errorHandler = ctx.getBean("deadLetterErrorHandler", DeadLetterChannelBuilder.class);
         assertNotNull(errorHandler);

@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -35,6 +39,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     private Exchange exchange;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context = new DefaultCamelContext();
@@ -44,11 +49,13 @@ public class GroupTokenIteratorTest extends TestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         context.stop();
         super.tearDown();
     }
 
+    @Test
     public void testGroupIterator() throws Exception {
         String s = "ABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
         Scanner scanner = new Scanner(s, "\n");
@@ -64,6 +71,7 @@ public class GroupTokenIteratorTest extends TestSupport {
         IOHelper.close(gi);
     }
 
+    @Test
     public void testGroupIteratorSkipFirst() throws Exception {
         String s = "##comment\nABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
         Scanner scanner = new Scanner(s, "\n");
@@ -79,6 +87,7 @@ public class GroupTokenIteratorTest extends TestSupport {
         IOHelper.close(gi);
     }
 
+    @Test
     public void testGroupIteratorWithDifferentEncodingFromDefault() throws Exception {
         if (Charset.defaultCharset() == StandardCharsets.UTF_8) {
             // can't think of test case where having default charset set to UTF-8 is affected

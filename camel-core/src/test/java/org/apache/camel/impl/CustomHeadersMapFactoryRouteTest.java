@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +37,7 @@ public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testCustomHeaders() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
         getMockEndpoint("mock:result").expectedHeaderReceived("FOO", 456);

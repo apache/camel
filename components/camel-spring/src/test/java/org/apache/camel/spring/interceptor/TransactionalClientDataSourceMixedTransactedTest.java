@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceMixedTransactedTest extends TransactionalClientDataSourceTest {
 
+   @Test
     public void testTransactionRollback() throws Exception {
         // through the onException clause below we've marked the exceptions containing the message
         // "Donkey" as being handled so that we don't count with any exception on the client side.

@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class OnCompletionModeTest extends ContextTestSupport {
 
+    @Test
     public void testOnCompletionScopeBefore() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("I was here Hello Camel");
@@ -31,6 +34,7 @@ public class OnCompletionModeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnCompletionScopeAfter() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
         getMockEndpoint("mock:after").expectedBodiesReceived("I was here Hello World");

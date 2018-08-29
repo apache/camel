@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterOnCompletionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitOk() throws Exception {
         getMockEndpoint("mock:done").expectedBodiesReceived("Hello World,Bye World");
         getMockEndpoint("mock:split").expectedBodiesReceived("Hello World", "Bye World");
@@ -36,6 +39,7 @@ public class SplitterOnCompletionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitException() throws Exception {
         getMockEndpoint("mock:done").expectedBodiesReceived("Hello World,Kaboom,Bye World");
         getMockEndpoint("mock:split").expectedBodiesReceived("Hello World", "Bye World");

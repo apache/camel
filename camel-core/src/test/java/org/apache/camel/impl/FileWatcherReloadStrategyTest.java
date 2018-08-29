@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
@@ -50,6 +52,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testAddNewRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
@@ -74,6 +77,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdateExistingRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
@@ -129,6 +133,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdateXmlRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");

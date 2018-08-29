@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,12 +37,14 @@ import org.apache.camel.util.jndi.ExampleBean;
  */
 public class IntrospectionSupportTest extends ContextTestSupport {
 
+    @Test
     public void testOverloadSetterChooseStringSetter() throws Exception {
         MyOverloadedBean overloadedBean = new MyOverloadedBean();
         IntrospectionSupport.setProperty(context.getTypeConverter(), overloadedBean, "bean", "James");
         assertEquals("James", overloadedBean.getName());
     }
 
+    @Test
     public void testOverloadSetterChooseBeanSetter() throws Exception {
         MyOverloadedBean overloadedBean = new MyOverloadedBean();
         ExampleBean bean = new ExampleBean();
@@ -49,6 +53,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Claus", overloadedBean.getName());
     }
 
+    @Test
     public void testOverloadSetterChooseUsingTypeConverter() throws Exception {
         MyOverloadedBean overloadedBean = new MyOverloadedBean();
         Object value = "Willem".getBytes();
@@ -57,6 +62,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Willem", overloadedBean.getName());
     }
 
+    @Test
     public void testPassword() throws Exception {
         MyPasswordBean passwordBean = new MyPasswordBean();
         IntrospectionSupport.setProperty(context.getTypeConverter(), passwordBean, "oldPassword", "Donald");
@@ -128,6 +134,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testIsSetterBuilderPatternSupport() throws Exception {
         Method setter = MyBuilderBean.class.getMethod("setName", String.class);
         Method setter2 = MyOtherBuilderBean.class.getMethod("setName", String.class);
@@ -143,6 +150,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(IntrospectionSupport.isSetter(setter3, true));
     }
 
+    @Test
     public void testHasProperties() throws Exception {
         Map<String, Object> empty = Collections.emptyMap();
         assertFalse(IntrospectionSupport.hasProperties(empty, null));
@@ -165,6 +173,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(IntrospectionSupport.hasProperties(param, "foo."));
     }
 
+    @Test
     public void testGetProperties() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
@@ -181,6 +190,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(null, map.get("id"));
     }
 
+    @Test
     public void testAnotherGetProperties() throws Exception {
         AnotherExampleBean bean = new AnotherExampleBean();
         bean.setId("123");
@@ -207,6 +217,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("123", map.get("id"));
     }
 
+    @Test
     public void testGetPropertiesOptionPrefix() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
@@ -223,6 +234,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("123", map.get("bean.id"));
     }
 
+    @Test
     public void testGetPropertiesSkipNull() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
@@ -238,6 +250,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(price.startsWith("10"));
     }
 
+    @Test
     public void testGetProperty() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setId("123");
@@ -248,6 +261,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Claus", name);
     }
 
+    @Test
     public void testSetProperty() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setId("123");
@@ -258,6 +272,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("James", bean.getName());
     }
 
+    @Test
     public void testAnotherGetProperty() throws Exception {
         AnotherExampleBean bean = new AnotherExampleBean();
         bean.setName("Claus");
@@ -277,6 +292,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "little"));
     }
 
+    @Test
     public void testGetPropertyLocaleIndependent() throws Exception {
         Locale oldLocale = Locale.getDefault();
         Locale.setDefault(new Locale("tr", "TR"));
@@ -299,6 +315,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testGetPropertyGetter() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
@@ -315,6 +332,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testGetPropertySetter() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
@@ -331,6 +349,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testIsGetter() throws Exception {
         ExampleBean bean = new ExampleBean();
 
@@ -343,6 +362,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(false, IntrospectionSupport.isSetter(price));
     }
 
+    @Test
     public void testIsSetter() throws Exception {
         ExampleBean bean = new ExampleBean();
 
@@ -355,6 +375,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(true, IntrospectionSupport.isSetter(price));
     }
 
+    @Test
     public void testOtherIsGetter() throws Exception {
         OtherExampleBean bean = new OtherExampleBean();
 
@@ -379,6 +400,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
     }
 
+    @Test
     public void testOtherIsSetter() throws Exception {
         OtherExampleBean bean = new OtherExampleBean();
 
@@ -403,6 +425,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
     }
 
+    @Test
     public void testExtractProperties() throws Exception {
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("foo.name", "Camel");
@@ -421,6 +444,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("yes", params.get("bar"));
     }
 
+    @Test
     public void testFindSetterMethodsOrderedByParameterType() throws Exception {
         List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false);
 

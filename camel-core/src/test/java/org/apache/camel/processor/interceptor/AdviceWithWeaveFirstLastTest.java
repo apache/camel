@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
 
+    @Test
     public void testWeaveAddFirst() throws Exception {
         // START SNIPPET: e1
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -46,6 +49,7 @@ public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWeaveAddLast() throws Exception {
         // START SNIPPET: e2
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {

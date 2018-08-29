@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class TimerNameTest extends ContextTestSupport {
 
     private String uri = "timer://foo?delay=0&period=10&timerName=bar";
 
+    @Test
     public void testTimerName() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 

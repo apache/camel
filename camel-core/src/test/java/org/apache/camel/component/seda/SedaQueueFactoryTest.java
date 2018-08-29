@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,6 +42,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
    
+    @Test
     public void testArrayBlockingQueueFactory() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue?queueFactory=#arrayQueueFactory", SedaEndpoint.class);
 
@@ -48,6 +51,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testArrayBlockingQueueFactoryAndSize() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue50?queueFactory=#arrayQueueFactory&size=50", SedaEndpoint.class);
 
@@ -57,6 +61,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
     
+    @Test
     public void testDefaultBlockingQueueFactory() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:linkedQueue", SedaEndpoint.class);
         BlockingQueue<Exchange> queue = endpoint.getQueue();

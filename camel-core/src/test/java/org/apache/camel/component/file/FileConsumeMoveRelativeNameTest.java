@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,11 +32,13 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
     private String fileUrl = "file://target/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/multidir");
         super.setUp();
     }
 
+    @Test
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");

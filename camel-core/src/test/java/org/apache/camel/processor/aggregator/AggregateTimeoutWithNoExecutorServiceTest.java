@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,6 +25,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSupport {
 
+    @Test
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
         assertTrue("There should be a thread for every aggregator when using defaults", 
                 AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS);

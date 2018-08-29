@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Service;
@@ -36,6 +38,7 @@ public class DefaultCamelContextStopFailureTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testStopWithFailure() throws Exception {
         stopOrder = "";
 

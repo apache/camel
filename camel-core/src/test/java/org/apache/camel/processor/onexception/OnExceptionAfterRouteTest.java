@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -29,6 +31,7 @@ public class OnExceptionAfterRouteTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOnExceptionAfterRoute() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.RejectedExecutionException;
 
@@ -36,7 +39,8 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
     private MockEndpoint result;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         result = getMockEndpoint("mock:result");
     }
@@ -54,11 +58,13 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testClosedCircuitPassesMessagesSync() throws Exception {
         String endpoint = "direct:start";
         closedCircuitPassesMessages(endpoint);
     }
     
+    @Test
     public void testClosedCircuitPassesMessagesAsync() throws Exception {
         String endpoint = "direct:start-async";
         closedCircuitPassesMessages(endpoint);
@@ -72,11 +78,13 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedMessagesOpenCircuitToPreventMessageThreeSync() throws Exception {
         String endpoint = "direct:start";
         failedMessagesOpenCircuitToPreventMessageThree(endpoint);
     }
     
+    @Test
     public void testFailedMessagesOpenCircuitToPreventMessageThreeAsync() throws Exception {
         String endpoint = "direct:start-async";
         failedMessagesOpenCircuitToPreventMessageThree(endpoint);
@@ -102,11 +110,13 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
     }
     
+    @Test
     public void testHalfOpenAfterTimeoutSync() throws Exception {
         String endpoint = "direct:start";
         halfOpenAfterTimeout(endpoint);
     }
     
+    @Test
     public void testHalfOpenAfterTimeoutAsync() throws Exception {
         String endpoint = "direct:start-async";
         halfOpenAfterTimeout(endpoint);
@@ -148,11 +158,13 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         assertTrue(exchangeSix.getException() instanceof RejectedExecutionException);
     }
     
+    @Test
     public void testHalfOpenToCloseTransitionSync() throws Exception {
         String endpoint = "direct:start";
         halfOpenToCloseTransition(endpoint);
     }
     
+    @Test
     public void testHalfOpenToCloseTransitionAsync() throws Exception {
         String endpoint = "direct:start-async";
         halfOpenToCloseTransition(endpoint);
@@ -187,11 +199,13 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         assertTrue(exchangeFive.getException() == null);
     }
 
+    @Test
     public void testHalfOpenCircuitClosesAfterTimeoutSync() throws Exception {
         String endpoint = "direct:start";
         halfOpenCircuitClosesAfterTimeout(endpoint);
     }
     
+    @Test
     public void testHalfOpenCircuitClosesAfterTimeoutAsync() throws Exception {
         String endpoint = "direct:start-async";
         halfOpenCircuitClosesAfterTimeout(endpoint);

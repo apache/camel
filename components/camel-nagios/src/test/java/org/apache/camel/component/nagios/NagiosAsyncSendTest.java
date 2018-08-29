@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.nagios;
+import org.junit.Before;
 
 import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
 

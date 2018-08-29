@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +38,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
+    @Test
     public void testWireTapShutdown() throws Exception {
         final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
 

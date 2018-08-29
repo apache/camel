@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.RouteStartupOrder;
  */
 public class RouteShutdownNotReverseOrderTest extends ContextTestSupport {
 
+    @Test
     public void testRouteShutdownNotReverseOrder() throws Exception {
         // flip to not reverse
         context.getShutdownStrategy().setShutdownRoutesInReverseOrder(false);

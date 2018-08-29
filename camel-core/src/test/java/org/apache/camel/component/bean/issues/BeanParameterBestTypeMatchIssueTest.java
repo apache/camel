@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
 
+    @Test
     public void testNoParam() throws InterruptedException {
         getMockEndpoint("mock:end").expectedBodiesReceived("A");
 
@@ -29,6 +32,7 @@ public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void test1Param() throws InterruptedException {
         getMockEndpoint("mock:end").expectedBodiesReceived("B");
 
@@ -37,6 +41,7 @@ public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void test2ParamString() throws InterruptedException {
         getMockEndpoint("mock:end").expectedBodiesReceived("C");
 
@@ -45,6 +50,7 @@ public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void test2ParamClassB() throws InterruptedException {
         getMockEndpoint("mock:end").expectedBodiesReceived("D");
 
@@ -53,6 +59,7 @@ public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void test2ParamBoolBody() throws InterruptedException {
         getMockEndpoint("mock:end").expectedBodiesReceived("E");
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.patterns;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +29,8 @@ import org.junit.Test;
 public class IsMockEndpointsFileTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/input");
         deleteDirectory("target/messages");
         super.setUp();

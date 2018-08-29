@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class SpringSplitterBodyTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringSplitterBodyTest.xml");
     }
 
+   @Test
     public void testSplitBody() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("A", "B", "C");

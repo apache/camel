@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.config.scan;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,6 +33,7 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
         return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/config/scan/componentScan.xml"}, getRouteExcludingApplicationContext());
     }
 
+   @Test
     public void testRouteExcluded() throws InterruptedException {
         assertEquals(1, context.getRoutes().size());
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
@@ -41,6 +44,7 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
         mock.assertIsSatisfied();
     }
 
+   @Test
     public void testRoutesNotExcludedWorkNormally() throws InterruptedException {
         template.sendBody("direct:start", "request");
         MockEndpoint mock = getMockEndpoint("mock:end");

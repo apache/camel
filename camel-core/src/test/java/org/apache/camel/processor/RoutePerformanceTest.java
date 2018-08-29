@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
     private SimpleDataSet dataSet = new SimpleDataSet(size);
     private String uri = "mock:results";
 
+    @Test
     public void testPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 

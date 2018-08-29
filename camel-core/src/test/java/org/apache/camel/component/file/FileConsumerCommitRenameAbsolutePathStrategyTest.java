@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -31,7 +34,8 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     private String base;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
         // use current dir as base as aboslute path
@@ -39,6 +43,7 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
         super.setUp();
     }
 
+    @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");

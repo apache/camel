@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -31,6 +33,7 @@ public class SpringAsyncDeadLetterChannelExecutorServiceRefTest extends SpringTe
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/async/SpringAsyncDeadLetterChannelExecutorServiceRefTest.xml");
     }
 
+   @Test
     public void testAsyncDLCExecutorServiceRefTest() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
 

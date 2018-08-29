@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.After;
+
+import org.junit.Test;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -37,6 +40,7 @@ public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport
         return context;
     }
 
+    @Test
     public void testTwoManagedCamelContextClash() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -64,7 +68,8 @@ public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         if (camel1 != null) {
             camel1.stop();
         }

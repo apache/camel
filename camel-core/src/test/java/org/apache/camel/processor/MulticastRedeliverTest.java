@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,6 +31,7 @@ public class MulticastRedeliverTest extends ContextTestSupport {
 
     private static int counter;
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);
@@ -38,6 +41,7 @@ public class MulticastRedeliverTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThrowExceptionAtA() throws Exception {
         counter = 0;
 
@@ -56,6 +60,7 @@ public class MulticastRedeliverTest extends ContextTestSupport {
         assertEquals(1 + 3, counter); // first call + 3 redeliveries
     }
 
+    @Test
     public void testThrowExceptionAtB() throws Exception {
         counter = 0;
 

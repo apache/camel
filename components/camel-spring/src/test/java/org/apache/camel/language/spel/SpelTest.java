@@ -16,10 +16,13 @@
  */
 package org.apache.camel.language.spel;
 
+import org.junit.Test;
+
 import org.apache.camel.LanguageTestSupport;
 
 public class SpelTest extends LanguageTestSupport {
 
+   @Test
     public void testSpelExpressions() throws Exception {
         assertExpression("#{exchange}", exchange);
         assertExpression("#{exchange.getIn().body}", "<hello id='m123'>world!</hello>");
@@ -33,17 +36,20 @@ public class SpelTest extends LanguageTestSupport {
         assertExpression("#{6 / -3}", -2);
     }
 
+   @Test
     public void testSpelPredicates() throws Exception {
         assertPredicate("#{request.headers['foo'].startsWith('a')}");
         assertPredicate("#{request.headers['foo'] == 'abc'}");
         assertPredicateFails("#{request.headers['foo'] == 'badString'}");
     }
     
+   @Test
     public void testGetOutFalseKeepsNullOutMessage() throws Exception {
         assertExpression("exchange.hasOut()", false);
         assertFalse(exchange.hasOut());
     }
 
+   @Test
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("#{response.body}", null);
         assertTrue(exchange.hasOut());

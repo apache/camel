@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stax;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,7 +50,8 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
     }

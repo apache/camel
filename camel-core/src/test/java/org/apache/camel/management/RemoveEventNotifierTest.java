@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -36,6 +39,7 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
     private EventNotifier notifier;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -67,6 +71,7 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testRemove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

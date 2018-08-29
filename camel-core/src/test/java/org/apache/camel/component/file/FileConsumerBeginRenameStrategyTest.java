@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,12 +34,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inprogress");
         deleteDirectory("target/reports");
         super.setUp();
     }
 
+    @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
@@ -47,6 +52,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testRenameFileExists() throws Exception {
         // create a file in inprogress to let there be a duplicate file
         File file = new File("target/inprogress");

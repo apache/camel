@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,6 +27,7 @@ public class EndpointToIdRefTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/EndpointToIdRefTest.xml");
     }
 
+   @Test
     public void testEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

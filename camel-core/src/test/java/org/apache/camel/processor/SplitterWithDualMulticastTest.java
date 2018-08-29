@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterWithDualMulticastTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterWithDualMulticast() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C");
         // should get the original input message without any headers etc

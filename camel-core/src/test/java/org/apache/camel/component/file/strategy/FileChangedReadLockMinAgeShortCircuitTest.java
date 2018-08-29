@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.FileOutputStream;
 import java.util.Date;
@@ -34,7 +37,8 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockMinAgeShortCircuitTest.class);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
         writeFile();
@@ -43,6 +47,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         super.setUp();
     }
 
+    @Test
     public void testChangedReadLockMinAge() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

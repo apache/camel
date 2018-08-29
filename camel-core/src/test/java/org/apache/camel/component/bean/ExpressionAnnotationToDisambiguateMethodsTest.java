@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,12 +37,14 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
     protected MyBean myBean = new MyBean();
     protected MyOtherBean myOtherBean = new MyOtherBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.sendBodyAndHeader("direct:in", "<hello>world!</hello>", "foo", "bar");
 
         assertEquals("bean body: " + myBean, "bar", myBean.bar);
     }
 
+    @Test
     public void testSendMessageHandler() throws Exception {
         template.sendBodyAndHeader("direct:other", "<hello>world!</hello>", "foo", "bar");
 

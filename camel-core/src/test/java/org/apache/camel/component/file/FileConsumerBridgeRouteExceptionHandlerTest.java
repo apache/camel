@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -32,6 +34,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
     private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
 
+    @Test
     public void testCustomExceptionHandler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:error").expectedBodiesReceived("Error Forced to simulate no space on device");

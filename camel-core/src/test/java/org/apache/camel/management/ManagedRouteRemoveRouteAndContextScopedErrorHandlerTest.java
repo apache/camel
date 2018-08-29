@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -30,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends ManagementTestSupport {
 
+    @Test
     public void testRemoveFoo() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -78,6 +81,7 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         assertTrue("Should be context scoped error handler: " + set, set.iterator().next().toString().contains("Logging"));
     }
 
+    @Test
     public void testRemoveBar() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

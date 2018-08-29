@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.validator;
 
+import org.junit.Test;
+
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
@@ -34,6 +36,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     
     
     // just inject the SchemaFactory as we want
+    @Test
     public void testCustomSchemaFactory() throws Exception {
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);

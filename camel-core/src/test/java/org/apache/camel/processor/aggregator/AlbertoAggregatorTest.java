@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     private static final String TYPE_HEADER = "type";
     private static final String BROTHERS_TYPE = "brothers";
 
+    @Test
     public void testAggregator() throws Exception {
 
         String allNames = "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";

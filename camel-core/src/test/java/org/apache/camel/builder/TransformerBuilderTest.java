@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.lang.reflect.Field;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +33,7 @@ import org.apache.camel.spi.Transformer;
 
 public class TransformerBuilderTest extends TestSupport {
 
+    @Test
     public void testDataFormatTransformer() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
@@ -52,6 +55,7 @@ public class TransformerBuilderTest extends TestSupport {
         assertEquals(StringDataFormat.class, dataFormatType.getClass());
     }
 
+    @Test
     public void testEndpointTransformer() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
@@ -75,6 +79,7 @@ public class TransformerBuilderTest extends TestSupport {
         assertEquals("direct://transformer", sp.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testCustomTransformer() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {

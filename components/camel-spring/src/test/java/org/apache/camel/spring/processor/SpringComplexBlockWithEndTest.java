@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,6 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringComplexBlockWithEndTest extends ContextTestSupport {
 
+   @Test
     public void testHello() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(1);
         getMockEndpoint("mock:bye").expectedMessageCount(0);
@@ -38,6 +41,7 @@ public class SpringComplexBlockWithEndTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+   @Test
     public void testBye() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(0);
         getMockEndpoint("mock:bye").expectedMessageCount(1);
@@ -49,6 +53,7 @@ public class SpringComplexBlockWithEndTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+   @Test
     public void testOther() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(0);
         getMockEndpoint("mock:bye").expectedMessageCount(0);

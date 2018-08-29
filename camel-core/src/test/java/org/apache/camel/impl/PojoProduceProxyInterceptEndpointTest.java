@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,8 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  *
  */
-public class PojoProduceProxyInterceptEndpointTest extends TestCase {
+public class PojoProduceProxyInterceptEndpointTest extends Assert {
 
+    @Test
     public void testPojoProduceInterceptAlreadyStarted() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
@@ -58,6 +61,7 @@ public class PojoProduceProxyInterceptEndpointTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testPojoProduceInterceptNotStarted() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {

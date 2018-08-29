@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.disruptor;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
@@ -29,7 +30,8 @@ import org.junit.Test;
 public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/disruptor");
         super.setUp();
     }

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.test;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,12 +31,14 @@ public class TestFileSplitTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/testme");
         super.setUp();
     }
 
     @Ignore
+    @Test
     public void testFile() throws Exception {
         template.sendBody("file:target/testme", "Hello World\nBye World\nHi World");
 

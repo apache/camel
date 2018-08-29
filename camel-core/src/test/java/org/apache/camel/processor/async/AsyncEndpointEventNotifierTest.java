@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +38,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
     private final CountDownLatch latch = new CountDownLatch(1);
     private final AtomicLong time = new AtomicLong();
 
+    @Test
     public void testAsyncEndpointEventNotifier() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");

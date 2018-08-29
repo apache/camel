@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ToDynamicRawAndXPathTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamicRawAndPlus() throws Exception {
         getMockEndpoint("mock:RAW(se+ret)foo").expectedBodiesReceived("<order uri=\"foo\"/>");
         getMockEndpoint("mock:RAW(se+ret)bar").expectedBodiesReceived("<order uri=\"bar\"/>");

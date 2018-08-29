@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -34,7 +35,8 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailMaxMessagesPerPollTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
     }

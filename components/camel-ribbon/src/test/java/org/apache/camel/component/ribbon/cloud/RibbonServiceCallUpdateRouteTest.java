@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.ribbon.cloud;
+import org.junit.Before;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
     private final StaticServiceDiscovery servers = new StaticServiceDiscovery();
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         // setup a static ribbon server list with these 2 servers to start with
         servers.addServer("myService@localhost:9090");
         servers.addServer("myService@localhost:9091");

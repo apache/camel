@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,11 +48,13 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
     }
 
+    @Test
     public void testDummy() {
         // this is a manual test
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -31,6 +33,7 @@ import org.apache.camel.ContextTestSupport;
 public class IOConverterCharsetTest extends ContextTestSupport {
     private static final String CONTENT = "G\u00f6tzend\u00e4mmerung,Joseph und seine Br\u00fcder";
 
+    @Test
     public void testToInputStreamFileWithCharsetUTF8() throws Exception {
         switchToDefaultCharset(StandardCharsets.UTF_8);
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
@@ -44,6 +47,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testToInputStreamFileWithCharsetUTF8withOtherDefaultEncoding() throws Exception {
         switchToDefaultCharset(StandardCharsets.ISO_8859_1);
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
@@ -57,6 +61,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testToInputStreamFileWithCharsetLatin1() throws Exception {
         switchToDefaultCharset(StandardCharsets.UTF_8);
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
@@ -70,6 +75,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testToInputStreamFileDirectByteDumpWithCharsetLatin1() throws Exception {
         switchToDefaultCharset(StandardCharsets.UTF_8);
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
@@ -83,6 +89,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testToReaderFileWithCharsetUTF8() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
         try (BufferedReader reader = IOConverter.toReader(file, "UTF-8");
@@ -94,6 +101,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testToReaderFileWithCharsetLatin1() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
         try (BufferedReader reader = IOConverter.toReader(file, "ISO-8859-1");

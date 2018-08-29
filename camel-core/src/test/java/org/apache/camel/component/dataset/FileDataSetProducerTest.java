@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,12 +48,14 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
 
+    @Test
     public void testDefaultListDataSet() throws Exception {
         template.sendBodyAndHeader(sourceUri, testPayload, Exchange.DATASET_INDEX, 0);
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         int messageCount = 20;
         dataSet.setSize(messageCount);
@@ -65,6 +70,7 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         File fileDataset = createFileDatasetWithSystemEndOfLine();
         dataSet = new FileDataSet(fileDataset);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -37,7 +40,8 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
     private SimpleRegistry registry = new SimpleRegistry();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/a");
         deleteDirectory("target/b");
         super.setUp();
@@ -48,6 +52,7 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testSharedThreadPool() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

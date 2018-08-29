@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,6 +33,7 @@ public class FromEndpointTest extends ContextTestSupport {
     private MockEndpoint results;
     private Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testReceivedMessageHasFromEndpointSet() throws Exception {
         results = getMockEndpoint("mock:results");
         results.expectedBodiesReceived(expectedBody);

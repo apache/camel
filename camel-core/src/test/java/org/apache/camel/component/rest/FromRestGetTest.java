@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,6 +41,7 @@ public class FromRestGetTest extends ContextTestSupport {
         return 2 + 3;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ChoiceDefinition;
@@ -31,6 +33,7 @@ import org.apache.camel.model.WhenDefinition;
  */
 public class TraceInitIdOnAllNodesTest extends ContextTestSupport {
 
+    @Test
     public void testInitIdsOnAllNodes() throws Exception {
         getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:other").expectedBodiesReceived("Hello World");

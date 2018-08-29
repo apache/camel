@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -27,6 +29,7 @@ import org.apache.camel.impl.FileWatcherReloadStrategy;
  */
 public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport {
 
+    @Test
     public void testReloadStrategy() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

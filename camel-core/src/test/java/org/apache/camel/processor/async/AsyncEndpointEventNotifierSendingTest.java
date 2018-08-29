@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -35,6 +37,7 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
 
     private final List<EventObject> events = new ArrayList<>();
 
+    @Test
     public void testAsyncEndpointEventNotifier() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");

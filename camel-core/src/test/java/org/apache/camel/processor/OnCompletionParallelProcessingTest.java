@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class OnCompletionParallelProcessingTest extends ContextTestSupport {
 
+    @Test
     public void testOnCompletionParallel() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
         getMockEndpoint("mock:after").expectedBodiesReceived("I was here Hello World");

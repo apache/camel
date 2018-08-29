@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionCallSubRouteNoErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionCallSubRouteNoErrorHandler() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:start").expectedMessageCount(1);

@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -29,17 +33,20 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         System.setProperty("environment", "junit");
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         System.clearProperty("environment");
         super.tearDown();
     }
 
+    @Test
     public void testConcatPropertiesComponentDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -56,6 +63,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithoutConcatPropertiesComponentDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testTryCatchTo() throws Exception {
         context.addRoutes(createTryCatchToRouteBuilder());
         context.start();
@@ -43,6 +46,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTryCatchRecipientList() throws Exception {
         context.addRoutes(createTryCatchRecipientListRouteBuilder());
         context.start();
@@ -58,6 +62,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDualTryCatchRecipientList() throws Exception {
         context.addRoutes(createDualTryCatchRecipientListRouteBuilder());
         context.start();
@@ -77,6 +82,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTo() throws Exception {
         context.addRoutes(createToRouteBuilder());
         context.start();
@@ -91,6 +97,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientList() throws Exception {
         context.addRoutes(createRecipientListRouteBuilder());
         context.start();

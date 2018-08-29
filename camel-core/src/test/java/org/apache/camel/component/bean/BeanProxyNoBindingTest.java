@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.w3c.dom.Document;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class BeanProxyNoBindingTest extends ContextTestSupport {
 
+    @Test
     public void testBeanProxyStringReturnString() throws Exception {
         // START SNIPPET: e2
         Endpoint endpoint = context.getEndpoint("direct:start");
@@ -39,6 +42,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         // END SNIPPET: e2
     }
 
+    @Test
     public void testBeanProxyStringReturnDocument() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -49,6 +53,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         assertEquals("<order id=\"123\">OK</order>", s);
     }
 
+    @Test
     public void testBeanProxyDocumentReturnString() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -59,6 +64,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         assertEquals("<order id=\"123\">OK</order>", reply);
     }
 
+    @Test
     public void testBeanProxyDocumentReturnDocument() throws Exception {
         // START SNIPPET: e3
         Endpoint endpoint = context.getEndpoint("direct:start");
@@ -73,6 +79,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         // END SNIPPET: e3
     }
 
+    @Test
     public void testBeanProxyFailure() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -81,6 +88,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         assertEquals("<order>FAIL</order>", reply);
     }
 
+    @Test
     public void testBeanProxyFailureNotXMLBody() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -93,6 +101,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testBeanProxyVoidReturnType() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -100,6 +109,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         service.doNothing("<order>ping</order>");
     }
 
+    @Test
     public void testBeanProxyFailureInvalidReturnType() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -114,6 +124,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testBeanProxyCallAnotherBean() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:bean");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -123,6 +134,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e4
+    @Test
     public void testProxyBuilderProxyCallAnotherBean() throws Exception {
         // use ProxyBuilder to easily create the proxy
         OrderService service = new ProxyBuilder(context).endpoint("direct:bean").binding(false).build(OrderService.class);
@@ -132,6 +144,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
     }
     // END SNIPPET: e4
 
+    @Test
     public void testBeanProxyCallAnotherBeanWithNoArgs() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:bean");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
@@ -140,6 +153,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         assertEquals("Hi nobody", reply);
     }
 
+    @Test
     public void testProxyBuilderProxyCallAnotherBeanWithNoArgs() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:bean");
         OrderService service = new ProxyBuilder(context).endpoint(endpoint).binding(false).build(OrderService.class);
@@ -148,6 +162,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         assertEquals("Hi nobody", reply);
     }
 
+    @Test
     public void testBeanProxyVoidAsInOut() throws Exception {
         Endpoint endpoint = context.getEndpoint("seda:delay");
         // will by default let all exchanges be InOut
@@ -160,6 +175,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testProxyBuilderVoidAsInOut() throws Exception {
         // will by default let all exchanges be InOut
         OrderService service = new ProxyBuilder(context).endpoint("seda:delay").binding(false).build(OrderService.class);

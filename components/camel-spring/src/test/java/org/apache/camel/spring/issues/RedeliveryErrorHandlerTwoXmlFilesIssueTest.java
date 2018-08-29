@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spring.SpringTestSupport;
@@ -33,6 +35,7 @@ public class RedeliveryErrorHandlerTwoXmlFilesIssueTest extends SpringTestSuppor
                 "org/apache/camel/spring/issues/RedeliveryErrorHandlerTwoXmlFilesIssueTest-2.xml");
     }
 
+   @Test
     public void testRedeliveryErrorHandlerTwoXmlFilesIssue() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

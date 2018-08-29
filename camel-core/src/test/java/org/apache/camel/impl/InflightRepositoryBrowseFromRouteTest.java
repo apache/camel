@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Collection;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.InflightRepository;
  */
 public class InflightRepositoryBrowseFromRouteTest extends ContextTestSupport {
 
+    @Test
     public void testInflight() throws Exception {
         assertEquals(0, context.getInflightRepository().browse().size());
 

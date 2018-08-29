@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -40,6 +42,7 @@ public class MockAsBeanTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
+    @Test
     public void testMockAsBeanWithWhenAnyExchangeReceived() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -76,6 +79,7 @@ public class MockAsBeanTest extends ContextTestSupport {
     // END SNIPPET: e2
     
    // START SNIPPET: e3
+    @Test
     public void testMockAsBeanWithReplyBody() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -89,6 +93,7 @@ public class MockAsBeanTest extends ContextTestSupport {
     // END SNIPPET: e3
     
    // START SNIPPET: e4
+    @Test
     public void testMockAsBeanWithReplyHeader() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedHeaderReceived("myHeader", "Bye World");

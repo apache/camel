@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -27,6 +29,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     private static int counter;
     private static String event = "";
 
+    @Test
     public void testExceptionOnPollAndCanStartAgain() throws Exception {
 
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
@@ -68,6 +71,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         assertEquals("Should not have rollback", false, rollback);
     }
     
+    @Test
     public void testRetryAtMostThreeTimes() throws Exception {
         counter = 0;
         event = "";
@@ -107,6 +111,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         assertEquals("rollbackrollbackrollbackrollback", event);
     }
 
+    @Test
     public void testNoExceptionOnPoll() throws Exception {
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, null);

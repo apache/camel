@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class ProcessorDefinitionHelperTest extends ContextTestSupport {
 
+    @Test
     public void testFilterTypeInOutputs() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 

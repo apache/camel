@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteRemove2Test extends ContextTestSupport {
 
+    @Test
     public void testRemove() throws Exception {
         DefaultCamelContext defaultContext = (DefaultCamelContext) context;
         assertEquals("2 routes to start with", 2, context.getRoutes().size());

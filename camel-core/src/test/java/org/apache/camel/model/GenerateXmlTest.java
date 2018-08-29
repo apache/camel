@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.io.StringWriter;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.apache.camel.model.language.XQueryExpression;
  */
 public class GenerateXmlTest extends XmlTestSupport {
 
+    @Test
     public void testCreateSimpleXml() throws Exception {
         RoutesDefinition context = new RoutesDefinition();
         RouteDefinition route = context.route();
@@ -38,6 +41,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         dump(context);
     }
 
+    @Test
     public void testGroovyFilterXml() throws Exception {
         RoutesDefinition context = new RoutesDefinition();
         RouteDefinition route = context.route();

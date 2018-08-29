@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,6 +34,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
     private int messageIndex;
 
+    @Test
     public void testAggregateLostGroupIssue() throws Exception {
         messageIndex = 0;
 

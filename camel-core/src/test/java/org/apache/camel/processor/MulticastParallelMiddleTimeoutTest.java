@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class MulticastParallelMiddleTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastParallelMiddleTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // B will timeout so we only get A and C

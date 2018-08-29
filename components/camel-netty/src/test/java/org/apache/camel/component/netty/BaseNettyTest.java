@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 import java.io.FileOutputStream;

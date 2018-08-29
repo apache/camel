@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,6 +32,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay3Test extends Con
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testRedelivery() throws Exception {
         MockEndpoint before = getMockEndpoint("mock:result");
         before.expectedBodiesReceived("Hello World");

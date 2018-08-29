@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.greeter;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.List;
 

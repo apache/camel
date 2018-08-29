@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.StringReader;
 import javax.xml.transform.stream.StreamSource;
 
@@ -28,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class StreamCachingOnlyRouteTest extends ContextTestSupport {
 
+    @Test
     public void testStreamCachingPerRoute() throws Exception {
         MockEndpoint c = getMockEndpoint("mock:c");
         c.expectedMessageCount(1);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.twitter.deprecated;
+import org.junit.Before;
 
 import org.apache.camel.component.twitter.CamelTwitterConsumerTestSupport;
 import org.slf4j.Logger;
@@ -26,7 +27,8 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class DirectMessagePollingTest extends CamelTwitterConsumerTestSupport {
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         /* Uncomment when you need a test direct message
         TwitterConfiguration properties = new TwitterConfiguration();

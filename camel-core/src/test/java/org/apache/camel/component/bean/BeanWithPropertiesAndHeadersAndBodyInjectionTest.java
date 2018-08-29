@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 import javax.naming.Context;
 
@@ -35,6 +37,7 @@ import org.apache.camel.util.jndi.JndiContext;
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         Exchange out = template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {

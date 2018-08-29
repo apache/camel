@@ -16,9 +16,11 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -29,8 +31,9 @@ import org.apache.camel.Producer;
 /**
  * Test that endpoints are only shutdown once when CamelContext is stopping.
  */
-public class EndpointShutdownOnceTest extends TestCase {
+public class EndpointShutdownOnceTest extends Assert {
 
+    @Test
     public void testEndpointShutdown() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("my", new MyComponent());

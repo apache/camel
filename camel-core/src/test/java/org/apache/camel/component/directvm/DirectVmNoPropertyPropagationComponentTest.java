@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,6 +39,7 @@ public class DirectVmNoPropertyPropagationComponentTest extends ContextTestSuppo
         return context;
     }
 
+    @Test
     public void testPropertiesPropagatedOrNot() throws Exception {
 
             

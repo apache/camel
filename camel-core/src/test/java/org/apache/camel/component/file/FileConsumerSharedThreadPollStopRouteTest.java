@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerSharedThreadPollTest {
 
+    @Test
     public void testSharedThreadPool() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

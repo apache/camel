@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedInterceptFromTest extends ManagementTestSupport {
 
+    @Test
     public void testManageWithInterceptFrom() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

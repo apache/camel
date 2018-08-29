@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testInvalidOnException() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -46,6 +49,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidOnCompletion() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -66,6 +70,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidTransacted() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

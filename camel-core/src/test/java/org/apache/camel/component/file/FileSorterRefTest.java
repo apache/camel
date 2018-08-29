@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Comparator;
 
@@ -44,7 +47,8 @@ public class FileSorterRefTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filesorter");
         super.setUp();
 
@@ -58,6 +62,7 @@ public class FileSorterRefTest extends ContextTestSupport {
             Exchange.FILE_NAME, "copenhagen.txt");
     }
 
+    @Test
     public void testSortFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

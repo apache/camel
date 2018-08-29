@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testUsingInterceptor() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -76,6 +79,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUsingExistingHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

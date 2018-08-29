@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.openshift;
+import org.junit.Before;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -26,7 +27,8 @@ public class OpenShiftUpdateEnvironmentVariableTest extends CamelTestSupport {
     private String password;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         // INSERT credentials here
         username = null;
         password = null;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.value;
+import org.junit.After;
 
 import java.util.Collections;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         value.close();
 
         super.tearDown();

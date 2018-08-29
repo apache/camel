@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +33,7 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFromRestModelContentType() throws Exception {
         Exchange out = template.request("seda:get-say-hello", new Processor() {
             @Override

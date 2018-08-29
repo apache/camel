@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ import static org.apache.camel.ThreadPoolRejectedPolicy.DiscardOldest;
  */
 public class ThreadsRejectedPolicyTest extends ContextTestSupport {
 
+    @Test
     public void testThreadsRejectedPolicy() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -34,6 +37,7 @@ public class ThreadsRejectedPolicyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsRejectedPolicyBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

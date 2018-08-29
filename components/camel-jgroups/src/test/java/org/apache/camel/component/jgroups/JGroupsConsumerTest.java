@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jgroups;
+import org.junit.After;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,7 +62,8 @@ public class JGroupsConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         channel.close();
         super.tearDown();
     }

@@ -16,11 +16,13 @@
  */
 package org.apache.camel.spring.scan;
 
+import org.junit.Test;
+
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
@@ -33,8 +35,9 @@ import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
 import org.apache.camel.util.CollectionHelper;
 
-public class PackageScanFiltersTest extends TestCase {
+public class PackageScanFiltersTest extends Assert {
 
+   @Test
     public void testAssignableToPackageScanFilter() {
         AssignableToPackageScanFilter filter = new AssignableToPackageScanFilter();
         assertFalse(filter.matches(ScanTargetOne.class));
@@ -57,6 +60,7 @@ public class PackageScanFiltersTest extends TestCase {
         assertTrue(filter.toString().contains("ScanTargetThree"));
     }
 
+   @Test
     public void testAnnotatedWithAnyPackageScanFilter() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
         annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
@@ -70,6 +74,7 @@ public class PackageScanFiltersTest extends TestCase {
         assertEquals("annotated with any @[[interface org.apache.camel.spring.scan.ScannableOne, interface org.apache.camel.spring.scan.ScannableTwo]]", filter.toString());
     }
 
+   @Test
     public void testAnnotatedWithPackageScanFilter() {
         AnnotatedWithPackageScanFilter filter = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
         validateFilter(filter, ScanTargetOne.class);
@@ -80,6 +85,7 @@ public class PackageScanFiltersTest extends TestCase {
         assertEquals("annotated with @ScannableTwo", filter.toString());
     }
 
+   @Test
     public void testCompositePackageScanFilter() {
         PackageScanFilter one = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
         PackageScanFilter two = new AssignableToPackageScanFilter(ScanTargetOne.class);
@@ -96,6 +102,7 @@ public class PackageScanFiltersTest extends TestCase {
         validateFilter(filter, ScanTargetTwo.class);
     }
 
+   @Test
     public void testInvertingFilter() {
         InvertingPackageScanFilter filter = new InvertingPackageScanFilter(new AnnotatedWithPackageScanFilter(ScannableOne.class));
         validateFilter(filter, ScanTargetThree.class);

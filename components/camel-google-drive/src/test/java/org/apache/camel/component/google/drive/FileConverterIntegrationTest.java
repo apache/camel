@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.drive;
+import org.junit.Before;
 
 
 import com.google.api.services.drive.model.File;
@@ -35,7 +36,8 @@ public class FileConverterIntegrationTest extends AbstractGoogleDriveTestSupport
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
     
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/convertertest");
         super.setUp();
     }

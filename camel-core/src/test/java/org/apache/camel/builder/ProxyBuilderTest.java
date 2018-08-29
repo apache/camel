@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +28,7 @@ import org.apache.camel.ContextTestSupport;
  */
 public class ProxyBuilderTest extends ContextTestSupport {
 
+    @Test
     public void testSayFoo() throws Exception {
         Foo foo = new ProxyBuilder(context).endpoint("direct:start").build(Foo.class);
 

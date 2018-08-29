@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.InOnly;
@@ -34,11 +36,12 @@ import org.slf4j.LoggerFactory;
 /**
  * @version
  */
-public class BeanInfoTest extends TestCase {
+public class BeanInfoTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
 
+    @Test
     public void testObjectOperations() throws Exception {
         BeanInfo info = createBeanInfo(Object.class);
 
@@ -47,6 +50,7 @@ public class BeanInfoTest extends TestCase {
         assertEquals("toString", operations.get(0).getMethod().getName());
     }
 
+    @Test
     public void testGetOperations() throws Exception {
         BeanInfo info = createBeanInfo(Foo.class);
 
@@ -63,6 +67,7 @@ public class BeanInfoTest extends TestCase {
         assertEquals(1, size);
     }
 
+    @Test
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
         BeanInfo info = createBeanInfo(Foo.class);
 
@@ -71,12 +76,14 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsOnInterface() throws Exception {
         BeanInfo info = createBeanInfo(MyOneWayInterface.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
     }
 
+    @Test
     public void testMethodPatternUsingMethodAnnotationsOnInterface() throws Exception {
         BeanInfo info = createBeanInfo(MyOneWayInterfaceWithOverloadedMethod.class);
 
@@ -85,6 +92,7 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsButOverloadingOnMethod() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnMethod.class);
 
@@ -92,6 +100,7 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsButOverloadingOnBaseClassMethod() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnBaseClass.class);
 
@@ -99,6 +108,7 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsOnClassWithAnnotationsOnInterface() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnMethod.class);
 
@@ -106,6 +116,7 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsOnBaseInterfaceAndOverloadingMethodOnDerivedInterface() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnInterface.class);
 
@@ -114,6 +125,7 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
+    @Test
     public void testImplementLevel2InterfaceMethodInPackagePrivateClass() {
         BeanInfo info = createBeanInfo(PackagePrivateClassImplementingLevel2InterfaceMethod.class);
         List<MethodInfo> mis = info.getMethods();
@@ -126,6 +138,7 @@ public class BeanInfoTest extends TestCase {
         Assert.assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
     }
 
+    @Test
     public void testPublicClassImplementingInterfaceMethodBySuperPackagePrivateClass() {
         BeanInfo info = createBeanInfo(PublicClassImplementingBySuperPackagePrivateClass.class);
         List<MethodInfo> mis = info.getMethods();

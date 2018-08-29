@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.LanguageTestSupport;
 
 public class SimpleWhiteSpaceTest extends LanguageTestSupport {
@@ -25,31 +27,37 @@ public class SimpleWhiteSpaceTest extends LanguageTestSupport {
         return "simple";
     }
 
+    @Test
     public void testExpressionWithSpace() {
         exchange.getIn().setBody("some text");
         assertPredicate("${in.body} contains 'some' and ${in.body} contains 'text'", true);
     }
 
+    @Test
     public void testExpressionWithTabs() {
         exchange.getIn().setBody("some text");
         assertPredicate("${in.body} contains 'some' and\t${in.body} contains 'text'", true);
     }
 
+    @Test
     public void testUnixMultiLineExpression() {
         exchange.getIn().setBody("some text");
         assertPredicate("${in.body} contains 'some' and\n${in.body} contains 'text'", true);
     }
 
+    @Test
     public void testWindowsMultiLineExpression() {
         exchange.getIn().setBody("some text");
         assertPredicate("${in.body} contains 'some' and\r\n${in.body} contains 'text'", true);
     }
 
+    @Test
     public void testMacMultiLineExpression() {
         exchange.getIn().setBody("some text");
         assertPredicate("${in.body} contains 'some' and\r${in.body} contains 'text'", true);
     }
 
+    @Test
     public void testExpressionWithMultiLineString() {
         exchange.getIn().setBody("\tsome\nmulti\rline\r\ntext");
         assertPredicate("${in.body} == '\tsome\nmulti\rline\r\ntext'", true);

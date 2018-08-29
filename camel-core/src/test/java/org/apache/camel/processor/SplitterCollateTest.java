@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class SplitterCollateTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterCollate() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(2);
 

@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class OnExceptionWireTapNewExchangeBodyTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionWireTapNewExchangeBody() throws Exception {
         getMockEndpoint("mock:tap").expectedBodiesReceived("Error due Forced");
         getMockEndpoint("mock:ignore").expectedMessageCount(1);

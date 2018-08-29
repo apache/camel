@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
@@ -25,6 +27,7 @@ import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
  */
 public class AggregatePreCompleteAwareStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testAggregatePreComplete() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E");
 

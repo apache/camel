@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +25,7 @@ import org.apache.camel.support.ServiceSupport;
 
 public class RemoveRouteStopEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testEndpointRegistryStopRouteEndpoints() throws Exception {
         Endpoint seda = context.hasEndpoint("seda://foo");
         assertNotNull(seda);
@@ -81,6 +84,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertFalse("Should not be started", ((ServiceSupport) log).isStarted());
     }
 
+    @Test
     public void testEndpointRegistryStopRouteEndpointsContextStop() throws Exception {
         Endpoint seda = context.hasEndpoint("seda://foo");
         assertNotNull(seda);

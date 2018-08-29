@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -34,6 +36,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     private static final int MESSAGE_COUNT = 9;
     private static final int TOLERANCE = 50;
 
+    @Test
     public void testGroupingWithSingleConstant() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
@@ -45,6 +48,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testGroupingWithDynamicHeaderExpression() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result2").expectedBodiesReceived("Bye World");
@@ -68,6 +72,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
@@ -133,12 +138,14 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnlyGetThroughAsConstantThrottleValue() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
         long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", MESSAGE_COUNT, resultEndpoint);
         assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
     
+    @Test
     public void testConfigurationWithHeaderExpression() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(MESSAGE_COUNT);

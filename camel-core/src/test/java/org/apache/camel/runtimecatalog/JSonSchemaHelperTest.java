@@ -16,6 +16,8 @@
  */
 package org.apache.camel.runtimecatalog;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 
 public class JSonSchemaHelperTest extends ContextTestSupport {
 
+    @Test
     public void testParseJsonSchemaMustBeOrdered() throws Exception {
         String json = context.getRuntimeCamelCatalog().componentJSonSchema("bean");
         assertNotNull(json);
@@ -59,6 +62,7 @@ public class JSonSchemaHelperTest extends ContextTestSupport {
         assertEquals("synchronous", rows.get(5).values().iterator().next());
     }
 
+    @Test
     public void testParseInvalidJson() throws Exception {
         String json = "{ \"name\": this is invalid }";
         try {

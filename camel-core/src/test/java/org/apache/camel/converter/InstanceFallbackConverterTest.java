@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Currency;
@@ -36,6 +38,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testInstanceFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
@@ -44,6 +47,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         assertEquals("Money talks says " + context.getName(), money);
     }
 
+    @Test
     public void testInstanceFallbackMandatoryConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
@@ -52,6 +56,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         assertEquals("Money talks says " + context.getName(), money);
     }
 
+    @Test
     public void testInstanceFallbackMandatoryFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
@@ -63,6 +68,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInstanceFallbackFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 

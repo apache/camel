@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -32,6 +34,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDoneFromRoute() throws Exception {
         // notify when exchange is done
         NotifyBuilder builder =

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
+    @Test
     public void testRecipientListWithIgnoreInvalidEndpointsOption() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
@@ -36,6 +39,7 @@ public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testRecipientListWithoutIgnoreInvalidEndpointsOption() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);

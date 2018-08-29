@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import javax.management.ObjectName;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -35,6 +37,7 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
     }
    
     @Override
+   @Test
     public void testQueryMbeans() throws Exception {
         // whats the numbers before, because the JVM can have left overs when unit testing
         int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();

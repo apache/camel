@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +37,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
 
+    @Test
     public void testDefaultListDataSet() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMinimumMessageCount((int) dataSet.getSize());
@@ -41,6 +45,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         dataSet.setSize(10);
@@ -50,6 +55,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         List<Object> bodies = new LinkedList<>();
         bodies.add("<hello>world!</hello>");

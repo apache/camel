@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -31,6 +33,7 @@ public class NavigateRouteTest extends ContextTestSupport {
 
     private static int count;
 
+    @Test
     public void testNavigateRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

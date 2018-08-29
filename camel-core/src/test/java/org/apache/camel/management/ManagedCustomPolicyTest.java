@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.management.MBeanServer;
@@ -35,6 +37,7 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger();
 
+    @Test
     public void testPolicy() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

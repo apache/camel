@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,12 +30,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/pair");
         deleteDirectory("target/pair2");
         super.setUp();
     }
 
+    @Test
     public void testTokenXMLPair() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
@@ -46,6 +51,7 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTokenXMLPair2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);

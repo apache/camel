@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -29,6 +31,7 @@ public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testInvalidConfigured() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

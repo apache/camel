@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +33,7 @@ import org.apache.camel.impl.SimpleRegistry;
  */
 public class SedaQueueTest extends ContextTestSupport {
 
+    @Test
     public void testQueue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Goodday World", "Bar");
@@ -40,6 +43,7 @@ public class SedaQueueTest extends ContextTestSupport {
         template.sendBody("seda:foo?concurrentConsumers=5", "Goodday World");
         template.sendBody("seda:bar", "Bar");
     }
+    @Test
     public void testQueueRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

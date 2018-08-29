@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor.idempotent;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +41,8 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
         createDirectory("target/fileidempotent");
 
@@ -58,6 +62,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
 
+   @Test
     public void testIdempotentLoad() throws Exception {
         // send two files (report.txt exists already in idempotent repo)
         template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.blueprint;
+import org.junit.Before;
 
 import org.junit.Test;
 
@@ -29,7 +30,8 @@ public class ConfigAdminLoadConfigurationFileNotFoundTest extends CamelBlueprint
     }
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should throw IllegalArgumentException, because the config file wasn't found");

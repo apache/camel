@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.blueprint;
+import org.junit.Before;
 
 import org.junit.Test;
 
@@ -27,7 +28,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 public class BlueprintAugmentedPropertiesNoFallbackTest extends CamelBlueprintTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should fail, because Blueprint XML uses property placeholders, but we didn't resolve the placeholder");

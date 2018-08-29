@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -39,6 +41,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
         return jndi;
     }
 
+    @Test
     public void testRetryUntil() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.patterns;
+import org.junit.Before;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +27,8 @@ public class RouteBuilderConfigureExceptionTest extends CamelTestSupport {
     private Predicate iAmNull;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown exception");

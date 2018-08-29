@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +32,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesComponentOnException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedMessageCount(1);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.IOException;
 
@@ -32,6 +35,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
     static int counter;
 
+    @Test
     public void testGlobalOnRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World3");
@@ -41,6 +45,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteSpecificOnRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -52,7 +57,8 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         counter = 0;
     }

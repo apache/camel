@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * Test XPath DSL with the ability to apply XPath on a header
  */
 public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSupport {
+    @Test
     public void testXPathWithNamespace() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:55");
         mock.expectedBodiesReceived("body");

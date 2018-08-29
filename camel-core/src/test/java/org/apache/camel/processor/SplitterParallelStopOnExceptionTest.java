@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,17 +38,20 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
 
     private ExecutorService service; 
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
         service = Executors.newFixedThreadPool(2);
         super.setUp();
     }
     
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         service.shutdownNow();
     }
 
+    @Test
     public void testSplitParallelStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
@@ -54,6 +61,7 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitParallelStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMinimumMessageCount(0);

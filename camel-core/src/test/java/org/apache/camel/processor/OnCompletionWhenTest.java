@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class OnCompletionWhenTest extends ContextTestSupport {
 
+    @Test
     public void testSynchronizeCompleteWhen() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
@@ -38,6 +41,7 @@ public class OnCompletionWhenTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSynchronizeCompleteNoWhen() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(0);
 

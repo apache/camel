@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,6 +37,7 @@ public class FromRestOptionsTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRestOptionsModel() throws Exception {
         
         RestDefinition rest = context.getRestDefinitions().get(0);

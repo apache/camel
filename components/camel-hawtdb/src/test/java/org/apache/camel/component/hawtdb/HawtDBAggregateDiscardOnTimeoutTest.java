@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,8 @@ public class HawtDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
     private HawtDBAggregationRepository repo;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         super.setUp();

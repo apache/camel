@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xquery;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -29,7 +30,8 @@ import org.junit.Test;
 public class XQueryFromFileExceptionTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/xquery");
         super.setUp();
     }

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import javax.management.ObjectName;
 
@@ -31,7 +34,8 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         domainName = "org.apache.camel-properties";
         System.setProperty(JmxSystemPropertyKeys.DOMAIN, domainName);
         System.setProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, domainName);
@@ -39,6 +43,7 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
         super.setUp();
     }
 
+    @Test
     public void testMBeanServerType() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionGlobalAndDLCErrorHandlerIssueReverseTest extends ContextTestSupport {
 
+    @Test
     public void testNoOnGlobalException() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
@@ -35,6 +38,7 @@ public class OnExceptionGlobalAndDLCErrorHandlerIssueReverseTest extends Context
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnRouteException() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

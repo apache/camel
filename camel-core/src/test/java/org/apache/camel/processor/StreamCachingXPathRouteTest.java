@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class StreamCachingXPathRouteTest extends ContextTestSupport {
 
+    @Test
     public void testByteArrayInputStream() throws Exception {
         getMockEndpoint("mock:english").expectedBodiesReceived("<hello/>");
         getMockEndpoint("mock:dutch").expectedBodiesReceived("<hallo/>");

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.example.camel.transport;
+import org.junit.Before;
+import org.junit.After;
 
 import java.net.MalformedURLException;
 

@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,17 +29,20 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         super.tearDown();
     }
 
+    @Test
     public void testShouldBeInstrumentedOk() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -45,6 +52,7 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testShouldBeInstrumentedKabom() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -59,6 +67,7 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testShouldBeInstrumentedOkAndKabom() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

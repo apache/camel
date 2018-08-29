@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.olingo2;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.Date;

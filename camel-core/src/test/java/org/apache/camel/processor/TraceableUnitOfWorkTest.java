@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,6 +34,7 @@ import org.apache.camel.spi.TracedRouteNodes;
  */
 public class TraceableUnitOfWorkTest extends ContextTestSupport {
 
+    @Test
     public void testSendingSomeMessages() throws Exception {
         Object out = template.requestBody("direct:start", "Hello London");
         assertEquals("Failed at: sendTo(bean://bar)", out);

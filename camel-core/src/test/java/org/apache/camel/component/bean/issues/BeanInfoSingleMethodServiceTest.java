@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +28,7 @@ public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
 
     private SingleMethodService myService = new SingleMethodServiceImpl();
 
+    @Test
     public void testBeanInfoSingleMethodRoute() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("You said Hello World");
 
@@ -34,12 +37,14 @@ public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanInfoSingleMethod() throws Exception {
         BeanInfo beaninfo = new BeanInfo(context, SingleMethodService.class);
         assertEquals(1, beaninfo.getMethods().size());
         assertEquals("doSomething", beaninfo.getMethods().get(0).getMethod().getName());
     }
 
+    @Test
     public void testBeanInfoSingleMethodImpl() throws Exception {
         BeanInfo beaninfo = new BeanInfo(context, SingleMethodServiceImpl.class);
         assertEquals(2, beaninfo.getMethods().size());

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Date;
 
 import org.w3c.dom.Document;
@@ -31,6 +33,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
 
+    @Test
     public void testBeanNoTypeConvertionPossibleFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -50,6 +53,7 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanNoTypeConvertionPossibleOK() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("77889,667,457");
@@ -59,6 +63,7 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanNoTypeConvertionPossibleOKNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

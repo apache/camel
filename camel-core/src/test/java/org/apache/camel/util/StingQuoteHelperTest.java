@@ -16,13 +16,16 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 
 /**
  *
  */
-public class StingQuoteHelperTest extends TestCase {
+public class StingQuoteHelperTest extends Assert {
 
+    @Test
     public void testSplitSafeQuote() throws Exception {
         assertEquals(null, StringQuoteHelper.splitSafeQuote(null, ','));
 
@@ -123,6 +126,7 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals("arg3", out[2]);
     }
 
+    @Test
     public void testLastIsQuote() throws Exception {
         String[] out = StringQuoteHelper.splitSafeQuote(" ${body}, 5, 'Hello World'", ',', true);
         assertEquals(3, out.length);
@@ -137,6 +141,7 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals("Hello World", out[2]);
     }
 
+    @Test
     public void testSingleInDoubleQuote() throws Exception {
         String[] out = StringQuoteHelper.splitSafeQuote("\"Hello O'Connor\", 5, 'foo bar'", ',', true);
         assertEquals(3, out.length);
@@ -151,6 +156,7 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals("foo bar", out[2]);
     }
 
+    @Test
     public void testDoubleInSingleQuote() throws Exception {
         String[] out = StringQuoteHelper.splitSafeQuote("'Hello O\"Connor', 5, 'foo bar'", ',', true);
         assertEquals(3, out.length);

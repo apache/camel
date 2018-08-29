@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -27,7 +30,8 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -40,6 +44,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRandom() throws Exception {
         x.expectedMessageCount(4);
         y.expectedMessageCount(2);
@@ -62,6 +67,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRandom2() throws Exception {
         x.expectedMessageCount(2);
         y.expectedMessageCount(1);
@@ -83,6 +89,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRandomBulk() throws Exception {
         x.expectedMessageCount(10);
         y.expectedMessageCount(15);
@@ -105,6 +112,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testUnmatchedRatiosToProcessors() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

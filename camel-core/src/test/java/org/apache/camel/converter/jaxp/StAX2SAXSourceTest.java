@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -40,6 +42,7 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
+    @Test
     public void testDefaultPrefixInRootElementWithCopyTransformer() throws Exception {
         TransformerFactory trf = TransformerFactory.newInstance();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SimpleLanguageTransformRandomTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleTransform() throws Exception {
         int out = template.requestBodyAndHeader("direct:start", "Random number", "max", "5", int.class);
         assertTrue(out <= 5);

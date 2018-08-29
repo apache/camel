@@ -33,7 +33,7 @@ public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
 
     @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         deleteDirectory("target/filemove");
         super.setUp();
     }

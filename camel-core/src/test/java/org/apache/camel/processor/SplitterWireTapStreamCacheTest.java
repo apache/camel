@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,13 +32,15 @@ public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
     private MockEndpoint wiretapEnd;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         startEnd = getMockEndpoint("mock:startEnd");
         splitEnd = getMockEndpoint("mock:splitEnd");
         wiretapEnd = getMockEndpoint("mock:wireTapEnd");
     }
 
+    @Test
     public void testWireTapAfterSplitDeletesStreamCacheFileWhenSplitFinishes() throws Exception {
         startEnd.expectedMessageCount(1);
         splitEnd.expectedMessageCount(1);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ChoiceWithEndTest extends ContextTestSupport {
 
+    @Test
     public void testRouteIsCorrectAtRuntime() throws Exception {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = getRoute("direct://start").navigate();
@@ -56,6 +59,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
     public void testChoiceHello() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:echo").expectedBodiesReceived("echo Hello World");
@@ -66,6 +70,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testChoiceBye() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:bye").expectedBodiesReceived("We do not care");
@@ -76,6 +81,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testChoiceOther() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Camel");
         getMockEndpoint("mock:other").expectedBodiesReceived("other Camel");

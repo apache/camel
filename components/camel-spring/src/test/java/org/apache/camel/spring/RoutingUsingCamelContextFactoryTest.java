@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
     protected AbstractXmlApplicationContext applicationContext;
 
+   @Test
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
@@ -73,7 +77,8 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }

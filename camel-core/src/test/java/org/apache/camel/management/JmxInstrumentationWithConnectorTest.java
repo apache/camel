@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.rmi.NoSuchObjectException;
 import java.rmi.registry.LocateRegistry;
@@ -58,7 +62,8 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         registryPort = 30000 + new Random().nextInt(10000);
         log.info("Using port " + registryPort);
         url = "service:jmx:rmi:///jndi/rmi://localhost:" + registryPort + "/jmxrmi/camel";
@@ -71,7 +76,8 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         if (clientConnector != null) {
             try {
                 clientConnector.close();
@@ -102,6 +108,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         return mbsc;
     }
 
+    @Test
     public void testRmiRegistryUnexported() throws Exception {
 
         Registry registry = LocateRegistry.getRegistry(registryPort);

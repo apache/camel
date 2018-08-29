@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeExchangeException;
@@ -27,6 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanParameterNoBeanBindingTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterInvalidValueA() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,6 +31,7 @@ public class SpringSetPropertyNameDynamicTest extends ContextTestSupport {
         public static final String EXCHANGE_PROP_TX_FAILED = "ExchangePropTxFailed";
     }
 
+   @Test
     public void testSetPropertyNameWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedMessageCount(1);

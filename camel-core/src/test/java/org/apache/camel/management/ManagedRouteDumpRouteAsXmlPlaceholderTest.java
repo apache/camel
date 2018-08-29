@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -41,6 +43,7 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
         return answer;
     }
 
+    @Test
     public void testDumpAsXml() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

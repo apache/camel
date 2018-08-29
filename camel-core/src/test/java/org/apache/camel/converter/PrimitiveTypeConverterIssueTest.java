@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
 
@@ -24,6 +26,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class PrimitiveTypeConverterIssueTest extends ContextTestSupport {
 
+    @Test
     public void testPrimitiveTypeConverter() throws Exception {
         StopWatch watch = new StopWatch();
         for (int i = 0; i < 10000; i++) {

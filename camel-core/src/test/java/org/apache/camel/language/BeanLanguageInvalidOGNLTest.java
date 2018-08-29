@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,6 +33,7 @@ import org.apache.camel.component.bean.MethodNotFoundException;
  */
 public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
+    @Test
     public void testBeanLanguageInvalidOGNL() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

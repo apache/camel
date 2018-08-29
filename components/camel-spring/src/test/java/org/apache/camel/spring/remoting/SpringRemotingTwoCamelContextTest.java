@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.remoting;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
@@ -24,8 +26,9 @@ import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringRemotingTwoCamelContextTest extends TestCase {
+public class SpringRemotingTwoCamelContextTest extends Assert {
     
+   @Test
     public void testProxyWithTwoCamelContext() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);

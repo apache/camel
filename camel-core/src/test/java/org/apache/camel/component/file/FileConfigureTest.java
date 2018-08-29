@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +40,7 @@ public class FileConfigureTest extends ContextTestSupport {
         }
     };
 
+    @Test
     public void testUriConfigurations() throws Exception {
         assertFileEndpoint("file://target/foo/bar", EXPECT_PATH, false);
         assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH, false);
@@ -51,6 +55,7 @@ public class FileConfigureTest extends ContextTestSupport {
         assertFileEndpoint("file:///", File.separator, true);
     }
     
+    @Test
     public void testUriWithParameters() throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&consumer.bridgeErrorHandler=true"
             + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed", FileEndpoint.class);
@@ -75,6 +80,7 @@ public class FileConfigureTest extends ContextTestSupport {
         assertEquals("Get a wrong option of StartingDirectoryMustExist", false, endpoint.isStartingDirectoryMustExist());
     }
     
+    @Test
     public void testUriWithCharset() throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/foo/bar?charset=UTF-8", FileEndpoint.class);
         assertNotNull("Could not find endpoint: file://target/foo/bar?charset=UTF-8", endpoint);
@@ -89,6 +95,7 @@ public class FileConfigureTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConsumerConfigurations() throws Exception {
         FileConsumer consumer = createFileConsumer("file://target/foo/bar?recursive=true");
         assertNotNull(consumer);
@@ -101,7 +108,8 @@ public class FileConfigureTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         // one of the above tests created a /target folder in the root we want to get rid of when testing
         deleteDirectory("/target");

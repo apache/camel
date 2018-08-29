@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 public class AggregateGroupedExchangeSizeTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGroupedSize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 

@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.dataformat;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.MySerialBean;
 
 public class DataFormatEndpointSerializationTest extends ContextTestSupport {
 
+    @Test
     public void testSerialization() throws Exception {
         MySerialBean bean = new MySerialBean();
         bean.setId(123);

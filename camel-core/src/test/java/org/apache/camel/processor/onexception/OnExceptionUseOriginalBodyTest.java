@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
 
+    @Test
     public void testUseOriginalBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:a");
         dead.expectedBodiesReceived("Hello");
@@ -39,6 +42,7 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDoNotUseOriginalBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedBodiesReceived("Hello World");

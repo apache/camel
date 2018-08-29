@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -29,6 +31,7 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
 
     private MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
 
+    @Test
     public void testRestartRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

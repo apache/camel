@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
@@ -29,6 +31,7 @@ public class SpringInterceptSendToEndpointDynamicTest extends ContextTestSupport
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointDynamic.xml");
     }
 
+   @Test
     public void testInterceptFile() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -38,6 +41,7 @@ public class SpringInterceptSendToEndpointDynamicTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+   @Test
     public void testNoInterceptFile() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);

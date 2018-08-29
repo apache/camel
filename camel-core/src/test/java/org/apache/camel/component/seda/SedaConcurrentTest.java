@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -34,6 +36,7 @@ import org.apache.camel.impl.DefaultProducerTemplate;
  */
 public class SedaConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testSedaConcurrentInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -48,6 +51,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSedaConcurrentInOnlyWithAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -62,6 +66,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSedaConcurrentInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -88,6 +93,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         executors.shutdownNow();
     }
 
+    @Test
     public void testSedaConcurrentInOutWithAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);

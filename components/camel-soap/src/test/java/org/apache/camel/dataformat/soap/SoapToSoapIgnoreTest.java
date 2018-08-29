@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.soap;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
