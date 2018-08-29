@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -30,6 +32,7 @@ import org.apache.camel.processor.interceptor.Tracer;
  */
 public class ManagedCamelContextTracerTest extends ManagementTestSupport {
 
+    @Test
     public void testCamelContextTracing() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

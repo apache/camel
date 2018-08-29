@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,6 +35,7 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
 
     public static final int NUM_AGGREGATORS = 20;
 
+    @Test
     public void testThreadNotUsedForEveryAggregatorWithCustomExecutorService() throws Exception {
         assertTrue("There should not be a thread for every aggregator when using a shared thread pool", 
                 aggregateThreadsCount() < NUM_AGGREGATORS);

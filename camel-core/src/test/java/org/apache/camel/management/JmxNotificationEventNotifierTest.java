@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
@@ -55,6 +57,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDone() throws Exception {
         // START SNIPPET: e2
         // register the NotificationListener
@@ -82,6 +85,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
     public void testExchangeFailed() throws Exception {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
         

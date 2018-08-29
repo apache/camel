@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateRouteException;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AdviceWithReplaceFromTest extends ContextTestSupport {
 
+    @Test
     public void testReplaceFromUri() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -45,6 +48,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testReplaceFromEndpoint() throws Exception {
         final Endpoint endpoint = context.getEndpoint("seda:foo");
 
@@ -64,6 +68,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testReplaceFromInvalidUri() throws Exception {
         try {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {

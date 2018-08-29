@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -33,6 +35,7 @@ public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport 
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         String expectedBody = "Wobble";
 

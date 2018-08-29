@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.net.ConnectException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +39,7 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicate
 
     private final AtomicInteger invoked = new AtomicInteger();
 
+    @Test
     public void testIssue() throws Exception {
         final Predicate fail = PredicateBuilder.or(
             header(Exchange.REDELIVERY_COUNTER).isNull(),

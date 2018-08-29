@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 
@@ -30,6 +32,7 @@ public class SpringTryNestedFailTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringTryNestedFailTest.xml");
     }
 
+   @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:donkey").expectedMessageCount(0);
@@ -41,6 +44,7 @@ public class SpringTryNestedFailTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+   @Test
     public void testFail() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:donkey").expectedMessageCount(1);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ public class DataSetSedaTest extends ContextTestSupport {
     private SimpleDataSet dataSet = new SimpleDataSet(200);
     private String uri = "dataset:foo?initialDelay=0&produceDelay=1";
 
+    @Test
     public void testDataSetWithSeda() throws Exception {
         MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina2;
+import org.junit.Before;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class ContextScopedOnExceptionRouteScopedErrorHandlerRefIssueTwoRoutesTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionErrorHandlerRef() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);
@@ -39,6 +42,7 @@ public class ContextScopedOnExceptionRouteScopedErrorHandlerRefIssueTwoRoutesTes
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionErrorHandlerRefFoo() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(0);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +54,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void test1() throws Exception {
         if (!enabled) {
             return;
@@ -60,6 +63,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         timeSplitRoutes(numberOfRequests);
     }
 
+    @Test
     public void test2() throws Exception {
         if (!enabled) {
             return;
@@ -68,6 +72,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         timeSplitRoutes(numberOfRequests);
     }
 
+    @Test
     public void test4() throws Exception {
         if (!enabled) {
             return;

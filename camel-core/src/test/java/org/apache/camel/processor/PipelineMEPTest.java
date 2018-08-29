@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -30,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class PipelineMEPTest extends ContextTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(3);
@@ -47,6 +50,7 @@ public class PipelineMEPTest extends ContextTestSupport {
         assertEquals(ExchangePattern.InOnly, mock.getExchanges().get(0).getPattern());
     }
 
+    @Test
     public void testInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(3);

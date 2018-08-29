@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -31,6 +33,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
  */
 public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncAwaitInterrupt() throws Exception {
         context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
 

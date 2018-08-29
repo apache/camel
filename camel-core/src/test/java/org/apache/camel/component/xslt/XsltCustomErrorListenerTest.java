@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
@@ -67,6 +69,7 @@ public class XsltCustomErrorListenerTest extends TestSupport {
         }
     }
 
+    @Test
     public void testErrorListener() throws Exception {
         try {
             SimpleRegistry registry = new SimpleRegistry();

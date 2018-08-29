@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
 
@@ -26,6 +28,7 @@ public class SplitIteratorNullTest extends ContextTestSupport {
 
     private MyIterator myIterator = new MyIterator();
 
+    @Test
     public void testSplitIteratorNull() throws Exception {
         assertFalse(myIterator.isNullReturned());
         getMockEndpoint("mock:line").expectedBodiesReceived("A", "B", "C");

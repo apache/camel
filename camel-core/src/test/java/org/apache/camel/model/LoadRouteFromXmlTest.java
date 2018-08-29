@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class LoadRouteFromXmlTest extends ContextTestSupport {
 
+    @Test
     public void testLoadRouteFromXml() throws Exception {
         assertNotNull("Existing foo route should be there", context.getRoute("foo"));
         assertEquals(1, context.getRoutes().size());

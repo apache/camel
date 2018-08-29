@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.test;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class TestSedaTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSeda() throws Exception {
         template.sendBody("seda:testme", "Hello World");
 

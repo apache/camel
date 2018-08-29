@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
@@ -67,6 +69,7 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testDynamicRouterOne() throws Exception {
         interceptStrategy.reset();
 
@@ -81,6 +84,7 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
     }
 
+    @Test
     public void testDynamicRouterTwo() throws Exception {
         interceptStrategy.reset();
 

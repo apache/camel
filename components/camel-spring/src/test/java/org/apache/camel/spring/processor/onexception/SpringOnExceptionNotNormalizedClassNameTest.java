@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringOnExceptionNotNormalizedClassNameTest extends ContextTestSupport {
 
+   @Test
     public void testOrderError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("Order ERROR");

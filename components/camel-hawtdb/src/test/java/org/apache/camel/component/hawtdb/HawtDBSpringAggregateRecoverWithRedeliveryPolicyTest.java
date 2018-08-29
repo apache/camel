@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +38,8 @@ public class HawtDBSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelS
     }
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
     }

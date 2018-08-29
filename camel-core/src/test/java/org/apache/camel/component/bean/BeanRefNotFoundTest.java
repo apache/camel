@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
@@ -34,6 +36,7 @@ public class BeanRefNotFoundTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeanRefNotFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

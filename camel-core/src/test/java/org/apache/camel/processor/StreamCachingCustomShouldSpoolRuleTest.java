@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -32,11 +35,13 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
     private MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/cachedir");
         super.setUp();
     }
 
+    @Test
     public void testByteArrayInputStream() throws Exception {
         getMockEndpoint("mock:english").expectedBodiesReceived("<hello/>");
         getMockEndpoint("mock:dutch").expectedBodiesReceived("<hallo/>");

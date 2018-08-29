@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
@@ -27,6 +29,7 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
         return false;
     }
 
+    @Test
     public void testInterceptSendToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

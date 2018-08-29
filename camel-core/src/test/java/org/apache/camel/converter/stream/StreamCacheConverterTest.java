@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.stream;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -42,11 +45,13 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     private Exchange exchange;
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         this.exchange = new DefaultExchange(context);
     }
     
+    @Test
     public void testConvertToStreamCache() throws Exception {
         context.start();
 
@@ -57,6 +62,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         assertEquals("The converted message is wrong", MESSAGE, message);
     }
 
+    @Test
     public void testConvertToStreamCacheStreamSource() throws Exception {
         context.start();
 
@@ -69,6 +75,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         assertNotNull(converter.toString((Source)cache, null));
     }
 
+    @Test
     public void testConvertToStreamCacheInputStream() throws Exception {
         context.start();
 
@@ -81,6 +88,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         assertEquals(data, data2);
     }
     
+    @Test
     public void testConvertToStreamCacheInputStreamWithFileCache() throws Exception {
         exchange.getContext().getStreamCachingStrategy().setSpoolThreshold(1);
 
@@ -100,6 +108,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConvertToSerializable() throws Exception {
         context.start();
 
@@ -109,6 +118,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         assertNotNull(ser);
     }
 
+    @Test
     public void testConvertToByteArray() throws Exception {
         context.start();
 

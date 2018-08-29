@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +33,7 @@ public class AsyncEndpointIdempotentConsumerTest extends ContextTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("A", "B", "C");
 

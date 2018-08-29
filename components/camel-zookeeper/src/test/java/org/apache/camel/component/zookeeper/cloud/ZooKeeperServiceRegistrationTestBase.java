@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
+import org.junit.After;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -75,7 +76,8 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
 
         CloseableUtils.closeQuietly(discovery);

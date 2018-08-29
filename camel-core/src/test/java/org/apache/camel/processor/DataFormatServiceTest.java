@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -36,6 +38,7 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
     protected final MyDataFormat my = new MyDataFormat();
 
+    @Test
     public void testMarshal() throws Exception {
         assertEquals(true, my.isStarted());
         assertSame(context, my.getCamelContext());
@@ -52,6 +55,7 @@ public class DataFormatServiceTest extends ContextTestSupport {
         assertSame(context, my.getCamelContext());
     }
 
+    @Test
     public void testUnmarshal() throws Exception {
         assertEquals(true, my.isStarted());
         assertSame(context, my.getCamelContext());

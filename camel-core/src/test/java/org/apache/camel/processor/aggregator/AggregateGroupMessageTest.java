@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 public class AggregateGroupMessageTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 

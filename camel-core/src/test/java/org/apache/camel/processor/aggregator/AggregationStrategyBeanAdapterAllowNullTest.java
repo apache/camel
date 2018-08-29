@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,6 +30,7 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
 
     private MyUserAppender appender = new MyUserAppender();
 
+    @Test
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

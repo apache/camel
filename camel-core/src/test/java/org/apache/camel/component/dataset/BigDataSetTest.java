@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 import javax.naming.Context;
 
@@ -31,6 +33,7 @@ import org.junit.Ignore;
 public class BigDataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20000);
 
+    @Test
     public void testDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok

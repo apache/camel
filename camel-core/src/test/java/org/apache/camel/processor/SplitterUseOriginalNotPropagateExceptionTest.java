@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +38,7 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
         return context;
     }
 
+    @Test
     public void testUseOriginalNotPropgateException() throws Exception {
         assertEquals(0, notifier.getErrors());
 

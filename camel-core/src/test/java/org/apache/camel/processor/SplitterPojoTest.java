@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSplitBodyWithPojoBean() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
@@ -52,6 +55,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSplitMessageWithPojoBean() throws Exception {
         String users[] = {"James", "Jonathan", "Hadrian", "Claus", "Willem"};
         MockEndpoint mock = getMockEndpoint("mock:result");

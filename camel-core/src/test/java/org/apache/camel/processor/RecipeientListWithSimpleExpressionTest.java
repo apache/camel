@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,11 +37,13 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         disableJMX();
         super.setUp();
     }
 
+    @Test
     public void testRecipientList() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -83,6 +88,7 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testStatic() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

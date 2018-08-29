@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,12 +35,14 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     private String id;
 
+    @Test
     public void testMarshal() throws Exception {
         DefaultExchangeHolder holder = createHolder(true);
         assertNotNull(holder);
         assertNotNull(holder.toString());
     }
 
+    @Test
     public void testNoProperties() throws Exception {
         DefaultExchangeHolder holder = createHolder(false);
         assertNotNull(holder);
@@ -52,6 +56,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertNull(exchange.getProperty("bar"));
     }
 
+    @Test
     public void testUnmarshal() throws Exception {
         id = null;
         Exchange exchange = new DefaultExchange(context);
@@ -66,6 +71,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals(id, exchange.getExchangeId());
     }
 
+    @Test
     public void testSkipNonSerializableData() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");
@@ -83,6 +89,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertNull(exchange.getIn().getHeader("Foo"));
     }
 
+    @Test
     public void testSkipNonSerializableDataFromList() throws Exception {
         // use a mixed list, the MyFoo is not serializable so the entire list should be skipped
         List<Object> list = new ArrayList<>();
@@ -105,6 +112,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertNull(exchange.getIn().getHeader("Foo"));
     }
 
+    @Test
     public void testSkipNonSerializableDataFromMap() throws Exception {
         // use a mixed Map, the MyFoo is not serializable so the entire map should be skipped
         Map<String, Object> map = new HashMap<>();
@@ -127,6 +135,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertNull(exchange.getIn().getHeader("Foo"));
     }
 
+    @Test
     public void testCaughtException() throws Exception {
         // use a mixed list, the MyFoo is not serializable so the entire list should be skipped
         List<Object> list = new ArrayList<>();
@@ -152,6 +161,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals("Forced", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
     }
 
+    @Test
     public void testFileNotSupported() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/log4j2.properties"));

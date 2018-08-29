@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.Component;
@@ -35,6 +37,7 @@ public class InterceptSendToEndpointServicePoolProducerTest extends ContextTestS
 
     private MyProducer myProducer;
 
+    @Test
     public void testInterceptSendToEndpointServicePoolProducer() throws Exception {
         assertNotNull(myProducer);
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz2;
+import org.junit.After;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;

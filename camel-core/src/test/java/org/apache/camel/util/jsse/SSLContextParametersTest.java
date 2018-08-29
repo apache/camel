@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util.jsse;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,12 +29,13 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
-import junit.framework.AssertionFailedError;
+
 
 import org.apache.camel.CamelContext;
 
 public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
+    @Test
     public void testFilter() {
         SSLContextParameters parameters = new SSLContextParameters();
 
@@ -52,11 +55,12 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         try {
             assertStartsWith((String[]) null, "TLS");
             fail("We chould got an exception here!");
-        } catch (AssertionFailedError ex) {
+        } catch (AssertionError ex) {
             assertEquals("Get a wrong message", "The values should not be null", ex.getMessage());
         }
     }
 
+    @Test
     public void testPropertyPlaceholders() throws Exception {
 
         CamelContext camelContext = this.createPropertiesPlaceholderAwareContext();
@@ -114,6 +118,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         context.createSSLEngine();
     }
 
+    @Test
     public void testServerParametersClientAuthentication() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -170,6 +175,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertEquals(true, engine.getNeedClientAuth());
     }
 
+    @Test
     public void testServerParameters() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -310,6 +316,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertTrue(Arrays.asList(configured).containsAll(Arrays.asList(control)));
     }
 
+    @Test
     public void testClientParameters() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -433,6 +440,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertEquals(12345, context.getClientSessionContext().getSessionTimeout());
     }
 
+    @Test
     public void testCipherSuites() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -500,6 +508,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertEquals(controlEngine.getEnabledCipherSuites()[0], serverSocket.getEnabledCipherSuites()[0]);
     }
 
+    @Test
     public void testCipherSuitesFilter() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -580,6 +589,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         }
     }
 
+    @Test
     public void testSecureSocketProtocols() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -648,6 +658,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         }
     }
 
+    @Test
     public void testSecureSocketProtocolsFilter() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
         controlContext.init(null, null, null);
@@ -725,6 +736,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         }
     }
 
+    @Test
     public void testSessionTimeout() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
         scp.setSessionTimeout("60");
@@ -743,6 +755,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     }
 
+    @Test
     public void testDefaultSecureSocketProtocol() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
 
@@ -760,6 +773,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");
     }
 
+    @Test
     public void testSecureSocketProtocol() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
         scp.setSecureSocketProtocol("SSLv3");
@@ -795,6 +809,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertEquals(serverSocket.getEnabledProtocols()[0], "SSLv3");
     }
 
+    @Test
     public void testProvider() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
         scp.createSSLContext();

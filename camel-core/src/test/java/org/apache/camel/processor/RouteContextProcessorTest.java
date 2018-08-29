@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -51,6 +53,7 @@ public class RouteContextProcessorTest extends ContextTestSupport {
 
     private static final int NUMBER_OF_MESSAGES = 10000;
 
+    @Test
     public void testForkAndJoin() throws InterruptedException {
         // enable the other test method for manual testing
     }

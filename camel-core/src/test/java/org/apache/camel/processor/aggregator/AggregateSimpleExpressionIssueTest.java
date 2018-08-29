@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -47,11 +50,13 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
     private AggStrategy aggStrategy = new AggStrategy();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
     }
 
+    @Test
     public void testDummy() throws Exception {
         // noop
     }

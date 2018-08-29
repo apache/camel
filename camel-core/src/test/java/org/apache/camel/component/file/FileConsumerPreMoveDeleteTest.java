@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -30,11 +33,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/premove");
         super.setUp();
     }
 
+    @Test
     public void testPreMoveDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -49,6 +54,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         assertFalse("Pre move file should have been deleted", pre.exists());
     }
 
+    @Test
     public void testPreMoveDeleteSameFileTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

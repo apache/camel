@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mqtt;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -35,14 +37,16 @@ public abstract class MQTTBaseTest extends CamelTestSupport {
     protected int numberOfMessages = 10;
 
 
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         brokerService = MQTTTestSupport.newBrokerService();
         brokerService.start();
         super.setUp();
     }
 
 
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         if (brokerService != null) {
             brokerService.stop();

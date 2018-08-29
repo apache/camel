@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +25,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class SplitContinuedLogIssueTest extends ContextTestSupport {
 
+    @Test
     public void testFooBar() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("bar");
         getMockEndpoint("mock:line").expectedBodiesReceived("foo", "bar");
@@ -34,6 +37,7 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBarFoo() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("bar");
         getMockEndpoint("mock:line").expectedBodiesReceived("bar", "foo");

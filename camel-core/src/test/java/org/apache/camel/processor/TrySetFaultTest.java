@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class TrySetFaultTest extends ContextTestSupport {
 
+    @Test
     public void testSetFault() throws Exception {
         // only mock:start gets the message as a fault body stops routing
         getMockEndpoint("mock:start").expectedMessageCount(1);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -35,6 +37,7 @@ public class ManagedErrorHandlerOptionsTest extends ManagementTestSupport {
 
     private static int counter;
 
+    @Test
     public void testManagedErrorHandlerOptions() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

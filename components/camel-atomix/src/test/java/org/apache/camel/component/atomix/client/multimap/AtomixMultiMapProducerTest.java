@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.multimap;
+import org.junit.After;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,7 +63,8 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         map.close();
 
         super.tearDown();

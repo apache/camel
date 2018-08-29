@@ -90,8 +90,8 @@ public class XmppRouteTest extends TestCase {
         return body;
     }
 
-    @Override
-    protected void setUp() throws Exception {
+   @Override
+   protected void setUp() throws Exception {
         client = new ProducerCache(this, container, 10);
 
         String uriPrefix = getUriPrefix();
@@ -125,8 +125,8 @@ public class XmppRouteTest extends TestCase {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort() + "/camel?login=false&room=camel-anon";
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+   @Override
+   protected void tearDown() throws Exception {
         client.stop();
         container.stop();
         embeddedXmppTestServer.stop();

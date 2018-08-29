@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class SedaSuspendConsumerStopRouteTest extends ContextTestSupport {
 
+    @Test
     public void testSedaSuspendConsumerStopRoute() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

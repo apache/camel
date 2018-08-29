@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
 
     private MyInterceptor myInterceptor = new MyInterceptor();
 
+    @Test
     public void testCustomInterceptor() throws Exception {
         getMockEndpoint("mock:child").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedMessageCount(1);

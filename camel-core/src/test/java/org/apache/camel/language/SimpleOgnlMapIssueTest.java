@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SimpleOgnlMapIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleOgnlIssueKing() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -38,6 +41,7 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSimpleOgnlIssueOther() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);

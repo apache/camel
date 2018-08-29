@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.validator;
 
+import org.junit.Test;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +40,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
     private JndiRegistry registry;
 
+    @Test
     public void testConfigurationOnEndpoint() throws Exception {
         // ensure that validator from test method "testConfigurationOnComponent"
         // is unbind
@@ -49,6 +52,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         execute(directStart, endpointUri);
     }
 
+    @Test
     public void testConfigurationOnComponent() throws Exception {
         // set resource resolver factory on component
         ValidatorComponent validatorComponent = new ValidatorComponent();

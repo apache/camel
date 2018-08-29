@@ -16,21 +16,24 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.net.URL;
 import javax.xml.transform.ErrorListener;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class XsltTestErrorListenerTest extends TestCase {
+public class XsltTestErrorListenerTest extends Assert {
 
     private XsltBuilder xsltBuilder = new XsltBuilder();
     private ErrorListener errorListener = mock(ErrorListener.class);
 
+    @Test
     public void testErrorListener() throws Exception {
         // Xalan transformer cannot work as expected, so we just skip the test
         if (xsltBuilder.getConverter().getTransformerFactory().getClass().getName().startsWith("org.apache.xalan")) {

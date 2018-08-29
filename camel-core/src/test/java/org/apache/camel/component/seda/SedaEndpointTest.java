@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,6 +35,7 @@ public class SedaEndpointTest extends ContextTestSupport {
 
     private BlockingQueue<Exchange> queue = new ArrayBlockingQueue<>(1000);
 
+    @Test
     public void testSedaEndpointUnboundedQueue() throws Exception {
         BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<>();
         SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), unbounded);        
@@ -57,6 +60,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(0, seda.getExchanges().size());
     }
 
+    @Test
     public void testSedaEndpoint() throws Exception {
         SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), queue);
         assertNotNull(seda);
@@ -80,6 +84,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(0, seda.getExchanges().size());
     }
 
+    @Test
     public void testSedaEndpointTwo() throws Exception {
         SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), queue, 2);
         assertNotNull(seda);
@@ -103,6 +108,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(0, seda.getExchanges().size());
     }
 
+    @Test
     public void testSedaEndpointSetQueue() throws Exception {
         SedaEndpoint seda = new SedaEndpoint();
         assertNotNull(seda);
@@ -132,6 +138,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(0, seda.getExchanges().size());
     }
 
+    @Test
     public void testSedaConsumer() throws Exception {
         SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
         Consumer consumer = seda.createConsumer(new Processor() {
@@ -144,6 +151,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertNotNull(consumer.toString());
     }
     
+    @Test
     public void testSedaDefaultValue() throws Exception {
         SedaComponent sedaComponent = new SedaComponent();
         sedaComponent.setQueueSize(300);

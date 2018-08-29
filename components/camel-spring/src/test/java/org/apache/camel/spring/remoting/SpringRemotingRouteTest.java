@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.remoting;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
@@ -26,8 +28,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version 
  */
-public class SpringRemotingRouteTest extends TestCase {
+public class SpringRemotingRouteTest extends Assert {
     
+   @Test
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);

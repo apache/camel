@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterNullBodyTest extends ContextTestSupport {
 
+    @Test
     public void testSplitABC() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -36,6 +39,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitABCStreaming() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -45,6 +49,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitEmptyList() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -55,6 +60,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitEmptyListStreaming() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -65,6 +71,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitNullBody() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -74,6 +81,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitNullBodyStreaming() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);

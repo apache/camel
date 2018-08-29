@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs;
+import org.junit.After;
 
 import java.io.File;
 
@@ -45,7 +46,8 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         if (!canTest()) {
             return;
         }

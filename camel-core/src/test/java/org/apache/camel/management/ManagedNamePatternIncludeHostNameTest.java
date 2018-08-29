@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -37,6 +39,7 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
         return context;
     }
 
+    @Test
     public void testManagedNamePattern() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

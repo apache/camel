@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.log;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class LogEndpointOptionsTest extends ContextTestSupport {
 
+    @Test
     public void testLogEndpointOptions() throws Exception {
         LogEndpoint log = context.getEndpoint("log:foo?level=DEBUG&marker=bar&groupSize=20", LogEndpoint.class);
         assertNotNull(log);

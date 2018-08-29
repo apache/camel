@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
@@ -41,6 +43,7 @@ public class SpringSimplePropertyPlaceholderClashTest extends SpringTestSupport 
         };
     }
 
+   @Test
     public void testReplaceSimpleExpression() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.FILE_NAME, "/root/dir/test.txt");
 

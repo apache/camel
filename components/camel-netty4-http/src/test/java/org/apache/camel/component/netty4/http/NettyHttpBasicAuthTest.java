@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,13 +26,15 @@ import org.junit.Test;
 public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
         super.setUp();
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         System.clearProperty("java.security.auth.login.config");
         super.tearDown();
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -65,6 +67,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecipientListOne() throws Exception {
         interceptStrategy.reset();
 
@@ -79,6 +82,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
         assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
     }
 
+    @Test
     public void testRecipientListTwo() throws Exception {
         interceptStrategy.reset();
 

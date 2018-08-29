@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,6 +33,7 @@ import org.apache.camel.util.jndi.JndiContext;
 public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testConstantXPathHeaders() throws Exception {
         template.sendBodyAndHeader("bean:myBean", "<response>OK</response>",
                                    "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");

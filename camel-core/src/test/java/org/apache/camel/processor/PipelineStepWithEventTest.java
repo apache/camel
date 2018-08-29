@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -40,6 +42,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
 
     private final MyStepEventListener listener = new MyStepEventListener();
 
+    @Test
     public void testPipelineStep() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:a2").expectedMessageCount(1);

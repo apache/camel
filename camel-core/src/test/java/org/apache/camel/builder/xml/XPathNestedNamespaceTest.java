@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class XPathNestedNamespaceTest extends ContextTestSupport {
 
+    @Test
     public void testXPathNamespace() throws Exception {
         String xml = "<STPTradeML xmlns=\"http://www.barcap.com/gcd/stpengine/1-0\"><FpML><trade/></FpML></STPTradeML>";
 

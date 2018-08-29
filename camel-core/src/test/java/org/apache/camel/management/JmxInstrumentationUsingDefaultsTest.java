@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -56,6 +60,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMBeansRegistered() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -87,6 +92,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Could not find 1 route: " + s, 1, s.size());
     }
 
+    @Test
     public void testCounters() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -176,7 +182,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
 
@@ -187,7 +194,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         try {
             super.tearDown();
             releaseMBeanServers();

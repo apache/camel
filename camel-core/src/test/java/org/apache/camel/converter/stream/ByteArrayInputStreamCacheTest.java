@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.stream;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -27,6 +29,7 @@ import org.apache.camel.util.IOHelper;
  */
 public class ByteArrayInputStreamCacheTest extends ContextTestSupport {
 
+    @Test
     public void testByteArrayInputStream() throws Exception {
         ByteArrayInputStreamCache cache = new ByteArrayInputStreamCache(new ByteArrayInputStream("<foo>bar</foo>".getBytes()));
 

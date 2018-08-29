@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ public class MockEndpointWithParametersTest extends ContextTestSupport {
 
     private String uri = "smtp://host:9999?username=smtpusername&password=smtppassword";
 
+    @Test
     public void testMockEndpointWithParameter() throws Exception {
         getMockEndpoint(uri).expectedBodiesReceived("Hello World");
 

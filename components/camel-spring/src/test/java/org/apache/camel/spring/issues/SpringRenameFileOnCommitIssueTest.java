@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,11 +31,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/renameissue");
         super.setUp();
     }
 
+   @Test
     public void testFileRenameFileOnCommitIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

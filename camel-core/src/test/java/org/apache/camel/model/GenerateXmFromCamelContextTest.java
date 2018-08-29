@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.io.StringWriter;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class GenerateXmFromCamelContextTest extends ContextTestSupport {
 
+    @Test
     public void testCreateRouteFromCamelContext() throws Exception {
         List<RouteDefinition> list = context.getRouteDefinitions();
         assertEquals("Size of list " + list, 1, list.size());

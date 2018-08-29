@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 
@@ -29,6 +31,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         return "simple";
     }
 
+    @Test
     public void testSimpleBody() throws Exception {
         assertExpression(exchange, "${body}", "<hello id='m123'>world!</hello>");
         assertExpression(exchange, "$simple{body}", "<hello id='m123'>world!</hello>");
@@ -38,6 +41,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         assertPredicate("body", true);
     }
 
+    @Test
     public void testSimpleHeader() throws Exception {
         exchange.getIn().setHeader("foo", 123);
         assertExpression(exchange, "${header.foo}", 123);
@@ -50,6 +54,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         assertPredicate("header.unknown", false);
     }
 
+    @Test
     public void testSimpleLogicalAnd() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -61,6 +66,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleLogicalOr() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);

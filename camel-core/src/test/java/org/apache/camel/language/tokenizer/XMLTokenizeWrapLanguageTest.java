@@ -16,12 +16,15 @@
  */
 package org.apache.camel.language.tokenizer;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
 
 public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
 
+    @Test
     public void testSendClosedTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child></c:parent>", 
                                                               "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
@@ -32,6 +35,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendClosedTagWithLineBreaksMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<?xml version='1.0' encoding='UTF-8'?>\n<c:parent xmlns:c='urn:c'>\n<c:child some_attr='a' anotherAttr='a'>\n</c:child></c:parent>", 
                                                               "<?xml version='1.0' encoding='UTF-8'?>\n<c:parent xmlns:c='urn:c'>\n<c:child some_attr='b' anotherAttr='b'>\n</c:child></c:parent>");
@@ -48,6 +52,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendSelfClosingTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /></c:parent>", 
                                                               "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b' /></c:parent>");
@@ -58,6 +63,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child></c:parent>", 
@@ -71,6 +77,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendMixedClosingTagInsideMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child></c:parent>",
@@ -83,6 +90,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNamespacedChildMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child></c:parent>", 
@@ -95,6 +103,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNamespacedParentMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child></c:parent>", 
@@ -106,6 +115,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendMoreParentsMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
@@ -120,6 +130,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendParentMessagesWithDifferentAttributesToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='e' xmlns:c='urn:c' xmlns:d=\"urn:d\">"

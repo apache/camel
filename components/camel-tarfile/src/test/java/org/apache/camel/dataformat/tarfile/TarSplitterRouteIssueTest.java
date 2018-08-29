@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.tarfile;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -25,7 +26,8 @@ import org.junit.Test;
 public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/tar");
         super.setUp();
     }

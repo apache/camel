@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,6 +35,7 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCOnCompletionOnCompletionTest.class);
 
+    @Test
     public void testMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);

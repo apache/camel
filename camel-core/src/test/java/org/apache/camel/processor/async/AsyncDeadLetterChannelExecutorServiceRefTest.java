@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,6 +36,7 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
         return false;
     }
 
+    @Test
     public void testAsyncErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

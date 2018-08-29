@@ -19,9 +19,9 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ManagementAgent;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,26 +51,26 @@ public class ManagedResourceTest extends ManagementTestSupport {
         }
 
         final ManagementAgent managementAgent = context.getManagementStrategy().getManagementAgent();
-        TestCase.assertNotNull(managementAgent);
+        Assert.assertNotNull(managementAgent);
 
         final MBeanServer mBeanServer = managementAgent.getMBeanServer();
-        TestCase.assertNotNull(mBeanServer);
+        Assert.assertNotNull(mBeanServer);
 
         final String mBeanServerDefaultDomain = managementAgent.getMBeanServerDefaultDomain();
-        TestCase.assertEquals("org.apache.camel", mBeanServerDefaultDomain);
+        Assert.assertEquals("org.apache.camel", mBeanServerDefaultDomain);
 
         final String managementName = context.getManagementName();
-        TestCase.assertNotNull("CamelContext should have a management name if JMX is enabled", managementName);
+        Assert.assertNotNull("CamelContext should have a management name if JMX is enabled", managementName);
         LOG.info("managementName = {}", managementName);
 
         // Get the Camel Context MBean
         ObjectName onContext = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=" + managementName + ",type=context,name=\"" + context.getName() + "\"");
-        TestCase.assertTrue("Should be registered", mBeanServer.isRegistered(onContext));
+        Assert.assertTrue("Should be registered", mBeanServer.isRegistered(onContext));
 
         // Get myManagedBean
         ObjectName onManagedBean = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=" + managementName + ",type=processors,name=\"myManagedBean\"");
         LOG.info("Canonical Name = {}", onManagedBean.getCanonicalName());
-        TestCase.assertTrue("Should be registered", mBeanServer.isRegistered(onManagedBean));
+        Assert.assertTrue("Should be registered", mBeanServer.isRegistered(onManagedBean));
 
         // Send a couple of messages to get some route statistics
         template.sendBody("direct:start", "Hello Camel");
@@ -78,13 +78,13 @@ public class ManagedResourceTest extends ManagementTestSupport {
 
         // Get MBean attribute
         int camelsSeenCount = (Integer) mBeanServer.getAttribute(onManagedBean, "CamelsSeenCount");
-        TestCase.assertEquals(2, camelsSeenCount);
+        Assert.assertEquals(2, camelsSeenCount);
 
         // Stop the route via JMX
         mBeanServer.invoke(onManagedBean, "resetCamelsSeenCount", null, null);
 
         camelsSeenCount = (Integer) mBeanServer.getAttribute(onManagedBean, "CamelsSeenCount");
-        TestCase.assertEquals(0, camelsSeenCount);
+        Assert.assertEquals(0, camelsSeenCount);
 
         String camelId = (String) mBeanServer.getAttribute(onManagedBean, "CamelId");
         assertEquals(context.getName(), camelId);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs;
+import org.junit.After;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,7 +79,8 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         if (!canTest()) {
             return;
         }

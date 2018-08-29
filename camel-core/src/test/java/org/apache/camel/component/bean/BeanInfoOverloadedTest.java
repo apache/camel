@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.impl.DefaultMessage;
  */
 public class BeanInfoOverloadedTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInfoOverloaded() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 

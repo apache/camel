@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ManagementAgent;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -36,6 +38,7 @@ public class JMXAgentPropertiesTest extends JMXAgentTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfigUsingProperties.xml");
     }
 
+   @Test
     public void testEnableUseHostIPAddress() throws Exception {
         CamelContext ctx = createCamelContext();
         ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();

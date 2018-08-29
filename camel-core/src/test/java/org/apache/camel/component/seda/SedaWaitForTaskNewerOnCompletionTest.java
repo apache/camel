@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +35,7 @@ public class SedaWaitForTaskNewerOnCompletionTest extends ContextTestSupport {
     private static String done = "";
     private final CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testNever() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);

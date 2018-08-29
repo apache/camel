@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -34,6 +36,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         return false;
     }
 
+    @Test
     public void testLoadStatisticsAreDisabledByDefault() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -69,6 +72,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         assertEquals("", load15);
     }
 
+    @Test
     public void testEnableLoadStatistics() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

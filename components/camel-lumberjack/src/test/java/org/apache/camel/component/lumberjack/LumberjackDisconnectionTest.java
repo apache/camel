@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.lumberjack;
+import org.junit.Before;
 
 import java.util.List;
 import java.util.Map;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ public class FileConsumerIdempotentKeyChangedIssueTest extends ContextTestSuppor
 
     private Endpoint endpoint;
 
+    @Test
     public void testFile() throws Exception {
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World");
 

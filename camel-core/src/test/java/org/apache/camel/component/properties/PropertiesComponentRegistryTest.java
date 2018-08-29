@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
@@ -58,6 +60,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testPropertiesComponentRegistryPlain() throws Exception {
         context.start();
 
@@ -66,6 +69,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         assertNull(context.getRegistry().lookupByName("unknown"));
     }
 
+    @Test
     public void testPropertiesComponentRegistryLookupName() throws Exception {
         context.start();
 
@@ -81,6 +85,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertiesComponentRegistryLookupNameAndType() throws Exception {
         context.start();
 

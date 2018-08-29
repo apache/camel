@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class EnricherDslTest extends ContextTestSupport {
 
+    @Test
     public void testEnrich() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:enriched");
         mock.expectedBodiesReceived("res-1", "res-2", "res-3");

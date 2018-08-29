@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -66,6 +68,7 @@ public abstract class TracingTestBase extends ContextTestSupport {
         return tracedMessages.size();
     }
 
+    @Test
     public void testTracerInOnly() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         ((Tracer) context.getDefaultTracer()).setTraceOutExchanges(false);
@@ -81,6 +84,7 @@ public abstract class TracingTestBase extends ContextTestSupport {
         validateTestTracerInOnly();
     }
 
+    @Test
     public void testTracerInOut() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         ((Tracer) context.getDefaultTracer()).setTraceOutExchanges(true);
@@ -96,6 +100,7 @@ public abstract class TracingTestBase extends ContextTestSupport {
         validateTestTracerInOut();
     }
 
+    @Test
     public void testTracerExceptionInOut() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         ((Tracer) context.getDefaultTracer()).setTraceOutExchanges(true);

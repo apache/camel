@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.patterns;
+import org.junit.After;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,7 +36,8 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
 
         // should create that file when test is done

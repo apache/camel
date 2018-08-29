@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.net.URL;
 
@@ -24,7 +27,7 @@ import javax.activation.URLDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -33,9 +36,10 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version 
  */
-public class BodyAndHeaderConvertTest extends TestCase {
+public class BodyAndHeaderConvertTest extends Assert {
     protected Exchange exchange;
 
+    @Test
     public void testConversionOfBody() throws Exception {
         Document document = exchange.getIn().getBody(Document.class);
         assertNotNull(document);
@@ -43,16 +47,19 @@ public class BodyAndHeaderConvertTest extends TestCase {
         assertEquals("Root element name", "hello", element.getLocalName());
     }
 
+    @Test
     public void testConversionOfExchangeProperties() throws Exception {
         String text = exchange.getProperty("foo", String.class);
         assertEquals("foo property", "1234", text);
     }
 
+    @Test
     public void testConversionOfMessageHeaders() throws Exception {
         String text = exchange.getIn().getHeader("bar", String.class);
         assertEquals("bar header", "567", text);
     }
 
+    @Test
     public void testConversionOfMessageAttachments() throws Exception {
         DataHandler handler = exchange.getIn().getAttachment("att");
         assertNotNull("attachment got lost", handler);
@@ -60,9 +67,9 @@ public class BodyAndHeaderConvertTest extends TestCase {
         assertNotNull("attachment got lost", attachment);
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.setProperty("foo", 1234);
         Message message = exchange.getIn();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,6 +46,7 @@ public class PublishEventNotifierToRouteTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:event").expectedMinimumMessageCount(6);
@@ -53,6 +56,7 @@ public class PublishEventNotifierToRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExchangeFailed() throws Exception {
         getMockEndpoint("mock:event").expectedMinimumMessageCount(4);
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.config;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class SpringProduceInjectedPrototypeBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringProduceInjectedPrototypeBeanTest.xml");
     }
 
+   @Test
     public void testProduceInjectedOnce() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
@@ -41,6 +44,7 @@ public class SpringProduceInjectedPrototypeBeanTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+   @Test
     public void testProduceInjectedTwice() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 

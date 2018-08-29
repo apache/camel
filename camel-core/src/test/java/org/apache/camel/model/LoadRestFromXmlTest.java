@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLoadRestFromXml() throws Exception {
         assertNotNull("Existing foo route should be there", context.getRoute("foo"));
 

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -34,6 +37,7 @@ public class FileValidatorRouteTest extends ContextTestSupport {
     protected MockEndpoint finallyEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -49,6 +53,7 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/validator/valid.xml")));
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -65,7 +70,8 @@ public class FileValidatorRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/validator");
         super.setUp();
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

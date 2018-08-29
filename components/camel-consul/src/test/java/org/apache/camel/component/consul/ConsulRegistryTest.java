@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.consul;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.Serializable;
 import java.util.HashMap;

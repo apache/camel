@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,11 +32,13 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
     private String fileUrl = "file://target/poll/?initialDelay=0&delay=10&maxMessagesPerPoll=2";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/poll");
         super.setUp();
     }
 
+    @Test
     public void testMaxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // we should poll at most 2

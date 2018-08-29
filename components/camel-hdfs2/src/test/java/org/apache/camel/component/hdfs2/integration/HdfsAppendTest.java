@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs2.integration;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +39,8 @@ public class HdfsAppendTest extends CamelTestSupport {
     }
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
 
         Configuration conf = new Configuration();
@@ -113,7 +116,8 @@ public class HdfsAppendTest extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
 
         Thread.sleep(250);

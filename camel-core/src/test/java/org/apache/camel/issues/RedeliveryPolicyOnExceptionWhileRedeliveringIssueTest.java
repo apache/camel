@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -53,6 +55,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
             }
         }
     }
+    @Test
     public void testMessageShouldGoToError() throws Exception {
         String msg = "payload";
 

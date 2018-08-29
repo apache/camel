@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.config;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RouteRefTest extends SpringTestSupport {
 
+   @Test
     public void testRouteRefInside() throws Exception {
         getMockEndpoint("mock:inside").expectedMessageCount(1);
 
@@ -33,6 +36,7 @@ public class RouteRefTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+   @Test
     public void testRouteRefOutside() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

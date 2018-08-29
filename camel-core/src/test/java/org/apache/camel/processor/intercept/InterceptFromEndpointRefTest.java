@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +36,7 @@ public class InterceptFromEndpointRefTest extends ContextTestSupport {
         return new DefaultCamelContext(reg);
     }
 
+    @Test
     public void testIntercept() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(1);
         getMockEndpoint("mock:first").expectedMessageCount(1);

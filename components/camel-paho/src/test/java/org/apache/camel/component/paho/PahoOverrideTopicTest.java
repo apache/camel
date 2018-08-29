@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.paho;
+import org.junit.After;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.builder.RouteBuilder;
@@ -47,7 +48,8 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         broker.stop();
     }

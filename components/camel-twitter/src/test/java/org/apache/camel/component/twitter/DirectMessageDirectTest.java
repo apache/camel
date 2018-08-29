@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.twitter;
+import org.junit.Before;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ import org.slf4j.LoggerFactory;
 public class DirectMessageDirectTest extends CamelTwitterConsumerTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         /* Uncomment when you need a test direct message
         TwitterConfiguration properties = new TwitterConfiguration();

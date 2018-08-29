@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.zipfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +36,8 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 5;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
     }

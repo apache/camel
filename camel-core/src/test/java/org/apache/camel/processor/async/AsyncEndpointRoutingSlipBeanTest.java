@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +35,7 @@ public class AsyncEndpointRoutingSlipBeanTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 

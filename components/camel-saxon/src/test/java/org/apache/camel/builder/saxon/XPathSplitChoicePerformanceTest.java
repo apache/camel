@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.builder.saxon;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +46,8 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
     }

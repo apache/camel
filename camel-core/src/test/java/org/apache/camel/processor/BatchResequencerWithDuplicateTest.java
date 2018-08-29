@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,6 +32,7 @@ public class BatchResequencerWithDuplicateTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testBatchResequencerAllowDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -54,6 +57,7 @@ public class BatchResequencerWithDuplicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBatchResequencerNoDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

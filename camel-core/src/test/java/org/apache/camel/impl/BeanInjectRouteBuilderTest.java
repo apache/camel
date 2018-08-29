@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -46,6 +48,7 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testBeanInject() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

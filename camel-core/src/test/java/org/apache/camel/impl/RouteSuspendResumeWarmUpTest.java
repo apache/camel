@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +31,7 @@ public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
 
     private MyService service = new MyService();
 
+    @Test
     public void testRouteSuspendResumeWarmUpTest() throws Exception {
         assertEquals("start", service.getState());
 

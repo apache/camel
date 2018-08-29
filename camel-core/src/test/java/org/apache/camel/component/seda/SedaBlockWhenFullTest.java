@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -46,6 +48,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSedaOfferTimeoutWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(SEDA_WITH_OFFER_TIMEOUT_URI, SedaEndpoint.class);
@@ -60,6 +63,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSedaDefaultWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
@@ -73,6 +77,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 2);
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
@@ -82,6 +87,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testAsyncSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
         getMockEndpoint(MOCK_URI).setResultWaitTime(DELAY_LONG * 3);

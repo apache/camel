@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -28,7 +29,8 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
     private HawtDBFile hawtDBFile;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
         File file = new File("target/data/hawtdb.dat");

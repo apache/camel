@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.jaxrs.simplebinding;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 import java.io.InputStream;
@@ -63,13 +65,15 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
     
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
     
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
     }

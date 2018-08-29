@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,6 +37,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOneProcesssor() throws Exception {
         failed = false;
 
@@ -80,6 +83,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreeProcesssors() throws Exception {
         failed = false;
 

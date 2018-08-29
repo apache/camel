@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,12 +32,14 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
 
         super.setUp();
     }
 
+    @Test
     public void testFileConsumeDoneFileIssue() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
@@ -60,6 +65,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertFalse("Done file should be deleted", new File("target/done/foo.done").exists());
     }
     
+    @Test
     public void testFileConsumeDynamicDoneFileName() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
@@ -90,6 +96,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         
     }
     
+    @Test
     public void testFileDoneFileNameContainingDollarSign() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 

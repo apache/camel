@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -28,7 +29,8 @@ public class LevelDBAggregationRepositoryRecoverExistingTest extends CamelTestSu
     private LevelDBFile levelDBFile;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
         File file = new File("target/data/leveldb.dat");

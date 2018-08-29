@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import java.util.Date;
 
@@ -39,7 +40,8 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailSortTermTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
     }

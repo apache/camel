@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StartupListener;
@@ -62,6 +64,7 @@ public class StartupListenerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testStartupListenerComponent() throws Exception {
         // and now the routes are started
         assertTrue(context.getRouteStatus("foo").isStarted());
@@ -76,6 +79,7 @@ public class StartupListenerTest extends ContextTestSupport {
         assertFalse(my.isAlreadyStarted());
     }
 
+    @Test
     public void testStartupListenerComponentAlreadyStarted() throws Exception {
         // and now the routes are started
         assertTrue(context.getRouteStatus("foo").isStarted());

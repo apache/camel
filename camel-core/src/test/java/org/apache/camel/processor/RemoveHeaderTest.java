@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class RemoveHeaderTest extends ContextTestSupport {
     private String headerName = "foo";
     private String expectedHeaderValue = "bar";
 
+    @Test
     public void testSetHeaderMidRouteThenRemove() throws Exception {
         mid.expectedMessageCount(1);
         end.expectedMessageCount(1);
@@ -52,7 +56,8 @@ public class RemoveHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         end = getMockEndpoint("mock:end");
         mid = getMockEndpoint("mock:mid");

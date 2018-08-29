@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -37,6 +40,7 @@ public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNoMessageId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -74,7 +78,8 @@ public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

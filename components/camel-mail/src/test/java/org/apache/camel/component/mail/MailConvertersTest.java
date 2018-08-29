@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import java.io.InputStream;
 import javax.mail.Message;
@@ -34,7 +35,8 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailConvertersTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         Mailbox.clearAll();
         super.setUp();
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
@@ -25,6 +27,7 @@ import org.apache.camel.PollingConsumer;
  */
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
+    @Test
     public void testCacheConsumers() throws Exception {
         ConsumerCache cache = new ConsumerCache(this, context);
         cache.start();

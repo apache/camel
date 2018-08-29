@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class AdviceWithIssueTest extends ContextTestSupport {
 
+    @Test
     public void testNoAdvice() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -42,6 +45,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithErrorHandler() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         try {
@@ -57,6 +61,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAdviceWithOnException() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {
@@ -77,6 +82,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithInterceptFrom() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {
@@ -95,6 +101,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {
@@ -113,6 +120,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithOnCompletion() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {

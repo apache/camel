@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testEndChoiceInvalid() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -48,6 +51,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testEndChoiceValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -75,6 +79,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndChoiceEndValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

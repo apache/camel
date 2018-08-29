@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +37,7 @@ public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
     private ExecutorService executorService;
     private CountDownLatch latch;
 
+    @Test
     public void testManual() throws Exception {
         // noop
     }

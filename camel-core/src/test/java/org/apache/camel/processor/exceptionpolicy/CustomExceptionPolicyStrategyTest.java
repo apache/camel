@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.CamelException;
@@ -52,6 +54,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     }
     // END SNIPPET e2
 
+    @Test
     public void testCustomPolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);

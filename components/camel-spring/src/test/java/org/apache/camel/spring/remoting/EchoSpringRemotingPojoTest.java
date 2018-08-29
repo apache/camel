@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.remoting;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,11 +32,13 @@ public class EchoSpringRemotingPojoTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/echo-pojo.xml");
     }
 
+   @Test
     public void testPojoOk() throws Exception {
         String out = template.requestBody("direct:start", "Claus", String.class);
         assertEquals("Claus Claus", out);
     }
 
+   @Test
     public void testPojoKabom() throws Exception {
         try {
             template.requestBody("direct:start", "Kabom", String.class);

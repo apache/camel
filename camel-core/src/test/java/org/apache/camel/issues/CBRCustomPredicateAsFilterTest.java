@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCBRCustomPredicateAsFilter() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:secret").expectedBodiesReceived("secret");

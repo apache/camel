@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
 
+    @Test
     public void testDirect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -44,6 +47,7 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDirectExistingExists() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

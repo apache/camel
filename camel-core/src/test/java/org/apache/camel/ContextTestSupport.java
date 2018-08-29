@@ -29,6 +29,8 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -79,8 +81,10 @@ public abstract class ContextTestSupport extends TestSupport {
         return new NotifyBuilder(context);
     }
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
 
@@ -121,8 +125,8 @@ public abstract class ContextTestSupport extends TestSupport {
         
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         log.debug("tearDown test: {}", getName());
         if (consumer != null) {
             consumer.stop();
@@ -133,6 +137,8 @@ public abstract class ContextTestSupport extends TestSupport {
         stopCamelContext();
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
         System.clearProperty("CamelSedaPollTimeout");
+
+        super.tearDown();
     }
 
     /**

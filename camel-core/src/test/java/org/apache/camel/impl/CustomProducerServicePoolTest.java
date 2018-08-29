@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -123,6 +125,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testCustomProducerServicePool() throws Exception {
         MyPool pool = new MyPool();
         pool.start();
@@ -155,6 +158,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         assertIsInstanceOf(MyPool.class, context.getProducerServicePool());
     }
 
+    @Test
     public void testCustomProducerServicePoolInRoute() throws Exception {
         context.addEndpoint("my", new MyEndpoint("my", context));
 

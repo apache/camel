@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.TimeZone;
@@ -35,6 +37,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testStaticFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         TimeZone tz = TimeZone.getDefault();
@@ -43,6 +46,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         assertEquals("Time talks", money);
     }
 
+    @Test
     public void testStaticFallbackMandatoryConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         TimeZone tz = TimeZone.getDefault();
@@ -51,6 +55,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         assertEquals("Time talks", money);
     }
 
+    @Test
     public void testStaticFallbackMandatoryFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
@@ -62,6 +67,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testStaticFallbackFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 

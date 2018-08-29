@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +30,8 @@ public class ResequencerFileNameTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
     }
@@ -42,6 +46,7 @@ public class ResequencerFileNameTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testStreamResequence() throws Exception {
         resultEndpoint.expectedBodiesReceived("20090612-D001", "20090612-D003");
         template.requestBody("direct:start", "20090612-D003");

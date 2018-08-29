@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -34,6 +36,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAsyncDefaultErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

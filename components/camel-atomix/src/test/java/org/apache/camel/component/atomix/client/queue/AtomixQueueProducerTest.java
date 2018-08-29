@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.queue;
+import org.junit.After;
 
 import java.util.Collections;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         queue.close();
 
         super.tearDown();

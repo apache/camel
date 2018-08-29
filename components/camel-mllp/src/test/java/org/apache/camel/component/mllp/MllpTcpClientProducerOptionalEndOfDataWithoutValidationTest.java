@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.mllp;
 
+import org.junit.Test;
+
 public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends TcpClientProducerEndOfDataAndValidationTestSupport {
     @Override
     boolean requireEndOfData() {
@@ -30,6 +32,7 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends
 
 
     @Override
+   @Test
     public void testSendSingleMessageWithoutEndOfData() throws Exception {
         expectedAACount = 1;
 
@@ -37,6 +40,7 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends
     }
 
     @Override
+   @Test
     public void testSendMultipleMessagesWithoutEndOfDataByte() throws Exception {
         expectedAACount = 3;
 
@@ -44,16 +48,19 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends
     }
 
     @Override
+   @Test
     public void testEmptyAcknowledgement() throws Exception {
         runEmptyAcknowledgement(aa);
     }
 
     @Override
+   @Test
     public void testInvalidAcknowledgement() throws Exception {
         runInvalidAcknowledgement(aa);
     }
 
     @Override
+   @Test
     public void testMissingEndOfDataByte() throws Exception {
         expectedAACount = 3;
         expectedTimeoutCount = 0;
@@ -62,6 +69,7 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends
     }
 
     @Override
+   @Test
     public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
         expectedAACount = 1;
 
@@ -69,6 +77,7 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends
     }
 
     @Override
+   @Test
     public void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception {
         expectedAACount = 1;
 
@@ -76,6 +85,7 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest extends
     }
 
     @Override
+   @Test
     public void testSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception {
         expectedAACount = 3;
 

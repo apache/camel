@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
@@ -25,6 +27,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmMultipleContextsStartStopTest extends AbstractVmTestSupport {
 
+   @Test
     public void testStartStop() throws Exception {
         /* Check that contexts are communicated */
         MockEndpoint mock = context2.getEndpoint("mock:result", MockEndpoint.class);

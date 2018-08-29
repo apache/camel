@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateDiscardOnTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedMessageCount(0);

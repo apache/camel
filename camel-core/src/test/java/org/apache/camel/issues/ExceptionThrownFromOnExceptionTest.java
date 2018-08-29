@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,6 +40,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testExceptionThrownFromOnException() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -97,6 +100,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionAndHandled() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -158,6 +162,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -223,6 +228,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -290,6 +296,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testNoExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -357,6 +364,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testNoExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);

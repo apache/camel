@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.mllp;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 

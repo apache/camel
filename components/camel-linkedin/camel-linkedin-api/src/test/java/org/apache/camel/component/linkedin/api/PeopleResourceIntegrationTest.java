@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.linkedin.api;
+import org.junit.Before;
 
 import java.util.Date;
 

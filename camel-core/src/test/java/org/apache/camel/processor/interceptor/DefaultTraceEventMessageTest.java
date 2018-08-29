@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Date;
@@ -33,6 +35,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class DefaultTraceEventMessageTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultTraceEventMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         MockEndpoint traced = getMockEndpoint("mock:traced");
@@ -71,6 +74,7 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
         assertEquals("{cheese=789}", em.getOutHeaders());
     }
     
+    @Test
     public void testDefaultTraceEventMessageBody() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("target/test"));
@@ -84,6 +88,7 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
         assertEquals("Get a wrong body string", "[Body is instance of java.io.InputStream]", em.getBody());
     }
  
+    @Test
     public void testDefaultTraceEventMessageOptions() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         DefaultTraceEventMessage em = new DefaultTraceEventMessage(new Date(), null, exchange);

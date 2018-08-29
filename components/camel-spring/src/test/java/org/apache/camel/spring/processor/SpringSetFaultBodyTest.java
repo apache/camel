@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spring.SpringTestSupport;
@@ -32,6 +34,7 @@ public class SpringSetFaultBodyTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringSetFaultBodyTest.xml");
     }
 
+   @Test
     public void testSetFaultBody() throws Exception {
         Exchange out = template.request("direct:start", new Processor() {
             @Override

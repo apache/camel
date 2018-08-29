@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -27,6 +29,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends TransactionalClientDataSourceTest {
 
+   @Test
     public void testTransactionRollbackWithExchange() throws Exception {
         Exchange out = template.send("direct:fail", new Processor() {
             public void process(Exchange exchange) throws Exception {

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -39,12 +42,14 @@ public class NoStreamCachingTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
         b = getMockEndpoint("mock:b");
     }
 
+    @Test
     public void testNoStreamCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -64,6 +69,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
+    @Test
     public void testNoStreamCacheIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -83,6 +89,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
+    @Test
     public void testMixed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.net.ConnectException;
 
 import org.apache.camel.CamelExecutionException;
@@ -31,6 +33,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends ContextTestSupport {
 
+    @Test
     public void testIssue() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new RouteBuilder() {

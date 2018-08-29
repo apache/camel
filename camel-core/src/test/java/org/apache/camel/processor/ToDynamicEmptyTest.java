@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ToDynamicEmptyTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamic() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
@@ -31,6 +34,7 @@ public class ToDynamicEmptyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToDynamicEmpty() throws Exception {
         template.sendBody("direct:start", "Hello Camel");
         // its empty so not sending anywhere

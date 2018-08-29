@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -38,6 +40,7 @@ public class CollectionProducerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCollectionProducer() throws Exception {
         Queue<Exchange> queue = new ArrayBlockingQueue<>(10);
 

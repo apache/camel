@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.avro;
+import org.junit.After;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
@@ -28,7 +29,8 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.xml;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.Processor;
@@ -89,11 +91,13 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     }
 
     @Override
+   @Test
     public void testIdempotentConsumer() throws Exception {
         // is tested elsewhere
     }
 
     @Override
+   @Test
     public void testRouteWithInterceptor() throws Exception {
         // is tested elsewhere
     }

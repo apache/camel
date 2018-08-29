@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
@@ -30,6 +33,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
     protected MockEndpoint finallyEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -49,6 +53,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testValidMessageNoHealth() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -64,6 +69,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testValidMessageNoHealthNoNamespace() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -79,6 +85,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -97,6 +104,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidMessageNoHealth() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -111,6 +119,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidMessageNoHealthNoNamespace() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -126,7 +135,8 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

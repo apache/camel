@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -44,6 +46,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     private final int size = 100;
     private final String uri = "direct:start";
 
+    @Test
     public void testAggregateConcurrency() throws Exception {
         int total = 0;
         ExecutorService service = Executors.newFixedThreadPool(20);

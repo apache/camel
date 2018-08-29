@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,6 +48,7 @@ public class MethodNotFoundExceptionSimplifiedTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testMethodNotFound() throws Exception {
         MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);

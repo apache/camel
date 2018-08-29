@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class BeanAbstractMethodIssueTest extends ContextTestSupport {
 
+    @Test
     public void testAbstractMethod() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(1);
 

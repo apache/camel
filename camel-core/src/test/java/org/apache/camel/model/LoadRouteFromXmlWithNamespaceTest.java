@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
+    @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
         InputStream inputStream = getClass().getResourceAsStream("routeWithNamespace.xml");
         RoutesDefinition routes = context.loadRoutesDefinition(inputStream);

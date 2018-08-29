@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.InputStream;
 import javax.xml.transform.sax.SAXSource;
@@ -35,6 +37,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SAXSourceLogBodyTest extends ContextTestSupport {
 
+    @Test
     public void testSAXSource() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

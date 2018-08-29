@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +40,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     private static CountDownLatch latch = new CountDownLatch(2);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/pending");
         super.setUp();
 
@@ -48,6 +52,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
     }
 
+    @Test
     public void testShutdownCompleteAllTasks() throws Exception {
         // give it 30 seconds to shutdown
         context.getShutdownStrategy().setTimeout(30);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.After;
+
+import org.junit.Test;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -53,7 +56,8 @@ public class ManagedServiceUrlPathTest extends ManagementTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         try {
             if (clientConnector != null) {
@@ -64,6 +68,7 @@ public class ManagedServiceUrlPathTest extends ManagementTestSupport {
         }
     }
 
+    @Test
     public void testConnectToJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

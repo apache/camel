@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import javax.sql.DataSource;
 
@@ -37,7 +40,8 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
     }
 
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
 
         // create database and insert dummy data
@@ -45,6 +49,7 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
         jdbc = new JdbcTemplate(ds);
     }
 
+   @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
@@ -52,6 +57,7 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
         assertEquals("Number of books", 3, count);
     }
 
+   @Test
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,12 +32,14 @@ import org.apache.camel.builder.RouteBuilder;
 public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
         super.setUp();
     }
 
+    @Test
     public void testRecipientListUseOriginalMessageIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
 

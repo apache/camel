@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public class EndpointCompletionTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
+    @Test
     public void testEndpointCompletion() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -54,6 +57,7 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
     }
 
+    @Test
     public void testEndpointConfigurationJson() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

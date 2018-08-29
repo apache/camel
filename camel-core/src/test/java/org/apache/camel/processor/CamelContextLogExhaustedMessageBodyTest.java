@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class CamelContextLogExhaustedMessageBodyTest extends ContextTestSupport {
 
+    @Test
     public void testLogExhaustedMessageHistoryWithMessageBody() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

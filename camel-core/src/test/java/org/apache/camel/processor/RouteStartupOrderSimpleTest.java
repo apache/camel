@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.RouteStartupOrder;
  */
 public class RouteStartupOrderSimpleTest extends ContextTestSupport {
 
+    @Test
     public void testRouteStartupOrder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

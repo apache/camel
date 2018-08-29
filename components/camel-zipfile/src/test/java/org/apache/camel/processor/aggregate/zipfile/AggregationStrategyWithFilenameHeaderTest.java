@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.zipfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.util.Arrays;
@@ -35,7 +36,8 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
     private static final List<String> FILE_NAMES = Arrays.asList("foo", "bar");
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
     }

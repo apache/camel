@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xstream;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +44,8 @@ public class XStreamConfigurationTest extends CamelTestSupport {
     private static volatile boolean methodInjected;
     
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         constructorInjected = false;
         methodInjected = false;

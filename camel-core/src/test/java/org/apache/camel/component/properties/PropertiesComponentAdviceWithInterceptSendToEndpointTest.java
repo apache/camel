@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class PropertiesComponentAdviceWithInterceptSendToEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWithInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinition("foo");
         route.adviceWith(context, new RouteBuilder() {

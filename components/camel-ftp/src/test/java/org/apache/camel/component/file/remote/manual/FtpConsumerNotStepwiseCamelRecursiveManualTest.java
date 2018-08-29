@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote.manual;
+import org.junit.Before;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -25,7 +26,8 @@ import org.junit.Test;
 public class FtpConsumerNotStepwiseCamelRecursiveManualTest extends CamelTestSupport {
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/ftptest");
         super.setUp();
     }

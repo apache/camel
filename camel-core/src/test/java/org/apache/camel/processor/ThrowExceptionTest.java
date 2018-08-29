@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ThrowExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testThrowException() throws Exception {
         getMockEndpoint("mock:start").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);

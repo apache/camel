@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +31,7 @@ public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
 
     private String body = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 
+    @Test
     public void testReduceStacksNeeded() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived(body);

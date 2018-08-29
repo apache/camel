@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -121,6 +123,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testByteArrayInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("<start></start>");
@@ -140,6 +143,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testFileInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("James,Guillaume,Hiram,Rob,Roman");
@@ -161,6 +165,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("A");
@@ -184,6 +189,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testReaderCache() throws Exception {
         String abcScharpS = "ABC\u00DF"; // sharp-s
 
@@ -198,6 +204,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testStreamSourceCacheWithInputStream() throws Exception {
         String input = "<A>a</A>";
 
@@ -212,6 +219,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testStreamSourceCacheWithReader() throws Exception {
         String input = "ABC\u00DF"; // sharp-s
 
@@ -227,6 +235,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSourceCache() throws Exception {
         String input = "<A>a</A>";
 

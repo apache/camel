@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.CamelExecutionException;
@@ -34,6 +36,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
 
     private MyBean bean;
 
+    @Test
     public void testEcho() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("echo Hello World");
@@ -45,6 +48,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                    mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
     }
     
+    @Test
     public void testEchoWithMethodHeaderHi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("hi Hello World");
@@ -57,6 +61,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testMixedBeanEndpoints() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("hi hi Hello World");
@@ -69,6 +74,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("hi Hello World");
@@ -78,6 +84,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFail() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");
@@ -89,6 +96,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMethodNotExists() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -105,6 +113,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMethodNotExistsOnInstance() throws Exception {
         final MyBean myBean = new MyBean();
         try {

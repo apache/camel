@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
@@ -37,6 +39,7 @@ public class LanguageServiceTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLanguageService() throws Exception {
         MyLanguage myl = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl);
@@ -57,6 +60,7 @@ public class LanguageServiceTest extends ContextTestSupport {
         assertTrue(context.getLanguageNames().isEmpty());
     }
 
+    @Test
     public void testNonSingletonLanguage() throws Exception {
         Language tol = context.resolveLanguage("tokenize");
         assertNotNull(tol);

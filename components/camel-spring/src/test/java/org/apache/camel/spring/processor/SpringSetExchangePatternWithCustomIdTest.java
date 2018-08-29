@@ -17,6 +17,8 @@
 
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.SetExchangePatternTest;
 
@@ -25,6 +27,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringSetExchangePatternWithCustomIdTest extends SetExchangePatternTest {
 
     @Override
+   @Test
     public void testToWithInOnlyParam() throws Exception {
         super.testToWithInOnlyParam();
 

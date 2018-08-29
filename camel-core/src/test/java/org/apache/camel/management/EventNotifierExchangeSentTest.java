@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -39,6 +42,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
     protected static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -75,6 +79,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeSent() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -110,6 +115,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
     }
 
+    @Test
     public void testExchangeSentRecipient() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -147,6 +153,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("direct://foo", e11.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testExchangeWireTap() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

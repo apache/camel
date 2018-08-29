@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import javax.sql.DataSource;
 
@@ -43,13 +46,15 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
 
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
     }
 
+   @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
@@ -57,6 +62,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
+   @Test
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

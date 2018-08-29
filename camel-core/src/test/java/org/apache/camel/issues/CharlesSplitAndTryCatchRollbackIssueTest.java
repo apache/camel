@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplitWithTryCatchAndRollbackOK() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -44,6 +47,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitWithTryCatchAndRollbackILE() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -58,6 +62,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitWithTryCatchAndRollbackException() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -80,6 +85,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitWithTryCatchAndRollbacILEAndException() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");

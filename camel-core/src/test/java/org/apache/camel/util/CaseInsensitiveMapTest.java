@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -32,14 +34,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
  * @version 
  */
-public class CaseInsensitiveMapTest extends TestCase {
+public class CaseInsensitiveMapTest extends Assert {
 
+    @Test
     public void testLookupCaseAgnostic() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -51,6 +54,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals("cheese", map.get("FOO"));
     }
 
+    @Test
     public void testLookupCaseAgnosticAddHeader() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -70,6 +74,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertNull(map.get("unknown"));
     }
 
+    @Test
     public void testLookupCaseAgnosticAddHeader2() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -89,6 +94,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertNull(map.get("unknown"));
     }
 
+    @Test
     public void testLookupCaseAgnosticAddHeaderRemoveHeader() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -112,6 +118,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertNull(map.get("unknown"));
     }
 
+    @Test
     public void testSetWithDifferentCase() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -124,6 +131,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals("bar", map.get("Foo"));
     }
 
+    @Test
     public void testRemoveWithDifferentCase() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -144,6 +152,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertTrue(map.isEmpty());
     }
 
+    @Test
     public void testPutAll() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -175,6 +184,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertNull(keys.get("BAR"));
     }
 
+    @Test
     public void testPutAllOther() {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
@@ -194,6 +204,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(123, map.get("BaR"));
     }
 
+    @Test
     public void testPutAllEmpty() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "cheese");
@@ -208,6 +219,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(1, map.size());
     }
 
+    @Test
     public void testConstructFromOther() {
         Map<String, Object> other = new HashMap<>();
         other.put("Foo", "cheese");
@@ -224,6 +236,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(123, map.get("BaR"));
     }
 
+    @Test
     public void testKeySet() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -247,6 +260,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertTrue(keys.contains("BAZ"));
     }
 
+    @Test
     public void testRetainKeysCopyToAnotherMap() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -271,6 +285,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertFalse(other.containsKey("BAZ"));
     }
 
+    @Test
     public void testValues() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -291,6 +306,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertTrue(values.contains("Beer"));
     }
 
+    @Test
     public void testRomeks() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "cheese");
@@ -314,6 +330,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals("cake", map.get("fOo"));
     }
 
+    @Test
     public void testRomeksUsingRegularHashMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("foo", "cheese");
@@ -335,6 +352,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals("cake", map.get("FOO"));
     }
 
+    @Test
     public void testRomeksTransferredToHashMapAfterwards() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -351,6 +369,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(1, other.size());
     }
 
+    @Test
     public void testSerialization() throws Exception {
         CaseInsensitiveMap testMap = new CaseInsensitiveMap();
         testMap.put("key", "value");
@@ -367,6 +386,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertTrue(testMapCopy.containsKey("key"));
     }
 
+    @Test
     public void testCopyToAnotherMapPreserveKeyCaseEntrySet() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -389,6 +409,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(2, other.size());
     }
 
+    @Test
     public void testCopyToAnotherMapPreserveKeyCasePutAll() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -407,6 +428,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(2, other.size());
     }
 
+    @Test
     public void testCopyToAnotherMapPreserveKeyCaseCtr() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -424,6 +446,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(2, other.size());
     }
 
+    @Test
     public void testCopyToAnotherMapPreserveKeyKeySet() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
@@ -447,6 +470,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(2, other.size());
     }
 
+    @Test
     public void testConcurrent() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(5);
 

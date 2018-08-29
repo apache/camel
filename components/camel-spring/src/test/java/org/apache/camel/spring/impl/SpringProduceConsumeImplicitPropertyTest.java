@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class SpringProduceConsumeImplicitPropertyTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/impl/SpringProduceConsumeImplicitPropertyTest.xml");
     }
 
+   @Test
     public void testImplicit() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +28,7 @@ import static org.apache.camel.builder.PredicateBuilder.not;
  */
 public class ChoiceWhenNotPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testPeople() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:people");
         mock.expectedMessageCount(1);
@@ -35,6 +38,7 @@ public class ChoiceWhenNotPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAnimals() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:animals");
         mock.expectedMessageCount(1);

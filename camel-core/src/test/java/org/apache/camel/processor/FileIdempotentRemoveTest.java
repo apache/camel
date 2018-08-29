@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -33,7 +36,8 @@ public class FileIdempotentRemoveTest extends ContextTestSupport {
     private IdempotentRepository<String> repo;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
             store.delete();
@@ -43,6 +47,7 @@ public class FileIdempotentRemoveTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testRemove() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Foo", "Bar");

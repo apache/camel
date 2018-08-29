@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -44,12 +47,14 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/pollstrategy");
         super.setUp();
         template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
+    @Test
     public void testStopOnRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xmpp;
+import org.junit.After;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -104,7 +105,8 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();
     }

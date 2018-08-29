@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ThreadsMaxQueueSizeTest extends ContextTestSupport {
 
+    @Test
     public void testThreadsMaxQueueSize() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -32,6 +35,7 @@ public class ThreadsMaxQueueSizeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsMaxQueueSizeBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

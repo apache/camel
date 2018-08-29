@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,6 +59,7 @@ public class SplitterUsingBeanReturningMessageTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSplitWithMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

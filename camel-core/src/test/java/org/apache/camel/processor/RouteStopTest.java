@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteStopTest extends ContextTestSupport {
 
+    @Test
     public void testOtherwise() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(0);
         getMockEndpoint("mock:bye").expectedMessageCount(0);
@@ -38,6 +41,7 @@ public class RouteStopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHello() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(1);
         getMockEndpoint("mock:bye").expectedMessageCount(0);
@@ -49,6 +53,7 @@ public class RouteStopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testByeWithStop() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(0);
         getMockEndpoint("mock:bye").expectedMessageCount(1);
@@ -61,6 +66,7 @@ public class RouteStopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetPropertyToStop() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);

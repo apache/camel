@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -35,7 +39,8 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
 
         // the event notifier should have send a message to the file endpoint
@@ -45,7 +50,8 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         super.tearDown();
 
         // the event notifier should have send a message to the file endpoint
@@ -54,6 +60,7 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
         assertTrue("Stop file should exist on shutdown", start.exists());
     }
 
+   @Test
     public void testSendMessageOnStartupAndStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

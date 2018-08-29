@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,11 +30,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filesplit");
         super.setUp();
     }
 
+    @Test
     public void testSplitStreamingWithChoice() throws Exception {
         getMockEndpoint("mock:other").expectedMessageCount(0);
 

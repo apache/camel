@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
+import org.junit.Before;
 
 import io.netty.buffer.ByteBuf;
 

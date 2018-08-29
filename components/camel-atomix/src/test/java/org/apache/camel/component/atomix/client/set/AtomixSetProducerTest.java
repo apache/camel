@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.set;
+import org.junit.After;
 
 import java.util.Collections;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         set.close();
 
         super.tearDown();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -44,6 +46,7 @@ public class XPathTransformTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testXPathTransform() throws Exception {
         Document doc = context.getTypeConverter().convertTo(Document.class, "<root><firstname>Apache</firstname><lastname>Camel</lastname></root>");
         NodeList list = XPathBuilder.xpath("/root/firstname", NodeList.class).evaluate(context, doc, NodeList.class);
@@ -54,6 +57,7 @@ public class XPathTransformTest extends ContextTestSupport {
         assertEquals("<root><firstname>Servicemix</firstname><lastname>Camel</lastname></root>", out);
     }
 
+    @Test
     public void testXPathNamespaceLoggingEnabledJavaDSL() throws Exception {
         Logger l = mock(Logger.class);
 
@@ -78,6 +82,7 @@ public class XPathTransformTest extends ContextTestSupport {
         verify(l).info(argThat(containsString("Namespaces discovered in message")), any(Object.class));
     }
 
+    @Test
     public void testXPathNamespaceLoggingDisabledJavaDSL() throws Exception {
         Logger l = mock(Logger.class);
 

@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.converter;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.StringSource;
 import org.apache.camel.TypeConverter;
@@ -35,17 +38,18 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * @version 
  */
-public class StringSourceTest extends TestCase {
+public class StringSourceTest extends Assert {
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
     protected String expectedBody = "<hello>world!</hello>";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         ServiceHelper.startService(converter);
     }
 
+    @Test
     public void testSerialization() throws Exception {
         StringSource expected = new StringSource(expectedBody, "mySystemID", "utf-8");
         expected.setPublicId("myPublicId");

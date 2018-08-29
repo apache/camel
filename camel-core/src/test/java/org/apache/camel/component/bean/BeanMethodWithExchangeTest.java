@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.naming.Context;
@@ -31,6 +33,7 @@ import org.apache.camel.util.jndi.JndiContext;
 
 public class BeanMethodWithExchangeTest extends ContextTestSupport {
     
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         Exchange result = template.request("direct:start1", new Processor() {
 

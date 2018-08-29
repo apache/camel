@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
 
+    @Test
     public void testManagedThreadPool() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

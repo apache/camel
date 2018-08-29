@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -30,6 +32,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateWithFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World,Bye World");

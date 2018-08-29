@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stream;
+import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
 
@@ -41,7 +42,8 @@ public class StreamToUrlTest extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         if (existingHandlers != null) {
             System.setProperty("java.protocol.handler.pkgs", existingHandlers);
         }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 import javax.naming.Context;
 import org.apache.camel.Body;
@@ -40,6 +42,7 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testInOnly() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:finish");
         end.expectedBodiesReceived("Hello!");
@@ -53,6 +56,7 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
         assertEquals("Hello!", end.getExchanges().get(0).getIn().getBody());
     }
 
+    @Test
     public void testInOut() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:finish");
         end.expectedBodiesReceived("Hello!");

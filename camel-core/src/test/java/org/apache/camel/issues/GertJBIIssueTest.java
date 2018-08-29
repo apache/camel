@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +39,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSimulateJBIEndpointFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -60,6 +63,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSimulateJBIEndpointNotExistOnCompletion() throws Exception {
         cause = null;
 

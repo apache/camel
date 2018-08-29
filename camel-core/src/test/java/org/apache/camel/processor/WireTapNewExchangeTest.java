@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class WireTapNewExchangeTest extends ContextTestSupport {
 
+    @Test
     public void testFireAndForgetUsingExpressions() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");

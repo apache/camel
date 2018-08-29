@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testSplitWithCustomAggregatorStrategy() throws Exception {
         int files = 10;
         MockEndpoint mock = getMockEndpoint("mock:result");

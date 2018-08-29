@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +30,8 @@ public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTes
     private LevelDBAggregationRepository repo;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
         // enable recovery

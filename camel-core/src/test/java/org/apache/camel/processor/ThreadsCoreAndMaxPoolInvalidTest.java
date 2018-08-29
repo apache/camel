@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class ThreadsCoreAndMaxPoolInvalidTest extends ContextTestSupport {
         return super.isUseRouteBuilder();
     }
 
+    @Test
     public void testInvalidSyntax() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

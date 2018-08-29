@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,6 +25,7 @@ import static org.apache.camel.language.spel.SpelExpression.spel;
 
 public class SpelRouteTest extends ContextTestSupport {
     
+   @Test
     public void testSpelRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Hello World! What a beautiful day");
@@ -30,6 +33,7 @@ public class SpelRouteTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
     
+   @Test
     public void testSpelWithLoop() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:loopResult");
         resultEndpoint.expectedBodiesReceived("A:0", "A:0:1", "A:0:1:2", "A:0:1:2:3");

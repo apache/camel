@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -44,7 +48,8 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
 
@@ -55,7 +60,8 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         try {
             releaseMBeanServers();
         } finally {
@@ -72,6 +78,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         }
     }
 
+   @Test
     public void testQueryMbeans() throws Exception {
         // whats the numbers before, because the JVM can have left overs when unit testing
         int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();

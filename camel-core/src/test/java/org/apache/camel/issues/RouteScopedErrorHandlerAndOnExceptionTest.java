@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.FileNotFoundException;
 import java.net.ConnectException;
 
@@ -32,6 +34,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testOnException() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new RouteBuilder() {
@@ -59,6 +62,7 @@ public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testErrorHandler() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new RouteBuilder() {

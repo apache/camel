@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -37,6 +39,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 
     private MyRepo repo = new MyRepo();
 
+    @Test
     public void testAggregateNewExchangeAndConfirm() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("ABC");

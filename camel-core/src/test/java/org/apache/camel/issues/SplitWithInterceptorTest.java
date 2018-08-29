@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -65,6 +67,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSplitOne() throws Exception {
         interceptStrategy.reset();
 
@@ -77,6 +80,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
     }
 
+    @Test
     public void testSplitTwo() throws Exception {
         interceptStrategy.reset();
 

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,7 +32,8 @@ import org.apache.camel.impl.JndiRegistry;
 public class FileBeanParameterBindingTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/foo");
         super.setUp();
     }
@@ -41,6 +45,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFileToBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

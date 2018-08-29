@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
     private MyCompletionStrategy strategy = new MyCompletionStrategy();
 
+    @Test
     public void testAggregateLifecycle() throws Exception {
         assertTrue("Should be started", strategy.isStarted());
         assertSame(context, strategy.getCamelContext());

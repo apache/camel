@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testSplitNoAggregationStrategy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
@@ -40,6 +43,7 @@ public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitNoAggregationStrategyException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");

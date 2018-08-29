@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
+import org.junit.After;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
@@ -27,10 +30,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version 
  */
-public class CamelContextAutoStartupTest extends TestCase {
+public class CamelContextAutoStartupTest extends Assert {
 
     private AbstractXmlApplicationContext ac;
 
+   @Test
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestFalse.xml");
 
@@ -61,6 +65,7 @@ public class CamelContextAutoStartupTest extends TestCase {
         mock.assertIsSatisfied();
     }
 
+   @Test
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestTrue.xml");
 
@@ -82,9 +87,9 @@ public class CamelContextAutoStartupTest extends TestCase {
         mock.assertIsSatisfied();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() throws Exception {
         IOHelper.close(ac);
-        super.tearDown();
+
     }
 }

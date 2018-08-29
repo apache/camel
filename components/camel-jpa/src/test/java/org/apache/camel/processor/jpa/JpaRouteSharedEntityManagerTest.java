@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
+import org.junit.Before;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -45,7 +46,8 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         // Don't run on Hibernate
         Assume.assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
         super.setUp();

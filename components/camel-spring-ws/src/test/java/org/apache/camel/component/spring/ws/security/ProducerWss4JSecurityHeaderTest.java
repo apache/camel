@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.spring.ws.security;
+import org.junit.Before;
 
 import net.javacrumbs.calc.model.PlusRequest;
 import net.javacrumbs.calc.model.PlusResponse;
@@ -43,7 +44,8 @@ public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
     private WebServiceTemplate webServiceTemplate;
     
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }

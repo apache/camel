@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class RecipientListMEPWithRawTest extends ContextTestSupport {
 
+    @Test
     public void testMEPInOnly() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World", "Hello Again");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Bye World");

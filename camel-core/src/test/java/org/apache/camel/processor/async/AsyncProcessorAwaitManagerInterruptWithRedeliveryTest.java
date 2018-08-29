@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
@@ -37,12 +40,14 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
     private MyBean bean;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         latch = new CountDownLatch(2);
         bean = spy(new MyBean(latch));
         super.setUp();
     }
 
+    @Test
     public void testAsyncAwaitInterrupt() throws Exception {
         context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.LogDefinition;
@@ -35,6 +37,7 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/CustomIdIssueTest.xml");
     }
 
+   @Test
     public void testCustomId() {
         RouteDefinition route = context.getRouteDefinition("myRoute");
         assertNotNull(route);

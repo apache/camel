@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.config;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -25,8 +27,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version 
  */
-public class CamelProxyUsingRefTest extends TestCase {
+public class CamelProxyUsingRefTest extends Assert {
 
+   @Test
     public void testCamelProxyUsingRef() throws Exception {
         AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyUsingRefTest.xml");
 

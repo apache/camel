@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.lang.management.ManagementFactory;
 import java.util.Set;
@@ -39,6 +42,7 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
         return true;
     }
 
+    @Test
     public void testCustomId() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -77,7 +81,8 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         server = ManagementFactory.getPlatformMBeanServer();
     }

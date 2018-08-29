@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +29,7 @@ public class WireTapUsingMulticastTest extends ContextTestSupport {
     protected MockEndpoint tap;
     protected MockEndpoint result;
 
+    @Test
     public void testSend() throws Exception {
         String body = "<body/>";
         tap.expectedBodiesReceived(body);
@@ -38,7 +42,8 @@ public class WireTapUsingMulticastTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         tap = getMockEndpoint("mock:tap");
         result = getMockEndpoint("mock:result");

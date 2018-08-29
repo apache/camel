@@ -16,15 +16,18 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
 
 /**
  *
  */
-public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
+public class RegistryLookupTypeClassCastExceptionTest extends Assert {
 
+    @Test
     public void testLookupOk() throws Exception {
         SimpleRegistry simple = new SimpleRegistry();
 
@@ -38,6 +41,7 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         assertNull(simple.lookupByNameAndType("foo", MyClass.class));
     }
 
+    @Test
     public void testCamelContextLookupOk() throws Exception {
         SimpleRegistry simple = new SimpleRegistry();
         CamelContext context = new DefaultCamelContext(simple);
@@ -52,6 +56,7 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         assertNull(context.getRegistry().lookupByNameAndType("foo", MyClass.class));
     }
 
+    @Test
     public void testLookupClassCast() throws Exception {
         SimpleRegistry simple = new SimpleRegistry();
 
@@ -67,6 +72,7 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         }
     }
 
+    @Test
     public void testCamelContextLookupClassCast() throws Exception {
         SimpleRegistry simple = new SimpleRegistry();
         CamelContext context = new DefaultCamelContext(simple);

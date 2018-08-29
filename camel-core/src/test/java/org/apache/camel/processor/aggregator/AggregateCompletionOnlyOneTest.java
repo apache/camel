@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +35,7 @@ public class AggregateCompletionOnlyOneTest extends ContextTestSupport {
 
     private MyRepo repo = new MyRepo();
 
+    @Test
     public void testOnlyOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A", "B", "C", "END");

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.openshift;
+import org.junit.Before;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -27,7 +28,8 @@ public class OpenShiftAddEmbeddedCartridgeTest extends CamelTestSupport {
     private String application;
 
     @Override
-    public void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         // INSERT credentials here
         username = null;
         password = null;

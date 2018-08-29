@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -45,6 +48,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
     private static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -78,6 +82,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -124,6 +129,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testExchangeOnException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -166,6 +172,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testExchangeDoTryDoCatch() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

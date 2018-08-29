@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +32,7 @@ public class AggregatorLockingTest extends ContextTestSupport {
 
     private final CountDownLatch latch = new CountDownLatch(2);
 
+    @Test
     public void testAggregationWithoutParallelNorOptimisticShouldNotLockDownstreamProcessors() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b");

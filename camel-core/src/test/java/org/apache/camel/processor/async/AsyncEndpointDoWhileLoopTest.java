@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 public class AsyncEndpointDoWhileLoopTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("Bye Camel", "Bye Camel", "Bye Camel", "Bye Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("done");

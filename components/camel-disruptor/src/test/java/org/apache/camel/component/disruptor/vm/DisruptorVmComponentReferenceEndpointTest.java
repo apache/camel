@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.component.disruptor.DisruptorReference;
  */
 public class DisruptorVmComponentReferenceEndpointTest extends ContextTestSupport {
 
+   @Test
     public void testDisruptorVmComponentReference() throws Exception {
         DisruptorVmComponent vm = context.getComponent("disruptor-vm", DisruptorVmComponent.class);
 

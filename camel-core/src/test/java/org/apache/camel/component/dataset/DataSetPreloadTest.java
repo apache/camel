@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ public class DataSetPreloadTest extends ContextTestSupport {
     private SimpleDataSet dataSet = new SimpleDataSet(20);
     private String uri = "dataset:foo?initialDelay=0&preloadSize=5";
 
+    @Test
     public void testDataSetPreloadSize() throws Exception {
         MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());

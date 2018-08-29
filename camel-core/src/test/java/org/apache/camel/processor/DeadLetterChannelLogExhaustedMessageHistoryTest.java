@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class DeadLetterChannelLogExhaustedMessageHistoryTest extends ContextTestSupport {
 
+    @Test
     public void testLogExhaustedMessageHistory() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 

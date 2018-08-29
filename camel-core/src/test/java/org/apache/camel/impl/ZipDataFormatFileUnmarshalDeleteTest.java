@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,11 +32,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/zip");
         super.setUp();
     }
 
+    @Test
     public void testZipFileUnmarshalDelete() throws Exception {
         // there are 2 exchanges
         NotifyBuilder event = event().whenDone(2).create();

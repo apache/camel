@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,7 +35,8 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filelanguage");
         super.setUp();
     }
@@ -44,6 +48,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testProducerFileNameHeaderNotEvaluated() {
         if (!isPlatform("windows")) {
             template.sendBodyAndHeader("file://target/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${id}}.txt");
@@ -51,12 +56,14 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProduceBeanByExpression() throws Exception {
         template.sendBody("file://target/filelanguage?fileName=${bean:myguidgenerator}.bak", "Hello World");
 
         assertFileExists("target/filelanguage/123.bak");
     }
 
+    @Test
     public void testProducerDateByHeader() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
             Exchange.FILE_NAME, simple("myfile-${date:now:yyyyMMdd}.txt"));
@@ -65,6 +72,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         assertFileExists("target/filelanguage/myfile-" + date + ".txt");
     }
 
+    @Test
     public void testProducerDateByExpression() throws Exception {
         template.sendBody("file://target/filelanguage?fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
@@ -72,6 +80,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         assertFileExists("target/filelanguage/myfile-" + date + ".txt");
     }
 
+    @Test
     public void testProducerComplexByExpression() throws Exception {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody("file://target/filelanguage?fileName=" + expression, "Hello World");
@@ -80,6 +89,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         assertFileExists("target/filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
+    @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage?fileName=myfile-${in.header.foo}.txt",
             "Hello World", "foo", "abc");
@@ -87,6 +97,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         assertFileExists("target/filelanguage/myfile-abc.txt");
     }
 
+    @Test
     public void testProducerWithDateHeader() throws Exception {
         Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);

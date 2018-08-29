@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,6 +41,7 @@ public class FileIdempotentConsumerLoadStoreTest extends ContextTestSupport {
     private File store = new File("target/idempotentfilestore.dat");
     private IdempotentRepository<String> repo;
 
+    @Test
     public void testLoadStore() throws Exception {
         assertFalse(repo.contains("1"));
         assertFalse(repo.contains("2"));
@@ -74,7 +78,8 @@ public class FileIdempotentConsumerLoadStoreTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
             store.delete();

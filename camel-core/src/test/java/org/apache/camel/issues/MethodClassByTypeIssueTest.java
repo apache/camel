@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class MethodClassByTypeIssueTest extends ContextTestSupport {
     
     private Object methodClass = MyTransformBean.class;
     
+    @Test
     public void testMethodClassByTypeAIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
 
@@ -34,6 +37,7 @@ public class MethodClassByTypeIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMethodClassByTypeBIssue() throws Exception {
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 

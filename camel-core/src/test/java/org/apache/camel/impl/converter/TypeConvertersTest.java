@@ -16,12 +16,15 @@
  */
 package org.apache.camel.impl.converter;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 
 public class TypeConvertersTest extends ContextTestSupport {
 
     private MyConverters converters = new MyConverters();
 
+    @Test
     public void testAdd() throws Exception {
         int before = context.getTypeConverterRegistry().size();
 

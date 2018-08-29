@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -45,6 +47,7 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         return answer;
     }
 
+    @Test
     public void testFromRestModelPlaceholder() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AsyncEndpointTryCatchFinally4Test extends ContextTestSupport {
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:try").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:catch").expectedMessageCount(0);

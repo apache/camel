@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
 
+   @Test
     public void testTransactedNoTXManager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

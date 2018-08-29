@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -39,7 +42,8 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         return true;
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
         b = getMockEndpoint("mock:b");
@@ -48,6 +52,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         e = getMockEndpoint("mock:e");
     }
 
+    @Test
     public void testFirstChoiceRoute() throws Exception {
         final String body = "<one/>";
         a.expectedBodiesReceived(body);
@@ -67,6 +72,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherwise() throws Exception {
         final String body = "<None/>";
         e.expectedBodiesReceived(body);

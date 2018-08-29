@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.support.ServiceSupport;
 
 public class RouteAwareRouteTest extends ContextTestSupport {
 
+    @Test
     public void testRouteAware() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
 

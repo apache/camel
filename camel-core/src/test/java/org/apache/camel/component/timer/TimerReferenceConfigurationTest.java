@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -95,6 +97,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     /**
      * Test that the reference configuration params are correct
      */
+    @Test
     public void testReferenceConfiguration() throws Exception {
 
         Endpoint e = context.getEndpoint(refTimerUri);
@@ -118,6 +121,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     /**
      * Test that the 'value' configuration params are correct
      */
+    @Test
     public void testValueConfiguration() throws Exception {
         Endpoint e = context.getEndpoint(valueTimerUri);
         TimerEndpoint timer = (TimerEndpoint) e;

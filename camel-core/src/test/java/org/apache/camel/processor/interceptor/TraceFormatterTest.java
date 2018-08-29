@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class TraceFormatterTest extends ContextTestSupport {
 
     private List<String> tracedBodies = new ArrayList<>();
 
+    @Test
     public void testSendingSomeMessagesBeingTraced() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Bye World");

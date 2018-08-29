@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,11 +26,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/input");
         super.setUp();
     }
 
+    @Test
     public void testMove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedFileExists("target/input/target/input.bak/somedate/hello.txt");
@@ -37,6 +42,7 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMoveFailed() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedFileExists("target/input/target/input.err/somedate/bomb.txt");

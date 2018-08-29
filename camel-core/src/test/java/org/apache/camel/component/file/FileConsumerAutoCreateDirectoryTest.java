@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -30,6 +32,7 @@ import org.apache.camel.Processor;
  */
 public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
+    @Test
     public void testCreateDirectory() throws Exception {
         deleteDirectory("target/file/foo");
 
@@ -49,6 +52,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
 
+    @Test
     public void testCreateAbsoluteDirectory() throws Exception {
         deleteDirectory("target/file/foo");
         // use current dir as base as absolute path
@@ -70,6 +74,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
 
+    @Test
     public void testDoNotCreateDirectory() throws Exception {
         deleteDirectory("target/file/foo");
 
@@ -88,6 +93,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         assertFalse("Directory should NOT be created", dir.exists());
     }
 
+    @Test
     public void testAutoCreateDirectoryWithDot() throws Exception {
         deleteDirectory("target/file/foo.bar");
 
@@ -107,6 +113,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
 
+    @Test
     public void testStartingDirectoryMustExistDirectory() throws Exception {
         deleteDirectory("target/file/foo");
 

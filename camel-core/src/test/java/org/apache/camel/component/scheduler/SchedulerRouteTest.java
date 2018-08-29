@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.scheduler;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
 
@@ -33,6 +35,7 @@ public class SchedulerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SchedulerRouteTest.class);
     private MyBean bean = new MyBean();
 
+    @Test
     public void testSchedulerInvokesBeanMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);

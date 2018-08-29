@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Properties;
@@ -34,7 +37,8 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
     }
@@ -46,6 +50,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testProducerPlaceholderPrefixDoneFileName() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

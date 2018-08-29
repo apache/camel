@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,7 +32,8 @@ import org.apache.camel.PollingConsumer;
 public class FilePollingConsumerTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         super.setUp();
     }
@@ -39,6 +43,7 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPollingConsumer() throws Exception {
         template.sendBodyAndHeader("file:target/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 

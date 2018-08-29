@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.TestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class DirectNoMultipleConsumersTest extends TestSupport {
 
+    @Test
     public void testNoMultipleConsumersTest() throws Exception {
         CamelContext container = new DefaultCamelContext();
         container.disableJMX();
