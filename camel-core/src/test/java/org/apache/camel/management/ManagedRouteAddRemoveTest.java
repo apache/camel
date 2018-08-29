@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -50,9 +51,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     @Test
     public void testRouteAddRemoteRouteWithTo() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        Assume.assumeFalse(isPlatform("aix"));
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
