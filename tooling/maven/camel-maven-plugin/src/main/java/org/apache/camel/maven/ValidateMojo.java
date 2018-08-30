@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -36,6 +38,7 @@ import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -178,6 +181,15 @@ public class ValidateMojo extends AbstractExecMojo {
      *            default-value="true"
      */
     private boolean duplicateRouteId;
+
+    /**
+     * Whether to validate for direct/seda endpoints not having matching pairs, such as producing to
+     * a non existing seda endpoint.
+     *
+     * @parameter property="camel.directOrSedaPairCheck"
+     *            default-value="true"
+     */
+    private boolean directOrSedaPairCheck;
 
     // CHECKSTYLE:OFF
     @Override
@@ -327,6 +339,7 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
 
+        // endpoint uris
         int endpointErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
@@ -431,13 +444,13 @@ public class ValidateMojo extends AbstractExecMojo {
             endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
                     ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         }
-
         if (endpointErrors > 0) {
             getLog().warn(endpointSummary);
         } else {
             getLog().info(endpointSummary);
         }
 
+        // simple
         int simpleErrors = validateSimple(catalog, simpleExpressions);
         String simpleSummary;
         if (simpleErrors == 0) {
@@ -453,6 +466,20 @@ public class ValidateMojo extends AbstractExecMojo {
             getLog().info(simpleSummary);
         }
 
+        // endpoint pairs
+        int sedaDirectErrors = 0;
+        String sedaDirectSummary = "";
+        if (directOrSedaPairCheck) {
+            long sedaDirectEndpoints = countEndpointPairs(endpoints, "direct") + countEndpointPairs(endpoints, "seda");
+            sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
+            if (sedaDirectErrors == 0) {
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success (%s = pairs)", sedaDirectEndpoints);
+            } else {
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)", sedaDirectEndpoints, sedaDirectErrors);
+            }
+        }
+
+        // route id
         int duplicateRouteIdErrors = validateDuplicateRouteId(routeIds);
         String routeIdSummary = "";
         if (duplicateRouteId) {
@@ -468,9 +495,56 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
 
-        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0)) {
-            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary);
+        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
+            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
         }
+    }
+
+    private int countEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
+        int pairs = 0;
+
+        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+
+        // find all pairs, eg consumers that has a producer (no need to check for producer that has a consumer)
+        for (CamelEndpointDetails c : consumers) {
+            boolean any = producers.stream().findAny().filter(e -> matchEndpointPath(c.getEndpointUri(), e.getEndpointUri())).isPresent();
+            if (any) {
+                pairs++;
+            }
+        }
+
+        return pairs;
+    }
+
+    private int validateEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
+        int errors = 0;
+
+        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+
+        // are there any consumers that do not have a producer pair
+        for (CamelEndpointDetails c : consumers) {
+            boolean any = producers.stream().findAny().filter(e -> matchEndpointPath(c.getEndpointUri(), e.getEndpointUri())).isPresent();
+            if (!any) {
+                errors++;
+            }
+        }
+        // are there any producers that do not have a consumer pair
+        for (CamelEndpointDetails p : producers) {
+            boolean any = consumers.stream().findAny().filter(e -> matchEndpointPath(p.getEndpointUri(), e.getEndpointUri())).isPresent();
+            if (!any) {
+                errors++;
+            }
+        }
+
+        return errors;
+    }
+
+    private static boolean matchEndpointPath(String uri, String uri2) {
+        String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
+        String p2 = uri2.contains("?") ? StringHelper.before(uri2, "?") : uri2;
+        return p.equals(p2);
     }
 
     private int validateSimple(CamelCatalog catalog, List<CamelSimpleExpressionDetails> simpleExpressions) {
