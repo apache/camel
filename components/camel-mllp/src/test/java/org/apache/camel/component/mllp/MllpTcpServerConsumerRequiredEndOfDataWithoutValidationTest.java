@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.mllp;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
@@ -36,16 +38,19 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
+    @Test
     public void testInvalidMessage() throws Exception {
         runNthInvalidMessage();
     }
 
     @Override
+    @Test
     public void testNthInvalidMessage() throws Exception {
         runNthInvalidMessage();
     }
 
     @Override
+    @Test
     public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
         expectedCompleteCount = 1;
 
@@ -54,12 +59,14 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
 
 
     @Override
+    @Test
     public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
         runNthMessageContainingEmbeddedStartOfBlock();
     }
 
 
     @Override
+    @Test
     public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
         setExpectedCounts();
 
@@ -71,6 +78,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
+    @Test
     public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
         expectedInvalidCount = 1;
 
@@ -78,6 +86,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
+    @Test
     public void testNthMessageContainingEmbeddedEndOfBlock() throws Exception {
         expectedInvalidCount = 1;
 
@@ -85,6 +94,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
+    @Test
     public void testInitialMessageWithoutEndOfDataByte() throws Exception {
         setExpectedCounts();
 
@@ -94,6 +104,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
+    @Test
     public void testMessageWithoutEndOfDataByte() throws Exception {
         expectedCompleteCount = 1;
         expectedInvalidCount = 1;

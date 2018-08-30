@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.controlbus;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ public class ControlBusRestartRouteTest extends ContextTestSupport {
 
     private MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
 
+    @Test
     public void testControlBusRestart() throws Exception {
         assertEquals(1, myRoutePolicy.getStart());
         assertEquals(0, myRoutePolicy.getStop());

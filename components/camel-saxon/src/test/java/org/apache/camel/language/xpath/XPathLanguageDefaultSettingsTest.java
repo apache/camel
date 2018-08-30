@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.language.xpath;
+import org.junit.Before;
+import org.junit.After;
 
 import javax.xml.xpath.XPathFactory;
 
@@ -34,6 +36,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
     private String oldPropertyValue;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         if (!isJavaVendor("ibm")) {
             // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
@@ -46,6 +49,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (oldPropertyValue != null) {
             System.setProperty(KEY, oldPropertyValue);

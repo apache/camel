@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -38,6 +40,7 @@ public class ManagedStatisticsLevelRoutesOnlyTest extends ManagementTestSupport 
         return context;
     }
 
+    @Test
     public void testManageStatisticsRoutesOnly() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

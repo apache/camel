@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
+    @Test
     public void testTryCatchMustHaveExceptionConfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

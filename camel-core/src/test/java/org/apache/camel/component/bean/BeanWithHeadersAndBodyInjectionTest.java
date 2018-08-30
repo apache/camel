@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import javax.naming.Context;
@@ -38,6 +40,7 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {

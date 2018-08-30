@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,14 +35,17 @@ public class TryProcessorTest extends ContextTestSupport {
 
     private boolean handled;
 
+    @Test
     public void testTryCatchFinallyProcessor() throws Exception {
         testTryCatchFinally("direct:processor");
     }
 
+    @Test
     public void testTryCatchFinallyExpression() throws Exception {
         testTryCatchFinally("direct:expression");
     }
 
+    @Test
     public void testTryCatchFinallyPredicate() throws Exception {
         testTryCatchFinally("direct:predicate");
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -31,6 +33,7 @@ public class PropertiesComponentRestartTest extends ContextTestSupport {
 
     private int resolvedCount;
 
+    @Test
     public void testPropertiesComponentCacheClearedOnStop() throws Exception {
 
         context.start();

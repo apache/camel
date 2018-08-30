@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
+    @Test
     public void testManageEndpointRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

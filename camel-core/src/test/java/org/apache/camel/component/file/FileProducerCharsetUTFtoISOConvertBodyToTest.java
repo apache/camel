@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -36,7 +39,8 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
     private byte[] iso;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use utf-8 as original payload with 00e6 which is a danish ae letter
         utf = "ABC\u00e6".getBytes("utf-8");
         iso = "ABC\u00e6".getBytes("iso-8859-1");
@@ -62,6 +66,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         super.setUp();
     }
 
+    @Test
     public void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
         oneExchangeDone.matchesMockWaitTime();
 

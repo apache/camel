@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport 
     
     private static String done = "";
 
+    @Test
     public void testAlways() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

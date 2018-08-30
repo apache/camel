@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -28,6 +30,7 @@ public class DeadLetterChannelHandleNewExceptionTest extends ContextTestSupport 
         return false;
     }
 
+    @Test
     public void testDeadLetterChannelHandleNewException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -49,6 +52,7 @@ public class DeadLetterChannelHandleNewExceptionTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDeadLetterChannelNotHandleNewException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

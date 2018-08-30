@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.crypto.cms;
+import org.junit.Before;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

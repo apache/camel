@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.camel.CamelContext;
@@ -29,6 +31,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class InvalidXsltFileTest extends TestSupport {
 
+    @Test
     public void testInvalidStylesheet() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();

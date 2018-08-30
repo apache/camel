@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.impl.JndiRegistry;
@@ -33,11 +35,13 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         return jndi;
     }
 
+    @Test
     public void testValueWithSpace() throws Exception {
         exchange.getIn().setBody("Hello Big World");
         assertPredicate("${in.body} == 'Hello Big World'", true);
     }
     
+    @Test
     public void testNullValue() throws Exception {
         exchange.getIn().setBody("Value");
         assertPredicate("${in.body} != null", true);
@@ -48,6 +52,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${body} != null", false);
     }
 
+    @Test
     public void testEmptyValue() throws Exception {
         exchange.getIn().setBody("");
         assertPredicate("${in.body} == null", false);
@@ -66,6 +71,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${body} == \"\"", false);
     }
 
+    @Test
     public void testAnd() throws Exception {
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 123", true);
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 444", false);
@@ -76,17 +82,20 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} < 200", true);
     }
 
+    @Test
     public void testTwoAnd() throws Exception {
         exchange.getIn().setBody("Hello World");
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 123 && ${body} == 'Hello World'", true);
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 123 && ${body} == 'Bye World'", false);
     }
 
+    @Test
     public void testThreeAnd() throws Exception {
         exchange.getIn().setBody("Hello World");
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 123 && ${body} == 'Hello World' && ${in.header.xx} == null", true);
     }
 
+    @Test
     public void testTwoOr() throws Exception {
         exchange.getIn().setBody("Hello World");
         assertPredicate("${in.header.foo} == 'abc' || ${in.header.bar} == 44 || ${body} == 'Bye World'", true);
@@ -95,6 +104,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 123 || ${body} == 'Bye World'", true);
     }
 
+    @Test
     public void testThreeOr() throws Exception {
         exchange.getIn().setBody("Hello World");
         assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'World'", true);
@@ -104,6 +114,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Hello World' || ${body} contains 'Moon'", true);
     }
 
+    @Test
     public void testAndWithQuotation() throws Exception {
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == '123'", true);
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == '444'", false);
@@ -114,6 +125,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} < '200'", true);
     }
 
+    @Test
     public void testOr() throws Exception {
         assertPredicate("${in.header.foo} == 'abc' || ${in.header.bar} == 123", true);
         assertPredicate("${in.header.foo} == 'abc' || ${in.header.bar} == 444", true);
@@ -126,6 +138,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'def' || ${in.header.bar} < 100", false);
     }
 
+    @Test
     public void testOrWithQuotation() throws Exception {
         assertPredicate("${in.header.foo} == 'abc' || ${in.header.bar} == '123'", true);
         assertPredicate("${in.header.foo} == 'abc' || ${in.header.bar} == '444'", true);
@@ -138,6 +151,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'def' || ${in.header.bar} < '100'", false);
     }
 
+    @Test
     public void testEqualOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} == 'abc'", true);
@@ -152,6 +166,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} == '1'", false);
     }
 
+    @Test
     public void testEqualIgnoreOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} =~ 'abc'", true);
@@ -168,6 +183,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} =~ '1'", false);
     }
 
+    @Test
     public void testNotEqualOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} != 'abc'", false);
@@ -182,6 +198,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} != '1'", true);
     }
 
+    @Test
     public void testFloatingNumber() throws Exception {
         // set a String value
         exchange.getIn().setBody("0.02");
@@ -201,6 +218,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${body} == 0.02", true);
     }
 
+    @Test
     public void testGreaterThanOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} > 'aaa'", true);
@@ -214,6 +232,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} > '200'", false);
     }
 
+    @Test
     public void testGreaterThanStringToInt() throws Exception {
         // set a String value
         exchange.getIn().setHeader("num", "70");
@@ -232,6 +251,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.num} > 777", false);
     }
 
+    @Test
     public void testLessThanStringToInt() throws Exception {
         // set a String value
         exchange.getIn().setHeader("num", "70");
@@ -250,6 +270,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.num} < 777", true);
     }
 
+    @Test
     public void testGreaterThanOrEqualOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} >= 'aaa'", true);
@@ -264,6 +285,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} >= '200'", false);
     }
 
+    @Test
     public void testLessThanOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} < 'aaa'", false);
@@ -277,6 +299,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} < '200'", true);
     }
     
+    @Test
     public void testAgainstNegativeValue() throws Exception {
         assertPredicate("${in.header.bar} == 123", true);
         assertPredicate("${in.header.bar} == -123", false);
@@ -323,6 +346,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
 
     }
 
+    @Test
     public void testLessThanOrEqualOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} <= 'aaa'", false);
@@ -337,22 +361,26 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} <= '200'", true);
     }
 
+    @Test
     public void testIsNull() throws Exception {
         assertPredicate("${in.header.foo} == null", false);
         assertPredicate("${in.header.none} == null", true);
     }
 
+    @Test
     public void testIsNotNull() throws Exception {
         assertPredicate("${in.header.foo} != null", true);
         assertPredicate("${in.header.none} != null", false);
     }
 
+    @Test
     public void testRightOperatorIsSimpleLanguage() throws Exception {
         // operator on right side is also using ${ } placeholders
         assertPredicate("${in.header.foo} == ${in.header.foo}", true);
         assertPredicate("${in.header.foo} == ${in.header.bar}", false);
     }
 
+    @Test
     public void testRightOperatorIsBeanLanguage() throws Exception {
         // operator on right side is also using ${ } placeholders
         assertPredicate("${in.header.foo} == ${bean:generator.generateFilename}", true);
@@ -361,6 +389,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} >= ${bean:generator.generateId}", true);
     }
 
+    @Test
     public void testContains() throws Exception {
         assertPredicate("${in.header.foo} contains 'a'", true);
         assertPredicate("${in.header.foo} contains 'ab'", true);
@@ -368,6 +397,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} contains 'def'", false);
     }
   
+    @Test
     public void testNotContains() throws Exception {
         assertPredicate("${in.header.foo} not contains 'a'", false);
         assertPredicate("${in.header.foo} not contains 'ab'", false);
@@ -375,6 +405,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} not contains 'def'", true);
     }
     
+    @Test
     public void testContainsIgnoreCase() throws Exception {
         assertPredicate("${in.header.foo} ~~ 'A'", true);
         assertPredicate("${in.header.foo} ~~ 'Ab'", true);
@@ -382,6 +413,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} ~~ 'defG'", false);
     }
 
+    @Test
     public void testRegex() throws Exception {
         assertPredicate("${in.header.foo} regex '^a..$'", true);
         assertPredicate("${in.header.foo} regex '^ab.$'", true);
@@ -392,6 +424,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} regex '^\\d{2}'", false);
     }
 
+    @Test
     public void testNotRegex() throws Exception {
         assertPredicate("${in.header.foo} not regex '^a..$'", false);
         assertPredicate("${in.header.foo} not regex '^ab.$'", false);
@@ -402,6 +435,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} not regex '^\\d{2}'", true);
     }
 
+    @Test
     public void testIn() throws Exception {
         // string to string
         assertPredicate("${in.header.foo} in 'foo,abc,def'", true);
@@ -415,6 +449,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} in '100,200'", false);
     }
 
+    @Test
     public void testNotIn() throws Exception {
         // string to string
         assertPredicate("${in.header.foo} not in 'foo,abc,def'", false);
@@ -428,6 +463,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} not in '100,200'", true);
     }
 
+    @Test
     public void testIs() throws Exception {
         assertPredicate("${in.header.foo} is 'java.lang.String'", true);
         assertPredicate("${in.header.foo} is 'java.lang.Integer'", false);
@@ -443,6 +479,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testIsNot() throws Exception {
         assertPredicate("${in.header.foo} not is 'java.lang.String'", false);
         assertPredicate("${in.header.foo} not is 'java.lang.Integer'", true);
@@ -458,6 +495,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testRange() throws Exception {
         assertPredicate("${in.header.bar} range '100..200'", true);
         assertPredicate("${in.header.bar} range '200..300'", false);
@@ -495,6 +533,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'def'", false);
     }
 
+    @Test
     public void testNotRange() throws Exception {
         assertPredicate("${in.header.bar} not range '100..200'", false);
         assertPredicate("${in.header.bar} not range '200..300'", true);
@@ -527,6 +566,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testUnaryInc() throws Exception {
         assertExpression("${in.header.bar}++", 124);
         assertExpression("+++++++++++++", "+++++++++++++");
@@ -540,6 +580,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar}++ == 124", true);
     }
 
+    @Test
     public void testUnaryDec() throws Exception {
         assertExpression("${in.header.bar}--", 122);
         assertExpression("-------------", "-------------");
@@ -553,6 +594,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar}-- == 124", false);
     }
 
+    @Test
     public void testStartsWith() throws Exception {
         exchange.getIn().setBody("Hello there");
         assertPredicate("${in.body} starts with 'Hello'", true);
@@ -563,6 +605,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} starts with 'Hi'", false);
     }
     
+    @Test
     public void testEndsWith() throws Exception {
         exchange.getIn().setBody("Hello there");
         assertPredicate("${in.body} ends with 'there'", true);

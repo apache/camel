@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -32,6 +34,7 @@ import org.apache.camel.impl.DefaultProducer;
  */
 public class WireTapOnExceptionTest extends ContextTestSupport {
     
+    @Test
     public void testWireTapOnException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(1);

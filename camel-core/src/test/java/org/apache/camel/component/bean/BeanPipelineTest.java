@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 import javax.naming.Context;
 
@@ -32,6 +34,7 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class BeanPipelineTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInPipeline() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World from James");

@@ -16,9 +16,11 @@
  */
 package org.apache.camel.main;
 
+import org.junit.Test;
+
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,8 +28,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
 
+    @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
@@ -52,6 +55,7 @@ public class MainTest extends TestCase {
         main.stop();
     }
 
+    @Test
     public void testDisableHangupSupport() throws Exception {
         // lets make a simple route
         Main main = new Main();
@@ -77,6 +81,7 @@ public class MainTest extends TestCase {
         main.stop();
     }
     
+    @Test
     public void testLoadingRouteFromCommand() throws Exception {
         Main main = new Main();
         // let the main load the MyRouteBuilder

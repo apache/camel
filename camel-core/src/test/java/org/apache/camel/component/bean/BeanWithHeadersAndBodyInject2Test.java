@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private MyBean myBean = new MyBean();
     private Map<String, User> users = new HashMap<>();
 
+    @Test
     public void testCannotBindToParameter() throws Exception {
         // Create hashmap for testing purpose
         users.put("charles", new User("Charles", "43"));
@@ -63,6 +66,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
         assertIsInstanceOf(NoTypeConversionAvailableException.class, out.getException().getCause());
     }
 
+    @Test
     public void testBindToParameter() throws Exception {
         final List<String> list = new ArrayList<>();
         list.add("Charles");
@@ -80,6 +84,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
         assertEquals("TheBody", myBean.body);
     }
 
+    @Test
     public void testBindToParameterIsNullValue() throws Exception {
         Exchange out = template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class BeanHandlerMethodTest extends ContextTestSupport {
 
+    @Test
     public void testInterfaceBeanMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyConcreteBean.class);
 
@@ -38,6 +41,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testNoHandleMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyNoDummyBean.class);
 
@@ -48,6 +52,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testAmbigiousMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyAmbigiousBean.class);
 
@@ -61,6 +66,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHandleMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyDummyBean.class);
 
@@ -71,6 +77,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testHandleAndBodyMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyOtherDummyBean.class);
 
@@ -81,6 +88,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testHandleAmbigious() throws Exception {
         BeanInfo info = new BeanInfo(context, MyReallyDummyBean.class);
 
@@ -94,6 +102,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoHandlerAmbigious() throws Exception {
         BeanInfo info = new BeanInfo(context, MyNoHandlerBean.class);
 

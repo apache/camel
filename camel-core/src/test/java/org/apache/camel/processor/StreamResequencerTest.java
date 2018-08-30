@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +46,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         });
     }
 
+    @Test
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("msg1", "msg2", "msg3", "msg4");
 
@@ -55,6 +58,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultithreaded() throws Exception {
         int numMessages = 100;
 
@@ -97,10 +101,12 @@ public class StreamResequencerTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testStreamResequencerTypeWithJmx() throws Exception {
         doTestStreamResequencerType();
     }
 
+    @Test
     public void testStreamResequencerTypeWithoutJmx() throws Exception {
         doTestStreamResequencerType();
     }

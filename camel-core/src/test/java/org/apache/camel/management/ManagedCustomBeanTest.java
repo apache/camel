@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Map;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -31,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedCustomBeanTest extends ManagementTestSupport {
 
+    @Test
     public void testManageCustomBean() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

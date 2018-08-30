@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.management.event.ExchangeSendingEvent;
  */
 public class EventNotifierExchangeSentParallelTest extends EventNotifierExchangeSentTest {
 
+    @Test
     public void testExchangeSentRecipient() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,12 +32,14 @@ import org.apache.camel.builder.RouteBuilder;
 public class FilerProducerFileNamesTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/reports");
         super.setUp();
     }
 
     // START SNIPPET: e1
+    @Test
     public void testProducerWithMessageIdAsFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:report");
         Exchange exchange = endpoint.createExchange();
@@ -49,6 +54,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         assertEquals("File should exists", true, file.exists());
     }
 
+    @Test
     public void testProducerWithHeaderFileName() throws Exception {
         template.sendBody("direct:report2", "This is super good report");
         File file = new File("target/report-super.txt");

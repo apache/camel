@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,7 +33,8 @@ import org.apache.camel.util.FileUtil;
 public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/classes/com.mycompany");
         createDirectory("target/classes/com.mycompany");
 
@@ -44,11 +49,13 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         deleteDirectory("target/classes/com.mycompany");
         super.tearDown();
     }
 
+    @Test
     public void testXsltIncludeClasspath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

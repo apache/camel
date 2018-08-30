@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.spring;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.CXFTestSupport;
@@ -37,6 +39,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     private Server server;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/filetocxf");
 
@@ -54,6 +57,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 

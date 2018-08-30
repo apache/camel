@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -31,13 +34,15 @@ public class FileConsumerAbsolutePathDefaultMoveTest extends ContextTestSupport 
     private String base;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/reports");
         // use current dir as base as absolute path
         base = new File("").getAbsolutePath() + "/target/reports";
         super.setUp();
     }
 
+    @Test
     public void testConsumeFromAbsolutePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");

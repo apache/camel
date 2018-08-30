@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
+    @Test
     public void testExludePreAndPostfixes() throws Exception {
         deleteDirectory("target/exclude");
         prepareFiles();

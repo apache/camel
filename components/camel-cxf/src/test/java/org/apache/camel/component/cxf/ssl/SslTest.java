@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.ssl;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.List;

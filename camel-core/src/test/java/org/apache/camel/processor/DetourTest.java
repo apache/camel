@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +28,7 @@ public class DetourTest extends ContextTestSupport {
     private static final String BODY = "<order custId=\"123\"/>";
     private ControlBean controlBean;
 
+    @Test
     public void testDetourSet() throws Exception {
         controlBean.setDetour(true);
         
@@ -42,6 +45,7 @@ public class DetourTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();        
     }
 
+    @Test
     public void testDetourNotSet() throws Exception {      
         controlBean.setDetour(false);
         

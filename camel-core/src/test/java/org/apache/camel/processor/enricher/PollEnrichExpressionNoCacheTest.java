@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class PollEnrichExpressionNoCacheTest extends ContextTestSupport {
 
+    @Test
     public void testPollEnricExpression() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 

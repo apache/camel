@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupport {
 
+    @Test
     public void testInterceptSendToEndpointNone() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(0);
@@ -37,6 +40,7 @@ public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptSendToEndpoint1() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(1);
@@ -48,6 +52,7 @@ public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptSendToEndpoint2() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(0);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRecursionDirect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -71,6 +74,7 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecursionDirectNoErrorHandler() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

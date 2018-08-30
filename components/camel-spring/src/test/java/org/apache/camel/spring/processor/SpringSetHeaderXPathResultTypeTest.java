@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -26,6 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringSetHeaderXPathResultTypeTest extends SpringTestSupport {
 
+    @Test
     public void testXPathResultType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mongodb.gridfs;
+import org.junit.After;
 
 
 import com.mongodb.MongoClient;
@@ -46,6 +47,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
     
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         mongo.close();

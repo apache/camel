@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -33,7 +36,8 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
     public static final String TEST_DIRECTORY = "target/chmoddir/foo/";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TEST_DIRECTORY);
         super.setUp();
     }
@@ -43,6 +47,7 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testWriteValidNoDir() throws Exception {
         if (!canTest()) {
             return;
@@ -51,6 +56,7 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         runChmodCheck("NoDir", null, "rwxr-xr-x");
     }
 
+    @Test
     public void testWriteValidChmod0755() throws Exception {
         if (!canTest()) {
             return;
@@ -59,6 +65,7 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         runChmodCheck("0755", "rwxrwxrwx", "rwxr-xr-x");
     }
 
+    @Test
     public void testWriteValidChmod666() throws Exception {
         if (!canTest()) {
             return;

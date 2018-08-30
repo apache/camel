@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -34,6 +36,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testCustomUnitOfWorkFactory() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("before", "I was here");

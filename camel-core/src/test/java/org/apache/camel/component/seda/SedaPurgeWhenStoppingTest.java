@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +35,7 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
     private final CountDownLatch latch = new CountDownLatch(1);
     private final CountDownLatch latch2 = new CountDownLatch(1);
 
+    @Test
     public void testPurgeWhenStopping() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

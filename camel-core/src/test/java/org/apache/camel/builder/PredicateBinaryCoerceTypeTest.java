@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -30,6 +33,7 @@ import org.apache.camel.impl.DefaultExchange;
 public class PredicateBinaryCoerceTypeTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
+    @Test
     public void testIsNull() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("123");
         assertDoesNotMatch(PredicateBuilder.isNull(a));
@@ -38,6 +42,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertMatches(PredicateBuilder.isNull(a));
     }
 
+    @Test
     public void testIsNotNull() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("123");
         assertMatches(PredicateBuilder.isNotNull(a));
@@ -46,6 +51,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertDoesNotMatch(PredicateBuilder.isNotNull(a));
     }
 
+    @Test
     public void testEqual() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("123"));
@@ -57,6 +63,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertMatches(PredicateBuilder.isEqualTo(a, b));
     }
 
+    @Test
     public void testEqualWithNull() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(null);
@@ -73,6 +80,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertMatches(PredicateBuilder.isEqualTo(a, b));
     }
 
+    @Test
     public void testNotEqual() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("123"));
@@ -83,6 +91,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertMatches(PredicateBuilder.isNotEqualTo(a, b));
     }
 
+    @Test
     public void testNotEqualWithNull() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(null);
@@ -99,6 +108,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertDoesNotMatch(PredicateBuilder.isNotEqualTo(a, b));
     }
 
+    @Test
     public void testGreatherThan() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("200");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("100"));
@@ -114,6 +124,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertMatches(PredicateBuilder.isGreaterThan(b, a));
     }
 
+    @Test
     public void testGreatherThanOrEqual() throws Exception {
         // greather than
         Expression a = ExpressionBuilder.constantExpression("200");
@@ -144,6 +155,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertMatches(PredicateBuilder.isGreaterThanOrEqualTo(b, a));
     }
 
+    @Test
     public void testLessThan() throws Exception {
         Expression a = ExpressionBuilder.constantExpression("100");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("200"));
@@ -159,6 +171,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
         assertDoesNotMatch(PredicateBuilder.isLessThan(b, a));
     }
 
+    @Test
     public void testLessThanOrEqual() throws Exception {
         // less than
         Expression a = ExpressionBuilder.constantExpression("100");
@@ -190,7 +203,8 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         Message in = exchange.getIn();
         in.setBody("Hello there!");

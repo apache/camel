@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncEndpointOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -49,6 +52,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncEndpointERROR() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

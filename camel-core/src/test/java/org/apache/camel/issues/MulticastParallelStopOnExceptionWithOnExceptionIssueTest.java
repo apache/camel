@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends MulticastStopOnExceptionWithOnExceptionIssueTest {
 
+    @Test
     public void testEnd1FailureTest() throws Exception {
         MockEndpoint end1 = getMockEndpoint("mock:end1");
         end1.whenAnyExchangeReceived(new Processor() {
@@ -45,6 +48,7 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnd2FailureTest() throws Exception {
         MockEndpoint end2 = getMockEndpoint("mock:end2");
         end2.whenAnyExchangeReceived(new Processor() {

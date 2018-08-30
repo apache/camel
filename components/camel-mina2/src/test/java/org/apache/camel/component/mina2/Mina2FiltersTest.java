@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina2;
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class Mina2FiltersTest extends BaseMina2Test {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         TestFilter.called = 0;
         super.tearDown();

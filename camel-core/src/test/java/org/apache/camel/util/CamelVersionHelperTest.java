@@ -16,12 +16,12 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.apache.camel.util.CamelVersionHelper.isGE;
 
-public class CamelVersionHelperTest extends TestCase {
+public class CamelVersionHelperTest extends Assert {
 
     @Test
     public void testGE() throws Exception {

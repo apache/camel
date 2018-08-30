@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelExecutionException;
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class XsltFeatureRouteTest extends ContextTestSupport {
 
+    @Test
     public void testSendMessage() throws Exception {
         String message = "<hello/>";
         sendXmlMessage("direct:start1", message);

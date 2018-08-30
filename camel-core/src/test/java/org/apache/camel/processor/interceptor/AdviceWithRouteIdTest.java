@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AdviceWithRouteIdTest extends AdviceWithTest {
 
+    @Test
     public void testAdvised() throws Exception {
         context.getRouteDefinition("myRoute").adviceWith(context, new RouteBuilder() {
             @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -40,6 +42,7 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
     private volatile CountDownLatch methodInvoked;
     private Future<Object> sendFuture;
 
+    @Test
     public void testDoSomething() throws Exception {
 
         runTestSendBody("Hello World", "Hello World", this::doSomething);
@@ -47,6 +50,7 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         runTestSendBody(this::expectNullBody, null, this::doSomething);
     }
 
+    @Test
     public void testChangeSomething() throws Exception {
         runTestSendBody("Bye World", "Hello World", this::changeSomething);
         runTestSendBody("Bye All", null, this::changeSomething);
@@ -54,12 +58,14 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testDoNothing() throws Exception {
         runTestSendBody("Hello World", "Hello World", this::doNothing);
         runTestSendBody("", "", this::doNothing);
         runTestSendBody(this::expectNullBody, null, this::doNothing);
     }
 
+    @Test
     public void testThrowSomething() throws Exception {
         try {
             runTestSendBody(m -> m.expectedMessageCount(0), "SomeProblem", this::throwSomething);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 
@@ -24,6 +26,7 @@ import org.apache.camel.ResolveEndpointFailedException;
  */
 public class FileInvalidStartingPathTest extends ContextTestSupport {
 
+    @Test
     public void testInvalidStartingPath() {
         try {
             context.getEndpoint("file://target/path/${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
@@ -33,6 +36,7 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testValidStartingPath() {
         context.getEndpoint("file://target/path/?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
     }

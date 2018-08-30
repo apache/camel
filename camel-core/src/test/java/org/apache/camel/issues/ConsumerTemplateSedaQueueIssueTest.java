@@ -16,12 +16,15 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
 
 public class ConsumerTemplateSedaQueueIssueTest extends ContextTestSupport {
 
+    @Test
     public void testConsumerTemplateSedaQueue() throws Exception {
         template.sendBody("direct:start", "A");
         template.sendBody("direct:start", "B");

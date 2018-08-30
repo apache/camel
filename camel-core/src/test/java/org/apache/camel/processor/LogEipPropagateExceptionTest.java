@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class LogEipPropagateExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testFailure() throws Exception {
         getMockEndpoint("mock:handleFailure").whenAnyExchangeReceived(new Processor() {
             @Override
@@ -41,6 +44,7 @@ public class LogEipPropagateExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSuccess() throws Exception {
         getMockEndpoint("mock:handleSuccess").whenAnyExchangeReceived(new Processor() {
             @Override

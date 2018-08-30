@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
@@ -52,6 +54,7 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         return set.iterator().next();
     }
 
+    @Test
     public void testRouteNoAutoStartup() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

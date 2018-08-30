@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class TokenXMLPairNamespaceMultilineSplitTest extends TokenXMLPairNamespaceSplitTest {
 
+    @Test
     public void testTokenXMLPair() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
@@ -37,6 +40,7 @@ public class TokenXMLPairNamespaceMultilineSplitTest extends TokenXMLPairNamespa
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTokenXMLPair2() throws Exception {
         // noop
     }

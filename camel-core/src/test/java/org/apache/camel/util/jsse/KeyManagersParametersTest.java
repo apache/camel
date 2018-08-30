@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util.jsse;
 
+import org.junit.Test;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
@@ -45,6 +47,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         return kmp;
     }
     
+    @Test
     public void testPropertyPlaceholders() throws Exception {
         
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
@@ -69,6 +72,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         validateKeyManagers(kms);
     }
     
+    @Test
     public void testCreateKeyManagers() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         
@@ -76,6 +80,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         validateKeyManagers(kms);
     }
     
+    @Test
     public void testExplicitAlgorithm() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
@@ -84,6 +89,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         validateKeyManagers(kms);
     }
     
+    @Test
     public void testExplicitProvider() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
@@ -93,6 +99,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         validateKeyManagers(kms);
     }
     
+    @Test
     public void testInvalidPassword() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setKeyPassword("");
@@ -105,6 +112,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testInvalidExplicitAlgorithm() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setAlgorithm("dsfsdfsdfdsfdsF");
@@ -117,6 +125,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testInvalidExplicitProvider() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setProvider("dsfsdfsdfdsfdsF");
@@ -129,6 +138,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testAliasedKeyManager() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         

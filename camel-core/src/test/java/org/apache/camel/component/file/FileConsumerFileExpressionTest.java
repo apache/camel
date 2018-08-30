@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,7 +33,8 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 public class FileConsumerFileExpressionTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filelanguage");
         super.setUp();
     }
@@ -47,6 +51,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testConsumeFileBasedOnBeanName() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage/bean", "Hello World", Exchange.FILE_NAME, "122.txt");
         template.sendBodyAndHeader("file://target/filelanguage/bean", "Goodday World", Exchange.FILE_NAME, "123.txt");
@@ -69,6 +74,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumeFileBasedOnDatePattern() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage/date", "Bye World", Exchange.FILE_NAME, "myfile-20081128.txt");
         template.sendBodyAndHeader("file://target/filelanguage/date", "Hello World", Exchange.FILE_NAME, "myfile-20081129.txt");

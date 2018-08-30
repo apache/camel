@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.zipfile;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -25,6 +26,7 @@ import org.junit.Test;
 public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/zip");
         super.setUp();

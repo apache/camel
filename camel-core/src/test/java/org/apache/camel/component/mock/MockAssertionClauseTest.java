@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MockAssertionClauseTest extends ContextTestSupport {
 
+    @Test
     public void testAssertionClauseAll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.allMessages().xpath("/person[@name='James']", Boolean.class);
@@ -34,6 +37,7 @@ public class MockAssertionClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAssertionClausePer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 

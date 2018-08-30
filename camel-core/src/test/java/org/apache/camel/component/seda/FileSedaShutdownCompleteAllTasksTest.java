@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.seda;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,11 +37,13 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
     private String url = "file:target/seda?initialDelay=0&delay=10";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/seda");
         super.setUp();
     }
 
+    @Test
     public void testShutdownCompleteAllTasks() throws Exception {
         // prepare 5 files to begin with
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");

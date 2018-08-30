@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,6 +37,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
     private volatile int receivedTotal;
     private volatile long receivedTimeout;
 
+    @Test
     public void testAggregateTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedMessageCount(0);
@@ -91,7 +94,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
             invoked.incrementAndGet();
 
             // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionFailedError) so that we assert
+            // allow to throw any Throwable (including AssertionError) so that we assert
             // about the expected values directly inside the test method itself. other than that
             // asserting inside a thread other than the main thread dosen't make much sense as
             // junit would not realize the failed assertion!

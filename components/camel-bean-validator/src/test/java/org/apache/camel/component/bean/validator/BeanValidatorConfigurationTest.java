@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean.validator;
+import org.junit.Before;
 
 import java.lang.annotation.ElementType;
 import java.util.Locale;
@@ -39,6 +40,7 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     private ConstraintValidatorFactory constraintValidatorFactory;
     
     @Override
+    @Before
     public void setUp() throws Exception {
         this.messageInterpolator = new MyMessageInterpolator();
         this.traversableResolver = new MyTraversableResolver();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -29,6 +31,7 @@ public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
         return registry;
     }
     
+    @Test
     public void testOnExceptionFirstBean() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:bean").expectedMessageCount(0);
@@ -37,6 +40,7 @@ public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testOnExceptionSecondBean() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:bean").expectedMessageCount(1);

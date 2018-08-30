@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -28,6 +30,7 @@ import org.apache.camel.util.SedaConstants;
 public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
     
 
+    @Test
     public void testSameQueue() throws Exception {
         for (int i = 0; i < 100; i++) {
             template.sendBody("vm:foo", "" + i);
@@ -44,6 +47,7 @@ public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSameQueueDifferentSize() throws Exception {
         try {
             template.sendBody("vm:foo?size=200", "Should fail");
@@ -54,6 +58,7 @@ public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSameQueueDifferentSizeBar() throws Exception {
         try {
             template.sendBody("vm:bar?size=200", "Should fail");

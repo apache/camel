@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.dozer;
+import org.junit.Before;
 
 import java.util.Arrays;
 
@@ -33,6 +34,7 @@ import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createD
 public class DozerTypeConverterDTOTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

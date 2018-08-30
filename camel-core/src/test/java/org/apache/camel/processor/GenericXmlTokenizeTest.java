@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class GenericXmlTokenizeTest extends ContextTestSupport {
 
+    @Test
     public void testSendClosedTagMessageToTokenize() throws Exception {
         String message = "<?xml version='1.0' encoding='UTF-8' ?><parent><child anotherAttr='' some_attr=''></child></parent>";
         // the result is formated
@@ -35,6 +38,7 @@ public class GenericXmlTokenizeTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testSendSelfClosingTagMessageToTokenize() throws Exception {
         String message = "<?xml version='1.0' encoding='UTF-8' ?><parent xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><child some_attr='' anotherAttr='' /></parent>";
         // the result is formated

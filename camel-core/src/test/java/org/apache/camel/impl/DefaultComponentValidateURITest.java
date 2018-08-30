@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -25,11 +27,13 @@ import org.apache.camel.ResolveEndpointFailedException;
  */
 public class DefaultComponentValidateURITest extends ContextTestSupport {
 
+    @Test
     public void testNoParameters() throws Exception {
         Endpoint endpoint = context.getEndpoint("timer://foo");
         assertNotNull("Should have created an endpoint", endpoint);
     }
 
+    @Test
     public void testUnknownParameter() throws Exception {
         try {
             context.getEndpoint("timer://foo?delay=250&unknown=1&period=500");
@@ -39,6 +43,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testDoubleAmpersand() throws Exception {
         try {
             context.getEndpoint("timer://foo?delay=250&&period=500");
@@ -48,6 +53,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testTrailingAmpersand() throws Exception {
         try {
             context.getEndpoint("timer://foo?delay=250&period=500&");
@@ -57,6 +63,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testScheduledPollConsumerOptions() throws Exception {
         // test that we support both notations of scheduled polling consumer options
 

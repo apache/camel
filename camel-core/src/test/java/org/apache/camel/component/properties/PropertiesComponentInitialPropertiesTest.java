@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -32,6 +34,7 @@ public class PropertiesComponentInitialPropertiesTest extends ContextTestSupport
         return false;
     }
 
+    @Test
     public void testPropertiesComponentEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

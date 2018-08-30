@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
+import org.junit.Before;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -39,6 +40,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
     private TarAggregationStrategy tar = new TarAggregationStrategy(false, true);
 
     @Override
+    @Before
     public void setUp() throws Exception {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");

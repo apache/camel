@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ public class CircuitBreakerLoadBalancerInvalidTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testInvalid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

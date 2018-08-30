@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionTransformConstant() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -52,6 +55,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
         assertEquals("Sorry", out);
     }
 
+    @Test
     public void testOnExceptionTransformExceptionMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -78,6 +82,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
         assertEquals("Sorry you cannot do this again to me", out);
     }
 
+    @Test
     public void testOnExceptionSimpleLangaugeExceptionMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

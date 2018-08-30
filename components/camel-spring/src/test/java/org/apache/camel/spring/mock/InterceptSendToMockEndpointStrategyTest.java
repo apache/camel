@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.mock;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class InterceptSendToMockEndpointStrategyTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml");
     }
 
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         getMockEndpoint("mock:direct:start").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:direct:foo").expectedBodiesReceived("Hello World");

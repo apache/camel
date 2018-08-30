@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms;
+import org.junit.Before;
 
 import javax.jms.ConnectionFactory;
 
@@ -34,6 +35,7 @@ public class FileRouteJmsPreMoveTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");

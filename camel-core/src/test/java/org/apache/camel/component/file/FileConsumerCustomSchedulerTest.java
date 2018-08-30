@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,11 +42,13 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/custom");
         super.setUp();
     }
 
+    @Test
     public void testCustomScheduler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

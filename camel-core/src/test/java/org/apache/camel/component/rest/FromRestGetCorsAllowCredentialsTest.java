@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,6 +34,7 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testCorsWithoutOrigin() throws Exception {
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
@@ -53,6 +56,7 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCorsWithOrigin() throws Exception {
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);

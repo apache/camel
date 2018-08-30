@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +37,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         return false;
     }
 
+    @Test
     public void testThreadsRejectedExecution() throws Exception {
         final CountDownLatch latch = new CountDownLatch(3);
 
@@ -75,6 +78,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsRejectedExecutionWithRedelivery() throws Exception {
         final CountDownLatch latch = new CountDownLatch(3);
 

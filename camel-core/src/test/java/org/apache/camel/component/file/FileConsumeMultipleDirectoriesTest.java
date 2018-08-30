@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -31,12 +34,14 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
     private String fileUrl = "file://target/multidir/?initialDelay=0&delay=10&recursive=true&delete=true&sortBy=file:path";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/multidir");
         super.setUp();
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World", "Hello World", "Godday World");

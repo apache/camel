@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExceptionComplexRouteTest {
 
+    @Test
     public void testNoError3() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -30,6 +33,7 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionalError3() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:error3").expectedMessageCount(1);

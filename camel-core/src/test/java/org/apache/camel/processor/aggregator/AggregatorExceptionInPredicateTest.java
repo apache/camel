@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -31,10 +33,12 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testExceptionInAggregationStrategy() throws Exception {
         testExceptionInFlow("direct:start");
     }
     
+    @Test
     public void testExceptionInPredicate() throws Exception {
         testExceptionInFlow("direct:predicate");
     }

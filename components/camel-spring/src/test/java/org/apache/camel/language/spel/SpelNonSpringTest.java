@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.LanguageTestSupport;
@@ -35,6 +37,7 @@ public class SpelNonSpringTest extends LanguageTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testSpelBeanExpressions() throws Exception {
         assertExpression("#{@myDummy.foo == 'xyz'}", true);
         assertExpression("#{@myDummy.bar == 789}", true);
@@ -46,6 +49,7 @@ public class SpelNonSpringTest extends LanguageTestSupport {
         }
     }
     
+    @Test
     public void testSpelBeanPredicates() throws Exception {
         assertPredicate("@myDummy.foo == 'xyz'");
         assertPredicate("@myDummy.bar == 789");

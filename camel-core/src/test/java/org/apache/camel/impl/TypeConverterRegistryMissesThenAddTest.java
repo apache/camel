@@ -16,15 +16,18 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * @version 
  */
-public class TypeConverterRegistryMissesThenAddTest extends TestCase {
+public class TypeConverterRegistryMissesThenAddTest extends Assert {
 
+    @Test
     public void testMissThenAddTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class NotifyBuilderOnFailureShutdownCamelIssueTest extends ContextTestSupport {
 
+    @Test
     public void testIssue() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
         assertTrue(notify.matchesMockWaitTime());

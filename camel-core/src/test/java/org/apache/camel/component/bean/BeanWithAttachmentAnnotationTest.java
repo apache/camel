@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -37,6 +39,7 @@ import org.apache.camel.util.jndi.JndiContext;
 
 public class BeanWithAttachmentAnnotationTest extends ContextTestSupport {
     
+    @Test
     public void testBeanWithOldAnnotationAndExchangeTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("attachment");
@@ -54,6 +57,7 @@ public class BeanWithAttachmentAnnotationTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("attachment");

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ public class BeanNoCacheTest extends ContextTestSupport {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
+    @Test
     public void testBeanRefNoCache() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello1", "Bye2", "Camel3");
 

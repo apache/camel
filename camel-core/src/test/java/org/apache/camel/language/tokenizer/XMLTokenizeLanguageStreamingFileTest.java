@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.language.tokenizer;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,11 +27,13 @@ import org.apache.camel.builder.xml.Namespaces;
 public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xmltokenize");
         super.setUp();
     }
 
+    @Test
     public void testFromFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>",
                 "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",

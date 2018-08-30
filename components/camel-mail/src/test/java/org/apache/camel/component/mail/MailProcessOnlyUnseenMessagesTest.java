@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -34,6 +35,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();

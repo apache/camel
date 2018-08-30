@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitStopOnExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplit() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("Hello", "World", "Kaboom");
         getMockEndpoint("mock:line").allMessages().exchangeProperty("foo").isEqualTo("changed");

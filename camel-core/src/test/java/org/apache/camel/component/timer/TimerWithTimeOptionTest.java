@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +37,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFiredInFutureWithTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,6 +60,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithTPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -78,6 +82,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithTPatternFixedRate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -100,6 +105,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithoutTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -122,6 +128,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithoutTPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -143,6 +150,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureCustomPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -165,6 +173,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureCustomPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -186,6 +195,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureIllegalTime() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

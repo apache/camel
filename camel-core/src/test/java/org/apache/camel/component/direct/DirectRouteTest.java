@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -31,8 +33,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * @version 
  */
-public class DirectRouteTest extends TestCase {
+public class DirectRouteTest extends Assert {
 
+    @Test
     public void testSedaQueue() throws Exception {
         CamelContext container = new DefaultCamelContext();
 

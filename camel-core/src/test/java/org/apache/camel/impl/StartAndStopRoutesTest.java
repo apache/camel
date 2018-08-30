@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,6 +38,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
     protected Endpoint endpointC;
     protected Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testStartRouteThenStopMutateAndStartRouteAgain() throws Exception {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         assertCollectionSize("Route", routes, 1);

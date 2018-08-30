@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +38,8 @@ public class FileIdempotentReadLockTest extends ContextTestSupport {
     MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
         super.setUp();
@@ -48,6 +52,7 @@ public class FileIdempotentReadLockTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testIdempotentReadLock() throws Exception {
         assertEquals(0, myRepo.getCacheSize());
 

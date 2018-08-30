@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.component.seda.QueueReference;
  */
 public class VmComponentReferenceEndpointTest extends ContextTestSupport {
     
+    @Test
     public void testVmComponentReference() throws Exception {
         VmComponent vm = context.getComponent("vm", VmComponent.class);
 

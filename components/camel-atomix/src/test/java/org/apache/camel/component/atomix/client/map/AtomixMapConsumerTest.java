@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.map;
+import org.junit.After;
 
 import java.util.Collections;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         map.close();
 

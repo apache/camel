@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.EventObject;
 
@@ -34,7 +37,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
     private int stops;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         super.setUp();
 
@@ -58,6 +62,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         });
     }
 
+    @Test
     public void testManagedCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

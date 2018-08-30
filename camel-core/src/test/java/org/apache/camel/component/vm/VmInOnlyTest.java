@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class VmInOnlyTest extends AbstractVmTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

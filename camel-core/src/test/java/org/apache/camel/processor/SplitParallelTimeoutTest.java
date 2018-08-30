@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +34,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
     private volatile int receivedTotal;
     private volatile long receivedTimeout;
 
+    @Test
     public void testSplitParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C
@@ -76,7 +79,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionFailedError) so that we assert
+            // allow to throw any Throwable (including AssertionError) so that we assert
             // about the expected values directly inside the test method itself. other than that
             // asserting inside a thread other than the main thread dosen't make much sense as
             // junit would not realize the failed assertion!

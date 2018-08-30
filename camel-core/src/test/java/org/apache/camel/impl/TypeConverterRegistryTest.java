@@ -16,10 +16,12 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
@@ -30,8 +32,9 @@ import org.apache.camel.support.TypeConverterSupport;
 /**
  * @version 
  */
-public class TypeConverterRegistryTest extends TestCase {
+public class TypeConverterRegistryTest extends Assert {
 
+    @Test
     public void testDefaultTypeConverterRegistry() {
         DefaultCamelContext ctx = new DefaultCamelContext();
         assertNotNull(ctx.getTypeConverterRegistry());
@@ -41,6 +44,7 @@ public class TypeConverterRegistryTest extends TestCase {
         assertNotNull(tc);
     }
 
+    @Test
     public void testAddTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 
@@ -57,6 +61,7 @@ public class TypeConverterRegistryTest extends TestCase {
         assertEquals(123, order.getId());
     }
 
+    @Test
     public void testAddDuplicateTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 
@@ -64,6 +69,7 @@ public class TypeConverterRegistryTest extends TestCase {
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
     }
 
+    @Test
     public void testAddDuplicateTypeConverterIgnore() {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Ignore);
@@ -73,6 +79,7 @@ public class TypeConverterRegistryTest extends TestCase {
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
     }
 
+    @Test
     public void testAddDuplicateTypeConverterFail() {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Fail);
@@ -86,6 +93,7 @@ public class TypeConverterRegistryTest extends TestCase {
         }
     }
 
+    @Test
     public void testRemoveTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 

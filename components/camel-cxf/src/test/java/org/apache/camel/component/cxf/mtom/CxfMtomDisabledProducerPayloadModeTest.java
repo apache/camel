@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
+import org.junit.Test;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -71,6 +73,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
     }
     
     @Override
+    @Test
     public void testProducer() throws Exception {
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;

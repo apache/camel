@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.junit.Assert;
 
@@ -24,6 +26,7 @@ import org.junit.Assert;
  */
 public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInfoOverloadedWithSubTypedParam() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
         Assert.assertEquals(2, beanInfo.getMethods().size());

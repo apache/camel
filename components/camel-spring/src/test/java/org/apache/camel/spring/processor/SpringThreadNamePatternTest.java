@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class SpringThreadNamePatternTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringThreadNamePatternTest.xml");
     }
 
+    @Test
     public void testThreadNamePattern() throws Exception {
         assertEquals("Riding the thread #counter#", context.getExecutorServiceManager().getThreadNamePattern());
 

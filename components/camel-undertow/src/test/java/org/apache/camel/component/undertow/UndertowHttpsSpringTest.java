@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
+import org.junit.Before;
+import org.junit.After;
 
 import java.net.URL;
 import javax.annotation.Resource;

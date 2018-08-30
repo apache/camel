@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.MulticastDefinition;
@@ -27,6 +29,7 @@ import org.apache.camel.model.SendDefinition;
  */
 public class DualPipelineTest extends ContextTestSupport {
 
+    @Test
     public void testDualPipeline() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("After A");

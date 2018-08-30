@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
         return context;
     }
 
+    @Test
     public void testEndpointRegistryKeepRouteEndpointsRemoveRouteSharedEndpoint() throws Exception {
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://start") != null);

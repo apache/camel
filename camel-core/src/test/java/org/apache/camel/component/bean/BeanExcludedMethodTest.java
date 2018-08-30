@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
@@ -25,6 +27,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class BeanExcludedMethodTest extends ContextTestSupport {
 
+    @Test
     public void testExcludedMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyDummyBean.class);
 
@@ -34,6 +37,7 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
         assertNull("Should not be possible to find a suitable method", mi);
     }
 
+    @Test
     public void testNotExcludedMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyOtherDummyBean.class);
 

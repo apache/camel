@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +36,7 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
     private static String afterThreadName;
     private static String resultThreadName;
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello Camel");

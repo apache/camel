@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class BeanInvocationThrowsExceptionTest extends ContextTestSupport {
 
     // START SNIPPET: e1
+    @Test
     public void testBeanInvocation() {
         int result = (Integer) template.sendBody("direct:input", ExchangePattern.InOut, "Hello London");
         assertEquals(1, result);
     }
 
+    @Test
     public void testBeanInvocationFailure() {
         // must create an exchange to get the result as an exchange where we can get the caused exception
         Exchange exchange = getMandatoryEndpoint("direct:input").createExchange(ExchangePattern.InOut);

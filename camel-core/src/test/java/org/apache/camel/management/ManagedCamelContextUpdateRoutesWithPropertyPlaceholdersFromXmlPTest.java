@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Properties;
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -48,6 +50,7 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         return context;
     }
 
+    @Test
     public void testUpdate() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -97,6 +100,7 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdateEscaped() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

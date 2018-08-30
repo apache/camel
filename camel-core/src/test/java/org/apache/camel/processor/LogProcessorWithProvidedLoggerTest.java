@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
@@ -54,6 +56,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         );
     }
 
+    @Test
     public void testLogProcessorWithRegistryLogger() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -64,6 +67,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Got Bye World"));
     }
 
+    @Test
     public void testLogProcessorWithProvidedLogger() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 

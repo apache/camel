@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StartupListener;
@@ -38,6 +40,7 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
         return jndi;
     }
 
+    @Test
     public void testStartupListenerComponent() throws Exception {
         // and now the routes are started
         assertTrue(context.getRouteStatus("foo").isStarted());

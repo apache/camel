@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc.ws;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.List;
 
@@ -60,12 +62,14 @@ public class WsProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         startTestServer();
         super.setUp();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         stopTestServer();

@@ -16,14 +16,17 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class TracingRedeliveryIssueTest extends TestCase {
+public class TracingRedeliveryIssueTest extends Assert {
 
+    @Test
     public void testTracing() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {

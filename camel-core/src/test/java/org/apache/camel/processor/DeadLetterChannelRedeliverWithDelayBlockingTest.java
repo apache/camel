@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
@@ -36,6 +38,7 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
     private static int counter;
 
+    @Test
     public void testRedeliverWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 

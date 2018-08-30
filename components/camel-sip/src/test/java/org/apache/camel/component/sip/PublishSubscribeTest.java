@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sip;
+import org.junit.Before;
 
 import javax.sip.message.Request;
 
@@ -45,6 +46,7 @@ public class PublishSubscribeTest extends CamelTestSupport {
     private ProducerTemplate producerTemplate;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         port1 = AvailablePortFinder.getNextAvailable(17189);
         port2 = AvailablePortFinder.getNextAvailable(port1 + 1);

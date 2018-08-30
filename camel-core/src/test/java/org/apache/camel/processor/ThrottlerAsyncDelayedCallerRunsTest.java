@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.ThreadPoolProfileBuilder;
  */
 public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
     
+    @Test
     public void testThrottler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(6);
 

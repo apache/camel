@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,6 +34,7 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFireAndForgetUsingProcessor() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @SuppressWarnings("deprecation")
@@ -74,6 +77,7 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testFireAndForgetUsingExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @SuppressWarnings("deprecation")

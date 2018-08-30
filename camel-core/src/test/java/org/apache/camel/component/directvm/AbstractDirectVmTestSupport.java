@@ -34,7 +34,7 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
 
     @Override
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
         doPostSetup();
@@ -57,7 +57,7 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
 
     @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         ServiceHelper.stopServices(context2, template2);
 
         super.tearDown();

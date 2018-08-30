@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
 
+    @Test
     public void testGeneratedFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:a");
         FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file://target", FileEndpoint.class);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ public class InheritErrorHandlerTrueTest extends ContextTestSupport {
 
     private static int counter;
 
+    @Test
     public void testInheritErrorHandlerTrue() throws Exception {
         counter = 0;
 

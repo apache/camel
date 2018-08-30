@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.scheduler;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport 
 
     private AtomicBoolean sleep = new AtomicBoolean(true);
 
+    @Test
     public void testTwoScheduler() throws Exception {
         getMockEndpoint("mock:done").expectedMinimumMessageCount(10);
 

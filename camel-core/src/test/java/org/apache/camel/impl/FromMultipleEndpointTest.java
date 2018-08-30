@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromMultipleEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testMultipleFromEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:results");
         mock.expectedMessageCount(2);

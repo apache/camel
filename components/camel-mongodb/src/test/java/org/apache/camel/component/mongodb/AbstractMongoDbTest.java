@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mongodb;
+import org.junit.After;
 
 import java.util.Formatter;
 
@@ -68,6 +69,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         testCollection.drop();
         dynamicCollection.drop();

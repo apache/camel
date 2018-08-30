@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
         return false;
     }
 
+    @Test
     public void testStartupOrderClash() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

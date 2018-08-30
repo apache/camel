@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -37,6 +39,7 @@ public class XPathTransformRouteTest extends ContextTestSupport {
         return doc;
     }
 
+    @Test
     public void testXPathTransform() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<root><firstname>Servicemix</firstname><lastname>Camel</lastname></root>");

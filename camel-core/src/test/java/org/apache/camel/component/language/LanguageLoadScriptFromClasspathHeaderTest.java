@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.language;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class LanguageLoadScriptFromClasspathHeaderTest extends ContextTestSupport {
 
+    @Test
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

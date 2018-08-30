@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs2;
+import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -558,6 +559,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (!canTest()) {
             return;

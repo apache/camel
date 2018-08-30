@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,6 +35,7 @@ public class WireTapVoidBeanTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapVoidBeanTest.class);
 
+    @Test
     public void testWireTapToVoidBean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

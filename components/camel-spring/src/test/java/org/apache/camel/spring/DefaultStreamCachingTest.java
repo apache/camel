@@ -16,15 +16,18 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class DefaultStreamCachingTest extends TestCase {
+public class DefaultStreamCachingTest extends Assert {
     
     
+    @Test
     public void testStreamCaching() throws Exception {
         AbstractApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/streamCaching.xml"});
         CamelContext camelContext = appContext.getBean("camelContext", CamelContext.class);

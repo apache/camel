@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.tarfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import org.junit.Test;
 public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/testDeleteTarFileWhenUnmarshalWithDataFormat");
         deleteDirectory("target/testDeleteTarFileWhenUnmarshalWithSplitter");

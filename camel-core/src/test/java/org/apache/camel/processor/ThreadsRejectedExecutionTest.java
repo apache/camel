@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -37,6 +39,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testThreadsRejectedExecution() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -65,6 +68,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsRejectedExecutionCallerNotRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -100,6 +104,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(1, mock.getReceivedCounter());
     }
 
+    @Test
     public void testThreadsRejectedDiscard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -128,6 +133,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
     
+    @Test
     public void testThreadsRejectedDiscardOldest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -156,6 +162,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedAbort() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -184,6 +191,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedCallerRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -212,6 +220,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedAbortNoRedelivery() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

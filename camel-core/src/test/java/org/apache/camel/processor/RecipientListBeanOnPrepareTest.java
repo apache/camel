@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,6 +36,7 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRecipientListBeanOnPrepare() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:a").message(0).body(String.class).isEqualTo("1 Tony the Tiger");

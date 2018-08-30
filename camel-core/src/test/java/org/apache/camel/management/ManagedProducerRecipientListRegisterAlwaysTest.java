@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -37,6 +39,7 @@ public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTe
         return context;
     }
 
+    @Test
     public void testProducer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -32,7 +35,8 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
     private MyStrategy myStrategy = new MyStrategy();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/begin");
         super.setUp();
     }
@@ -44,6 +48,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeginFailureOneTime() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

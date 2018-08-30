@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty;
+import org.junit.After;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -96,6 +97,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         alive = false;

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ScriptTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testScript() throws Exception {
         resultEndpoint.expectedBodiesReceived("Hello");
 
@@ -35,7 +39,8 @@ public class ScriptTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +41,8 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
     private int lines = 20000;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/split");
         createDirectory("target/split");
         createBigFile();
@@ -55,6 +59,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
         IOHelper.close(fos);
     }
 
+    @Test
     public void testSplitParallelBigFile() throws Exception {
         StopWatch watch = new StopWatch();
 

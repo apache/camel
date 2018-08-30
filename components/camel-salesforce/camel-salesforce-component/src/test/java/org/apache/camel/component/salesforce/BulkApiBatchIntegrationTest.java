@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +56,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
     }
 
     @Theory
+    @Test
     public void testBatchLifecycle(BatchTest request) throws Exception {
         log.info("Testing Batch lifecycle with {} content", request.contentType);
 

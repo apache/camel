@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.etcd.cloud;
+import org.junit.After;
 
 import java.net.URI;
 
@@ -69,6 +70,7 @@ public class SpringEtcdServiceCallRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         CLIENT.deleteDir("/etcd-services-1/").recursive().send().get();

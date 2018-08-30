@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +33,7 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
     private int size = 20;
     private int delay = 100;
 
+    @Test
     public void testSplitParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(size);

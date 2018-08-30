@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
     private ExecutorService myPool;
 
+    @Test
     public void testAggregateShutdownDefaultThreadPoolTest() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
@@ -55,6 +58,7 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
     public void testAggregateShutdownCustomThreadPoolTest() throws Exception {
         assertEquals(false, myPool.isShutdown());
 

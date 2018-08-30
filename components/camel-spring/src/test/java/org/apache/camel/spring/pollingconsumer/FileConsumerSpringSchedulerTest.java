@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.pollingconsumer;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
@@ -30,6 +31,7 @@ public class FileConsumerSpringSchedulerTest extends SpringTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/file/spring");
         super.setUp();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,7 @@ public class VmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
     private static long id;
     private final ThreadLocal<String> local = new ThreadLocal<>();
 
+    @Test
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

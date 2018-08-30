@@ -16,9 +16,11 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,9 +32,10 @@ import org.slf4j.LoggerFactory;
 /**
  * @version 
  */
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
+    @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +41,7 @@ public class DefaultConsumerBridgeErrorHandlerTest extends ContextTestSupport {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Cannot process");

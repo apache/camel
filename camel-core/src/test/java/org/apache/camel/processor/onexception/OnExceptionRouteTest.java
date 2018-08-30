@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.IOException;
 
@@ -32,6 +35,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
     private MyOwnHandlerBean myOwnHandlerBean;
     private MyServiceBean myServiceBean;
 
+    @Test
     public void testNoError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
@@ -43,6 +47,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionalError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
@@ -55,6 +60,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
         assertEquals("<order><type>myType</type><user>Func</user></order>", myOwnHandlerBean.getPayload());
     }
 
+    @Test
     public void testTechnicalError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
@@ -68,6 +74,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
         assertNull(myOwnHandlerBean.getPayload());
     }
 
+    @Test
     public void testErrorWhileHandlingException() throws Exception {
         // DLC does not handle the exception as we failed during processing in onException
         MockEndpoint error = getMockEndpoint("mock:error");
@@ -92,7 +99,8 @@ public class OnExceptionRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         myOwnHandlerBean = new MyOwnHandlerBean();
         myServiceBean = new MyServiceBean();
         super.setUp();

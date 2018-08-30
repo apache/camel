@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class SplitterMethodCallTest extends ContextTestSupport {
 
+    @Test
     public void testSplitUsingMethodCall() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Claus", "James", "Willem");

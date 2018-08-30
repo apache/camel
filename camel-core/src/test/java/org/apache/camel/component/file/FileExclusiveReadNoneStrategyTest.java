@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +39,8 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
     private String fileUrl = "file://target/exclusiveread/slowfile?noop=true&initialDelay=0&delay=10&readLock=none";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/exclusiveread");
         createDirectory("target/exclusiveread/slowfile");
         super.setUp();
@@ -53,6 +57,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

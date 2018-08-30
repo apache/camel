@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
+    @Test
     public void testDisruptorVmInOutChainedTimeout() throws Exception {
         StopWatch watch = new StopWatch();
 

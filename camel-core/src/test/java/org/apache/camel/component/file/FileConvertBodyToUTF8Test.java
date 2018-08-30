@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,7 +33,8 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
     private byte[] body;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/utf8");
         super.setUp();
 
@@ -45,6 +49,7 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFileUTF8() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

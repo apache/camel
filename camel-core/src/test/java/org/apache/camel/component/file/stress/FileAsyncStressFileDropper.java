@@ -35,7 +35,7 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         // do not test on windows
         if (isPlatform("windows")) {
             return;

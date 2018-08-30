@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,6 +31,7 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
 
     private MyServiceBean myServiceBean;
 
+    @Test
     public void testNoErrorWhen() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:func").expectedMessageCount(0);
@@ -42,6 +46,7 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionalError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:tech").expectedMessageCount(0);
@@ -56,6 +61,7 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTechnicalError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:func").expectedMessageCount(0);
@@ -71,7 +77,8 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         myServiceBean = new MyServiceBean();
         super.setUp();
     }

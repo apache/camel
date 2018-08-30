@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,6 +34,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testDsl() throws Exception {
         if (!canTest()) {
             return;

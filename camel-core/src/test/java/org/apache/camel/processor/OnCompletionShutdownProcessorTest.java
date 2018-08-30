@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
 
     private MyProcessor processor = new MyProcessor();
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         assertEquals("Started", processor.getStatus().name());
 

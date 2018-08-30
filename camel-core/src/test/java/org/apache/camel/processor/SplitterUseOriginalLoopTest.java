@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +25,7 @@ import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 
 public class SplitterUseOriginalLoopTest extends ContextTestSupport {
 
+    @Test
     public void testUseOriginalLoop() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(6);
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello,World");

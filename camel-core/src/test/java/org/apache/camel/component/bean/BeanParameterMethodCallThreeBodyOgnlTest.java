@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanParameterMethodCallThreeBodyOgnlTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterValue() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("3");
 

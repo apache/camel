@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class DynamicRouterOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:end").expectedMessageCount(1);
 
@@ -35,6 +38,7 @@ public class DynamicRouterOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testException() throws Exception {
         getMockEndpoint("mock:end").expectedMessageCount(1);
 
@@ -58,6 +62,7 @@ public class DynamicRouterOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExceptionTwo() throws Exception {
         getMockEndpoint("mock:end").expectedMessageCount(2);
 

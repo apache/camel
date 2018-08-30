@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ToDynamicRawTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamicRaw() throws Exception {
         getMockEndpoint("mock:RAW(se+ret)").expectedBodiesReceived("Hello Camel");
 

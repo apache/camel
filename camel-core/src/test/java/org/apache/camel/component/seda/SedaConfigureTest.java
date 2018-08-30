@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +32,7 @@ public class SedaConfigureTest extends ContextTestSupport {
     
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBlockingQueueConfigured() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?size=2000", SedaEndpoint.class);
         BlockingQueue<Exchange> queue = endpoint.getQueue();
@@ -38,16 +41,19 @@ public class SedaConfigureTest extends ContextTestSupport {
         assertEquals("remainingCapacity", 2000, blockingQueue.remainingCapacity());
     }
 
+    @Test
     public void testConcurrentConsumersConfigured() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?concurrentConsumers=5", SedaEndpoint.class);
         assertEquals("concurrentConsumers", 5, endpoint.getConcurrentConsumers());
     }
 
+    @Test
     public void testBlockWhenFull() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?size=2000&blockWhenFull=true", SedaEndpoint.class);
         assertTrue("blockWhenFull", endpoint.isBlockWhenFull());
     }
 
+    @Test
     public void testDefaults() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo", SedaEndpoint.class);
         assertFalse("blockWhenFull: wrong default", endpoint.isBlockWhenFull());

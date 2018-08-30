@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -64,6 +66,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
     }
     private EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
 
+    @Test
     public void testAlwaysFails() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -90,6 +93,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         mock2.assertIsSatisfied();
     }
 
+    @Test
     public void testEverySecondOneFails() throws Exception {
         int size = 200;
         ExecutorService service = Executors.newFixedThreadPool(10);

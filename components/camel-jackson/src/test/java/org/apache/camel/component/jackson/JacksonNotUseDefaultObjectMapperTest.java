@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jackson;
+import org.junit.Before;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class JacksonNotUseDefaultObjectMapperTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         df.setUseDefaultObjectMapper(false);
         super.setUp();

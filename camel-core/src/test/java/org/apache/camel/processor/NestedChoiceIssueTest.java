@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class NestedChoiceIssueTest extends ContextTestSupport {
 
+    @Test
     public void testNestedChoiceBig() throws Exception {
         getMockEndpoint("mock:low").expectedMessageCount(0);
         getMockEndpoint("mock:med").expectedMessageCount(0);
@@ -31,6 +34,7 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNestedChoiceMed() throws Exception {
         getMockEndpoint("mock:low").expectedMessageCount(0);
         getMockEndpoint("mock:med").expectedMessageCount(1);
@@ -41,6 +45,7 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNestedChoiceLow() throws Exception {
         getMockEndpoint("mock:low").expectedMessageCount(1);
         getMockEndpoint("mock:med").expectedMessageCount(0);

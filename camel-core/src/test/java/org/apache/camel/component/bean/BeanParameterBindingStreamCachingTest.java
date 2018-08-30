@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.language.Simple;
  */
 public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
 
+    @Test
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("abcABC");
 

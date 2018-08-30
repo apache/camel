@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.validator;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +31,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
     }
      
     /** Tests that external DTD call is executed for StringSource by expecting an UnkonwHostException. */
+    @Test
     public void testInvalidMessageWithExternalDTDStringSource() throws Exception {
         unknownHostExceptionEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -39,6 +42,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
     }
 
     /** Tests that external DTD call is executed  for StreamSourceby expecting an UnkonwHostException. */
+    @Test
     public void testInvalidMessageWithExternalDTDStreamSource() throws Exception {
         unknownHostExceptionEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -49,6 +53,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
     }
     
     /** Tests that XXE is possible for StreamSource by expecting an UnkonwHostException. */
+    @Test
     public void testInvalidMessageXXESourceStream() throws Exception {
         unknownHostExceptionEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);

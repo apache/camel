@@ -16,12 +16,15 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
 
+    @Test
     public void testConstantBinary() throws Exception {
         byte[] data = template.requestBody("direct:start", "", byte[].class);
         // should have X number of bytes

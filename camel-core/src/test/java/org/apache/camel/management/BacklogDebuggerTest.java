@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
@@ -29,6 +31,7 @@ import static org.awaitility.Awaitility.await;
 public class BacklogDebuggerTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebugger() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -91,6 +94,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerUpdateBodyAndHeader() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -168,6 +172,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerUpdateBodyAndHeaderType() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -247,6 +252,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerRemoveBodyAndHeader() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -324,6 +330,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerSuspendOnlyOneAtBreakpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -385,6 +392,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerConditional() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -470,6 +478,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerStep() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -570,6 +579,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerStepCurrentNode() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +45,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
     private JndiRegistry registry;
 
+    @Test
     public void testConfigurationOnEndpoint() throws Exception {
         String endpointUri = "xslt:xslt/staff/staff.xsl?uriResolverFactory=#uriResolverFactory";
         String directStart = "direct:start";
@@ -53,6 +56,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
         execute(endpointUri, directStart);
     }
 
+    @Test
     public void testConfigurationOnComponent() throws Exception {
 
         XsltComponent xsltComponent = new XsltComponent();

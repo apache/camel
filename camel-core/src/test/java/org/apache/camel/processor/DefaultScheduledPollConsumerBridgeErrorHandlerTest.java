@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.Component;
@@ -35,6 +37,7 @@ import org.apache.camel.impl.ScheduledPollConsumer;
  */
 public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMinimumMessageCount(1);

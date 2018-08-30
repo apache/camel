@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -32,6 +34,7 @@ public class ClassComponentWithPropertiesLookupSetFromEndpointTest extends Conte
         return jndi;
     }
 
+    @Test
     public void testClassComponent() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hi World");
 

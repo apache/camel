@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         // do not expect a message since we only do onCompleteOnly
         getMockEndpoint("mock:sync").expectedMessageCount(0);

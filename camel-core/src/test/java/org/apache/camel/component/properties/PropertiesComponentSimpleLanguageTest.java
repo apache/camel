@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -32,6 +34,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPropertiesComponentSimpleLanguage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -46,6 +49,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         assertEquals("Hi Claus do you think Camel rocks?", reply);
     }
 
+    @Test
     public void testPropertiesComponentDualSimpleLanguage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -60,6 +64,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         assertEquals("Hi Claus do you think Camel rocks? And do you like Gouda cheese?", reply);
     }
 
+    @Test
     public void testPropertiesComponentSimpleLanguageWithLocations() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -74,6 +79,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         assertEquals("Hi Claus. Beer taste good.", reply);
     }
 
+    @Test
     public void testNoExistingPropertiesComponentWithLocation() throws Exception {
         context.removeComponent("properties");
         context.addRoutes(new RouteBuilder() {
@@ -89,6 +95,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         assertEquals("Hi Claus. Beer taste good.", reply);
     }
 
+    @Test
     public void testNoExistingPropertiesComponentWithLocations() throws Exception {
         context.removeComponent("properties");
         context.addRoutes(new RouteBuilder() {
@@ -105,6 +112,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         assertEquals("Hi Claus. Camel rocks.", reply);
     }
 
+    @Test
     public void testNoExistingPropertiesComponentWithoutLocation() throws Exception {
         context.removeComponent("properties");
         context.addRoutes(new RouteBuilder() {

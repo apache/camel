@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -33,7 +36,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class GenericFileConverterTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/gf");
         super.setUp();
     }
@@ -43,6 +47,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testToFile() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -63,6 +68,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -84,6 +90,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBytes() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -105,6 +112,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToSerializable() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -126,6 +134,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToInputStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -147,6 +156,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToFileInputStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

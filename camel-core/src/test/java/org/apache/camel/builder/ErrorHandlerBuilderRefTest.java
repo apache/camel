@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.UUID;
@@ -46,6 +48,7 @@ public class ErrorHandlerBuilderRefTest extends ContextTestSupport {
         return context;
     }
     
+    @Test
     public void testErrorHandlerBuilderRef() throws Exception {
         String uuid = UUID.randomUUID().toString();
         context.addRoutes(new TempRouteBuilder(uuid));

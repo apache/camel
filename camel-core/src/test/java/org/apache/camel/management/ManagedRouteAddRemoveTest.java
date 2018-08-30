@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Assume;
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,11 +48,10 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         };
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithTo() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        Assume.assumeFalse(isPlatform("aix"));
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -110,6 +112,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         log.info("Shutting down...");
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientList() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -170,6 +173,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         log.info("Shutting down...");
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRoutingSlip() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -230,6 +234,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         log.info("Shutting down...");
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientListAndRouteScopedOnException() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -288,6 +293,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         log.info("Shutting down...");
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientListAndContextScopedOnException() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -347,6 +353,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         log.info("Shutting down...");
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientListAndRouteScopedOnCompletion() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -404,6 +411,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         log.info("Shutting down...");
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientListAndContextScopedOnCompletion() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

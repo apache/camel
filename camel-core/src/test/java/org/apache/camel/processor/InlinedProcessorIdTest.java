@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -44,6 +46,7 @@ public class InlinedProcessorIdTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testInlinedProcessorId() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
 

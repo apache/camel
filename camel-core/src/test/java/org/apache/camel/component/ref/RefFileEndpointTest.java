@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ref;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -32,11 +35,13 @@ public class RefFileEndpointTest extends ContextTestSupport {
     private SimpleRegistry registry = new SimpleRegistry();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/foo");
         super.setUp();
     }
 
+    @Test
     public void testRefFileEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.braintree;
+import org.junit.After;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -60,6 +61,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.transactionIds) {

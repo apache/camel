@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.language;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/script");
         super.setUp();
     }
 
+    @Test
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 

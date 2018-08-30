@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,6 +32,7 @@ public class StringDataFormatTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/stringDataFormatTest.xml");
     }
 
+    @Test
     public void testMarshalString() throws Exception {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
@@ -44,6 +47,7 @@ public class StringDataFormatTest extends SpringTestSupport {
         assertEquals(body, result);
     }
 
+    @Test
     public void testUnMarshalString() throws Exception {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         byte[] body = "Hello Thai Elephant \u0E08".getBytes();

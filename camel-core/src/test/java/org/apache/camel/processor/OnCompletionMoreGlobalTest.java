@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class OnCompletionMoreGlobalTest extends ContextTestSupport {
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:complete").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:failure").expectedMessageCount(0);
@@ -43,6 +46,7 @@ public class OnCompletionMoreGlobalTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:complete").expectedMessageCount(0);
         getMockEndpoint("mock:failure").expectedMessageCount(1);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +47,7 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         return registry;
     }
 
+    @Test
     public void testParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
         ComponentVerifier verifier = component.getVerifier();
@@ -64,6 +67,7 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
     }
 
+    @Test
     public void testMissingParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
         ComponentVerifier verifier = component.getVerifier();

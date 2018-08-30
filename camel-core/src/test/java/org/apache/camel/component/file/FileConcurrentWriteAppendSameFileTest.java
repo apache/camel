@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
@@ -31,11 +34,13 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
     private final int size = 100;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/concurrent");
         super.setUp();
     }
 
+    @Test
     public void testConcurrentAppend() throws Exception {
         // create file with many lines
         StringBuilder sb = new StringBuilder();

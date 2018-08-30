@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.net.URL;
 import java.util.List;
@@ -45,7 +48,8 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         jaxbContext = context.getModelJAXBContextFactory().newJAXBContext();
     }
@@ -63,6 +67,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
         return assertIsInstanceOf(RestDefinition.class, rest);
     }
 
+    @Test
     public void testAddRestDefinitionsFromXml() throws Exception {
         RestDefinition rest = loadRest("rest1.xml");
         assertNotNull(rest);

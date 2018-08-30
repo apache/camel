@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spark;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;

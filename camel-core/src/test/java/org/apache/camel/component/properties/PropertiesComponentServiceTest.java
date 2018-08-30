@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class PropertiesComponentServiceTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -47,6 +50,7 @@ public class PropertiesComponentServiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionGetOrElse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
     
+    @Test
     public void testTimerInvocation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 
         mock.expectedMinimumMessageCount(2);
@@ -33,6 +36,7 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTimerUsingStopWatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 
         mock.expectedMinimumMessageCount(2);

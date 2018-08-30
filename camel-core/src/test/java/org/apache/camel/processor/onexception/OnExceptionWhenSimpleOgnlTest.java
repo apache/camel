@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionWhenSimpleOgnlTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionWhenSimpleOgnl() throws Exception {
         getMockEndpoint("mock:three").expectedMessageCount(1);
 

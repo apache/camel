@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.language;
 
+import org.junit.Test;
+
 import java.net.URLEncoder;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class LanguageScriptInHeaderRouteTakePrecedenceTest extends ContextTestSupport {
 
+    @Test
     public void testLanguageWithHeader() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -35,6 +38,7 @@ public class LanguageScriptInHeaderRouteTakePrecedenceTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLanguageNoHeader() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

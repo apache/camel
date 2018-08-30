@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +33,7 @@ public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/multipleLifecycleStrategyInjection.xml");
     }
 
+    @Test
     public void testInjectedStrategy() throws Exception {
         assertEquals(3, context.getLifecycleStrategies().size());
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(0));

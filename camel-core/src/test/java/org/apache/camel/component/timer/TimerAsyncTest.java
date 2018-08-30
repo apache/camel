@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,16 +31,19 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class TimerAsyncTest extends ContextTestSupport {
 
+    @Test
     public void testSync() throws Exception {
         TimerEndpoint endpoint = context.getEndpoint("timer:foo?synchronous=true", TimerEndpoint.class);
         assertTrue("Timer endpoint must be synchronous, but it isn't", endpoint.isSynchronous());
     }
 
+    @Test
     public void testAsync() throws Exception {
         TimerEndpoint endpoint = context.getEndpoint("timer:foo", TimerEndpoint.class);
         assertFalse("Timer endpoint must be asynchronous, but it isn't", endpoint.isSynchronous());
     }
 
+    @Test
     public void testAsyncRouting() throws Exception {
         final int threads = 5;
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -29,6 +31,7 @@ import org.apache.camel.support.RoutePolicySupport;
  */
 public class AdviceWithRoutePolicyTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").message(0).header("MyRoutePolicy").isEqualTo(true);
@@ -40,6 +43,7 @@ public class AdviceWithRoutePolicyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceRoutePolicyRemoved() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {

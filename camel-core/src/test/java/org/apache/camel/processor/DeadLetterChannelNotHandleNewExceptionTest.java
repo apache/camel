@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -31,6 +33,7 @@ public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSuppo
         }
     }
 
+    @Test
     public void testDeadLetterChannelNotHandleNewException() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

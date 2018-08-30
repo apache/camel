@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends ContextTestSupport {
 
+    @Test
     public void testInvalidUri() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -43,6 +46,7 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
         }
     }
 
+    @Test
     public void testInvalidOption() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

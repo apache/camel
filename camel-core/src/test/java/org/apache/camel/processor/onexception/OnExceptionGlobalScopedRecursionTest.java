@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRecursion() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
@@ -65,6 +68,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecursionHandled() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
@@ -101,6 +105,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecursionDirectNoErrorHandler() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
@@ -143,6 +148,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecursionHandledDirectNoErrorHandler() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
@@ -186,6 +192,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecursionDirect() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
@@ -225,6 +232,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecursionHandledDirect() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);

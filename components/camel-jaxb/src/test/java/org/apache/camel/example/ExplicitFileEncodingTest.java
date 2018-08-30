@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.example;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -33,6 +34,7 @@ import org.junit.Test;
 public class ExplicitFileEncodingTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/charset");
         super.setUp();

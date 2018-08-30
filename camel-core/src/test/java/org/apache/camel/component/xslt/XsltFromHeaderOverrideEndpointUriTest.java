@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.junit.Ignore;
 @Ignore("CamelXsltComponent don't support XSLT_RESOURCE_URI header anymore")
 public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
 
+    @Test
     public void testSendMessageAndHaveItTransformed() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);

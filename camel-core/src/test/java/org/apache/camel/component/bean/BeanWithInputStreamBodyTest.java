@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +40,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testBeanWithInputStreamBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -58,6 +61,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanWithInputStreamBodyMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -78,6 +82,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanWithInputStreamBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -98,6 +103,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanWithInputStreamBodyMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -118,6 +124,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanWithInputStreamBodyMethodOGNL() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.example;
+import org.junit.Before;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ import org.junit.Test;
 public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/charset");
         super.setUp();

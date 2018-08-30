@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateLostGroupIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(4);

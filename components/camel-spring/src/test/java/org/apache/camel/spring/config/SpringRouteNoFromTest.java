@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
@@ -24,10 +27,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringRouteNoFromTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         createApplicationContext();
     }
 
+    @Test
     public void testRouteNoFrom() {
         // noop
     }

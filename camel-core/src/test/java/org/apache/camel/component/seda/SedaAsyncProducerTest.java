@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.Future;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,6 +40,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
     private String route = "";
 
+    @Test
     public void testAsyncProducer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -57,6 +60,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
         assertEquals("Bye World", response);
     }
 
+    @Test
     public void testAsyncProducerWait() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -35,6 +37,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testProcessor() throws Exception {
         StopWatch watch = new StopWatch();
 
@@ -46,6 +49,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
         log.info("Processor took {} ms ", watch.taken());
     }
 
+    @Test
     public void testBean() throws Exception {
         StopWatch watch = new StopWatch();
 

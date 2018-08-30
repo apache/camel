@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,28 +29,33 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteMEPOptionalOutTest extends ContextTestSupport {
 
+    @Test
     public void testHasOut() {
         Object out = template.requestBody("direct:start", "Hi");
         assertEquals("Bye World", out);
     }
 
+    @Test
     public void testHasNotOutForInOptionalOut() {
         // OUT is optional in the route but we should not get a response
         Object out = template.sendBody("direct:noout", ExchangePattern.InOptionalOut, "Hi");
         assertEquals(null, out);
     }
 
+    @Test
     public void testHasNotOutForInOut() {
         // OUT is optional in the route but we should still not get a response
         Object out = template.sendBody("direct:noout", ExchangePattern.InOut, "Hi");
         assertEquals(null, out);
     }
 
+    @Test
     public void testHasNotOutForInOnly() {
         Object out = template.sendBody("direct:noout", ExchangePattern.InOnly, "Hi");
         assertEquals(null, out);
     }
 
+    @Test
     public void testInOnly() {
         Object out = template.sendBody("direct:inonly", ExchangePattern.InOnly, "Hi");
         assertEquals(null, out);

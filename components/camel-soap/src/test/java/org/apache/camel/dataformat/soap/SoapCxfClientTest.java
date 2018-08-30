@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.soap;
+import org.junit.Before;
 
 import java.util.List;
 

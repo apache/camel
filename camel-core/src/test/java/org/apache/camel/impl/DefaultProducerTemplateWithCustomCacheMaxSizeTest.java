@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -34,6 +36,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         return context;
     }
 
+    @Test
     public void testCacheProducers() throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
 
@@ -55,6 +58,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
 
+    @Test
     public void testInvalidSizeABC() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
         try {
@@ -65,6 +69,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         }
     }
 
+    @Test
     public void testInvalidSizeZero() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
         try {

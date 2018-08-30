@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class DeadLetterChannelCatchThrowableTest extends ContextTestSupport {
 
+    @Test
     public void testDeadLetterChannelCatchThrowable() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
+import org.junit.Before;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -45,6 +46,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

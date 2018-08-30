@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class BeanOnglStaticMethodTest extends ContextTestSupport {
 
+    @Test
     public void testBeanOnglStaticMethod() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
 

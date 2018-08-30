@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +29,7 @@ import org.apache.camel.util.StopWatch;
 
 public class DirectProducerBlockingTest extends ContextTestSupport {
 
+    @Test
     public void testProducerBlocksForSuspendedConsumer() throws Exception {
         DirectEndpoint endpoint = getMandatoryEndpoint("direct:suspended", DirectEndpoint.class);
         endpoint.getConsumer().suspend();
@@ -42,6 +45,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProducerBlocksWithNoConsumers() throws Exception {
         DirectEndpoint endpoint = getMandatoryEndpoint("direct:suspended", DirectEndpoint.class);
         endpoint.getConsumer().suspend();
@@ -58,6 +62,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProducerBlocksResumeTest() throws Exception {
         context.suspendRoute("foo");
 

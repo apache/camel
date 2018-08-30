@@ -17,6 +17,8 @@
 
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class PredicateAggregatorCollectionTest extends ContextTestSupport {
 
+    @Test
     public void testPredicateAggregateCollection() throws Exception {
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");

@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
 
 /**
  * @version 
  */
 public class UnitOfWorkWithAsyncFlowTest extends UnitOfWorkTest {
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         uri = "seda:async";
         super.setUp();
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class TryCatchNestedChoiceTest extends ContextTestSupport {
 
+    @Test
     public void testFoo() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -36,6 +39,7 @@ public class TryCatchNestedChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOther() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -46,6 +50,7 @@ public class TryCatchNestedChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCatch() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);

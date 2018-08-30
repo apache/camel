@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.beanio;
+import org.junit.Before;
+import org.junit.After;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

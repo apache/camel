@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -37,6 +39,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLogBodyStreamStringSourceDisabled() throws Exception {
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
 
@@ -55,6 +58,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
 
+    @Test
     public void testLogBodyStreamStringSourceDisabledByDefault() throws Exception {
         context.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
 
@@ -73,6 +77,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
 
+    @Test
     public void testLogBodyStreamStringSourceEnabled() throws Exception {
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 
@@ -91,6 +96,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
 
+    @Test
     public void testLogBodyStreamDisabled() throws Exception {
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
         
@@ -109,6 +115,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
     }
 
+    @Test
     public void testLogBodyStreamDisabledByDefault() throws Exception {
         context.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
 
@@ -127,6 +134,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
     }
 
+    @Test
     public void testLogBodyStreamEnabled() throws Exception {
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 

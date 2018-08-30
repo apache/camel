@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -38,6 +40,7 @@ public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testManageStatisticsLevelDisabled() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

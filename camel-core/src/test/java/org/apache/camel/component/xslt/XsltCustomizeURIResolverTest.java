@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import javax.xml.transform.Source;
@@ -36,6 +38,7 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
 
     private static final String EXPECTED_XML_CONSTANT = "<data>FOO DATA</data>";
 
+    @Test
     public void testXsltCustomURIResolverDirectInRouteUri() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultURIResolverDirect");
         mock.expectedMessageCount(1);

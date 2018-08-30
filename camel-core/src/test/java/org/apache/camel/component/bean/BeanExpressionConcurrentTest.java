@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanExpressionConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testBeanConcurrent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1000);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -122,6 +124,7 @@ public class ServicePoolAwareLeakyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testForMemoryLeak() throws Exception {
         registerLeakyComponent();
 

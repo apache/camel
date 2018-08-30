@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,6 +34,7 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
     private static final int MAX_ITERATIONS = 1000;
     private static int counter;
 
+    @Test
     public void testIssue() throws Exception {
         template.sendBody("seda:foo", "Hello World");
 

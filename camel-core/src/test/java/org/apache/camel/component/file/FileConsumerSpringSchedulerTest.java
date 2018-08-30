@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class FileConsumerSpringSchedulerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSpring() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

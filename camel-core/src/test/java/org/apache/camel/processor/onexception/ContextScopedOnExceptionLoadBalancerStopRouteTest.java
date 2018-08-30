@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import static org.awaitility.Awaitility.await;
 
 public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:start").expectedBodiesReceived("World");
@@ -38,6 +41,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testError() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:start").expectedBodiesReceived("Kaboom");
@@ -49,6 +53,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testErrorOk() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:start").expectedBodiesReceived("Kaboom", "World");
@@ -61,6 +66,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testErrorOkError() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:start").expectedBodiesReceived("Kaboom", "World", "Kaboom");

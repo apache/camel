@@ -16,14 +16,17 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import javax.xml.transform.Source;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class XsltUriResolverTest extends TestCase {
+public class XsltUriResolverTest extends Assert {
 
+    @Test
     public void testResolveUri() throws Exception {
         CamelContext context = new DefaultCamelContext();
         XsltUriResolver xsltUriResolver = new XsltUriResolver(context, "classpath:xslt/staff/staff.xsl");

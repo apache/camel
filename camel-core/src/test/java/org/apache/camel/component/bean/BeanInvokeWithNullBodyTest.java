@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -25,6 +27,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanInvokeWithNullBodyTest extends ContextTestSupport {
 
+    @Test
     public void testWithHelloWorld() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -33,6 +36,7 @@ public class BeanInvokeWithNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithEmptyBody() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("");
 
@@ -41,6 +45,7 @@ public class BeanInvokeWithNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithNullBody() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body().isNull();

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+import org.junit.Before;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.junit.Test;
 public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();

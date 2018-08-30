@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,11 +32,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class GzipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/gzip");
         super.setUp();
     }
 
+    @Test
     public void testGzipFileUnmarshalDelete() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 

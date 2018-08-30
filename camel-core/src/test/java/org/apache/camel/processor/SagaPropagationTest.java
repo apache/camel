@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +39,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     private List<String> sagaIds;
 
 
+    @Test
     public void testPropagationRequired() throws Exception {
         context.createFluentProducerTemplate().to("direct:required").request();
 
@@ -44,6 +47,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         assertUniqueNonNullSagaIds(1);
     }
 
+    @Test
     public void testPropagationRequiresNew() throws Exception {
         context.createFluentProducerTemplate().to("direct:requiresNew").request();
 
@@ -51,6 +55,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         assertUniqueNonNullSagaIds(3);
     }
 
+    @Test
     public void testPropagationNotSupported() throws Exception {
         context.createFluentProducerTemplate().to("direct:notSupported").request();
 
@@ -58,6 +63,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         assertNonNullSagaIds(1);
     }
 
+    @Test
     public void testPropagationSupports() throws Exception {
         context.createFluentProducerTemplate().to("direct:supports").request();
 
@@ -65,6 +71,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         assertNonNullSagaIds(1);
     }
 
+    @Test
     public void testPropagationMandatory() throws Exception {
         try {
             context.createFluentProducerTemplate().to("direct:mandatory").request();
@@ -74,6 +81,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropagationNever() throws Exception {
         try {
             context.createFluentProducerTemplate().to("direct:never").request();

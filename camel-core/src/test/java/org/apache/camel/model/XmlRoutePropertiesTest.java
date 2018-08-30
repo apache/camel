@@ -16,11 +16,14 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.util.Objects;
 import javax.xml.bind.JAXBException;
 
 public class XmlRoutePropertiesTest extends XmlTestSupport {
 
+    @Test
     public void testXmlRouteGroup() throws JAXBException {
         RouteContainer context = assertParseAsJaxb("routeProperties.xml");
         RouteDefinition route = assertOneElement(context.getRoutes());

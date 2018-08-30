@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -31,6 +33,7 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
 
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("StartMyBean");

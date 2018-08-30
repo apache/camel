@@ -16,15 +16,17 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.support.LifecycleStrategySupport;
 
-public class CamelContextTrackerTest extends TestCase {
+public class CamelContextTrackerTest extends Assert {
 
     private final class MyContextTracker extends CamelContextTracker {
 
@@ -42,6 +44,7 @@ public class CamelContextTrackerTest extends TestCase {
         }
     }
 
+    @Test
     public void testContainerSet() throws Exception {
 
         MyContextTracker tracker = new MyContextTracker();

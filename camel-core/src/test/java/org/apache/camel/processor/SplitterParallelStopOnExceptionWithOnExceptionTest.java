@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
@@ -37,6 +40,7 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop1() throws Exception {
         // we run parallel so the tasks could haven been processed so we get 0 or more messages
         getMockEndpoint("mock:split").expectedMinimumMessageCount(0);
@@ -48,6 +52,7 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop2() throws Exception {
         // we run parallel so the tasks could haven been processed so we get 0 or more messages
         getMockEndpoint("mock:split").expectedMinimumMessageCount(0);
@@ -59,6 +64,7 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop3() throws Exception {
         // we run parallel so the tasks could haven been processed so we get 0 or more messages
         getMockEndpoint("mock:split").expectedMinimumMessageCount(0);

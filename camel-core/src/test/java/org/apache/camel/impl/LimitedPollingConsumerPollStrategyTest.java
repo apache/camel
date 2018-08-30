@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.util.ServiceHelper;
@@ -24,6 +26,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
 
     private LimitedPollingConsumerPollStrategy strategy;
 
+    @Test
     public void testLimitedPollingConsumerPollStrategy() throws Exception {
         Exception expectedException = new Exception("Hello");
 
@@ -46,6 +49,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void testLimitAtTwoLimitedPollingConsumerPollStrategy() throws Exception {
         Exception expectedException = new Exception("Hello");
 
@@ -66,6 +70,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void testLimitedPollingConsumerPollStrategySuccess() throws Exception {
         Exception expectedException = new Exception("Hello");
 
@@ -93,6 +98,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void testLimitedPollingConsumerPollStrategySuccessThenFail() throws Exception {
         Exception expectedException = new Exception("Hello");
 
@@ -130,6 +136,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void testTwoConsumersLimitedPollingConsumerPollStrategy() throws Exception {
         Exception expectedException = new Exception("Hello");
 
@@ -163,6 +170,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer2.stop();
     }
 
+    @Test
     public void testRestartManuallyLimitedPollingConsumerPollStrategy() throws Exception {
         Exception expectedException = new Exception("Hello");
 

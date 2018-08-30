@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,6 +35,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
  */
 public class DefaultErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testRoute() {
         Route route = context.getRoutes().get(0);
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
@@ -48,6 +51,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -57,6 +61,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

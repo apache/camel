@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
@@ -30,6 +32,7 @@ import org.apache.camel.spi.RouteContext;
  */
 public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
 
+    @Test
     public void testPropertyPlaceholder() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel");
         template.sendBody("seda:foo", "Hello World");

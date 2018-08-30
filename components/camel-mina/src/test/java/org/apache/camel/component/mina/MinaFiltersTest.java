@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class MinaFiltersTest extends BaseMinaTest {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         TestFilter.called = 0;
         super.setUp();

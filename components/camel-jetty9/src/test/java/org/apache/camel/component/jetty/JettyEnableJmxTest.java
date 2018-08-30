@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty;
+import org.junit.Before;
+import org.junit.After;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -37,6 +39,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     private MBeanServerConnection mbsc;
 
     @Override
+    @After
     public void tearDown() throws Exception {
         releaseMBeanServers();
         mbsc = null;
@@ -45,6 +48,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         enableJMX();
         releaseMBeanServers();

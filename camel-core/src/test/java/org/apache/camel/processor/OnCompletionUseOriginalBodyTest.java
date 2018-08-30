@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
 
+    @Test
     public void testOnCompletionUseOriginalBody() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:before").expectedPropertyReceived(Exchange.ON_COMPLETION, true);

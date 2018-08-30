@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -47,6 +49,7 @@ public class ChoiceWithTranfromTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testRoute() {
         String result = template.requestBodyAndHeader("direct:outerRoute", "body", "test-header", "headerValue", String.class);
         assertEquals("Processing body", result);

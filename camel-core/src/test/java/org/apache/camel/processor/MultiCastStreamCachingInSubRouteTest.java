@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -56,6 +58,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testWithAggregationStrategyAndStreamCacheInSubRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Test Message 1Test Message 2");
@@ -64,6 +67,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNestedMultiCastWithCachedStreamInAggregationStrategy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultNested");
         mock.expectedBodiesReceived("Test Message 1Test Message 2");

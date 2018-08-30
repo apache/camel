@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,6 +50,7 @@ public class CustomDataSetTest extends ContextTestSupport {
         }
     };
 
+    @Test
     public void testUsingCustomDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok

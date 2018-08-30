@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.netty4.http.rest;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.component.netty4.http.RestContextPathMatcher;
 
-public class RestPathMatchingTest extends TestCase {
+public class RestPathMatchingTest extends Assert {
 
     private RestContextPathMatcher matcher = new RestContextPathMatcher("", "", null, true);
 
+    @Test
     public void testRestPathMatcher() throws Exception {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", true));
         assertTrue(matcher.matchRestPath("/foo/", "foo/", true));
@@ -53,6 +56,7 @@ public class RestPathMatchingTest extends TestCase {
         assertTrue(matcher.matchRestPath("/1234567890/list/2014", "/{user}/list/{year}", true));
     }
 
+    @Test
     public void testRestPathMatcherNoWildcard() throws Exception {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", false));
         assertTrue(matcher.matchRestPath("/foo/", "foo/", false));

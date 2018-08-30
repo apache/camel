@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultErrorHandlerCatchThrowable() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xmpp;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -109,12 +111,14 @@ public class XmppRobustConnectionTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         embeddedXmppTestServer = new EmbeddedXmppTestServer();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();

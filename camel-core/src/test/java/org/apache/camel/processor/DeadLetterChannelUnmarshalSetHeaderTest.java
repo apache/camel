@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -31,6 +33,7 @@ import org.apache.camel.support.ServiceSupport;
  */
 public class DeadLetterChannelUnmarshalSetHeaderTest extends ContextTestSupport {
 
+    @Test
     public void testDLCSetHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedBodiesReceived("Hello World");

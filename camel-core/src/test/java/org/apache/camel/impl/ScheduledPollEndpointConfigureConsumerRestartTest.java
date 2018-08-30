@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +37,7 @@ public class ScheduledPollEndpointConfigureConsumerRestartTest extends ContextTe
     private MyEndpoint my;
     private Map<String, Object> props = new HashMap<>();
 
+    @Test
     public void testRestart() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 

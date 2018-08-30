@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.ws;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,6 +43,7 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context.setTracing(true);

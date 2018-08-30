@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.idempotent.cassandra;
+import org.junit.After;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -47,6 +48,7 @@ public class CassandraIdempotentTest extends BaseCassandraTest {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         if (canTest()) {

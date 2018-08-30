@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,6 +40,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
         }
     }
 
+    @Test
     public void testNoWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
@@ -52,6 +55,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_USER_QUEUE);
         mock.expectedMessageCount(1);

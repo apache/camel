@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,7 +28,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,36 +37,42 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version 
  */
-public class IOHelperTest extends TestCase {
+public class IOHelperTest extends Assert {
 
+    @Test
     public void testIOException() {
         IOException io = new IOException("Damn", new IllegalArgumentException("Damn"));
         assertEquals("Damn", io.getMessage());
         assertTrue(io.getCause() instanceof IllegalArgumentException);
     }
 
+    @Test
     public void testIOExceptionWithMessage() {
         IOException io = new IOException("Not again", new IllegalArgumentException("Damn"));
         assertEquals("Not again", io.getMessage());
         assertTrue(io.getCause() instanceof IllegalArgumentException);
     }
 
+    @Test
     public void testNewStringFromBytes() {
         String s = IOHelper.newStringFromBytes("Hello".getBytes());
         assertEquals("Hello", s);
     }
 
+    @Test
     public void testNewStringFromBytesWithStart() {
         String s = IOHelper.newStringFromBytes("Hello".getBytes(), 2, 3);
         assertEquals("llo", s);
     }
 
+    @Test
     public void testCopyAndCloseInput() throws Exception {
         InputStream is = new ByteArrayInputStream("Hello".getBytes());
         OutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os, 256);
     }
     
+    @Test
     public void testCharsetNormalize() throws Exception {
         assertEquals("UTF-8", IOHelper.normalizeCharset("'UTF-8'"));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8\""));
@@ -72,18 +80,22 @@ public class IOHelperTest extends TestCase {
         assertEquals("UTF-8", IOHelper.normalizeCharset("\' UTF-8\'"));
     }
 
+    @Test
     public void testLine1() throws Exception {
         assertReadAsWritten("line1",   "line1", "line1\n");
     }
 
+    @Test
     public void testLine1LF() throws Exception {
         assertReadAsWritten("line1LF", "line1\n", "line1\n");
     }
 
+    @Test
     public void testLine2() throws Exception {
         assertReadAsWritten("line2",   "line1\nline2", "line1\nline2\n");
     }
 
+    @Test
     public void testLine2LF() throws Exception {
         assertReadAsWritten("line2LF", "line1\nline2\n", "line1\nline2\n");
     }
@@ -105,6 +117,7 @@ public class IOHelperTest extends TestCase {
         out.close();
     }
 
+    @Test
     public void testCharsetName() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
@@ -119,6 +132,7 @@ public class IOHelperTest extends TestCase {
         
     }
     
+    @Test
     public void testGetCharsetNameFromContentType() throws Exception {
         String charsetName = IOHelper.getCharsetNameFromContentType("text/html; charset=iso-8859-1");
         assertEquals("iso-8859-1", charsetName);

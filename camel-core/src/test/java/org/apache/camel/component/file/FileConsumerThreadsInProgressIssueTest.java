@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testFileConsumerThreadsInProgressIssue() throws Exception {
         // give longer timeout for stopping
         context.getShutdownStrategy().setTimeout(180);

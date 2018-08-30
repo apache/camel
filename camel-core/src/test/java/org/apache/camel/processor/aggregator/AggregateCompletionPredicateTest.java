@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +28,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateCompletionPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testCompletionPredicateBeforeTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A+B+C+END");
@@ -40,6 +43,7 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleCompletionPredicateBeforeTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A+B+C+END", "D+E+END", "F+G+H+I+END");
@@ -62,6 +66,7 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCompletionPredicateBeforeTimeoutTwoGroups() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A+B+C+END", "1+2+3+4+END");
@@ -81,6 +86,7 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleCompletionPredicateBeforeTimeoutTwoGroups() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A+B+C+END", "1+2+3+4+END", "5+6+END", "D+E+END", "7+8+END", "F+G+H+I+END");

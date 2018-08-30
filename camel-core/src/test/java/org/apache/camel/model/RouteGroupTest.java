@@ -16,12 +16,15 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 
 public class RouteGroupTest extends ContextTestSupport {
 
+    @Test
     public void testRouteGroup()  {
         RouteDefinition definition = context.getRouteDefinition("route-id");
         Route route = context.getRoute("route-id");

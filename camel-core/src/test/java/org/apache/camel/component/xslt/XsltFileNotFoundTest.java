@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.io.FileNotFoundException;
 import javax.xml.transform.TransformerException;
 
@@ -30,6 +32,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class XsltFileNotFoundTest extends TestSupport {
 
+    @Test
     public void testNoXsltFile() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();

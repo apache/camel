@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
 
     private MyCustomStrategy strategy = new MyCustomStrategy();
 
+    @Test
     public void testCustomAggregationStrategy() throws Exception {
         assertTrue("Should be started", strategy.start);
         assertFalse("Should not be stopped", strategy.stop);

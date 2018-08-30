@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.etcd.cloud;
+import org.junit.After;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         try {
             client.deleteDir(CONFIGURATION.getServicePath()).recursive().send().get();

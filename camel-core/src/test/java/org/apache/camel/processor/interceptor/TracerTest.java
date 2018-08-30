@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+import org.junit.After;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -56,11 +59,13 @@ public class TracerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         tracer.stop();
         super.tearDown();
     }
 
+    @Test
     public void testTracer() throws Exception {
         MockEndpoint tracer = getMockEndpoint("mock:traced");
         tracer.expectedMessageCount(1);

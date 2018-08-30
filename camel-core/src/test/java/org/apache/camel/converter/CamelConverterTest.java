@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -33,6 +35,7 @@ import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
  */
 public class CamelConverterTest extends ContextTestSupport {
 
+    @Test
     public void testToProcessorExpression() throws Exception {
         Expression exp = ExpressionBuilder.headerExpression("foo");
 
@@ -47,6 +50,7 @@ public class CamelConverterTest extends ContextTestSupport {
         assertEquals("bar", exchange.getOut().getBody());
     }
 
+    @Test
     public void testToProcessorPredicate() throws Exception {
         Predicate pred = PredicateBuilder.isEqualTo(headerExpression("foo"), constant("bar"));
 

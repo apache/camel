@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DefaultCamelContextRestartTest extends ContextTestSupport {
 
+    @Test
     public void testRestart() throws Exception {
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());

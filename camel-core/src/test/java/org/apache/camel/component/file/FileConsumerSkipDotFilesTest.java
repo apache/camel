@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,11 +32,13 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
     private String fileUrl = "file://target/dotfiles/?initialDelay=0&delay=10";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/dotfiles");
         super.setUp();
     }
 
+    @Test
     public void testSkipDotFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -45,6 +50,7 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testSkipDotFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
