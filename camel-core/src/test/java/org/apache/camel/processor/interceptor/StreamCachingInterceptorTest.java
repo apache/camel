@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -40,6 +43,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
     private MockEndpoint b;
     private final XmlConverter converter = new XmlConverter();
 
+    @Test
     public void testConvertStreamSourceWithRouteBuilderStreamCaching() throws Exception {
         a.expectedMessageCount(1);
 
@@ -50,6 +54,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
     }
     
+    @Test
     public void testNoConversionForOtherXmlSourceTypes() throws Exception {
         a.expectedMessageCount(3);
 
@@ -68,6 +73,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", source, BODY_TYPE, source.getClass());
     }
 
+    @Test
     public void testConvertStreamSourceWithRouteOnlyStreamCaching() throws Exception {
         b.expectedMessageCount(1);
 
@@ -79,6 +85,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
+    @Test
     public void testConvertInputStreamWithRouteBuilderStreamCaching() throws Exception {
         a.expectedMessageCount(1);
 
@@ -90,6 +97,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
+    @Test
     public void testIgnoreAlreadyRereadable() throws Exception {
         a.expectedMessageCount(1);
 
@@ -99,6 +107,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof String);
     }
 
+    @Test
     public void testStreamCachingInterceptorToString() {
         StreamCachingInterceptor cache = new StreamCachingInterceptor();
         assertNotNull(cache.toString());
@@ -108,7 +117,8 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
         b = getMockEndpoint("mock:b");

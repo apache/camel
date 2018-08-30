@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xstream;
+import org.junit.Before;
+import org.junit.After;
 
 import com.thoughtworks.xstream.XStream;
 import org.junit.AfterClass;

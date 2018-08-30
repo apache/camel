@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedLogEndpointTest extends ManagementTestSupport {
 
+    @Test
     public void testLogEndpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -79,10 +82,10 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
         assertEquals(0, received.intValue());
 
         rate = (Double) mbeanServer.getAttribute(name, "Rate");
-        assertEquals(0.0d, rate);
+        assertEquals((Double) 0.0d, rate);
 
         average = (Double) mbeanServer.getAttribute(name, "Average");
-        assertEquals(0.0d, average);
+        assertEquals((Double) 0.0d, average);
     }
 
     @Override

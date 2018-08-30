@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class Issue3Test extends ContextTestSupport {
     protected String fromQueue = "direct:A";
 
+    @Test
     public void testIssue() throws Exception {
         sendBody(fromQueue, "cluster!");
     }

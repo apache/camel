@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -26,6 +28,7 @@ import org.apache.camel.ProxyInstantiationException;
  */
 public class ProxyInstantiationExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testProxyException() {
         Endpoint endpoint = context.getEndpoint("mock:foo");
         ProxyInstantiationException e = new ProxyInstantiationException(CamelContext.class, endpoint, new IllegalArgumentException("Damn"));

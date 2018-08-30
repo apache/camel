@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +29,8 @@ public class StickyLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -43,6 +47,7 @@ public class StickyLoadBalanceTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSticky() throws Exception {
         x.expectedBodiesReceived("A", "D", "F");
         y.expectedBodiesReceived("B", "C", "G", "H");

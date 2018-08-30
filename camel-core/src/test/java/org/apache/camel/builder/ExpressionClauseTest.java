@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -35,6 +37,7 @@ import org.apache.camel.impl.DefaultAttachment;
  */
 public class ExpressionClauseTest extends ContextTestSupport {
 
+    @Test
     public void testConstant() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -45,6 +48,7 @@ public class ExpressionClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAttachments() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

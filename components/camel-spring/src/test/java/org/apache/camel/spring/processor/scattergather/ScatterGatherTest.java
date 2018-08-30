@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor.scattergather;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class ScatterGatherTest extends ContextTestSupport {
 
+    @Test
     public void testScatterAndGather() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.example;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
@@ -27,6 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class PojoVmConsumerTest extends SpringTestSupport {
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testMessagesSentToConsumerArrive() throws Exception {
         String body = "<hello>world!</hello>";
         resultEndpoint.expectedBodiesReceived(body);
@@ -37,7 +41,8 @@ public class PojoVmConsumerTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");

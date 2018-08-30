@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jclouds;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -28,6 +29,7 @@ import org.junit.Test;
 public class JcloudsFileConsumerStreamCachingIssueTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/foo");
         super.setUp();

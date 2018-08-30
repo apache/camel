@@ -58,11 +58,11 @@ public class Contract {
         return outputType;
     }
     
-   /**
-    * Set the output data type.
-    *
-    * @param outputType output data type
-    */
+    /**
+     * Set the output data type.
+     *
+     * @param outputType output data type
+     */
     public void setOutputType(String outputType) {
         this.outputType = new DataType(outputType);
         this.contractString = null;

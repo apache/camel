@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -36,6 +38,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
     private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
     private MyExceptionHandler myExceptionHandler = new MyExceptionHandler();
 
+    @Test
     public void testCustomExceptionHandler() throws Exception {
         myExceptionHandler.setTemplate(context.createProducerTemplate());
 

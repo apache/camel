@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+import org.junit.Before;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.XPathFilterTest;
@@ -25,7 +26,8 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringXPathFilterWithNamespaceTest extends XPathFilterTest {
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         matchingBody = "<person name='James' city='London' xmlns='http://example.com/person'/>";
         super.setUp();
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
@@ -46,22 +48,27 @@ public class RouteIdFactoryTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testDirectRouteIdWithOptions() {
         assertEquals("start1", context.getRouteDefinitions().get(0).getId());
     }
 
+    @Test
     public void testDirectRouteId() {
         assertEquals("start2", context.getRouteDefinitions().get(1).getId());
     }
 
+    @Test
     public void testRestRouteIdWithVerbUri() {
         assertEquals("get-say-hello-bar", context.getRouteDefinitions().get(2).getId());
     }
 
+    @Test
     public void testRestRouteIdWithoutVerbUri() {
         assertEquals("get-say-hello", context.getRouteDefinitions().get(3).getId());
     }
 
+    @Test
     public void testRestRouteIdWithoutPathUri() {
         assertEquals("get-hello", context.getRouteDefinitions().get(4).getId());
     }

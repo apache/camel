@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.net.URL;
 
@@ -33,6 +35,7 @@ import static org.apache.camel.builder.xml.XsltBuilder.xslt;
  */
 public class XsltOutputFileTest extends ContextTestSupport {
 
+    @Test
     public void testXsltOutputFile() throws Exception {
         createDirectory("target/xslt");
 
@@ -46,6 +49,7 @@ public class XsltOutputFileTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testXsltOutputFileMissingHeader() throws Exception {
         try {
             template.sendBody("direct:start", "<hello>world!</hello>");

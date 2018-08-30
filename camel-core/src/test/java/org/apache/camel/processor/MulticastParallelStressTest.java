@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +33,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class MulticastParallelStressTest extends ContextTestSupport {
 
+    @Test
     public void testTwoMulticast() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("ABCD", "ABCD");
@@ -42,6 +45,7 @@ public class MulticastParallelStressTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMoreMulticast() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -54,6 +58,7 @@ public class MulticastParallelStressTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConcurrencyParallelMulticast() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);

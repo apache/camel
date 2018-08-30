@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.disruptor;
+import org.junit.Before;
 
 
 import java.util.ArrayList;

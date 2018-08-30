@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class RedeliverEntireRouteTest extends ContextTestSupport {
 
+    @Test
     public void testRedeliverEntireRoute() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.util.List;
 import javax.xml.bind.JAXBException;
 
@@ -32,12 +34,14 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
  */
 public class XmlParseTest extends XmlTestSupport {
 
+    @Test
     public void testParseSimpleRouteXml() throws Exception {
         RouteDefinition route = assertOneRoute("simpleRoute.xml");
         assertFrom(route, "seda:a");
         assertChildTo("to", route, "seda:b");
     }
 
+    @Test
     public void testParseProcessorXml() throws Exception {
         RouteDefinition route = assertOneRoute("processor.xml");
         assertFrom(route, "seda:a");
@@ -45,6 +49,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Processor ref", "myProcessor", to.getRef());
     }
 
+    @Test
     public void testParseProcessorWithFilterXml() throws Exception {
         RouteDefinition route = assertOneRoute("processorWithFilter.xml");
         assertFrom(route, "seda:a");
@@ -52,6 +57,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(filter.getExpression(), "juel", "in.header.foo == 'bar'");
     }
 
+    @Test
     public void testParseProcessorWithHeaderFilterXml() throws Exception {
         RouteDefinition route = assertOneRoute("processorWithHeaderFilter.xml");
         assertFrom(route, "seda:a");
@@ -59,6 +65,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(filter.getExpression(), "header", "foo");
     }
 
+    @Test
     public void testParseProcessorWithElFilterXml() throws Exception {
         RouteDefinition route = assertOneRoute("processorWithElFilter.xml");
         assertFrom(route, "seda:a");
@@ -66,6 +73,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(filter.getExpression(), "el", "$in.header.foo == 'bar'");
     }
 
+    @Test
     public void testParseProcessorWithGroovyFilterXml() throws Exception {
         RouteDefinition route = assertOneRoute("processorWithGroovyFilter.xml");
         assertFrom(route, "seda:a");
@@ -73,6 +81,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(filter.getExpression(), "groovy", "in.headers.any { h -> h.startsWith('foo')}");
     }
 
+    @Test
     public void testParseRecipientListXml() throws Exception {
         RouteDefinition route = assertOneRoute("dynamicRecipientList.xml");
         assertFrom(route, "seda:a");
@@ -80,12 +89,14 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(node.getExpression(), "header", "foo");
     }
 
+    @Test
     public void testParseStaticRecipientListXml() throws Exception {
         RouteDefinition route = assertOneRoute("staticRecipientList.xml");
         assertFrom(route, "seda:a");
         assertChildTo(route, "seda:b", "seda:c", "seda:d");
     }
 
+    @Test
     public void testParseTransformXml() throws Exception {
         RouteDefinition route = assertOneRoute("transform.xml");
         assertFrom(route, "direct:start");
@@ -94,6 +105,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:end", 1);
     }
 
+    @Test
     public void testParseSagaXml() throws Exception {
         RouteDefinition route = assertOneRoute("saga.xml");
         assertFrom(route, "direct:start");
@@ -102,6 +114,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:end", 2);
     }
 
+    @Test
     public void testParseScriptXml() throws Exception {
         RouteDefinition route = assertOneRoute("script.xml");
         assertFrom(route, "direct:start");
@@ -110,6 +123,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:end", 1);
     }
 
+    @Test
     public void testParseSetBodyXml() throws Exception {
         RouteDefinition route = assertOneRoute("setBody.xml");
         assertFrom(route, "direct:start");
@@ -118,6 +132,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:end", 1);
     }
 
+    @Test
     public void testParseSetHeaderXml() throws Exception {
         RouteDefinition route = assertOneRoute("setHeader.xml");
         assertFrom(route, "seda:a");
@@ -127,6 +142,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:b", 1);
     }
 
+    @Test
     public void testParseSetHeaderToConstantXml() throws Exception {
         RouteDefinition route = assertOneRoute("setHeaderToConstant.xml");
         assertFrom(route, "seda:a");
@@ -137,6 +153,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @SuppressWarnings("deprecation")
+    @Test
     public void testParseSetOutHeaderXml() throws Exception {
         RouteDefinition route = assertOneRoute("setOutHeader.xml");
         assertFrom(route, "seda:a");
@@ -147,6 +164,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @SuppressWarnings("deprecation")
+    @Test
     public void testParseSetOutHeaderToConstantXml() throws Exception {
         RouteDefinition route = assertOneRoute("setOutHeaderToConstant.xml");
         assertFrom(route, "seda:a");
@@ -156,6 +174,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:b", 1);
     }
 
+    @Test
     public void testParseConvertBodyXml() throws Exception {
         RouteDefinition route = assertOneRoute("convertBody.xml");
         assertFrom(route, "seda:a");
@@ -163,6 +182,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("java.lang.Integer", node.getType());
     }
 
+    @Test
     public void testParseRoutingSlipXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
@@ -171,6 +191,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(RoutingSlipDefinition.DEFAULT_DELIMITER, node.getUriDelimiter());
     }
 
+    @Test
     public void testParseRoutingSlipWithHeaderSetXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlipHeaderSet.xml");
         assertFrom(route, "seda:a");
@@ -179,6 +200,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(RoutingSlipDefinition.DEFAULT_DELIMITER, node.getUriDelimiter());
     }
 
+    @Test
     public void testParseRoutingSlipWithHeaderAndDelimiterSetXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlipHeaderAndDelimiterSet.xml");
         assertFrom(route, "seda:a");
@@ -187,6 +209,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("#", node.getUriDelimiter());
     }
 
+    @Test
     public void testParseRouteWithChoiceXml() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithChoice.xml");
         assertFrom(route, "seda:a");
@@ -201,6 +224,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo("otherwise", otherwise, "seda:d");
     }
 
+    @Test
     public void testParseSplitterXml() throws Exception {
         RouteDefinition route = assertOneRoute("splitter.xml");
         assertFrom(route, "seda:a");
@@ -210,6 +234,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo("to", splitter, "seda:b");
     }
 
+    @Test
     public void testParseLoadBalance() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithLoadBalance.xml");
         assertFrom(route, "seda:a");
@@ -218,6 +243,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertTrue("The loadBalancer should be RoundRobinLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalancerDefinition);
     }
 
+    @Test
     public void testParseCircuitBreakerLoadBalance() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithCircuitBreakerLoadBalance.xml");
         assertFrom(route, "direct:start");
@@ -230,6 +256,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Should have HalfOpenAfter timeout of 1000L ", 1000L, strategy.getHalfOpenAfter().longValue());
     }
 
+    @Test
     public void testParseStickyLoadBalance() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithStickyLoadBalance.xml");
         assertFrom(route, "seda:a");
@@ -240,6 +267,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertNotNull("the expression should not be null ", strategy.getCorrelationExpression());
     }
 
+    @Test
     public void testParseFailoverLoadBalance() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithFailoverLoadBalance.xml");
         assertFrom(route, "seda:a");
@@ -250,6 +278,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("there should be 2 exceptions", 2, strategy.getExceptions().size());
     }
 
+    @Test
     public void testParseRandomLoadBalance() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithRandomLoadBalance.xml");
         assertFrom(route, "seda:a");
@@ -258,6 +287,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertTrue("The loadBalancer should be RandomLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RandomLoadBalancerDefinition);
     }
 
+    @Test
     public void testParseTopicLoadBalance() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithTopicLoadBalance.xml");
         assertFrom(route, "seda:a");
@@ -266,76 +296,91 @@ public class XmlParseTest extends XmlTestSupport {
         assertTrue("The loadBalancer should be TopicLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof TopicLoadBalancerDefinition);
     }
 
+    @Test
     public void testParseHL7DataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithHL7DataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseXStreamDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXStreamDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseJibxDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithJibxDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseXMLBeansDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXMLBeansDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseXMLSecurityDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXMLSecurityDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseTidyMarkupDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithTidyMarkupDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseRSSDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithRSSDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseJSonDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithJSonDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseJaxbDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithJaxbDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseFlatpackDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithFlatpackDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseCvsDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithCvsDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseZipFileDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithZipFileDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseBindyDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithBindyDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseCastorDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithCastorDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
+    @Test
     public void testParseBatchResequencerXml() throws Exception {
         RouteDefinition route = assertOneRoute("resequencerBatch.xml");
         ResequenceDefinition resequencer = assertOneProcessorInstanceOf(ResequenceDefinition.class, route);
@@ -345,6 +390,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(2000L, resequencer.getBatchConfig().getBatchTimeout());
     }
 
+    @Test
     public void testParseStreamResequencerXml() throws Exception {
         RouteDefinition route = assertOneRoute("resequencerStream.xml");
         ResequenceDefinition resequencer = assertOneProcessorInstanceOf(ResequenceDefinition.class, route);
@@ -354,6 +400,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(2000L, resequencer.getStreamConfig().getTimeout());
     }
 
+    @Test
     public void testLoop() throws Exception {
         RouteDefinition route = assertOneRoute("loop.xml");
         LoopDefinition loop = assertOneProcessorInstanceOf(LoopDefinition.class, route);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,7 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 

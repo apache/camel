@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.util;
 
+import org.junit.Test;
+
 import org.apache.camel.TestSupport;
 
 /**
@@ -23,6 +25,7 @@ import org.apache.camel.TestSupport;
  */
 public class MainRunnerTest extends TestSupport {
 
+    @Test
     public void testMainRunner() throws Exception {
         MainRunner runner = new MainRunner();
         runner.setDelay(10);

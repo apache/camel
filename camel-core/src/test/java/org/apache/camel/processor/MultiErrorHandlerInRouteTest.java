@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +31,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
     private MyProcessor outer = new MyProcessor();
     private MyProcessor inner = new MyProcessor();
 
+    @Test
     public void testNoErrors() throws Exception {
         outer.setName("Claus");
         inner.setName("James");
@@ -41,6 +44,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOuterError() throws Exception {
         outer.setName("Error");
         inner.setName("James");
@@ -53,6 +57,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInnerError() throws Exception {
         outer.setName("Claus");
         inner.setName("Error");

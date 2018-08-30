@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Consumer;
@@ -27,6 +29,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
 
     private final AtomicInteger polled = new AtomicInteger();
 
+    @Test
     public void test321Greedy() throws Exception {
         polled.set(0);
 
@@ -55,6 +58,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void test321NotGreedy() throws Exception {
         polled.set(0);
 

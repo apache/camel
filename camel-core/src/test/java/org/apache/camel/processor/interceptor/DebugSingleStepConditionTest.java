@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +43,8 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
     private Condition beerCondition;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
@@ -57,6 +61,7 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testDebug() throws Exception {
         // we only want to single step the beer route
         context.getDebugger().addSingleStepBreakpoint(breakpoint, beerCondition);

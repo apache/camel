@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testManagedCamelContextClient() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -59,6 +62,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(names.contains("mock"));
     }
 
+    @Test
     public void testManagedCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -144,6 +148,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "stop", null, null);
     }
 
+    @Test
     public void testManagedCamelContextCreateEndpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -174,6 +179,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue("Should be registered " + seda, registered);
     }
 
+    @Test
     public void testManagedCamelContextRemoveEndpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -213,6 +219,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertFalse("Should not be registered " + seda, registered);
     }
 
+    @Test
     public void testFindComponentsInClasspath() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -237,6 +244,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("camel-core", prop.get("artifactId"));
     }
 
+    @Test
     public void testManagedCamelContextCreateRouteStaticEndpointJson() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -255,6 +263,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
     }
 
+    @Test
     public void testManagedCamelContextExplainEndpointUriFalse() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -288,6 +297,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
 
+    @Test
     public void testManagedCamelContextExplainEndpointUriTrue() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -320,6 +330,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
 
+    @Test
     public void testManagedCamelContextExplainEipFalse() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -339,6 +350,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("Bye World"));
     }
 
+    @Test
     public void testManagedCamelContextExplainEipTrue() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -360,6 +372,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("Bye World"));
     }
 
+    @Test
     public void testManagedCamelContextExplainEipModel() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -379,6 +392,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"displayName\": \"Discard On Completion Timeout\", \"required\": false, \"type\": \"boolean\""));
     }
 
+    @Test
     public void testManagedCamelContextExplainComponentModel() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.Ignore;
@@ -29,6 +31,7 @@ public class NodeListToDocumentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testXPathNodeResultToDocument() throws Exception {
         // TODO: uses an internal nexus class which can only be tested on some platforms
         /*

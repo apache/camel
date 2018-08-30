@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +28,7 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
 
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.sendBody("bean:myBean", "<a><b>12</b></a>");
         assertEquals("bean ab: " + myBean, "12", myBean.ab);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,6 +29,7 @@ public class SpringSimpleMultiLineExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleMultiLineExpressionTest.xml");
     }
 
+    @Test
     public void testSimpleMultiLineExpression() {
         String result = template.requestBodyAndHeader("direct:start", "Camel", "h", "some text", String.class);
         assertEquals("correct", result);

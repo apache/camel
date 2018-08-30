@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,6 +36,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
         return jndi;
     }
 
+    @Test
     public void testRetryUntil() throws Exception {
         try {
             template.requestBody("direct:start", "Hello World");

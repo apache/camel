@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         return false;
     }
 
+    @Test
     public void testFooCorrect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -53,6 +56,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFooMissingParenthesis() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -75,6 +79,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         }
     }
 
+    @Test
     public void testFooInvalidName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

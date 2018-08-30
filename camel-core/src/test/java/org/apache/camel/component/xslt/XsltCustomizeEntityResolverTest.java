@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.StringReader;
 import org.xml.sax.EntityResolver;
@@ -31,6 +33,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
 
     private static final String EXPECTED_XML_CONSTANT = "<A>1</A>";
 
+    @Test
     public void testXsltCustomURIResolverDirectInRouteUri() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultURIResolverDirect");
         mock.expectedMessageCount(1);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.File;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -32,6 +34,7 @@ import org.apache.camel.impl.DefaultAttachment;
  */
 public class MessageWithAttachmentRedeliveryIssueTest extends ContextTestSupport {
 
+    @Test
     public void testMessageWithAttachmentRedeliveryIssue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

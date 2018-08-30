@@ -16,6 +16,8 @@
  */
 package org.apache.camel.catalog;
 
+import org.junit.Test;
+
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,6 +30,7 @@ public class CamelCatalogMBeanExporterTest {
 
     private CamelCatalogMBeanExporter exporter = new CamelCatalogMBeanExporter();
 
+    @Test
     public void testMBeanExporter() throws Exception {
         exporter.init();
 

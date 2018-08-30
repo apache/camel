@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +75,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRoute() throws Exception {
         List<Route> routes = buildSimpleRoute();
 
@@ -104,6 +107,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
         List<Route> routes = buildSimpleRouteWithHeaderPredicate();
 
@@ -143,6 +147,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRouteWithChoice() throws Exception {
         List<Route> routes = buildSimpleRouteWithChoice();
 
@@ -190,6 +195,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testCustomProcessor() throws Exception {
         List<Route> routes = buildCustomProcessor();
 
@@ -215,6 +221,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testCustomProcessorWithFilter() throws Exception {
         List<Route> routes = buildCustomProcessorWithFilter();
 
@@ -241,6 +248,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testWireTap() throws Exception {
         List<Route> routes = buildWireTap();
 
@@ -282,6 +290,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testRouteWithInterceptor() throws Exception {
 
         List<Route> routes = buildRouteWithInterceptor();
@@ -305,6 +314,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
+    @Test
     public void testComplexExpressions() throws Exception {
         // START SNIPPET: e7
         RouteBuilder builder = new RouteBuilder() {
@@ -356,6 +366,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testRouteDynamicReceipentList() throws Exception {
 
         List<Route> routes = buildDynamicRecipientList();
@@ -399,6 +410,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSplitter() throws Exception {
 
         List<Route> routes = buildSplitter();
@@ -432,6 +444,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testIdempotentConsumer() throws Exception {
 
         List<Route> routes = buildIdempotentConsumer();
@@ -471,6 +484,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testThreads() throws Exception {
 
         List<Route> routes = buildThreads();
@@ -547,6 +561,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
+    @Test
     public void testCorrectNumberOfRoutes() throws Exception {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {

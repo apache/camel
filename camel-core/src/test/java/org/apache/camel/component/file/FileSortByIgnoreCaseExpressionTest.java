@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,7 +32,8 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
     private String fileUrl = "file://target/filesorter/";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filesorter");
         super.setUp();
     }
@@ -50,6 +54,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
             Exchange.FILE_NAME, "Report-1.xml");
     }
 
+    @Test
     public void testSortFilesByNameWithCase() throws Exception {
         prepareFolder("a");
 
@@ -68,6 +73,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSortFilesByNameNoCase() throws Exception {
         prepareFolder("b");
 
@@ -86,6 +92,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSortFilesByNameNoCaseReverse() throws Exception {
         prepareFolder("c");
 

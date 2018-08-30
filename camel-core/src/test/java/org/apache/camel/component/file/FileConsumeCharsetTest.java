@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,12 +32,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumeCharsetTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
         template.sendBodyAndHeader("file://target/files?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME, "report.txt");
     }
 
+    @Test
     public void testConsumeAndDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World \u4f60\u597d");

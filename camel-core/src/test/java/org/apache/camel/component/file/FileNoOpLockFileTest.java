@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -33,11 +36,13 @@ import static org.awaitility.Awaitility.await;
 public class FileNoOpLockFileTest extends ContextTestSupport {
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         deleteDirectory("target/reports");
         super.tearDown();
     }
 
+    @Test
     public void testLocked() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Locked");
@@ -54,6 +59,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         checkLockFile(false);
     }
 
+    @Test
     public void testNotLocked() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Not Locked");

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SerializationDataFormat;
@@ -28,6 +30,7 @@ public class DataFormatFactoryTest extends ContextTestSupport {
     private static final DataFormatFactory STRING_DFF = () -> new StringDataFormat("UTF-8");
     private static final DataFormat SERIALIZATION_DF = new SerializationDataFormat();
 
+    @Test
     public void testDataFormatResolveOrCreate() throws Exception {
         assertSame(STRING_DF, context.resolveDataFormat("string"));
         assertNotSame(STRING_DF, context.createDataFormat("string"));

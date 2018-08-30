@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SedaTimeoutDisabledTest extends ContextTestSupport {
 
+    @Test
     public void testSedaNoTimeout() throws Exception {
         Future<String> out = template.asyncRequestBody("seda:foo?timeout=0", "World", String.class);
         // use 5 sec failsafe in case something hangs

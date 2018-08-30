@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,10 +35,12 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testDummy() throws Exception {
 
     }
 
+    @Test
     public void testSendMessageWithURI() throws Exception {
         Object[] args = {"abc", 5, "def"};
         template.sendBody("bean:myBean?method=myMethod&multiParameterArray=true", args);
@@ -46,6 +50,7 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
         assertEquals("bean.x", "def", myBean.x);
     }
 
+    @Test
     public void testSendMessageWithSettingHeader() throws Exception {
         Object[] args = {"hello", 123, "world"};
         template.sendBodyAndHeader("direct:in", args, Exchange.BEAN_MULTI_PARAMETER_ARRAY, true);

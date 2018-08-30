@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testBothGood() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -40,6 +43,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         assertThat("no exception", received.isFailed(), is(false));
     }
 
+    @Test
     public void testBFail() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -60,6 +64,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         assertThat("no exception", received.isFailed(), is(false));
     }
 
+    @Test
     public void testAFail() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

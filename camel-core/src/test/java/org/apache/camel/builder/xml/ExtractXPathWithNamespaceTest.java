@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ExtractXPathWithNamespaceTest extends ContextTestSupport {
 
+    @Test
     public void testXPathWithNamespace() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<number xmlns=\"http://acme.com/cheese\">55</number>");
@@ -35,6 +38,7 @@ public class ExtractXPathWithNamespaceTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testXPathWithNamespaceOther() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<number xmlns=\"http://acme.com/cheese\">99</number>");
@@ -45,6 +49,7 @@ public class ExtractXPathWithNamespaceTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testXPathWithNamespaceDifferentNamespace() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<number xmlns=\"http://acme.com/cake\">55</number>");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -30,6 +33,7 @@ public class ValidatorBeanCallTest extends ContextTestSupport {
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testCallBean() throws Exception {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
@@ -43,7 +47,8 @@ public class ValidatorBeanCallTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

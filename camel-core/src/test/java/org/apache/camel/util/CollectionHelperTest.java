@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,16 +26,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  * @version 
  */
-public class CollectionHelperTest extends TestCase {
+public class CollectionHelperTest extends Assert {
 
     private String[] names = new String[]{"Claus", "Willem", "Jonathan"};
     private List<String> list = Arrays.asList(names);
 
+    @Test
     public void testCollectionAsCommaDelimitedString() {
         assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(names));
         assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(list));
@@ -44,6 +47,7 @@ public class CollectionHelperTest extends TestCase {
         assertEquals("Claus", CollectionHelper.collectionAsCommaDelimitedString(new String[]{"Claus"}));
     }
 
+    @Test
     public void testSize() {
         Map<String, Object> map = new HashMap<>();
         map.put("foo", 123);
@@ -55,6 +59,7 @@ public class CollectionHelperTest extends TestCase {
         assertEquals(2, CollectionHelper.size(array).intValue());
     }
 
+    @Test
     public void testAppendValue() {
         Map<String, Object> map = new HashMap<>();
         CollectionHelper.appendValue(map, "foo", 123);
@@ -75,6 +80,7 @@ public class CollectionHelperTest extends TestCase {
         assertEquals(789, value.intValue());
     }
 
+    @Test
     public void testCreateSetContaining() throws Exception {
         Set<String> set = CollectionHelper.createSetContaining("foo", "bar", "baz");
         assertEquals(3, set.size());
@@ -83,6 +89,7 @@ public class CollectionHelperTest extends TestCase {
         assertTrue(set.contains("baz"));
     }
 
+    @Test
     public void testFlatternKeysInMap() throws Exception {
         Map<String, Object> root = new LinkedHashMap<>();
         Map<String, Object> api = new LinkedHashMap<>();

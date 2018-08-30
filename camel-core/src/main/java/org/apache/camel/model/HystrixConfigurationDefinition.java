@@ -50,7 +50,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     // Fluent API
     // -------------------------------------------------------------------------
 
-   /**
+    /**
      * Sets the group key to use. The default value is CamelHystrix.
      */
     public HystrixConfigurationDefinition groupKey(String groupKey) {

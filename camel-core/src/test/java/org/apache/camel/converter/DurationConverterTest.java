@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import java.time.Duration;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +28,7 @@ import static org.junit.Assert.assertThat;
 
 public class DurationConverterTest extends ContextTestSupport {
 
+    @Test
     public void testToMillis() throws Exception {
         Duration duration = Duration.parse("PT2H6M20.31S");
 
@@ -34,6 +37,7 @@ public class DurationConverterTest extends ContextTestSupport {
         assertThat(millis, is(7580310L));
     }
 
+    @Test
     public void testToMillisOverflow() throws Exception {
         Duration duration = Duration.parse("P60000000000000D");
         try {
@@ -44,6 +48,7 @@ public class DurationConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testFromString() throws Exception {
         String durationAsString = "PT2H6M20.31S";
 
@@ -52,6 +57,7 @@ public class DurationConverterTest extends ContextTestSupport {
         assertThat(duration.toString(), is("PT2H6M20.31S"));
     }
 
+    @Test
     public void testToString() throws Exception {
         Duration duration = Duration.parse("PT2H6M20.31S");
 

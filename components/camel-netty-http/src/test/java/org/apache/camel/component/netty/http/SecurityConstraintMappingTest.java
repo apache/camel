@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class SecurityConstraintMappingTest extends TestCase {
+import org.junit.Assert;
 
+public class SecurityConstraintMappingTest extends Assert {
+
+    @Test
     public void testDefault() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
 
@@ -27,6 +30,7 @@ public class SecurityConstraintMappingTest extends TestCase {
         assertNotNull(matcher.restricted("/foo"));
     }
 
+    @Test
     public void testFoo() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo");
@@ -37,6 +41,7 @@ public class SecurityConstraintMappingTest extends TestCase {
         assertNull(matcher.restricted("/foo/bar"));
     }
 
+    @Test
     public void testFooWildcard() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo*");
@@ -47,6 +52,7 @@ public class SecurityConstraintMappingTest extends TestCase {
         assertNotNull(matcher.restricted("/foo/bar"));
     }
 
+    @Test
     public void testFooBar() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo");
@@ -62,6 +68,7 @@ public class SecurityConstraintMappingTest extends TestCase {
         assertNull(matcher.restricted("/bar/bar"));
     }
 
+    @Test
     public void testFooBarWildcard() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo*");
@@ -77,6 +84,7 @@ public class SecurityConstraintMappingTest extends TestCase {
         assertNotNull(matcher.restricted("/bar/bar"));
     }
 
+    @Test
     public void testFooExclusion() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo/*");
@@ -89,6 +97,7 @@ public class SecurityConstraintMappingTest extends TestCase {
         assertNull(matcher.restricted("/foo/public/open"));
     }
 
+    @Test
     public void testDefaultExclusion() {
         // everything is restricted unless its from the public
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class AggregateAggregationStrategyIsPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateCompletionAware() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+Y+ZZZZ");
 

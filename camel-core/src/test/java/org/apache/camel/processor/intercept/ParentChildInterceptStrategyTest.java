@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
 
     protected static final List<String> LIST = new ArrayList<>();
 
+    @Test
     public void testParentChild() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
         getMockEndpoint("mock:a").expectedMessageCount(1);

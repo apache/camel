@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,16 +36,19 @@ public class CamelContextHelperTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testGetMandatoryEndpoint() {
         MockEndpoint mock = CamelContextHelper.getMandatoryEndpoint(context, "mock:foo", MockEndpoint.class);
         assertNotNull(mock);
     }
 
+    @Test
     public void testMandatoryConvertTo() {
         Integer num = CamelContextHelper.mandatoryConvertTo(context, Integer.class, "5");
         assertEquals(5, num.intValue());
     }
 
+    @Test
     public void testMandatoryConvertToNotPossible() {
         try {
             CamelContextHelper.mandatoryConvertTo(context, CamelContext.class, "5");
@@ -53,17 +58,20 @@ public class CamelContextHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLookupBean() {
         Object foo = CamelContextHelper.lookup(context, "foo");
         assertNotNull(foo);
         assertIsInstanceOf(MyFooBean.class, foo);
     }
 
+    @Test
     public void testLookupBeanAndType() {
         MyFooBean foo = CamelContextHelper.lookup(context, "foo", MyFooBean.class);
         assertNotNull(foo);
     }
 
+    @Test
     public void testRouteStartupOrder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

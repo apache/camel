@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
@@ -34,6 +36,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNotMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,6 +60,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testYesMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

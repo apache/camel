@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +31,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
     private static int counter;
     private static int redeliveryCounter;
 
+    @Test
     public void testTwoRedeliveryTest() throws Exception {
         counter = 0;
         redeliveryCounter = 0;
@@ -43,6 +46,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         assertEquals(2, redeliveryCounter); // 2 re-deliveries
     }
 
+    @Test
     public void testNoRedeliveriesTest() throws Exception {
         counter = 0;
         redeliveryCounter = 0;
@@ -57,6 +61,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         assertEquals(0, redeliveryCounter); // no redeliveries
     }
 
+    @Test
     public void testOneRedeliveriesTest() throws Exception {
         counter = 0;
         redeliveryCounter = 0;

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,11 +41,13 @@ public class ShutdownDeferTest extends ContextTestSupport {
     private static final AtomicBoolean CONSUMER_SUSPENDED = new AtomicBoolean();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/deferred");
         super.setUp();
     }
 
+    @Test
     public void testShutdownDeferred() throws Exception {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);

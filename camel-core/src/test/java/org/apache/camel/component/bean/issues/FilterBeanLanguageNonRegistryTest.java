@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.bean.BeanLanguage;
@@ -25,6 +27,7 @@ import org.apache.camel.language.bean.BeanLanguage;
  */
 public class FilterBeanLanguageNonRegistryTest extends ContextTestSupport {
 
+    @Test
     public void testBeanLanguageExp() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel");
 

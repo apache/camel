@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +28,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class XPathFunctionsTest extends ContextTestSupport {
 
+    @Test
     public void testChoiceWithHeaderAndPropertiesSelectCamel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:camel");
         mock.expectedBodiesReceived("<name>King</name>");
@@ -36,6 +39,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testChoiceWithNoHeaderAndPropertiesSelectDonkey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:donkey");
         mock.expectedBodiesReceived("<name>Donkey Kong</name>");
@@ -45,6 +49,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testChoiceWithNoHeaderAndPropertiesSelectOther() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedBodiesReceived("<name>Other</name>");

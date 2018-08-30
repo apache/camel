@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedTimerTest extends ManagementTestSupport {
 
+    @Test
     public void testTimer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

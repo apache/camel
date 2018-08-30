@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterOnPrepareExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterOnPrepare() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(2);
 

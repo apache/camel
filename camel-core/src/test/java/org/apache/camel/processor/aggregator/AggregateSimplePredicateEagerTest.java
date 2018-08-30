@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
@@ -25,6 +27,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateSimplePredicateEagerTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateSimplePredicateEager() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C+END");
 

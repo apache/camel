@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +28,7 @@ import org.apache.camel.util.jndi.JndiContext;
 
 public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport {
 
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         MockEndpoint error = getMockEndpoint("mock:error");

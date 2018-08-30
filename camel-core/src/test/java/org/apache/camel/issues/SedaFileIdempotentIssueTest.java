@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +40,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     private FileIdempotentRepository repository = new FileIdempotentRepository();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         createDirectory("target/inbox");
 
@@ -77,6 +81,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testRepo() throws Exception {
         boolean done = latch.await(10, TimeUnit.SECONDS);
         assertTrue("Should stop Camel", done);

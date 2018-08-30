@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,6 +37,7 @@ import org.apache.camel.support.EventNotifierSupport;
 public class EnricherSendEventTest extends ContextTestSupport {
     private MyEventNotifier en = new MyEventNotifier();
     
+    @Test
     public void testAsyncEnricher() throws Exception {
         
         template.sendBody("direct:start1", "test");
@@ -43,6 +46,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     }
     
     
+    @Test
     public void testSyncEnricher() throws Exception {
         template.sendBody("direct:start2", "test");
         assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());

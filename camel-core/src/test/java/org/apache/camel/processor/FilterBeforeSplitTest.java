@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -32,6 +34,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class FilterBeforeSplitTest extends ContextTestSupport {
 
+    @Test
     public void testFilterBeforeSplit() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World how are you?");
 
@@ -46,6 +49,7 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiltered() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:before").expectedBodiesReceived("I will be filtered", "Hello World");

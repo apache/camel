@@ -19,7 +19,7 @@ package org.apache.camel.catalog.maven;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
@@ -29,7 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("Cannot run on CI servers so run manually")
-public class MavenArtifactProviderTest extends TestCase {
+public class MavenArtifactProviderTest extends Assert {
 
     @Test
     public void testAddComponent() {

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,13 +32,15 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
     private String fileUrl = "file://target/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filefilter");
         deleteDirectory("target/filefilter/foo");
         deleteDirectory("target/filefilter/barbar");
         super.setUp();
     }
 
+    @Test
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -47,6 +52,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -16,15 +16,18 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  * @version 
  */
-public class TimeTest extends TestCase {
+public class TimeTest extends Assert {
 
+    @Test
     public void testTimeSeconds() {
         Time time = Time.seconds(5);
         assertNotNull(time);
@@ -37,6 +40,7 @@ public class TimeTest extends TestCase {
         assertNotNull(time.toString());
     }
 
+    @Test
     public void testTimeMinutes() {
         Time time = Time.minutes(3);
         assertNotNull(time);
@@ -46,6 +50,7 @@ public class TimeTest extends TestCase {
         assertNotNull(time.toString());
     }
 
+    @Test
     public void testTimeHours() {
         Time time = Time.hours(4);
         assertNotNull(time);
@@ -55,6 +60,7 @@ public class TimeTest extends TestCase {
         assertNotNull(time.toString());
     }
 
+    @Test
     public void testTimeDays() {
         Time time = Time.days(2);
         assertNotNull(time);

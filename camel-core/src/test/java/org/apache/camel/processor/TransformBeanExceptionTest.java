@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class TransformBeanExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testTransformBeanException() throws Exception {
         getMockEndpoint("mock:dead").expectedBodiesReceived("Hello World", "Bye World", "Hi World", "Hi Camel", "Bye Camel");
 

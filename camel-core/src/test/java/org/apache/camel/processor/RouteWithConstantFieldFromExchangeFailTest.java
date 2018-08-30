@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -25,12 +28,14 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSupport {
 
+    @Test
     public void testFail() throws Exception {
         // noop as its tested that it fails on startup
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown an exception");

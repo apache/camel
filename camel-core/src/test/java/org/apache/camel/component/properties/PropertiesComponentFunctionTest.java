@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -39,6 +41,7 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFunction() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.addFunction(new MyFunction());

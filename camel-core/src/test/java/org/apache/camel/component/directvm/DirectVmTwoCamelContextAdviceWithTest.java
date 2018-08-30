@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -56,6 +58,7 @@ public class DirectVmTwoCamelContextAdviceWithTest extends AbstractDirectVmTestS
         };
     }
 
+    @Test
     public void testTwoCamelContext() throws Exception {
         // add route
         context.addRoutes(createRouteBuilder());

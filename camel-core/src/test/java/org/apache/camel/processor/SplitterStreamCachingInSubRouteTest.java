@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -55,6 +57,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testWithAggregationStategyAndStreamCacheInSubRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Test Message 22");
@@ -63,6 +66,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testStreamCacheIterableSplitter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Test Message 22");
@@ -71,6 +75,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNested() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultNested");
         mock.expectedBodiesReceived("Test Message 22");

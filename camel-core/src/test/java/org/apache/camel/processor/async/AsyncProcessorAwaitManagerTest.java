@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.Collection;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
  */
 public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncAwait() throws Exception {
         context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
 

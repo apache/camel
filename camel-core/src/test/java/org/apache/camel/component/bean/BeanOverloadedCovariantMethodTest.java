@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -26,6 +28,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testHelloCovariantOverload() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -44,6 +47,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testHelloCovariantOverloadNoNameOrParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -63,6 +67,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testHelloCovariantOverloadNoParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -82,6 +87,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testHelloCovariantOverloadFromParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

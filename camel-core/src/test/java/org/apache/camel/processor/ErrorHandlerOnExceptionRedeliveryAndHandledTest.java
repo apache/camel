@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.ConnectException;
 
@@ -32,6 +34,7 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
 
     private static String counter = "";
 
+    @Test
     public void testRedeliveryCounterIsResetWhenHandled() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);

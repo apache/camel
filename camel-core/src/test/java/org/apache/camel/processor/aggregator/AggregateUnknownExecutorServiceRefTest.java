@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +33,7 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAggregateUnknownExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

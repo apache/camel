@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -40,7 +43,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/idempotent");
         super.setUp();
         template.sendBodyAndHeader("file://target/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
@@ -56,6 +60,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testIdempotentRef() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");

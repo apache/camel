@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -34,6 +36,7 @@ public class FromRestDuplicateTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDuplicateGet() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -55,6 +58,7 @@ public class FromRestDuplicateTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testDuplicatePost() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

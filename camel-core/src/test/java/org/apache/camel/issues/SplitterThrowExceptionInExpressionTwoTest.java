@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterThrowExceptionInExpressionTwoTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterAndVerifyMock() throws Exception {
         getMockEndpoint("mock:cast1").expectedMessageCount(1);
         getMockEndpoint("mock:cast2").expectedMessageCount(0);

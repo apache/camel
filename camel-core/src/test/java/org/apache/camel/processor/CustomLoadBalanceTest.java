@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
@@ -29,7 +32,8 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -50,6 +54,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testCustomLoadBalancer() throws Exception {
         x.expectedBodiesReceived("x", "x", "x");
         y.expectedBodiesReceived("y", "y");

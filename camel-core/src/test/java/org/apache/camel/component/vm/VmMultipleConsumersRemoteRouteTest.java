@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class VmMultipleConsumersRemoteRouteTest extends TestCase {
+public class VmMultipleConsumersRemoteRouteTest extends Assert {
 
+    @Test
     public void testVmMultipleConsumersRemoteRoute() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         ProducerTemplate producerTemplate = camelContext.createProducerTemplate();

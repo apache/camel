@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +37,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class ManagedInflightStatisticsTest extends ManagementTestSupport {
 
+    @Test
     public void testOldestInflight() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

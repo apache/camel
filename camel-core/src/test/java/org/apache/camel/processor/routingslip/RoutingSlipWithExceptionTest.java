@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.routingslip;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +40,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     private MockEndpoint exceptionSettingEndpoint;
     private MockEndpoint aEndpoint;
 
+    @Test
     public void testNoException() throws Exception {
         endEndpoint.expectedMessageCount(1);
         exceptionEndpoint.expectedMessageCount(0);
@@ -47,6 +51,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionThrowingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -57,6 +62,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionThrowingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -67,6 +73,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionSettingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -77,6 +84,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionSettingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -118,7 +126,8 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);

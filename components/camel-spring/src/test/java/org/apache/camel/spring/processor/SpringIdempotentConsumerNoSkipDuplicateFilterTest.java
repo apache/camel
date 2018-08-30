@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -34,6 +36,7 @@ public class SpringIdempotentConsumerNoSkipDuplicateFilterTest extends SpringTes
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateFilterTest.xml");
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("one", "two", "three");

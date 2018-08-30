@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import javax.management.Attribute;
@@ -30,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerEventMessageStreamCaching() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

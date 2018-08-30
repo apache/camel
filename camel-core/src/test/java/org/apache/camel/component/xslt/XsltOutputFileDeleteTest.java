@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class XsltOutputFileDeleteTest extends ContextTestSupport {
 
+    @Test
     public void testXsltOutputDeleteFile() throws Exception {
         createDirectory("target/xslt");
 

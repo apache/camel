@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest extends TransactionClientDataSourceSupport {
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
 
@@ -40,6 +43,7 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
         });
     }
 
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedMessageCount(1);

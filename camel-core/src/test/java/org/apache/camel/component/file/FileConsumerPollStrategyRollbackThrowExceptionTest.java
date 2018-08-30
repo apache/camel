@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -48,12 +51,14 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/pollstrategy");
         super.setUp();
         template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
+    @Test
     public void testRollbackThrowException() throws Exception {
         await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);
 

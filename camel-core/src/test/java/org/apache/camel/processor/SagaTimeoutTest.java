@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.model.SagaCompletionMode;
 public class SagaTimeoutTest extends ContextTestSupport {
 
 
+    @Test
     public void testTimeoutCalledCorrectly() throws Exception {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
@@ -42,6 +45,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test
     public void testTimeoutHasNoEffectIfCompleted() throws Exception {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");

@@ -16,6 +16,7 @@
  */
 
 package org.apache.camel.component.etcd.cloud;
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +67,7 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         client.deleteDir("/services/").recursive().send().get();

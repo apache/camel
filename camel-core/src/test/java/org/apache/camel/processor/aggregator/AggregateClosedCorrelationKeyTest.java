@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +34,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAggregateClosedCorrelationKey() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -62,6 +65,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAggregateClosedCorrelationKeyCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

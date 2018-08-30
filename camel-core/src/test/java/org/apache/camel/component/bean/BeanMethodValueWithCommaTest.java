@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -25,6 +27,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanMethodValueWithCommaTest extends ContextTestSupport {
 
+    @Test
     public void testSingle() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camela,b");
 
@@ -33,6 +36,7 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDouble() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camelc,d");
 
@@ -41,6 +45,7 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeader() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camele,f");
 
@@ -49,6 +54,7 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void test() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("SomeID0 0 10,11,12 * * ?");
 

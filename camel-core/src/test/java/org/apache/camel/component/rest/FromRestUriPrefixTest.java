@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
 public class FromRestUriPrefixTest extends FromRestGetTest {
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 

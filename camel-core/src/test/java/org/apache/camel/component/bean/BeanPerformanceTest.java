@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,6 +38,7 @@ public class BeanPerformanceTest extends ContextTestSupport {
         INVOKED.incrementAndGet();
     }
 
+    @Test
     public void testBeanPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 

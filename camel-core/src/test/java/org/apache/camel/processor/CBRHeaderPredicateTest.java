@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -35,6 +37,7 @@ public class CBRHeaderPredicateTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testCBR() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("Hello Foo");

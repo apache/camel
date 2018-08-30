@@ -16,15 +16,18 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * @version 
  */
-public class TypeConverterAllowNullTest extends TestCase {
+public class TypeConverterAllowNullTest extends Assert {
 
+    @Test
     public void testMissThenAddTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());

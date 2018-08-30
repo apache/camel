@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,7 +33,8 @@ public class PollEnricherTest extends ContextTestSupport {
     protected MockEndpoint mock;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         mock = getMockEndpoint("mock:mock");
     }
@@ -39,6 +43,7 @@ public class PollEnricherTest extends ContextTestSupport {
     //  InOnly routes
     // -------------------------------------------------------------
 
+    @Test
     public void testPollEnrichInOnly() throws InterruptedException {
         template.sendBody("seda:foo1", "blah");
 
@@ -50,6 +55,7 @@ public class PollEnricherTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testPollEnrichInOnlyWaitWithTimeout() throws InterruptedException {
         // this first try there is no data so we timeout
         mock.expectedBodiesReceived("test:blah");
@@ -65,6 +71,7 @@ public class PollEnricherTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testPollEnrichInOnlyWaitNoTimeout() throws InterruptedException {
         // use another thread to send it a bit later
         Thread t = new Thread(new Runnable() {
@@ -93,6 +100,7 @@ public class PollEnricherTest extends ContextTestSupport {
     //  InOut routes
     // -------------------------------------------------------------
 
+    @Test
     public void testPollEnrichInOut() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
@@ -100,6 +108,7 @@ public class PollEnricherTest extends ContextTestSupport {
         assertEquals("test:blah", result);
     }
 
+    @Test
     public void testPollEnrichInOutPlusHeader() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 

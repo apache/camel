@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.net.URL;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import static org.apache.camel.builder.xml.XsltBuilder.xslt;
  */
 public class XsltTest extends ContextTestSupport {
 
+    @Test
     public void testXslt() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");

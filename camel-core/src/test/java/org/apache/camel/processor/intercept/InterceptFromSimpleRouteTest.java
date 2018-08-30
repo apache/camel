@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class InterceptFromSimpleRouteTest extends ContextTestSupport {
 
+    @Test
     public void testIntercept() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
         intercepted.expectedBodiesReceived("Hello London");

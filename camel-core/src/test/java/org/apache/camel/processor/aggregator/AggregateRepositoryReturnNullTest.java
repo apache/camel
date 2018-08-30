@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateRepositoryReturnNull() throws Exception {
         try {
             template.sendBodyAndHeader("direct:start", "Hello World", "id", 123);

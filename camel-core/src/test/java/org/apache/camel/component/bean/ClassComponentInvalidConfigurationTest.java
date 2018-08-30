@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -31,6 +33,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testClassNotFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -50,6 +53,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertyNotFoundOnClass() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

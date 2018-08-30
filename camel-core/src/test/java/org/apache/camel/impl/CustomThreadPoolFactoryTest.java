@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -38,6 +40,7 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testCustomThreadPoolFactory() {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
         assertTrue("Should use custom thread pool factory", factory.isInvoked());

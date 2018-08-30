@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.catalog;
+import org.junit.Before;
 
 import java.io.FileInputStream;
 import java.util.HashMap;

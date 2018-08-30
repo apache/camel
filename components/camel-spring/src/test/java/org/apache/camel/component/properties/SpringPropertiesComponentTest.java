@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.CamelContextFactoryBean;
 
 public class SpringPropertiesComponentTest extends BaseSpringPropertiesComponentTest {
 
+    @Test
     public void testResolutionOfPlaceholdersOnFactoryBean() {
         final CamelContextFactoryBean factoryBean = applicationContext.getBean("&camel-1",
             CamelContextFactoryBean.class);

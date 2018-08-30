@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -44,6 +46,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         return (byte[]) template.requestBody("direct:start", TEXT.getBytes("UTF-8"));
     }
 
+    @Test
     public void testMarshalTextToGZip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -59,6 +62,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         assertEquals("Uncompressed something different than compressed", TEXT, result);
     }
 
+    @Test
     public void testUnMarshalTextToGzip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

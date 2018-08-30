@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
+import org.junit.Before;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -109,6 +110,7 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         setLockTimeout(0);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DoTryCatchWithSplitterTest extends ContextTestSupport {
 
+    @Test
     public void testTryCatchWithSplitter() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("Tiger", "Camel");
         getMockEndpoint("mock:iae").expectedBodiesReceived("Tiger,Camel,Donkey");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +36,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
 
     private Set<Class<?>> allClasses;
 
+    @Before
     public void setUp() throws Exception {
         // use classes that are pretty much constants
         allClasses = new HashSet<>();
@@ -47,10 +51,12 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         super.setUp();
     }
 
+    @Test
     public void testNoPattersIncludeAllClasses() {
         validateMatchingSetContains(allClasses);
     }
 
+    @Test
     public void testIncludePatterns() {
         addIncludePatterns("*");
         validateMatchingSetContains(allClasses);
@@ -100,6 +106,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains();
     }
 
+    @Test
     public void testExcludePatterns() {
         addExcludePatterns("*");
         validateMatchingSetContains();
@@ -149,6 +156,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains(allClasses);
     }
 
+    @Test
     public void testExcludeHasPrecedenceOverInclude() {
         // include any classes from the util pkg but exclude those in jar
         addIncludePatterns("java.util.*");
@@ -156,6 +164,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class);
     }
     
+    @Test
     public void testBulkIncludeAdd() {
         // include any classes from the util pkg but exclude those in jar
         Set<String> includes = CollectionHelper.createSetContaining("java.io.*", "java.util.*");
@@ -163,6 +172,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains(allClasses);
     }
     
+    @Test
     public void testBulkExcludeAdd() {
         // include any classes from the util pkg but exclude those in jar
         Set<String> excludes = CollectionHelper.createSetContaining("java.io.*", "java.util.*");

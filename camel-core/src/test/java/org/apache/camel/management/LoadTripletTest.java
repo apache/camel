@@ -16,11 +16,14 @@
  */
 package org.apache.camel.management;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.management.mbean.LoadTriplet;
 
-public class LoadTripletTest extends TestCase {
+public class LoadTripletTest extends Assert {
 
+    @Test
     public void testConstantUpdate() {
         LoadTriplet t = new LoadTriplet();
         t.update(1);
@@ -35,6 +38,7 @@ public class LoadTripletTest extends TestCase {
         assertEquals(1.0, t.getLoad15(), Math.ulp(1.0) * 5);
     }
 
+    @Test
     public void testChargeDischarge() {
         LoadTriplet t = new LoadTriplet();
         t.update(0);

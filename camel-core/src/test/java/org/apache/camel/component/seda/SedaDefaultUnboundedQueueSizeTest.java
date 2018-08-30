@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 
 /**
@@ -23,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
  */
 public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
 
+    @Test
     public void testSedaDefaultUnboundedQueueSize() throws Exception {
         SedaEndpoint seda = context.getEndpoint("seda:foo", SedaEndpoint.class);
         assertEquals(0, seda.getQueue().size());
@@ -34,6 +37,7 @@ public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
         assertEquals(1000, seda.getQueue().size());
     }
 
+    @Test
     public void testSedaDefaultBoundedQueueSize() throws Exception {
         SedaEndpoint seda = context.getEndpoint("seda:foo?size=500", SedaEndpoint.class);
         assertEquals(0, seda.getQueue().size());

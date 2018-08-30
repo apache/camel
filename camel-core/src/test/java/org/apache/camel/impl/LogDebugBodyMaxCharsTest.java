@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,7 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "20");
     }
@@ -39,6 +43,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLogBodyMaxLengthTest() throws Exception {
         // create a big body
         StringBuilder sb = new StringBuilder();
@@ -64,6 +69,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
     }
 
+    @Test
     public void testNotClipped() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

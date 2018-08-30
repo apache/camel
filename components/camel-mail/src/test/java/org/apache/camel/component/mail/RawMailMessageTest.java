@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class RawMailMessageTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         Mailbox.clearAll();
         prepareMailbox("jonesPop3", "pop3");

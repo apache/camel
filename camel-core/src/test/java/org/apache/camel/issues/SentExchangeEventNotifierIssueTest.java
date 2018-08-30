@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
@@ -61,6 +63,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeSentNotifier() throws Exception {
         notifier.reset();
 
@@ -71,6 +74,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         assertEquals(1, notifier.getCounter());
     }
 
+    @Test
     public void testExchangeSentNotifierExchange() throws Exception {
         notifier.reset();
 
@@ -86,6 +90,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         assertEquals(1, notifier.getCounter());
     }
 
+    @Test
     public void testExchangeSentNotifierManualExchange() throws Exception {
         notifier.reset();
 

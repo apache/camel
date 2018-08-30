@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.remoting;
 
+import org.junit.Test;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,11 +32,13 @@ public class EchoSpringRemotingThrowingRuntimeExceptionTest extends SpringTestSu
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/echo.xml");
     }
 
+    @Test
     public void testEchoOk() throws Exception {
         String out = template.requestBody("direct:echo", "Claus", String.class);
         assertEquals("Claus Claus", out);
     }
     
+    @Test
     public void testEchoKabom() throws Exception {
         try {
             template.requestBody("direct:echo", "Kabom", String.class);
@@ -45,11 +49,13 @@ public class EchoSpringRemotingThrowingRuntimeExceptionTest extends SpringTestSu
         }
     }
 
+    @Test
     public void testRouteOk() throws Exception {
         String out = template.requestBody("direct:start", "Claus", String.class);
         assertEquals("Claus Claus", out);
     }
 
+    @Test
     public void testRouteKabom() throws Exception {
         try {
             template.requestBody("direct:start", "Kabom", String.class);

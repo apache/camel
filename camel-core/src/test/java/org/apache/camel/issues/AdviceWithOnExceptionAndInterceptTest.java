@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -56,6 +58,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testFailover() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

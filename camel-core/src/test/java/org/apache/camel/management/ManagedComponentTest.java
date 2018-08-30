@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Collections;
 import java.util.Map;
 import javax.management.MBeanServer;
@@ -44,6 +46,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testVerifySupported() throws Exception {
         // JMX tests don't work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -63,6 +66,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
         assertFalse(invoke(mbeanServer, on, "isVerifySupported"));
     }
 
+    @Test
     public void testVerify() throws Exception {
         // JMX tests don't work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

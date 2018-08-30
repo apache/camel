@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +36,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     private String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
 
+    @Test
     public void testSplitAndAggregateInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(expectedBody);

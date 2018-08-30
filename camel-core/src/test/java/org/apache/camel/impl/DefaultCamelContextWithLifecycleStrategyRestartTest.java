@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,6 +35,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
 
     private MyStrategy strategy = new MyStrategy();
 
+    @Test
     public void testRestart() throws Exception {
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());
@@ -65,6 +68,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteStopped() throws Exception {
         assertTrue(context.getRouteStatus("foo").isStarted());
         assertEquals(0, strategy.getRemoveCounter());

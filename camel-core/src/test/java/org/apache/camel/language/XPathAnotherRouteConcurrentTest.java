@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testConcurrent() throws Exception {
         doSendMessages(100, 10);
     }

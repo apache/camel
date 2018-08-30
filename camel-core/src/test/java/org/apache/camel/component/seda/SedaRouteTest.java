@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.seda;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,18 +38,21 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class SedaRouteTest extends TestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");
         super.tearDown();
     }
 
+    @Test
     public void testSedaQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -80,6 +87,7 @@ public class SedaRouteTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testThatShowsEndpointResolutionIsNotConsistent() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 

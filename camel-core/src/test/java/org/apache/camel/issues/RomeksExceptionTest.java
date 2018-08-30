@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,10 +35,12 @@ import org.slf4j.LoggerFactory;
 public class RomeksExceptionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RomeksExceptionTest.class);
 
+    @Test
     public void testRouteA() throws Exception {
         assertErrorHandlingWorks("a");
     }
 
+    @Test
     public void testRouteB() throws Exception {
         assertErrorHandlingWorks("b");
     }

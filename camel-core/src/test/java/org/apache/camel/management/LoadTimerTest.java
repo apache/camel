@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,6 +36,7 @@ public class LoadTimerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testTimer() throws Exception {
         TimerListenerManager myTimer = new TimerListenerManager();
         myTimer.setCamelContext(context);

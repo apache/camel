@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +44,8 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filelanguage");
         super.setUp();
     }
@@ -59,6 +63,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         return jndi;
     }
 
+    @Test
     public void testConsumeExpressionThrowException() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage/bean", "Bye World", Exchange.FILE_NAME, "123.txt");
 

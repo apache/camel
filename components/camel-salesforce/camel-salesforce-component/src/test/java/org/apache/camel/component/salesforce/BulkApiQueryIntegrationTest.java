@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -39,6 +41,7 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
     }
 
     @Theory
+    @Test
     public void testQueryLifecycle(ContentType contentType) throws Exception {
         log.info("Testing Query lifecycle with {} content", contentType);
 

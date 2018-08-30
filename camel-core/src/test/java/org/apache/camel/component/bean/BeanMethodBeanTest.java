@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 
 import org.apache.camel.TestSupport;
@@ -25,6 +27,7 @@ import org.apache.camel.TestSupport;
  */
 public class BeanMethodBeanTest extends TestSupport {
 
+    @Test
     public void testBeanMethod() throws Exception {
         Method method = MyFooBean.class.getMethod("hello", String.class);
 

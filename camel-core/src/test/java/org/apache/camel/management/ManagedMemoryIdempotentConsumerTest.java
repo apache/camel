@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -37,6 +40,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected MockEndpoint resultEndpoint;
     private IdempotentRepository<String> repo;
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -97,6 +101,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         assertTrue(repo.contains("4"));
     }
 
+    @Test
     public void testDuplicateMessagesCountAreCorrectlyCounted() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -165,7 +170,8 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository();
         // lets start with 4
         repo.add("4");

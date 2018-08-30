@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -62,6 +64,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Camel");

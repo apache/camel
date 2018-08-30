@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -32,12 +34,14 @@ import org.springframework.jmx.support.JmxUtils;
 public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         ZooKeeperTestSupport.setupTestServer();
         super.setUp();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         ZooKeeperTestSupport.shutdownServer();

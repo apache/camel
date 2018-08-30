@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -39,16 +41,19 @@ public class MainSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMainSupport() throws Exception {
         MyMainSupport my = new MyMainSupport();
         my.run(new String[]{"-d", "1"});
     }
 
+    @Test
     public void testMainSupportMaxMessages() throws Exception {
         MyMainSupport my = new MyMainSupport();
         my.run(new String[]{"-d", "1", "-dm", "2"});
     }
 
+    @Test
     public void testMainSupportHelp() throws Exception {
         MyMainSupport my = new MyMainSupport();
         my.run(new String[]{"-h"});

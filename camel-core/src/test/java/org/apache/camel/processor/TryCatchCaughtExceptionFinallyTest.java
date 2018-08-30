@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class TryCatchCaughtExceptionFinallyTest extends ContextTestSupport {
 
+    @Test
     public void testTryCatchCaughtExceptionFinally() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

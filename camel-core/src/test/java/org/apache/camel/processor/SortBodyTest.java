@@ -17,6 +17,8 @@
 
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class SortBodyTest extends ContextTestSupport {
 
+    @Test
     public void testSortBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

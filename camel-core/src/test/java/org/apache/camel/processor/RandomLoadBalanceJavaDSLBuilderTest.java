@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.Navigate;
@@ -34,6 +36,7 @@ import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
  */
 public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
+    @Test
     public void testNavigateRouteAsJavaDSLWithNavigate() throws Exception {
         // this one navigate using the runtime route using the Navigate<Processor>
 
@@ -52,6 +55,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")", sb.toString());
     }
 
+    @Test
     public void testNavigateRouteAsJavaDSL() throws Exception {
         // this one navigate using the route definition
 

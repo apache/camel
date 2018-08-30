@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.management;
 
+import org.junit.Test;
+
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
@@ -44,6 +46,7 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
         return new ClassPathXmlApplicationContext("/org/apache/camel/spring/disableJmxConfig.xml");
     }
 
+    @Test
     public void testReady() {
         // noop
     }

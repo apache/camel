@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
+import org.junit.Before;
 
 import java.net.URL;
 import java.util.Properties;
@@ -35,6 +36,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     protected Properties originalValues = new Properties();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests

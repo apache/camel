@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,6 +37,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDeadLetterChannelAlwaysHandled() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

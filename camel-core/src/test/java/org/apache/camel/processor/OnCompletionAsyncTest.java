@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,6 +35,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAsyncComplete() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -63,6 +66,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -97,6 +101,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncCompleteUseOriginalBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -127,6 +132,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncFailureUseOriginalBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -162,6 +168,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncCompleteOnCompleteFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

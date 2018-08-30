@@ -17,6 +17,8 @@
 
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,6 +44,7 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         };
     }
     
+    @Test
     public void testSenderXmlData() throws Exception {        
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();

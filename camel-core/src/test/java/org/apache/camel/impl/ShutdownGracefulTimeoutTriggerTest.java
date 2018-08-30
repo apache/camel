@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ public class ShutdownGracefulTimeoutTriggerTest extends ContextTestSupport {
 
     private static String foo = "";
 
+    @Test
     public void testShutdownGraceful() throws Exception {
         // timeout after 2 seconds
         context.getShutdownStrategy().setTimeout(2);

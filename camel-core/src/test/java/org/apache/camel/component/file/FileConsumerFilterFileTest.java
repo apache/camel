@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,11 +33,13 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
     private String fileUrl2 = "file://target/filefilter/?initialDelay=0&delay=10&filterFile=${file:modified} < ${date:now-2s}";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filefilter");
         super.setUp();
     }
 
+    @Test
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -45,6 +50,7 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -56,6 +62,7 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testFilterFilesWithDate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedBodiesReceived("Something else");

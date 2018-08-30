@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,6 +32,7 @@ public class TracingWithDelayTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(TracingWithDelayTest.class);
 
+    @Test
     public void testTracingWithDelay() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

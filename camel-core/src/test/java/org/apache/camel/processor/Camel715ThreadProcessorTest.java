@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -35,7 +35,7 @@ import org.junit.Test;
  * An old unit test from CAMEL-715 which reproduced a problem which we don't have anymore
  * in Camel threads EIP and the routing engine.
  */
-public class Camel715ThreadProcessorTest extends TestCase {
+public class Camel715ThreadProcessorTest extends Assert {
     private static final int ITERS = 50000;
 
     class SendingProcessor implements Processor {

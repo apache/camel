@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class SpringBuilderRefPropertiesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefPropertiesTest.xml");
     }
 
+    @Test
     public void testSpringBuilderRefProperties() throws Exception {
         getMockEndpoint("{{result}}").expectedMessageCount(1);
 

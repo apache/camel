@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchBeanException;
@@ -34,6 +36,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testNoBean() {
         RegistryBean rb = new RegistryBean(context, "bar");
         try {
@@ -44,6 +47,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testBean() {
         RegistryBean rb = new RegistryBean(context, "foo");
         Object bean = rb.getBean();
@@ -55,6 +59,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         assertNotNull(rb.getRegistry());
     }
 
+    @Test
     public void testParameterMappingStrategy() {
         RegistryBean rb = new RegistryBean(context, "foo");
         ParameterMappingStrategy myStrategy = new ParameterMappingStrategy() {
@@ -73,6 +78,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         assertNotNull(rb.getRegistry());
     }
 
+    @Test
     public void testLookupClass() throws Exception {
         RegistryBean rb = new RegistryBean(context, "static");
 
@@ -81,6 +87,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         assertEquals("foofoo", foo.echo("foo"));
     }
 
+    @Test
     public void testLookupFQNClass() throws Exception {
         RegistryBean rb = new RegistryBean(context, "org.apache.camel.component.bean.MyDummyBean");
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MockPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testMockPredicate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.message(0).predicate().header("foo");
@@ -38,6 +41,7 @@ public class MockPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMockPredicateAsParameter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.message(0).predicate(PredicateBuilder.isNotNull(header("foo")));
@@ -49,6 +53,7 @@ public class MockPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOutBodyType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.message(0).outBody(String.class).isEqualTo("Bye World");

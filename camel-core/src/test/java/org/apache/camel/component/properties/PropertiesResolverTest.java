@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class PropertiesResolverTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesResolver() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

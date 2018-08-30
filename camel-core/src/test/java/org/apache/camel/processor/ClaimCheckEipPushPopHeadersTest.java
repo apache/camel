@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
 
 public class ClaimCheckEipPushPopHeadersTest extends ContextTestSupport {
 
+    @Test
     public void testPushPopHeaders() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").expectedHeaderReceived("foo", 123);

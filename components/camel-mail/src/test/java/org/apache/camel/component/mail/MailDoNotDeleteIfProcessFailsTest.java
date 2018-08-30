@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -37,6 +38,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
     private static int counter;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();

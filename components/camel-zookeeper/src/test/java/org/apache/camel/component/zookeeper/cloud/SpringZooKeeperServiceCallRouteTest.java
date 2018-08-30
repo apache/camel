@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
+import org.junit.After;
 
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -90,6 +91,7 @@ public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport 
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 

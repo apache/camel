@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -29,6 +31,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
 
+    @Test
     public void testPropertyInjectAnnotationOne() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -37,6 +40,7 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertyInjectAnnotationTwo() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("WorldWorldWorld");
 
@@ -45,6 +49,7 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertyInjectAnnotationThree() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Goodbye World");
 

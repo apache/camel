@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StringHelper;
@@ -25,6 +27,7 @@ import org.apache.camel.util.StringHelper;
  */
 public class MethodCallStaticMethodTest extends ContextTestSupport {
 
+    @Test
     public void testStaticMethod() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "\"Hello World\"");
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "Hello World");

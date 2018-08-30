@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterOnPrepareTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterOnPrepare() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(2);
         getMockEndpoint("mock:a").allMessages().body(String.class).isEqualTo("1 Tony the Tiger");

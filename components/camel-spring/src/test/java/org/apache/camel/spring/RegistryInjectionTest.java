@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
@@ -35,6 +37,7 @@ public class RegistryInjectionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/RegistryInjection.xml");
     }
 
+    @Test
     public void testInjectedStrategy() throws Exception {
         CamelContext context = createCamelContext();
 

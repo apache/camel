@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.io.FileNotFoundException;
 
 import org.xml.sax.SAXParseException;
@@ -42,11 +44,13 @@ public class XPathFeatureTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testXPathResult() throws Exception {
         String result = (String)xpath("/").stringResult().evaluate(createExchange(XML_DATA));
         assertEquals("Get a wrong result", "  ", result);
     }
 
+    @Test
     public void testXPath() throws Exception {
         // Set this feature will enable the external general entities
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":"
@@ -63,6 +67,7 @@ public class XPathFeatureTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testXPathNoTypeConverter() throws Exception {
         try {
             // define a class without type converter as document type
@@ -73,6 +78,7 @@ public class XPathFeatureTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testXPathResultOnInvalidData() throws Exception {
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));

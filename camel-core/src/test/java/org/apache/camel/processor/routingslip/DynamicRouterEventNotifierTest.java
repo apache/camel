@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.routingslip;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 
 import org.apache.camel.Body;
@@ -39,6 +41,7 @@ public class DynamicRouterEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testDynamicRouterEventNotifier() throws Exception {
         getMockEndpoint("mock:x").expectedMessageCount(1);
         getMockEndpoint("mock:y").expectedMessageCount(1);

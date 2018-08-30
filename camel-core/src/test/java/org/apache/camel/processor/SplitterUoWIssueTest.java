@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class SplitterUoWIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/splitter");
         super.setUp();
     }
 
+    @Test
     public void testSplitterUoWIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
@@ -40,6 +45,7 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitterTwoFilesUoWIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E", "F", "G", "H", "I");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E", "F,G,H,I");

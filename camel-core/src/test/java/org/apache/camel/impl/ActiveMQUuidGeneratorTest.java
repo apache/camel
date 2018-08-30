@@ -16,16 +16,19 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ActiveMQUuidGeneratorTest extends TestCase {
+public class ActiveMQUuidGeneratorTest extends Assert {
     
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGeneratorTest.class);
 
+    @Test
     public void testGenerateUUID() {
         ActiveMQUuidGenerator uuidGenerator = new ActiveMQUuidGenerator();
 
@@ -35,6 +38,7 @@ public class ActiveMQUuidGeneratorTest extends TestCase {
         assertNotSame(firstUUID, secondUUID);
     }
 
+    @Test
     public void testPerformance() {
         ActiveMQUuidGenerator uuidGenerator = new ActiveMQUuidGenerator();
         StopWatch watch = new StopWatch();
@@ -48,6 +52,7 @@ public class ActiveMQUuidGeneratorTest extends TestCase {
         LOG.info("Took " + TimeUtils.printDuration(watch.taken()));
     }
 
+    @Test
     public void testSanitizeHostName() throws Exception {
         assertEquals("somehost.lan", ActiveMQUuidGenerator.sanitizeHostName("somehost.lan"));
         // include a UTF-8 char in the text \u0E08 is a Thai elephant

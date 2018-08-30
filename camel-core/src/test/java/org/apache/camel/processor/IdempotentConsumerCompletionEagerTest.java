@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -42,6 +45,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testCompletionEager() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
@@ -79,6 +83,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotCompletionEager() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
@@ -127,7 +132,8 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

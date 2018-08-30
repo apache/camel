@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 public class XsltMessageTerminateTest extends ContextTestSupport {
 
+    @Test
     public void testXsltTerminate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);

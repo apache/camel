@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +29,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
     // TODO: We should have a JMX test of this as well
 
+    @Test
     public void testAutoStartupFalseContextStart() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
         camel.disableJMX();
@@ -60,6 +63,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.stop();
     }
 
+    @Test
     public void testAutoStartupFalseRouteStart() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
         camel.disableJMX();
@@ -93,6 +97,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.stop();
     }
 
+    @Test
     public void testAutoStartupTrue() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
         camel.disableJMX();
@@ -120,6 +125,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.stop();
     }
 
+    @Test
     public void testAutoStartupFalseRouteOverride() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
         camel.disableJMX();

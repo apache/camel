@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class CBRSimplePredicateEmptyBodyTest extends ContextTestSupport {
 
+    @Test
     public void testCBR() throws Exception {
         getMockEndpoint("mock:unknown").expectedMessageCount(1);
         getMockEndpoint("mock:unknown").message(0).header("name").isNull();

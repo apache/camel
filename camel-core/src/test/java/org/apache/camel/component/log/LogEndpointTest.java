@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.log;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -44,6 +46,7 @@ public class LogEndpointTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLogEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -56,6 +59,7 @@ public class LogEndpointTest extends ContextTestSupport {
     }
     
     
+    @Test
     public void testLogEndpointGroupSize() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:result");
         int expectedCount = 50;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
+    @Test
     public void testReceivedTimestamp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isNotNull();
@@ -44,6 +47,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAssertPeriod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -54,6 +58,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAssertPeriodNot() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -66,6 +71,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         mock.assertIsNotSatisfied();
     }
 
+    @Test
     public void testAssertPeriodSecondMessageArrives() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -98,6 +104,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
+    @Test
     public void testNoAssertPeriodSecondMessageArrives() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -131,6 +138,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
+    @Test
     public void testArrivesBeforeNext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -143,6 +151,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesAfterPrevious() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -155,6 +164,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesBeforeAndAfter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
@@ -170,6 +180,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesWithinAfterPrevious() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -182,6 +193,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesWithinBeforeNext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -194,6 +206,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesAllMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);

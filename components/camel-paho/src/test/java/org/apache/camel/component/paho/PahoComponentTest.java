@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.paho;
+import org.junit.After;
 
 import java.io.UnsupportedEncodingException;
 
@@ -59,6 +60,7 @@ public class PahoComponentTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         broker.stop();

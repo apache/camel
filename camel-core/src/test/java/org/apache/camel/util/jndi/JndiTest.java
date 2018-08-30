@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.util.jndi;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -45,16 +48,18 @@ public class JndiTest extends TestSupport {
         }
     }
 
+    @Test
     public void testLookupOfSimpleName() throws Exception {
         Object value = assertLookup("foo");
         assertEquals("foo", "bar", value);
     }
 
+    @Test
     public void testLookupOfTypedObject() throws Exception {
         Object value = assertLookup("example");
         ExampleBean bean = assertIsInstanceOf(ExampleBean.class, value);
         assertEquals("Bean.name", "James", bean.getName());
-        assertEquals("Bean.price", 2.34, bean.getPrice());
+        assertEquals("Bean.price", 2.34d, bean.getPrice(), 1e-5d);
 
         log.info("Found bean: " + bean);
     }
@@ -65,7 +70,8 @@ public class JndiTest extends TestSupport {
         return value;
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         context = createInitialContext();

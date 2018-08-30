@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -36,6 +38,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
+    @Test
     public void testManageThrottler() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -104,6 +107,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertTrue("Should be around 1 sec now: was " + total, total > 1000);
     }
 
+    @Test
     public void testThrottleVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -139,6 +143,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
     }
 
+    @Test
     public void testThrottleAsyncVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -176,6 +181,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
     }
 
+    @Test
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -215,6 +221,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(0, completed.longValue());
     }
 
+    @Test
     public void testRejectedExecution() throws Exception {
         // when delaying async, we can possibly fill up the execution queue
         //. which would through a RejectedExecutionException.. we need to make
@@ -248,6 +255,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRejectedExecutionCallerRuns() throws Exception {
         // when delaying async, we can possibly fill up the execution queue
         //. which would through a RejectedExecutionException.. we need to make

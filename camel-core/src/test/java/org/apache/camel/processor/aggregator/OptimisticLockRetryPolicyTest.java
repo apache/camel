@@ -16,13 +16,16 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 
-public class OptimisticLockRetryPolicyTest extends TestCase {
+public class OptimisticLockRetryPolicyTest extends Assert {
 
     private static long precision = 100L; // give or take 100ms
 
+    @Test
     public void testRandomBackOff() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(true);
@@ -36,6 +39,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         }
     }
 
+    @Test
     public void testExponentialBackOff() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
@@ -50,6 +54,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         }
     }
 
+    @Test
     public void testExponentialBackOffMaximumRetryDelay() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
@@ -74,6 +79,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         }
     }
 
+    @Test
     public void testRetryDelay() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
@@ -88,6 +94,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         }
     }
 
+    @Test
     public void testMaximumRetries() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);

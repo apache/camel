@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptSendToMockEndpointStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy());
         context.addRoutes(new RouteBuilder() {
@@ -56,6 +59,7 @@ public class InterceptSendToMockEndpointStrategyTest extends ContextTestSupport 
         assertNotNull(context.hasEndpoint("mock:log:foo"));
     }
 
+    @Test
     public void testAdvisedMockEndpointsWithPattern() throws Exception {
         context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy("log*"));
         context.addRoutes(new RouteBuilder() {

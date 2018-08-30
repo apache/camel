@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ public class SagaFailuresTest extends ContextTestSupport {
 
     private AtomicInteger maxFailures;
 
+    @Test
     public void testCompensationAfterFailures() throws Exception {
         maxFailures = new AtomicInteger(2);
 
@@ -38,6 +41,7 @@ public class SagaFailuresTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test
     public void testNoCompensationAfterMaxFailures() throws Exception {
         maxFailures = new AtomicInteger(3);
 
@@ -50,6 +54,7 @@ public class SagaFailuresTest extends ContextTestSupport {
         compensate.assertIsNotSatisfied();
     }
 
+    @Test
     public void testCompletionAfterFailures() throws Exception {
         maxFailures = new AtomicInteger(2);
 
@@ -65,6 +70,7 @@ public class SagaFailuresTest extends ContextTestSupport {
         end.assertIsSatisfied();
     }
 
+    @Test
     public void testNoCompletionAfterMaxFailures() throws Exception {
         maxFailures = new AtomicInteger(3);
 

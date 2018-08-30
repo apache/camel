@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -24,6 +26,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class BeanInfoInheritanceTest extends ContextTestSupport {
 
+    @Test
     public void testInheritance() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Y.class);
 
@@ -40,6 +43,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoInheritance() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, A.class);
 
@@ -56,6 +60,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInheritanceAndOverload() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Z.class);
 

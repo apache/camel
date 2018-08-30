@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -27,7 +28,8 @@ import org.junit.Test;
 public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         deleteDirectory("target/enrichdata");
         super.setUp();

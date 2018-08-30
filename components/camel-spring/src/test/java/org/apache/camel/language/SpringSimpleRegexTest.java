@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,6 +29,7 @@ public class SpringSimpleRegexTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/springSimpleRegexContext.xml");
     }
     
+    @Test
     public void testSimpleRegex() {
         String result = template.requestBody("direct:start", "Something is wrong", String.class);
         assertEquals("Let's keep looking.", result);

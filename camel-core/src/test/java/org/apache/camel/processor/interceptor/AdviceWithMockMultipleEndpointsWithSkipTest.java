@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,6 +30,7 @@ public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupp
 
     // START SNIPPET: e1
     // tag::e1[]
+    @Test
     public void testAdvisedMockEndpointsWithSkip() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder

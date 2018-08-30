@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptorStrategyNotOrdered() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("order", "foobar");

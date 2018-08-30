@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.management.Attribute;
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
+    @Test
     public void testScheduledPollConsumer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

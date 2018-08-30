@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.direct;
+import org.junit.Before;
+import org.junit.After;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,13 +29,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * @version 
  */
-public class TwoCamelContextDirectEndpointTest extends TestCase {
+public class TwoCamelContextDirectEndpointTest extends Assert {
     private DefaultCamelContext camel1;
     private DefaultCamelContext camel2;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
@@ -53,13 +57,14 @@ public class TwoCamelContextDirectEndpointTest extends TestCase {
         camel2.start();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         camel1.stop();
         camel2.stop();
-        super.tearDown();
+
     }
 
+    @Test
     public void testTwoCamelContextDirectEndpoint() throws Exception {
         Endpoint start1 = camel1.getEndpoint("direct:start");
         Endpoint start2 = camel2.getEndpoint("direct:start");

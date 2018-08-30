@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -42,6 +45,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
             + "</xsl:stylesheet>";
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 
@@ -62,6 +66,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
         // Override so we can start the context ourself in the setUp
     }
 
+    @Test
     public void testNotCached() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
@@ -80,6 +85,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testCached() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
@@ -98,6 +104,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testCachedIsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
@@ -116,6 +123,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
     
+    @Test
     public void testClearCachedStylesheetViaJmx() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");

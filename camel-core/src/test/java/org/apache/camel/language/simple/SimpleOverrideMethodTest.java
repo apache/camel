@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -28,6 +30,7 @@ public class SimpleOverrideMethodTest extends LanguageTestSupport {
         return "simple";
     }
 
+    @Test
     public void testOverrideMethod() throws Exception {
         Path path = new File("target").toPath();
         exchange.getIn().setBody(path);

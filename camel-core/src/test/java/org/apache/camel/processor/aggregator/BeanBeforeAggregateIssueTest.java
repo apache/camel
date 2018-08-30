@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -32,6 +34,7 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
 
     private MyAggRepo myRepo = new MyAggRepo();
 
+    @Test
     public void testBeanBeforeAggregation() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 

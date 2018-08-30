@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InflightRepositoryRouteTest extends ContextTestSupport {
 
+    @Test
     public void testInflight() throws Exception {
         context.setInflightRepository(new MyInflightRepo());
 

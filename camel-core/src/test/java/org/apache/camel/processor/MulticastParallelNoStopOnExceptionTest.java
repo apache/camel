@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,17 +35,20 @@ import org.apache.camel.builder.RouteBuilder;
 public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service; 
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
         service = Executors.newFixedThreadPool(2);
         super.setUp();
     }
     
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         service.shutdownNow();
     }
 
+    @Test
     public void testMulticastParallelNoStopOnExceptionOk() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello");
@@ -53,6 +60,7 @@ public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastParalllelNoStopOnExceptionStop() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:bar").expectedMessageCount(0);

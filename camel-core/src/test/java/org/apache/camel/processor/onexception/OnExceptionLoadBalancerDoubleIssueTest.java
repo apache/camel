@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class OnExceptionLoadBalancerDoubleIssueTest extends ContextTestSupport {
 
+    @Test
     public void testNotDouble() throws Exception {
         // there should only be 3 processors on the load balancer
         getMockEndpoint("mock:error").expectedBodiesReceived("A", "D", "G");

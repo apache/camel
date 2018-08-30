@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 
 import org.apache.camel.ProducerTemplate;
@@ -30,6 +32,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
     }
 
+    @Test
     public void testLoadRoutes() throws Exception {
         SpringCamelContext camel = applicationContext.getBean(SpringCamelContext.class);
         assertEquals(0, camel.getRoutes().size());

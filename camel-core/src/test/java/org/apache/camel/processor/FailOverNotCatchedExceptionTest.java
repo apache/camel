@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -33,7 +36,8 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -71,6 +75,7 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testExceptionNotCatched() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);

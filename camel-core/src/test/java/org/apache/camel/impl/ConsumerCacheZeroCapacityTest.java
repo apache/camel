@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
+    @Test
     public void testConsumerCacheZeroCapacity() throws Exception {
         ConsumerCache cache = new ConsumerCache(this, context, 0);
         cache.start();

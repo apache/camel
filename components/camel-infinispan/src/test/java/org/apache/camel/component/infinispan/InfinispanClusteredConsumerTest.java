@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.infinispan;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.concurrent.TimeUnit;
 import org.apache.camel.EndpointInject;

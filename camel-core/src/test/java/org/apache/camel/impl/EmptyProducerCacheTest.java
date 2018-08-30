@@ -16,12 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 
 public class EmptyProducerCacheTest extends ContextTestSupport {
 
+    @Test
     public void testEmptyCache() throws Exception {
         ProducerCache cache = new EmptyProducerCache(this, context);
         cache.start();
@@ -41,6 +44,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
         cache.stop();
     }
 
+    @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
         ProducerCache cache = new EmptyProducerCache(this, context);
         cache.start();

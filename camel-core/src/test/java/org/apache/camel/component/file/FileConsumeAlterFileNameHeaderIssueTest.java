@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,7 +32,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
     }
@@ -39,6 +43,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         return false;
     }
 
+    @Test
     public void testConsumeAndDeleteRemoveAllHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -66,6 +71,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         assertFalse("File should been deleted", new File("target/files/hello.txt").exists());
     }
 
+    @Test
     public void testConsumeAndDeleteChangeFileHeader() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -92,6 +98,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         assertFalse("File should been deleted", new File("target/files/hello.txt").exists());
     }
 
+    @Test
     public void testConsumeAndMoveRemoveAllHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -119,6 +126,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         assertTrue("File should been moved", new File("target/files/.camel/hello.txt").exists());
     }
 
+    @Test
     public void testConsumeAndMoveChangeFileHeader() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

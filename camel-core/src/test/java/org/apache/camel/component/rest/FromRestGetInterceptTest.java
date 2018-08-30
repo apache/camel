@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -29,6 +31,7 @@ public class FromRestGetInterceptTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

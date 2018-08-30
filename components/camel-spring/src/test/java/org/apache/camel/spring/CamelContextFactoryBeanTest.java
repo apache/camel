@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
@@ -34,17 +37,19 @@ import org.xmlunit.diff.Diff;
 /**
  * @version 
  */
-public class CamelContextFactoryBeanTest extends TestCase {
+public class CamelContextFactoryBeanTest extends Assert {
     
     private CamelContextFactoryBean factory;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         
         factory = new CamelContextFactoryBean();
         factory.setId("camelContext");
     }
 
+    @Test
     public void testGetDefaultUuidGenerator() throws Exception {
         factory.setApplicationContext(new StaticApplicationContext());
         factory.afterPropertiesSet();
@@ -54,6 +59,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
         assertTrue(uuidGenerator instanceof DefaultUuidGenerator);
     }
     
+    @Test
     public void testGetCustomUuidGenerator() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("uuidGenerator", SimpleUuidGenerator.class);
@@ -65,6 +71,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
         assertTrue(uuidGenerator instanceof SimpleUuidGenerator);
     }
 
+    @Test
     public void testSetEndpoints() throws Exception {
         // Create a new Camel context and add an endpoint
         CamelContextFactoryBean camelContext = new CamelContextFactoryBean();
@@ -82,6 +89,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
         assertFalse("Expected context and actual context differ:\n" + diff.toString(), diff.hasDifferences());
     }
 
+    @Test
     public void testCustomModelJAXBContextFactory() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("customModelJAXBContextFactory", CustomModelJAXBContextFactory.class);

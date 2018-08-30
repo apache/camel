@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 
 /**
@@ -35,6 +37,7 @@ public class RouteBuilderAddRoutesOnlyInterceptTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testAddRoutes() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Foo was here");
 

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

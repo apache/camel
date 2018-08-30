@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +33,7 @@ public class RuntimeEndpointRegistryTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testRuntimeEndpointRegistry() throws Exception {
         RuntimeEndpointRegistry registry = context.getRuntimeEndpointRegistry();
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -23,6 +25,7 @@ public class ExpressionClauseSupplierTest extends ContextTestSupport {
 
     private static final String BODY_SUPPLIER_MSG = "I am the body supplier!";
 
+    @Test
     public void testBodySupplier() throws Exception {
         MockEndpoint functionMock1 = getMockEndpoint("mock:output1");
         functionMock1.expectedMessageCount(1);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty;
+import org.junit.Before;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -33,6 +34,7 @@ public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducerJMXBeansIssueTest.class);
 
     @Override
+    @Before
     public void setUp() throws Exception {
         // to enable the JMX connector
         enableJMX();

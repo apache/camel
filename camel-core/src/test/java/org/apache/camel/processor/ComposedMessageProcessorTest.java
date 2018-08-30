@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 public class ComposedMessageProcessorTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testValidatingCorrectOrder() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
@@ -50,6 +53,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testValidatingIncorrectOrder() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);

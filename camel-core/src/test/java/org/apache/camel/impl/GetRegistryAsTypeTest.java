@@ -16,13 +16,16 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 
-public class GetRegistryAsTypeTest extends TestCase {
+public class GetRegistryAsTypeTest extends Assert {
 
+    @Test
     public void testDefault() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -36,6 +39,7 @@ public class GetRegistryAsTypeTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testSimple() throws Exception {
         CamelContext context = new DefaultCamelContext(new SimpleRegistry());
         context.start();
@@ -50,6 +54,7 @@ public class GetRegistryAsTypeTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testComposite() throws Exception {
         CompositeRegistry cr = new CompositeRegistry();
         cr.addRegistry(new SimpleRegistry());

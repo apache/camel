@@ -16,12 +16,15 @@
  */
 package org.apache.camel.spring.contextscan;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ContextScanOnExceptionAndDLCErrorHandlerReverseTest extends SpringTestSupport {
 
+    @Test
     public void testFoo() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
@@ -33,6 +36,7 @@ public class ContextScanOnExceptionAndDLCErrorHandlerReverseTest extends SpringT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBar() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

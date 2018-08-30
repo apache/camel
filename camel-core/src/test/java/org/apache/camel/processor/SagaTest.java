@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class SagaTest extends ContextTestSupport {
 
     private CreditService creditService;
 
+    @Test
     public void testCreditExhausted() throws Exception {
         // total credit is 100
         buy(20, false, false);
@@ -51,6 +54,7 @@ public class SagaTest extends ContextTestSupport {
         await().until(() -> creditService.getCredit(), equalTo(5));
     }
 
+    @Test
     public void testTotalCompensation() throws Exception {
         // total credit is 100
         for (int i = 0; i < 10; i++) {

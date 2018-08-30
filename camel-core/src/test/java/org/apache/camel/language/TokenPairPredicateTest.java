@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -28,11 +31,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class TokenPairPredicateTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/pair");
         super.setUp();
     }
 
+    @Test
     public void testTokenPairPredicate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

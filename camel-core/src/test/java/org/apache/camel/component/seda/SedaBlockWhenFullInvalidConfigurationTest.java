@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -28,6 +30,7 @@ public class SedaBlockWhenFullInvalidConfigurationTest extends ContextTestSuppor
         return false;
     }
 
+    @Test
     public void testInvalidConfiguration() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

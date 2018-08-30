@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class BeanByteArrayBodyTest extends ContextTestSupport {
 
+    @Test
     public void testByteArray() throws Exception {
         byte[] bytes = new byte[]{65, 66, 67};
 

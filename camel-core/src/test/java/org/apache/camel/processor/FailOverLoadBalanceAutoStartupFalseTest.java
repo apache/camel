@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport {
     
+    @Test
     public void testFailover() throws Exception {
         getMockEndpoint("mock:x").expectedMessageCount(1);
         getMockEndpoint("mock:y").expectedMessageCount(1);

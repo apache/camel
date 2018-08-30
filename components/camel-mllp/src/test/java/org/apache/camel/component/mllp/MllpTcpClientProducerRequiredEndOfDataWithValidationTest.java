@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.mllp;
 
+import org.junit.Test;
+
 public class MllpTcpClientProducerRequiredEndOfDataWithValidationTest extends TcpClientProducerEndOfDataAndValidationTestSupport {
 
     @Override
@@ -32,6 +34,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithValidationTest extends Tc
 
 
     @Override
+    @Test
     public void testSendSingleMessageWithoutEndOfData() throws Exception {
         expectedTimeoutCount = 1;
 
@@ -39,21 +42,25 @@ public class MllpTcpClientProducerRequiredEndOfDataWithValidationTest extends Tc
     }
 
     @Override
+    @Test
     public void testSendMultipleMessagesWithoutEndOfDataByte() throws Exception {
         runSendMultipleMessagesWithoutEndOfDataByte(ackTimeoutError);
     }
 
     @Override
+    @Test
     public void testEmptyAcknowledgement() throws Exception {
         runEmptyAcknowledgement(aa);
     }
 
     @Override
+    @Test
     public void testInvalidAcknowledgement() throws Exception {
         runInvalidAcknowledgement(aa);
     }
 
     @Override
+    @Test
     public void testMissingEndOfDataByte() throws Exception {
         expectedAACount = 2;
         expectedTimeoutCount = 1;
@@ -62,6 +69,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithValidationTest extends Tc
     }
 
     @Override
+    @Test
     public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
         expectedAACount = 1;
 
@@ -69,6 +77,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithValidationTest extends Tc
     }
 
     @Override
+    @Test
     public void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception {
         expectedTimeoutCount = 1;
 
@@ -76,6 +85,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithValidationTest extends Tc
     }
 
     @Override
+    @Test
     public void testSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception {
         expectedAACount = 2;
         expectedTimeoutCount = 1;

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 
@@ -34,6 +36,7 @@ public class HawtDBGrowIssueTest extends CamelTestSupport {
     private final int size = 1024;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
@@ -48,6 +51,7 @@ public class HawtDBGrowIssueTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         hawtDBFile.stop();
         super.tearDown();

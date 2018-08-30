@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -32,6 +34,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNonSingleton() throws Exception {
         context.addComponent("dummy", new MyDummyComponent());
 

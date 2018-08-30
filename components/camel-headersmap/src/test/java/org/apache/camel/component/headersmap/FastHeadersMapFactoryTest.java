@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.headersmap;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
-public class FastHeadersMapFactoryTest extends TestCase {
+public class FastHeadersMapFactoryTest extends Assert {
 
+    @Test
     public void testLookupCaseAgnostic() {
         Map<String, Object> map = new FastHeadersMapFactory().newMap();
         assertNull(map.get("foo"));
@@ -34,6 +37,7 @@ public class FastHeadersMapFactoryTest extends TestCase {
         assertEquals("cheese", map.get("FOO"));
     }
 
+    @Test
     public void testConstructFromOther() {
         Map<String, Object> other = new FastHeadersMapFactory().newMap();
         other.put("Foo", "cheese");
@@ -50,6 +54,7 @@ public class FastHeadersMapFactoryTest extends TestCase {
         assertEquals(123, map.get("BaR"));
     }
 
+    @Test
     public void testIsInstance() {
         Map<String, Object> map = new FastHeadersMapFactory().newMap();
 

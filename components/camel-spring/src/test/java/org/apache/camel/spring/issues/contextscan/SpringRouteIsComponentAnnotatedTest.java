@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.issues.contextscan;
 
+import org.junit.Test;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,7 @@ public class SpringRouteIsComponentAnnotatedTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/contextscan/SpringRouteIsComponentAnnotatedTest.xml");
     }
 
+    @Test
     public void testSpringRouteIsComponentAnnotated() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

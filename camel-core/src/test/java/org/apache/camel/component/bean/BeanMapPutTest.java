@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ public class BeanMapPutTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testMapPut() throws Exception {
         assertEquals(0, myMap.size());
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateExpressionTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 

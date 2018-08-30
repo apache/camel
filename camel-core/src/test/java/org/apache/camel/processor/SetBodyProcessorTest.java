@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ import org.apache.camel.impl.DefaultMessage;
  */
 public class SetBodyProcessorTest extends ContextTestSupport {
 
+    @Test
     public void testSetBody() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("World");
@@ -63,6 +66,7 @@ public class SetBodyProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSetBodyWithHeader() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:test");
         result.expectedBodiesReceived("bbb");

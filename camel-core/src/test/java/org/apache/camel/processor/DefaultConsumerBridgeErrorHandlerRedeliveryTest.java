@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -29,6 +31,7 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
 
     protected final AtomicInteger redeliverCounter = new AtomicInteger();
 
+    @Test
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Cannot process");

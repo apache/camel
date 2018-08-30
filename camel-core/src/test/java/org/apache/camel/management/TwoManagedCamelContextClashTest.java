@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.After;
+
+import org.junit.Test;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -41,6 +44,7 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         return context;
     }
 
+    @Test
     public void testTwoManagedCamelContextNoClashDefault() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -66,6 +70,7 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on2));
     }
 
+    @Test
     public void testTwoManagedCamelContextNoClashCustomPattern() throws Exception {
         camel1 = createCamelContext("foo", "killer-#counter#");
         camel2 = createCamelContext("foo", "killer-#counter#");
@@ -86,6 +91,7 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on2));
     }
 
+    @Test
     public void testTwoManagedCamelContextClash() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -112,7 +118,8 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (camel1 != null) {
             camel1.stop();
         }

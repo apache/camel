@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -46,6 +48,7 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testPropertiesInPredicates() throws Exception {
         getMockEndpoint("mock:header-ok").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:choice-ok").expectedBodiesReceived("Hello Camel");

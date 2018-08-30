@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -38,6 +40,7 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
         return true;
     }
 
+    @Test
     public void testReduceStacksNeeded() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

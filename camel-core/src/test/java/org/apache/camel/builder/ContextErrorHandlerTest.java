@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.List;
 
@@ -31,7 +34,8 @@ import org.apache.camel.processor.SendProcessor;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();
         RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
@@ -58,6 +62,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
 
         RouteBuilder builder = new RouteBuilder() {
@@ -83,6 +88,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testGetTheDefaultErrorHandlerFromContext() throws Exception {
 
         RouteBuilder builder = new RouteBuilder() {

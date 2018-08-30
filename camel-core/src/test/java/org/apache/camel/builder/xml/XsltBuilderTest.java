@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.builder.xml;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
@@ -42,12 +45,14 @@ import org.apache.camel.util.UnitOfWorkHelper;
 public class XsltBuilderTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xslt");
         createDirectory("target/xslt");
         super.setUp();
     }
 
+    @Test
     public void testXsltUrl() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -61,6 +66,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltTransformerUrl() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -75,6 +81,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltFile() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
@@ -88,6 +95,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
     
+    @Test
     public void testXsltTransformerFile() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
@@ -102,6 +110,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltInputStream() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
@@ -115,6 +124,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltTransformerInputStream() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
@@ -129,6 +139,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltSource() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
         Source styleSheet = new SAXSource(new InputSource(Files.newInputStream(Paths.get(file.getAbsolutePath()))));
@@ -143,6 +154,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltTemplates() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
         Source source = new SAXSource(new InputSource(Files.newInputStream(Paths.get(file.getAbsolutePath()))));
@@ -160,6 +172,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltOutputString() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -174,6 +187,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltOutputBytes() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -188,6 +202,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody(String.class));
     }
 
+    @Test
     public void testXsltOutputDOM() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -202,6 +217,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<goodbye>world!</goodbye>", exchange.getOut().getBody(String.class));
     }
 
+    @Test
     public void testXsltOutputFile() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -221,6 +237,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
     }
 
+    @Test
     public void testXsltOutputFileDelete() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -247,6 +264,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertFalse("Output file should be deleted", file.exists());
     }
 
+    @Test
     public void testXsltSetConverter() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -263,6 +281,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
+    @Test
     public void testXsltResultHandler() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -279,6 +298,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody(String.class));
     }
 
+    @Test
     public void testNullBodyDefault() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -295,6 +315,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testFailNullBody() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -312,6 +333,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNotFailNullBody() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 

@@ -16,15 +16,18 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.example.MyProcessor;
 
 /**
  * @version 
  */
-public class MainExampleTest extends TestCase {
+public class MainExampleTest extends Assert {
 
+    @Test
     public void testMain() throws Exception {
         Main main = new Main();
         main.addRouteBuilder(new RouteBuilder() {
@@ -41,6 +44,7 @@ public class MainExampleTest extends TestCase {
         main.stop();
     }
     
+    @Test
     public void testFileApplicationContextUri() throws Exception {
         Main main = new Main();
         main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");

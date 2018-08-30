@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -42,6 +44,7 @@ public class Mina2ProducerShutdownTest extends TestSupport {
         me.testProducer();
     }
 
+    @Test
     public void testProducer() throws Exception {
         // use shutdown hook to verify that we have stopped within 5 seconds
         Thread hook = new AssertShutdownHook();

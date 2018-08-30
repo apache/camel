@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
@@ -31,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
 
+    @Test
     public void testReset() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

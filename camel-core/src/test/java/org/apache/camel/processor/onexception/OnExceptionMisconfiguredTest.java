@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import javax.xml.soap.SOAPException;
 
@@ -33,6 +35,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOnExceptionMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,6 +54,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOnExceptionMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -69,6 +73,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOnExceptionMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -88,6 +93,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOnExceptionMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -107,6 +113,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOnExceptionMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -127,6 +134,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOnExceptionNotMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -141,6 +149,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         // okay
     }
 
+    @Test
     public void testOnExceptionNotMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -155,6 +164,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         // okay
     }
 
+    @Test
     public void testOnExceptionNotMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -168,6 +178,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         // okay
     }
 
+    @Test
     public void testOnExceptionNotMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -181,6 +192,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         // okay
     }
 
+    @Test
     public void testOnExceptionNotMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

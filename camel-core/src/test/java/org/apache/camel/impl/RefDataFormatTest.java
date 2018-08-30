@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -36,6 +38,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testMarshalRef() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("CBA");
 
@@ -44,6 +47,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUnmarshalRef() throws Exception {
         getMockEndpoint("mock:b").expectedBodiesReceived("ABC");
 

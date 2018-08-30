@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -32,6 +34,7 @@ import static org.apache.camel.util.FileUtil.normalizePath;
  */
 public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
 
+    @Test
     public void testStreamCachingStrategy() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

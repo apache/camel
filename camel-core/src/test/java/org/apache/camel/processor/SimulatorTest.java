@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,10 +40,12 @@ public class SimulatorTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
     public void testReceivesFooResponse() throws Exception {
         assertRespondsWith("foo", "Bye said foo");
     }
 
+    @Test
     public void testReceivesBarResponse() throws Exception {
         assertRespondsWith("bar", "Bye said bar");
     }

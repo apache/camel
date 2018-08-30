@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.http;
+import org.junit.Before;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
@@ -38,6 +39,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     private TestClientConfigurer testConfigurer;
     
     @Override
+    @Before
     public void setUp() throws Exception {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();

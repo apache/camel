@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -36,6 +38,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
     private MyEndpoint myendpoint;
     private volatile String order = "";
 
+    @Test
     public void testEndpointMustBeStartedBeforeProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,6 +54,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
         assertEquals("EndpointProducer", order);
     }
 
+    @Test
     public void testEndpointMustBeStartedBeforeConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -66,6 +70,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
         assertEquals("EndpointConsumer", order);
     }
 
+    @Test
     public void testEndpointMustBeStartedBeforeConsumerAndProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -82,6 +87,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
         assertEquals("EndpointProducerConsumer", order);
     }
 
+    @Test
     public void testEndpointStartedOnceAndOnlyStoppedOnShutdown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

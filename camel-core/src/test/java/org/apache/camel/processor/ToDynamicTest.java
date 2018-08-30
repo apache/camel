@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class ToDynamicTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamic() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
@@ -33,6 +36,7 @@ public class ToDynamicTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToDynamicInvalid() throws Exception {
         try {
             template.sendBody("direct:start", "Hello Camel");

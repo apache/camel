@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +32,7 @@ public class WireTapTest extends ContextTestSupport {
     protected MockEndpoint tap;
     protected MockEndpoint result;
 
+    @Test
     public void testSend() throws Exception {
         // hello must come first, as we have delay on the tapped route
         result.expectedBodiesReceived("Hello World", "Tapped");
@@ -39,6 +43,7 @@ public class WireTapTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testWireTapId() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         MockEndpoint b = getMockEndpoint("mock:b");
@@ -50,7 +55,8 @@ public class WireTapTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         tap = getMockEndpoint("mock:tap");
         result = getMockEndpoint("mock:result");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,11 +48,13 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
@@ -93,6 +98,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
@@ -138,6 +144,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTwoTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("C+D", "A+B");

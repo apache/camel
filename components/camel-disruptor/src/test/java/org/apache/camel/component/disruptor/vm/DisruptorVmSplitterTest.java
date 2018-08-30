@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.disruptor.vm;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
     }
 
 
+    @Test
     public void testSplitUsingMethodCall() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Claus", "James", "Willem");

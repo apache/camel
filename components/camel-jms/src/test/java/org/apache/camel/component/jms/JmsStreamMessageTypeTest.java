@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms;
+import org.junit.Before;
 
 import java.io.File;
 import javax.jms.ConnectionFactory;
@@ -30,6 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsStreamMessageTypeTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/stream");
         super.setUp();

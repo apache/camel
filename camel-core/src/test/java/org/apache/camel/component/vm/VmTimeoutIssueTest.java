@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class VmTimeoutIssueTest extends AbstractVmTestSupport {
 
+    @Test
     public void testVmTimeoutWithAnotherVm() throws Exception {
         try {
             template2.requestBody("vm:start1?timeout=1000", "Hello");
@@ -37,6 +40,7 @@ public class VmTimeoutIssueTest extends AbstractVmTestSupport {
         }
     }
 
+    @Test
     public void testVmTimeoutWithProcessor() throws Exception {
         try {
             template2.requestBody("vm:start2?timeout=4000", "Hello");

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.concurrent.Future;
 
 import org.apache.camel.CamelExecutionException;
@@ -31,6 +33,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FluentProducerTemplateTest extends ContextTestSupport {
 
+    @Test
     public void testNoEndpoint() throws Exception {
         FluentProducerTemplate fluent = context.createFluentProducerTemplate();
 
@@ -49,6 +52,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testDefaultEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -64,6 +68,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertSame(context, fluent.getCamelContext());
     }
 
+    @Test
     public void testFromCamelContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -82,6 +87,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertSame(context, fluent.getCamelContext());
     }
 
+    @Test
     public void testIn() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -98,6 +104,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertSame(context, template.getCamelContext());
     }
 
+    @Test
     public void testInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Bye World");
@@ -112,6 +119,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertEquals("Bye Bye World", result);
     }
 
+    @Test
     public void testInOutWithBodyConversion() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(11);
@@ -126,6 +134,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertEquals(11, result);
     }
 
+    @Test
     public void testInOutWithBodyConversionFault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -143,6 +152,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -157,6 +167,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertEquals("Faulty World", result);
     }
 
+    @Test
     public void testExceptionUsingBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -173,6 +184,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExceptionUsingProcessor() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -188,6 +200,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExceptionUsingExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -207,6 +220,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRequestExceptionUsingBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -226,6 +240,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRequestExceptionUsingProcessor() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -241,6 +256,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRequestExceptionUsingExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -260,6 +276,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExchange() throws Exception {
         Exchange exchange = ExchangeBuilder.anExchange(context)
             .withBody("Hello!")
@@ -284,6 +301,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRequestBody() throws Exception {
         // with endpoint as string uri
         FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
@@ -347,6 +365,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         );
     }
 
+    @Test
     public void testAsyncRequest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:async");
         mock.expectedMessageCount(2);
@@ -374,6 +393,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAsyncSend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:async");
         mock.expectedMessageCount(2);
