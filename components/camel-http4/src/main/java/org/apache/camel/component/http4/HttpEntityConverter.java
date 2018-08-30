@@ -72,7 +72,8 @@ public final class HttpEntityConverter {
             Message inMessage = exchange.getIn();
             String length = inMessage.getHeader(Exchange.CONTENT_LENGTH, String.class);
             
-            if (ObjectHelper.isEmpty(length)) {
+            if (exchange.getProperty(Exchange.IGNORE_CONTENT_LENGTH_HEADER, Boolean.FALSE, Boolean.class) || 
+                    ObjectHelper.isEmpty(length)) {
                 entity = new InputStreamEntity(in, -1);
             } else {
                 entity = new InputStreamEntity(in, Long.parseLong(length));
