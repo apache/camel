@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testTransactedNoTXManager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

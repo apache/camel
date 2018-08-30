@@ -44,7 +44,7 @@ public class SpringJmxDumpCBRRoutesAsXmlTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testJmxDumpCBRRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

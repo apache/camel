@@ -48,8 +48,8 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         broker.stop();
     }

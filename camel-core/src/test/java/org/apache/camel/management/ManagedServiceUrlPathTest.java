@@ -56,8 +56,8 @@ public class ManagedServiceUrlPathTest extends ManagementTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         try {
             if (clientConnector != null) {

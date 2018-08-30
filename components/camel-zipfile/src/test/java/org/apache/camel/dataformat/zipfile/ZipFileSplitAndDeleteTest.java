@@ -35,8 +35,8 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/testDeleteZipFileWhenUnmarshalWithDataFormat");
         deleteDirectory("target/testDeleteZipFileWhenUnmarshalWithSplitter");
         super.setUp();

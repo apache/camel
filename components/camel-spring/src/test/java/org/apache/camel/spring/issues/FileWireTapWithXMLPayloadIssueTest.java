@@ -31,8 +31,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xmldata");
         super.setUp();
 
@@ -41,7 +41,7 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
                 + "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
     }
 
-   @Test
+    @Test
     public void testWireTapXpathExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

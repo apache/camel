@@ -29,8 +29,8 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
     private HawtDBFile hawtDBFile;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
         File file = new File("target/data/hawtdb.dat");

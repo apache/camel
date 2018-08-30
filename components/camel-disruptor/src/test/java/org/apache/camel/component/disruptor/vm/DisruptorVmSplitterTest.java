@@ -36,7 +36,7 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
     }
 
 
-   @Test
+    @Test
     public void testSplitUsingMethodCall() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Claus", "James", "Willem");

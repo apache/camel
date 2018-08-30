@@ -34,8 +34,8 @@ public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
     private Schema schema;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         schema = getSchema();
         super.setUp();
     }

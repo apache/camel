@@ -33,7 +33,7 @@ public class SpringPropertyPlaceholderFileEndpointIssueTest extends SpringTestSu
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpring() throws Exception {
         deleteDirectory("target/issue");
 

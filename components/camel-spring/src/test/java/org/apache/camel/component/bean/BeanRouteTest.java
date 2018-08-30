@@ -29,28 +29,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";
 
-   @Test
+    @Test
     public void testSayHello() throws Exception {
         Object value = template.requestBody("bean:myBean?method=sayHello", body);
 
         assertEquals("Returned value", "Hello James!", value);
     }
 
-   @Test
+    @Test
     public void testSayGoodbye() throws Exception {
         Object value = template.requestBody("bean:myBean?method=sayGoodbye", body);
 
         assertEquals("Returned value", "Bye James!", value);
     }
 
-   @Test
+    @Test
     public void testChooseMethodUsingBodyType() throws Exception {
         Object value = template.requestBody("bean:myBean", 4);
 
         assertEquals("Returned value", 8L, value);
     }
 
-   @Test
+    @Test
     public void testAmbiguousMethodCallFails() throws Exception {
         try {
             Object value = template.requestBody("bean:myBean", body);

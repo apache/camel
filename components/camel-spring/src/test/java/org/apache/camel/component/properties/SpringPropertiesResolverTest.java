@@ -32,7 +32,7 @@ public class SpringPropertiesResolverTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesResolverTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringPropertiesResolver() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

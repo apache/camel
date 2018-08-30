@@ -40,8 +40,8 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // create database and insert dummy data
@@ -49,7 +49,7 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
         jdbc = new JdbcTemplate(ds);
     }
 
-   @Test
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
@@ -57,7 +57,7 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
         assertEquals("Number of books", 3, count);
     }
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

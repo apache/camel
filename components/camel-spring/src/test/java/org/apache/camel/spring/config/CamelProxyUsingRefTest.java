@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CamelProxyUsingRefTest extends Assert {
 
-   @Test
+    @Test
     public void testCamelProxyUsingRef() throws Exception {
         AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyUsingRefTest.xml");
 

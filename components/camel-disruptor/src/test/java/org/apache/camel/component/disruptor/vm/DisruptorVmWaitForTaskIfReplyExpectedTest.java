@@ -29,7 +29,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -39,7 +39,7 @@ public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSup
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

@@ -33,7 +33,7 @@ public class SpringAsyncDeadLetterChannelExecutorServiceRefTest extends SpringTe
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/async/SpringAsyncDeadLetterChannelExecutorServiceRefTest.xml");
     }
 
-   @Test
+    @Test
     public void testAsyncDLCExecutorServiceRefTest() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
 

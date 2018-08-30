@@ -28,7 +28,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringAggregatorWithCustomStrategyTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testSendingMessagesWithCustomAggregator() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 

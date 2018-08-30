@@ -29,7 +29,7 @@ public class SpringSimpleNewlineTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/springSimpleNewline.xml");
     }
     
-   @Test
+    @Test
     public void testSimpleNewline() {
         String result = template.requestBody("direct:start", "Camel", String.class);
         assertEquals("Body is\non new line Camel\n", result);

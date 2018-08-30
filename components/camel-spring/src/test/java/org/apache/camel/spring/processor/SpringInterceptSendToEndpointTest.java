@@ -31,7 +31,7 @@ public class SpringInterceptSendToEndpointTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpoint.xml");
     }
 
-   @Test
+    @Test
     public void testInterceptEndpoint() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:detour").expectedBodiesReceived("Hello World");

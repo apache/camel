@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringThreadsCorePoolTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testThreadsCorePool() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -34,7 +34,7 @@ public class SpringThreadsCorePoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testThreadsCorePoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

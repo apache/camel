@@ -41,8 +41,8 @@ public class ResequencerEngineTest extends TestSupport {
     public void setUp() throws Exception {
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (runner != null) {
             runner.cancel();
         }

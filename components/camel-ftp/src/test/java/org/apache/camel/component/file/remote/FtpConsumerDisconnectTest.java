@@ -28,8 +28,8 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // ask the singleton FtpEndpoint to make use of a custom FTPClient

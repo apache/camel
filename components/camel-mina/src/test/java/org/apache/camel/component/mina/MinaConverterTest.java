@@ -33,7 +33,7 @@ import org.apache.mina.common.ByteBuffer;
  */
 public class MinaConverterTest extends Assert {
 
-   @Test
+    @Test
     public void testToByteArray() {
         byte[] in = "Hello World".getBytes();
         ByteBuffer bb = ByteBuffer.wrap(in);
@@ -45,7 +45,7 @@ public class MinaConverterTest extends Assert {
         }
     }
 
-   @Test
+    @Test
     public void testToString() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
         ByteBuffer bb = ByteBuffer.wrap(in.getBytes("UTF-8"));
@@ -56,7 +56,7 @@ public class MinaConverterTest extends Assert {
         assertEquals("Hello World \u4f60\u597d", out);
     }
 
-   @Test
+    @Test
     public void testToStringTwoTimes() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
         ByteBuffer bb = ByteBuffer.wrap(in.getBytes("UTF-8"));
@@ -71,7 +71,7 @@ public class MinaConverterTest extends Assert {
         assertEquals("Hello World \u4f60\u597d", out);
     }
 
-   @Test
+    @Test
     public void testToInputStream() throws Exception {
         byte[] in = "Hello World".getBytes();
         ByteBuffer bb = ByteBuffer.wrap(in);
@@ -83,7 +83,7 @@ public class MinaConverterTest extends Assert {
         }
     }
 
-   @Test
+    @Test
     public void testToByteBuffer() {
         byte[] in = "Hello World".getBytes();
 

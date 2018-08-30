@@ -91,13 +91,13 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     }
 
     @Override
-   @Test
+    @Test
     public void testIdempotentConsumer() throws Exception {
         // is tested elsewhere
     }
 
     @Override
-   @Test
+    @Test
     public void testRouteWithInterceptor() throws Exception {
         // is tested elsewhere
     }

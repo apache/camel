@@ -59,8 +59,8 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         queue.close();
 
         super.tearDown();

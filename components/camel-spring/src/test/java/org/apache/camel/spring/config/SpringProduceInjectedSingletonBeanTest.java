@@ -32,7 +32,7 @@ public class SpringProduceInjectedSingletonBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringProduceInjectedSingletonBeanTest.xml");
     }
 
-   @Test
+    @Test
     public void testProduceInjectedOnce() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
@@ -44,7 +44,7 @@ public class SpringProduceInjectedSingletonBeanTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testProduceInjectedTwice() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 

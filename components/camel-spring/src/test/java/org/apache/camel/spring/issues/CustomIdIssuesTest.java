@@ -37,7 +37,7 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/CustomIdIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testCustomId() {
         RouteDefinition route = context.getRouteDefinition("myRoute");
         assertNotNull(route);

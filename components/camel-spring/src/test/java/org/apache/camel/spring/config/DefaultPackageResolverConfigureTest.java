@@ -29,7 +29,7 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/PackageResolverTest.xml");
     }
 
-   @Test
+    @Test
     public void testSetAcceptableSchema() throws Exception {
         DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.getPackageScanClassResolver();
         assertNotNull(resolver);

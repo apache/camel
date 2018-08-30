@@ -27,7 +27,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceNotTransactedTest extends TransactionalClientDataSourceTest {
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

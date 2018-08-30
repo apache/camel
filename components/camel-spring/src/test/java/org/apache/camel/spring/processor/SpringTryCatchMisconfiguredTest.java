@@ -51,7 +51,7 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml");
     }
 
-   @Test
+    @Test
     public void testTryCatchMisconfigured() {
         // noop
     }

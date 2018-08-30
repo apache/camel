@@ -29,7 +29,7 @@ public class SpringCamelContextShutdownAfterBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringCamelContextShutdownAfterBeanTest.xml");
     }
 
-   @Test
+    @Test
     public void testShutdown() throws Exception {
         // you may have errors during shutdown, which you can see from the log
 

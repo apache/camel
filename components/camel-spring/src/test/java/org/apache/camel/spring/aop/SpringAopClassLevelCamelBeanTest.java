@@ -36,7 +36,7 @@ public class SpringAopClassLevelCamelBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/aop/SpringAopClassLevelCamelBeanTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringAopOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -47,7 +47,7 @@ public class SpringAopClassLevelCamelBeanTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testSpringAopException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

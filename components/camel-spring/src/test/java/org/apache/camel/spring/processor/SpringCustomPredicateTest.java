@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringCustomPredicateTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testFilterMyPredicate() throws InterruptedException {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Camel", "Secret Agent");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World", "Secret Agent");

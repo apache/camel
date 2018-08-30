@@ -31,7 +31,7 @@ public class BridgePropertyPlaceholderConfigurerTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");   
     }
     
-   @Test
+    @Test
     public void testProperty() throws Exception {
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(CONSTANT);
@@ -39,7 +39,7 @@ public class BridgePropertyPlaceholderConfigurerTest extends SpringTestSupport {
         result.assertIsSatisfied();
     }
 
-   @Test
+    @Test
     public void testPropertyDefault() throws Exception {
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived("myDefaultValue");

@@ -30,7 +30,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringTransformTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testSendAMessageWhichIsTransformed() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Hello World!");

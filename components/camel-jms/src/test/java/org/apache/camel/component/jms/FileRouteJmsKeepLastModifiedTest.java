@@ -36,8 +36,8 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
         super.setUp();

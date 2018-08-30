@@ -39,8 +39,8 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed");
         super.setUp();
     }

@@ -23,8 +23,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TransactionalClientDataSourceWithSpringRouteBuilderTest extends TransactionalClientDataSourceTest {
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();        
     }

@@ -29,8 +29,8 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown exception");
@@ -41,7 +41,7 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         }
     }
 
-   @Test
+    @Test
     public void testDummy() {
         // noop
     }

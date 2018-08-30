@@ -33,7 +33,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testStreamCaching() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMessageCount(1);
@@ -50,7 +50,7 @@ public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
         assertNotSame(message, cache);
     }
 
-   @Test
+    @Test
     public void testNoStreamCaching() throws Exception {
         MockEndpoint b = getMockEndpoint("mock:b");
         b.expectedMessageCount(1);

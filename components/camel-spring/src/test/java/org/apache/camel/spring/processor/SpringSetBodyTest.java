@@ -26,7 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringSetBodyTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testSendAMessageWhosInBodyIsTransformed() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedBodiesReceived("Hello World!");

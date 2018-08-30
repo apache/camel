@@ -29,7 +29,7 @@ public class SpringCamelContextShutdownBeforeBeanTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringCamelContextShutdownBeforeBeanTest.xml");
     }
 
-   @Test
+    @Test
     public void testShutdown() throws Exception {
         ShutdownOrderBean order = (ShutdownOrderBean) context.getRegistry().lookupByName("order");
 

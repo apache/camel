@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RouteRefMultipleRefsTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testRouteRefOutside() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);

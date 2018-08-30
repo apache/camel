@@ -28,7 +28,7 @@ public class CamelPropertiesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelPropertiesTest.xml");
     }
 
-   @Test
+    @Test
     public void testProperties() throws Exception {
         assertNotNull(context.getGlobalOptions());
         assertEquals(2, context.getGlobalOptions().size());

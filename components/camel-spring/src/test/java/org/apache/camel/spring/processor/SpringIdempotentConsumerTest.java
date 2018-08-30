@@ -36,7 +36,7 @@ public class SpringIdempotentConsumerTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringIdempotentConsumerTest.xml");
     }
 
-   @Test
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("one", "two", "three");

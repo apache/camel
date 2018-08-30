@@ -29,8 +29,8 @@ public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         sendFile(getFtpUrl(), "Hello World", "target/filename-consumer-hello.txt");
         sendFile(getFtpUrl(), "Bye World", "target/filename-consumer-bye.txt");

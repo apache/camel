@@ -31,8 +31,8 @@ public class LevelDBExchangeSerializationTest extends CamelTestSupport {
     private LevelDBFile levelDBFile;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
         File file = new File("target/data/leveldb.dat");
@@ -42,8 +42,8 @@ public class LevelDBExchangeSerializationTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         levelDBFile.stop();
         super.tearDown();
     }

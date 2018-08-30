@@ -38,8 +38,8 @@ import static org.hamcrest.CoreMatchers.is;
 public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         if (isJava16()) {
             // cannot test on java 1.6
             return;

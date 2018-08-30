@@ -25,7 +25,7 @@ public class CamelSpringRunnerExcludeRoutesTest
         extends CamelSpringRunnerPlainTest {
 
     @Override
-   @Test
+    @Test
     public void testExcludedRoute() {
         assertNull(camelContext.getRoute("excludedRoute"));
     }

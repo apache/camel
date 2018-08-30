@@ -32,7 +32,7 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
     private static long id;
     private final ThreadLocal<String> local = new ThreadLocal<>();
 
-   @Test
+    @Test
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

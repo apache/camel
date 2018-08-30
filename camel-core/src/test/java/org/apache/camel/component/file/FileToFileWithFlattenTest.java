@@ -49,8 +49,8 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         context.stop();
         super.tearDown();
     }

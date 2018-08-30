@@ -27,7 +27,7 @@ public class EndpointToIdRefTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/EndpointToIdRefTest.xml");
     }
 
-   @Test
+    @Test
     public void testEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

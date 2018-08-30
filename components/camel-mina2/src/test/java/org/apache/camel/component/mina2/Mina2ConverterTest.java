@@ -32,7 +32,7 @@ import org.apache.mina.core.buffer.IoBuffer;
  */
 public class Mina2ConverterTest extends Assert {
 
-   @Test
+    @Test
     public void testToByteArray() {
         byte[] in = "Hello World".getBytes();
         IoBuffer bb = IoBuffer.wrap(in);
@@ -44,7 +44,7 @@ public class Mina2ConverterTest extends Assert {
         }
     }
 
-   @Test
+    @Test
     public void testToString() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
         IoBuffer bb = IoBuffer.wrap(in.getBytes("UTF-8"));
@@ -55,7 +55,7 @@ public class Mina2ConverterTest extends Assert {
         assertEquals("Hello World \u4f60\u597d", out);
     }
 
-   @Test
+    @Test
     public void testToStringTwoTimes() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
         IoBuffer bb = IoBuffer.wrap(in.getBytes("UTF-8"));
@@ -70,7 +70,7 @@ public class Mina2ConverterTest extends Assert {
         assertEquals("", out);
     }
 
-   @Test
+    @Test
     public void testToInputStream() throws Exception {
         byte[] in = "Hello World".getBytes();
         IoBuffer bb = IoBuffer.wrap(in);
@@ -82,7 +82,7 @@ public class Mina2ConverterTest extends Assert {
         }
     }
 
-   @Test
+    @Test
     public void testToByteBuffer() {
         byte[] in = "Hello World".getBytes();
 

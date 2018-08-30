@@ -49,8 +49,8 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         assertFalse("Should not throw exception during graceful shutdown", eh.isError());

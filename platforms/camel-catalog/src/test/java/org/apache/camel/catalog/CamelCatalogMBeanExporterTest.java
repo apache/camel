@@ -30,7 +30,7 @@ public class CamelCatalogMBeanExporterTest {
 
     private CamelCatalogMBeanExporter exporter = new CamelCatalogMBeanExporter();
 
-   @Test
+    @Test
     public void testMBeanExporter() throws Exception {
         exporter.init();
 

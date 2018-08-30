@@ -26,7 +26,7 @@ import org.apache.camel.guice.Main;
  */
 public class IntegrationTest extends Assert {
 
-   @Test
+    @Test
     public void testCamelRulesDeployCorrectlyInGuice() throws Exception {
         // let's boot up the Guicey JNDI context for 2 seconds to check that it works OK
         Main.main("-duration", "2s", "-o", "target/site/cameldoc", "-j", "/guicejndi.properties");

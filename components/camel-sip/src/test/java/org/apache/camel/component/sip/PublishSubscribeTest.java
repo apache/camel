@@ -46,8 +46,8 @@ public class PublishSubscribeTest extends CamelTestSupport {
     private ProducerTemplate producerTemplate;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         port1 = AvailablePortFinder.getNextAvailable(17189);
         port2 = AvailablePortFinder.getNextAvailable(port1 + 1);
         port3 = AvailablePortFinder.getNextAvailable(port2 + 1);

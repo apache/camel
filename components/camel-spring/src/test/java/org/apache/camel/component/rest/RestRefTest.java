@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RestRefTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testRestRefTest() throws Exception {
         assertEquals(2 + 3, context.getRoutes().size());
 

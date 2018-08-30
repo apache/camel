@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class MainTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
-   @Test
+    @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();

@@ -27,7 +27,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringSetExchangePatternWithCustomIdTest extends SetExchangePatternTest {
 
     @Override
-   @Test
+    @Test
     public void testToWithInOnlyParam() throws Exception {
         super.testToWithInOnlyParam();
 

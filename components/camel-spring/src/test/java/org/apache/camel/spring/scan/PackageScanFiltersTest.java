@@ -37,7 +37,7 @@ import org.apache.camel.util.CollectionHelper;
 
 public class PackageScanFiltersTest extends Assert {
 
-   @Test
+    @Test
     public void testAssignableToPackageScanFilter() {
         AssignableToPackageScanFilter filter = new AssignableToPackageScanFilter();
         assertFalse(filter.matches(ScanTargetOne.class));
@@ -60,7 +60,7 @@ public class PackageScanFiltersTest extends Assert {
         assertTrue(filter.toString().contains("ScanTargetThree"));
     }
 
-   @Test
+    @Test
     public void testAnnotatedWithAnyPackageScanFilter() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
         annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
@@ -74,7 +74,7 @@ public class PackageScanFiltersTest extends Assert {
         assertEquals("annotated with any @[[interface org.apache.camel.spring.scan.ScannableOne, interface org.apache.camel.spring.scan.ScannableTwo]]", filter.toString());
     }
 
-   @Test
+    @Test
     public void testAnnotatedWithPackageScanFilter() {
         AnnotatedWithPackageScanFilter filter = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
         validateFilter(filter, ScanTargetOne.class);
@@ -85,7 +85,7 @@ public class PackageScanFiltersTest extends Assert {
         assertEquals("annotated with @ScannableTwo", filter.toString());
     }
 
-   @Test
+    @Test
     public void testCompositePackageScanFilter() {
         PackageScanFilter one = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
         PackageScanFilter two = new AssignableToPackageScanFilter(ScanTargetOne.class);
@@ -102,7 +102,7 @@ public class PackageScanFiltersTest extends Assert {
         validateFilter(filter, ScanTargetTwo.class);
     }
 
-   @Test
+    @Test
     public void testInvertingFilter() {
         InvertingPackageScanFilter filter = new InvertingPackageScanFilter(new AnnotatedWithPackageScanFilter(ScannableOne.class));
         validateFilter(filter, ScanTargetThree.class);

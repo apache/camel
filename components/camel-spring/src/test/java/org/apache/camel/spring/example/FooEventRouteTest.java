@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class FooEventRouteTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testMultipleConsumersOnSeda() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceivedInAnyOrder("fooA", "anotherA", "fooB", "anotherB");

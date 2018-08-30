@@ -28,8 +28,8 @@ public class SpringPropertiesComponentCacheDisabledTest extends BaseSpringProper
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         PropertiesComponent component = context.getComponent("properties", PropertiesComponent.class);
         assertFalse("Cache should be disabled", component.isCache());
 

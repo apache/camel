@@ -38,19 +38,19 @@ public class RabbitMQRequeueQpidTest extends RabbitMQRequeueIntTest {
     
     @Ignore
     @Override
-   @Test
+    @Test
     public void testNoRequeueHeaderCausesReject() throws Exception {
     }
     
     @Ignore
     @Override
-   @Test
+    @Test
     public void testNonBooleanRequeueHeaderCausesReject() throws Exception {
     }
 
     @Ignore
     @Override
-   @Test
+    @Test
     public void testFalseRequeueHeaderCausesReject() throws Exception {
     }
 }

@@ -38,8 +38,8 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
     private static int counter;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
     }

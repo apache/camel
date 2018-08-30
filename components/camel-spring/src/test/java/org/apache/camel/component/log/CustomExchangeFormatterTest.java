@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CustomExchangeFormatterTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testExchangeFormattersConfiguredProperly() throws Exception {
         TestExchangeFormatter aaa = null;
         TestExchangeFormatter bbb = null;

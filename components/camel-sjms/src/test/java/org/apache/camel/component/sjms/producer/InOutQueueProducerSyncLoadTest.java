@@ -48,8 +48,8 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     }
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         mc1 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
         mc2 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
@@ -58,8 +58,8 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     }
     
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         MyMessageListener l1 = (MyMessageListener)mc1.getMessageListener();
         l1.close();
         mc1.close();

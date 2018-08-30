@@ -44,7 +44,7 @@ public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSuppo
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testJmxDumpRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

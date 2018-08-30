@@ -40,13 +40,13 @@ public class SpringFromRestDuplicateTest extends SpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // must override as there is no valid spring xml file
         createApplicationContext();
     }
 
-   @Test
+    @Test
     public void testDuplicate() throws Exception {
         // noop
     }

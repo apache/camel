@@ -26,15 +26,15 @@ import org.junit.Test;
 public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
         super.setUp();
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("java.security.auth.login.config");
         super.tearDown();
     }

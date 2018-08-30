@@ -37,7 +37,7 @@ public class SpelNonSpringTest extends LanguageTestSupport {
         return new DefaultCamelContext(registry);
     }
 
-   @Test
+    @Test
     public void testSpelBeanExpressions() throws Exception {
         assertExpression("#{@myDummy.foo == 'xyz'}", true);
         assertExpression("#{@myDummy.bar == 789}", true);
@@ -49,7 +49,7 @@ public class SpelNonSpringTest extends LanguageTestSupport {
         }
     }
     
-   @Test
+    @Test
     public void testSpelBeanPredicates() throws Exception {
         assertPredicate("@myDummy.foo == 'xyz'");
         assertPredicate("@myDummy.bar == 789");

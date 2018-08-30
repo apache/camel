@@ -33,8 +33,8 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
     private LevelDBAggregationRepository repo;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
         // enable recovery

@@ -34,7 +34,7 @@ import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;
  */
 public class SearchTermBuilderTest extends Assert {
 
-   @Test
+    @Test
     public void testSearchTermBuilderFromAndSubject() throws Exception {
         SearchTermBuilder build = new SearchTermBuilder();
         SearchTerm st = build.from("someone@somewhere.com").subject("Camel").build();
@@ -58,7 +58,7 @@ public class SearchTermBuilderTest extends Assert {
         assertFalse("Should not match message, as from doesn't match", st.match(msg2));
     }
 
-   @Test
+    @Test
     public void testSearchTermBuilderFromOrSubject() throws Exception {
         SearchTermBuilder build = new SearchTermBuilder();
         SearchTerm st = build.subject("Camel").from(or, "admin@apache.org").build();
@@ -82,7 +82,7 @@ public class SearchTermBuilderTest extends Assert {
         assertTrue("Should match message, as its from admin", st.match(msg2));
     }
 
-   @Test
+    @Test
     public void testSearchTermSentLast24Hours() throws Exception {
         SearchTermBuilder build = new SearchTermBuilder();
         long offset = -1 * (24 * 60 * 60 * 1000L);
@@ -113,7 +113,7 @@ public class SearchTermBuilderTest extends Assert {
         assertFalse("Should not match message as its too old", st.match(msg2));
     }
 
-   @Test
+    @Test
     public void testComparison() throws Exception {
         assertEquals(1, Comparison.LE.asNum());
         assertEquals(2, Comparison.LT.asNum());

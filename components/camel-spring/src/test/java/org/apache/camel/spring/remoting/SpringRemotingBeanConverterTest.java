@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringRemotingBeanConverterTest extends Assert {
     
-   @Test
+    @Test
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
 

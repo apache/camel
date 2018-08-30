@@ -36,8 +36,8 @@ import static org.apache.camel.component.mail.SearchTermBuilder.Op;
 public class MailSearchTermTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
     }

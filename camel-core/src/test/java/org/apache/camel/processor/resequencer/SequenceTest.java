@@ -41,8 +41,8 @@ public class SequenceTest extends Assert {
         set.add(e2);
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
     }
 
     @Test

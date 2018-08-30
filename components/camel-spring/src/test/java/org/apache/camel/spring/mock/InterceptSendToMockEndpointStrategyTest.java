@@ -32,7 +32,7 @@ public class InterceptSendToMockEndpointStrategyTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml");
     }
 
-   @Test
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         getMockEndpoint("mock:direct:start").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:direct:foo").expectedBodiesReceived("Hello World");

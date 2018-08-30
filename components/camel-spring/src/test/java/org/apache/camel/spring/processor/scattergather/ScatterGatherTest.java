@@ -29,7 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class ScatterGatherTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testScatterAndGather() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

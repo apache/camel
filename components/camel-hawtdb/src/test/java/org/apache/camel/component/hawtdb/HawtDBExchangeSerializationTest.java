@@ -31,8 +31,8 @@ public class HawtDBExchangeSerializationTest extends CamelTestSupport {
     private HawtDBFile hawtDBFile;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
         File file = new File("target/data/hawtdb.dat");
@@ -42,8 +42,8 @@ public class HawtDBExchangeSerializationTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         hawtDBFile.stop();
         super.tearDown();
     }

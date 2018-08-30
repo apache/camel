@@ -27,7 +27,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmInOutChainedTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testInOutDisruptorVmChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");

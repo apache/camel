@@ -32,7 +32,7 @@ public class SpringXMLTokenSplitTest extends XMLTokenSplitTest {
     }
 
     @Override
-   @Test
+    @Test
     public void testXMLToken2() throws Exception {
         // noop
     }

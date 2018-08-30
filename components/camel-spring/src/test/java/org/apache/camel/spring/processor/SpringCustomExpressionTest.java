@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringCustomExpressionTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testTransformMyExpression() throws InterruptedException {
         getMockEndpoint("mock:result").expectedBodiesReceived("Yes Camel rocks", "Hello World");
 

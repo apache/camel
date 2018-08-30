@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class BeanMockTest extends ApplicationContextTestSupport {
 
-   @Test
+    @Test
     public void testAssertionsUsingBean() throws Exception {
         MyAssertions bean = getMandatoryBean(MyAssertions.class, "myBean");
         bean.assertEndpointsValid();

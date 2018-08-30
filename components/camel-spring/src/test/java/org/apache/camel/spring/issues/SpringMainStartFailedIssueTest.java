@@ -25,7 +25,7 @@ import org.apache.camel.spring.Main;
 
 public class SpringMainStartFailedIssueTest extends TestSupport {
 
-   @Test
+    @Test
     public void testStartupFailed() throws Exception {
         Main main = new Main();
 

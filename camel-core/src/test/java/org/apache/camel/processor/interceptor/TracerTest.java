@@ -59,8 +59,8 @@ public class TracerTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         tracer.stop();
         super.tearDown();
     }

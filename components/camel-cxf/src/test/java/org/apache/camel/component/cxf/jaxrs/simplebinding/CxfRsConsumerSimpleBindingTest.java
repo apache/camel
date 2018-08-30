@@ -65,15 +65,15 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
     
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
     
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
     }

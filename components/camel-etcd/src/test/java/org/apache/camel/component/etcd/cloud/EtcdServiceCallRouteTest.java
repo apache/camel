@@ -67,8 +67,8 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         client.deleteDir("/services/").recursive().send().get();
     }

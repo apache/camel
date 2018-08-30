@@ -25,7 +25,7 @@ import org.junit.Assert;
 
 public class FastHeadersMapFactoryTest extends Assert {
 
-   @Test
+    @Test
     public void testLookupCaseAgnostic() {
         Map<String, Object> map = new FastHeadersMapFactory().newMap();
         assertNull(map.get("foo"));
@@ -37,7 +37,7 @@ public class FastHeadersMapFactoryTest extends Assert {
         assertEquals("cheese", map.get("FOO"));
     }
 
-   @Test
+    @Test
     public void testConstructFromOther() {
         Map<String, Object> other = new FastHeadersMapFactory().newMap();
         other.put("Foo", "cheese");
@@ -54,7 +54,7 @@ public class FastHeadersMapFactoryTest extends Assert {
         assertEquals(123, map.get("BaR"));
     }
 
-   @Test
+    @Test
     public void testIsInstance() {
         Map<String, Object> map = new FastHeadersMapFactory().newMap();
 

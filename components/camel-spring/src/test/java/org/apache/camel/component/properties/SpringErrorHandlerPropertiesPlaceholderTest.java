@@ -32,7 +32,7 @@ public class SpringErrorHandlerPropertiesPlaceholderTest extends SpringTestSuppo
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringErrorHandlerPropertiesPlaceholderTest.xml");
     }
     
-   @Test
+    @Test
     public void testErrorHandler() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 

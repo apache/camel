@@ -32,14 +32,14 @@ public class SpelSpringTest extends LanguageTestSupport {
         return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/language/spel/SpelSpringTest-context.xml");
     }
 
-   @Test
+    @Test
     public void testSpelBeanExpressions() throws Exception {
         assertExpression("#{@myDummy.foo == 'xyz'}", true);
         assertExpression("#{@myDummy.bar == 789}", true);
         assertExpression("#{@myDummy.bar.toString()}", "789");
     }
     
-   @Test
+    @Test
     public void testSpelBeanPredicates() throws Exception {
         assertPredicate("@myDummy.foo == 'xyz'");
         assertPredicate("@myDummy.bar == 789");

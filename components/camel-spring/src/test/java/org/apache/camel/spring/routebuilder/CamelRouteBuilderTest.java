@@ -31,7 +31,7 @@ public class CamelRouteBuilderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/routebuilder/camelRouteBuilder.xml");
     }
 
-   @Test
+    @Test
     public void testShouldProcessAnnotatedFields() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);

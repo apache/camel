@@ -32,7 +32,7 @@ public class SpringPackageTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringPackageTest.xml");
     }
 
-   @Test
+    @Test
     public void testFoundRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

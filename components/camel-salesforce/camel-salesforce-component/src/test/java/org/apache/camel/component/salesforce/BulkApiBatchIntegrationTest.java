@@ -56,7 +56,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
     }
 
     @Theory
-   @Test
+    @Test
     public void testBatchLifecycle(BatchTest request) throws Exception {
         log.info("Testing Batch lifecycle with {} content", request.contentType);
 

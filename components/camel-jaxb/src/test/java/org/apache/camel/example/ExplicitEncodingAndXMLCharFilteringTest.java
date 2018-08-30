@@ -38,8 +38,8 @@ import org.junit.Test;
 public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/charset");
         super.setUp();
     }

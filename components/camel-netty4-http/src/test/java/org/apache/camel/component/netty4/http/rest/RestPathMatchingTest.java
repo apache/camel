@@ -25,7 +25,7 @@ public class RestPathMatchingTest extends Assert {
 
     private RestContextPathMatcher matcher = new RestContextPathMatcher("", "", null, true);
 
-   @Test
+    @Test
     public void testRestPathMatcher() throws Exception {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", true));
         assertTrue(matcher.matchRestPath("/foo/", "foo/", true));
@@ -56,7 +56,7 @@ public class RestPathMatchingTest extends Assert {
         assertTrue(matcher.matchRestPath("/1234567890/list/2014", "/{user}/list/{year}", true));
     }
 
-   @Test
+    @Test
     public void testRestPathMatcherNoWildcard() throws Exception {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", false));
         assertTrue(matcher.matchRestPath("/foo/", "foo/", false));

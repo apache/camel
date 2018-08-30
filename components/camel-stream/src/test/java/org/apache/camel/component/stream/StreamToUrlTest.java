@@ -42,8 +42,8 @@ public class StreamToUrlTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (existingHandlers != null) {
             System.setProperty("java.protocol.handler.pkgs", existingHandlers);
         }

@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class CamelContextStandaloneTest extends Assert {
 
-   @Test
+    @Test
     public void testStandalone() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {

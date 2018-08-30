@@ -34,7 +34,7 @@ public class RouteRefPropertyPlaceholderMultipleCamelContextRefsTest extends Ass
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefPropertyPlaceholderMultipleCamelContextRefsTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringTwoCamelContextDirectEndpoint() throws Exception {
         AbstractXmlApplicationContext ac = createApplicationContext();
         ac.start();

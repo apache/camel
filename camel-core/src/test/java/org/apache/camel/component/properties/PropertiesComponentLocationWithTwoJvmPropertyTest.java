@@ -36,8 +36,8 @@ public class PropertiesComponentLocationWithTwoJvmPropertyTest extends Propertie
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         System.clearProperty("propPath");
     }

@@ -37,8 +37,8 @@ public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSuppor
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         aggregationRepository.stop();
         super.tearDown();
     }

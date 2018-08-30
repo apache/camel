@@ -45,8 +45,8 @@ public class ErrorHandlerTest extends TestSupport {
         System.setProperty("CamelSedaPollTimeout", "10");
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");
     }
 

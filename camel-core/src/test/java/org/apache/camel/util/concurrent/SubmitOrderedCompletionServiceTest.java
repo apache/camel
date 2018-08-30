@@ -42,8 +42,8 @@ public class SubmitOrderedCompletionServiceTest extends Assert {
         service = new SubmitOrderedCompletionService<>(executor);
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         executor.shutdownNow();
     }
 

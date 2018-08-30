@@ -27,7 +27,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmConcurrentConsumersTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

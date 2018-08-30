@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringRemotingTwoCamelContextTest extends Assert {
     
-   @Test
+    @Test
     public void testProxyWithTwoCamelContext() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);

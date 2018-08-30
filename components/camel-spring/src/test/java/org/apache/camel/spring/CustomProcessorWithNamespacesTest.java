@@ -39,7 +39,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
     protected AbstractXmlApplicationContext applicationContext;
 
-   @Test
+    @Test
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
@@ -78,8 +78,8 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }

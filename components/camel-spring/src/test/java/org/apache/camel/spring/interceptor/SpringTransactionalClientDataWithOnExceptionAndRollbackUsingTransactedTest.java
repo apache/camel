@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);

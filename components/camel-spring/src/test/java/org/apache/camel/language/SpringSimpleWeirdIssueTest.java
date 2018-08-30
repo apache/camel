@@ -29,7 +29,7 @@ public class SpringSimpleWeirdIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleWeirdIssueTest.xml");
     }
     
-   @Test
+    @Test
     public void testSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

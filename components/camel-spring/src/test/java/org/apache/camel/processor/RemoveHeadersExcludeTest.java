@@ -32,7 +32,7 @@ public class RemoveHeadersExcludeTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/camel-context.xml");
     }
 
-   @Test
+    @Test
     public void testRemoveHeadersWithExcludePatterns() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);

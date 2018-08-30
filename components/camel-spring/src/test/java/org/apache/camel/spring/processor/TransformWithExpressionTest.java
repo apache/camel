@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TransformWithExpressionTest extends SpringTestSupport {
     protected MockEndpoint endEndpoint;
 
-   @Test
+    @Test
     public void testTransforms() throws Exception {
         endEndpoint.expectedBodiesReceived("Some data plus ... extra data!");
 
@@ -37,8 +37,8 @@ public class TransformWithExpressionTest extends SpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         endEndpoint = getMockEndpoint("mock:end");

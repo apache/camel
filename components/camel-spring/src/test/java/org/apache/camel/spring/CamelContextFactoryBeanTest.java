@@ -41,15 +41,15 @@ public class CamelContextFactoryBeanTest extends Assert {
     
     private CamelContextFactoryBean factory;
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         
         factory = new CamelContextFactoryBean();
         factory.setId("camelContext");
     }
 
-   @Test
+    @Test
     public void testGetDefaultUuidGenerator() throws Exception {
         factory.setApplicationContext(new StaticApplicationContext());
         factory.afterPropertiesSet();
@@ -59,7 +59,7 @@ public class CamelContextFactoryBeanTest extends Assert {
         assertTrue(uuidGenerator instanceof DefaultUuidGenerator);
     }
     
-   @Test
+    @Test
     public void testGetCustomUuidGenerator() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("uuidGenerator", SimpleUuidGenerator.class);
@@ -71,7 +71,7 @@ public class CamelContextFactoryBeanTest extends Assert {
         assertTrue(uuidGenerator instanceof SimpleUuidGenerator);
     }
 
-   @Test
+    @Test
     public void testSetEndpoints() throws Exception {
         // Create a new Camel context and add an endpoint
         CamelContextFactoryBean camelContext = new CamelContextFactoryBean();
@@ -89,7 +89,7 @@ public class CamelContextFactoryBeanTest extends Assert {
         assertFalse("Expected context and actual context differ:\n" + diff.toString(), diff.hasDifferences());
     }
 
-   @Test
+    @Test
     public void testCustomModelJAXBContextFactory() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("customModelJAXBContextFactory", CustomModelJAXBContextFactory.class);

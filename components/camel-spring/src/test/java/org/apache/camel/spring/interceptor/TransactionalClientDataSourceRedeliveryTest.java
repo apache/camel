@@ -29,7 +29,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceRedeliveryTest extends TransactionalClientDataSourceTest {
 
-   @Test
+    @Test
     public void testTransactionRollbackWithExchange() throws Exception {
         Exchange out = template.send("direct:fail", new Processor() {
             public void process(Exchange exchange) throws Exception {

@@ -44,13 +44,13 @@ public class SpringFilterNoChildTest extends SpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // must override as there is no valid spring xml file
         createApplicationContext();
     }
 
-   @Test
+    @Test
     public void testFilterNoOutput() throws Exception {
         // noop
     }

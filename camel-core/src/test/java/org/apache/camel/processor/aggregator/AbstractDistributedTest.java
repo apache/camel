@@ -48,8 +48,8 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2.addRoutes(createRouteBuilder2());
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         ServiceHelper.stopAndShutdownServices(context2, template2);
 
         super.tearDown();

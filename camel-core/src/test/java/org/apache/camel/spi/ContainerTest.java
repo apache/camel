@@ -38,8 +38,8 @@ public class ContainerTest extends Assert {
         }
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         Container.Instance.set(null);
 
     }

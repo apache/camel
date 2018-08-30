@@ -33,7 +33,7 @@ public class DelayerInterceptorTest extends SpringTestSupport {
                 "/org/apache/camel/spring/interceptor/delayerInterceptorTest.xml");
     }
 
-   @Test
+    @Test
     public void testDelayer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);

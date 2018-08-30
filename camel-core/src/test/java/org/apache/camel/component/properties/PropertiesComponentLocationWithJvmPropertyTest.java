@@ -58,8 +58,8 @@ public class PropertiesComponentLocationWithJvmPropertyTest extends ContextTestS
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         System.clearProperty("propFile");
     }

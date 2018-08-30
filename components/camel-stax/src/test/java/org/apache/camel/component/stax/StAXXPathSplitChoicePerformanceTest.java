@@ -50,8 +50,8 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
     }

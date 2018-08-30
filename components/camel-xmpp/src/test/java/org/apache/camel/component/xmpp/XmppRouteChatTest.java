@@ -102,8 +102,8 @@ public class XmppRouteChatTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();
     }

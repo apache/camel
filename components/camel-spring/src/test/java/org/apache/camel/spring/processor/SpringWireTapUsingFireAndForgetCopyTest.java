@@ -32,7 +32,7 @@ public class SpringWireTapUsingFireAndForgetCopyTest extends ContextTestSupport 
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringWireTapUsingFireAndForgetCopyTest.xml");
     }
 
-   @Test
+    @Test
     public void testFireAndForgetUsingExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("World");
@@ -54,7 +54,7 @@ public class SpringWireTapUsingFireAndForgetCopyTest extends ContextTestSupport 
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
-   @Test
+    @Test
     public void testFireAndForgetUsingProcessor() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("World");

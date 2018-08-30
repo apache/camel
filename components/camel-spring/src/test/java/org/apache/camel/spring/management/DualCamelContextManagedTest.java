@@ -40,7 +40,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedTest.xml");
     }
 
-   @Test
+    @Test
     public void testDualCamelContextManaged() throws Exception {
         
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

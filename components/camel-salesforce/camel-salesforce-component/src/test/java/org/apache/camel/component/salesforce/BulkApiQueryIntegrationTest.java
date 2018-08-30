@@ -41,7 +41,7 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
     }
 
     @Theory
-   @Test
+    @Test
     public void testQueryLifecycle(ContentType contentType) throws Exception {
         log.info("Testing Query lifecycle with {} content", contentType);
 

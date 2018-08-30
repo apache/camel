@@ -40,8 +40,8 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
     private TarAggregationStrategy tar = new TarAggregationStrategy(false, true);
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
         deleteDirectory("target/out");

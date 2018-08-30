@@ -90,7 +90,7 @@ public final class AS2Utils {
     }
 
 
-   /**
+    /**
      * Determines if <code>c</code> is a printable character.
      * @param c - the character to test
      * @return <code>true</code> if <code>c</code> is a printable character; <code>false</code> otherwise.

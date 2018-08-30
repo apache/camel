@@ -26,7 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringSetOutHeaderTest extends ContextTestSupport {
     
-   @Test
+    @Test
     public void testSetOutHeaderWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:b");
         resultEndpoint.expectedHeaderReceived("oldBodyValue", "Hello");

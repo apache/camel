@@ -32,7 +32,7 @@ public class SpringChangeFunctionStartFunctionEndTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringChangeFunctionStartFunctionEndTest.xml");
     }
 
-   @Test
+    @Test
     public void testSimpleWithPrefix() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Custom tokens is cool");
 
@@ -42,8 +42,8 @@ public class SpringChangeFunctionStartFunctionEndTest extends SpringTestSupport 
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // change the tokens back to default after testing
         SimpleLanguage.changeFunctionStartToken("${", "$simple{");
         SimpleLanguage.changeFunctionEndToken("}");

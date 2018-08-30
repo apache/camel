@@ -31,8 +31,8 @@ public class HawtDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
     private HawtDBAggregationRepository repo;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         super.setUp();

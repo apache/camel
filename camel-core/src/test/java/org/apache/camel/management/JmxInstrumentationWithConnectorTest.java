@@ -76,8 +76,8 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (clientConnector != null) {
             try {
                 clientConnector.close();

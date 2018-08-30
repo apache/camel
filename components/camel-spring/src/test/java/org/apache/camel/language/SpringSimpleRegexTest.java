@@ -29,7 +29,7 @@ public class SpringSimpleRegexTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/springSimpleRegexContext.xml");
     }
     
-   @Test
+    @Test
     public void testSimpleRegex() {
         String result = template.requestBody("direct:start", "Something is wrong", String.class);
         assertEquals("Let's keep looking.", result);

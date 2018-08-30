@@ -49,8 +49,8 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         deleteDirectory("target/classes/com.mycompany");
         super.tearDown();
     }

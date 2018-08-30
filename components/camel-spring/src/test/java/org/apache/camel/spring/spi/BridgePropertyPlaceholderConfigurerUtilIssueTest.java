@@ -31,7 +31,7 @@ public class BridgePropertyPlaceholderConfigurerUtilIssueTest extends SpringTest
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurerUtilIssue.xml");
     }
 
-   @Test
+    @Test
     public void testIssue() throws Exception {
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
         // we do not receive the constant  but a different value

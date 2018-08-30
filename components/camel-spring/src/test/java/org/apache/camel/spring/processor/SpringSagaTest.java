@@ -26,7 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringSagaTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testSendAMessageWithinASaga() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedBodiesReceived("correct");
@@ -42,7 +42,7 @@ public class SpringSagaTest extends ContextTestSupport {
         completionEndpoint.assertIsSatisfied();
     }
 
-   @Test
+    @Test
     public void testCompensationWithinASaga() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedMessageCount(1);

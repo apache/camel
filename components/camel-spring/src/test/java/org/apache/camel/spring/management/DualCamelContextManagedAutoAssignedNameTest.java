@@ -35,7 +35,7 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
     }
 
-   @Test
+    @Test
     public void testDualCamelContextManaged() throws Exception {
 
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

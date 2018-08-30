@@ -29,7 +29,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testDisruptorVmInOutChainedTimeout() throws Exception {
         StopWatch watch = new StopWatch();
 

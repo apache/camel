@@ -32,7 +32,7 @@ public class CamelSpringPropertyPlaceholderConfigurer2Test extends SpringTestSup
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurer2Test.xml");
     }
 
-   @Test
+    @Test
     public void testCamelSpringPropertyPlaceholderConfigurerTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bonjour Camel");
 

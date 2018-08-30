@@ -34,8 +34,8 @@ public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducerJMXBeansIssueTest.class);
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // to enable the JMX connector
         enableJMX();
         System.setProperty("org.apache.camel.jmx.createRmiConnector", "True");

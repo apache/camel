@@ -29,7 +29,7 @@ public class SpringSimpleMultiLineExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleMultiLineExpressionTest.xml");
     }
 
-   @Test
+    @Test
     public void testSimpleMultiLineExpression() {
         String result = template.requestBodyAndHeader("direct:start", "Camel", "h", "some text", String.class);
         assertEquals("correct", result);

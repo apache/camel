@@ -33,7 +33,7 @@ public class TracerConfigurationTest extends SpringTestSupport {
             "/org/apache/camel/spring/interceptor/tracerConfigurationTest.xml");
     }
 
-   @Test
+    @Test
     public void testTraceFormatter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

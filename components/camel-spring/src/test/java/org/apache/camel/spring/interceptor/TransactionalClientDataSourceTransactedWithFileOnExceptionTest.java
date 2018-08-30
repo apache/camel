@@ -32,7 +32,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest extends TransactionClientDataSourceSupport {
 
-   @Test
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
 
@@ -43,7 +43,7 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
         });
     }
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedMessageCount(1);

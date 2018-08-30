@@ -47,8 +47,8 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         nettySharedHttpServer.stop();
         super.tearDown();
     }

@@ -30,13 +30,13 @@ public class SpringEnricherTest extends ContextTestSupport {
     private MockEndpoint mock;
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         mock = getMockEndpoint("mock:result");
     }
 
-   @Test
+    @Test
     public void testEnrich() throws Exception {
         mock.expectedBodiesReceived("test:blah");
         template.sendBody("direct:start", "test");

@@ -30,7 +30,7 @@ public class SpringLogMarkerTest extends SpringTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String uri = "direct:start";
 
-   @Test
+    @Test
     public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(1);

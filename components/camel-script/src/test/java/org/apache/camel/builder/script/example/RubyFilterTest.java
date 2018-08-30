@@ -28,13 +28,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class RubyFilterTest extends XPathFilterTest {
 
     @Override
-   @Test
+    @Test
     public void testSendMatchingMessage() throws Exception {
         super.testSendMatchingMessage();
     }
 
     @Override
-   @Test
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         super.testSendNotMatchingMessage();
     }

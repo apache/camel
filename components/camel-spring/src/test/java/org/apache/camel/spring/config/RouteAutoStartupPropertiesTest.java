@@ -34,7 +34,7 @@ public class RouteAutoStartupPropertiesTest extends Assert {
 
     private AbstractXmlApplicationContext ac;
 
-   @Test
+    @Test
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupFalseTest.xml");
 
@@ -58,7 +58,7 @@ public class RouteAutoStartupPropertiesTest extends Assert {
         mock.assertIsSatisfied();
     }
 
-   @Test
+    @Test
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupTrueTest.xml");
 
@@ -78,8 +78,8 @@ public class RouteAutoStartupPropertiesTest extends Assert {
         mock.assertIsSatisfied();
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         IOHelper.close(ac);
 
     }

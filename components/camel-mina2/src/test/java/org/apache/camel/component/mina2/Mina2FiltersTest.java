@@ -48,8 +48,8 @@ public class Mina2FiltersTest extends BaseMina2Test {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         TestFilter.called = 0;
         super.tearDown();
     }

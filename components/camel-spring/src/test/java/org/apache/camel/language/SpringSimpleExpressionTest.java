@@ -29,7 +29,7 @@ public class SpringSimpleExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleExpressionTest.xml");
     }
 
-   @Test
+    @Test
     public void testSimpleWhenString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("correct");
 
@@ -38,7 +38,7 @@ public class SpringSimpleExpressionTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testSimpleOtherwiseString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("incorrect");
 

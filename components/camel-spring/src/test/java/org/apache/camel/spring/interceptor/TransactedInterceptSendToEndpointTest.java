@@ -27,7 +27,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactedInterceptSendToEndpointTest extends TransactionalClientDataSourceTest {
 
-   @Test
+    @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
         intercepted.expectedBodiesReceived("Hello World");
@@ -37,7 +37,7 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
         intercepted.expectedBodiesReceived("Tiger in Action");

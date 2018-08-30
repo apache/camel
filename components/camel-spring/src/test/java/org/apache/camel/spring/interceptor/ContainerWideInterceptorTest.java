@@ -38,8 +38,8 @@ public class ContainerWideInterceptorTest extends TestSupport {
     private ContainerWideInterceptor myInterceptor;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         ac = new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/ContainerWideInterceptorTest.xml");
         camel1 = ac.getBean("camel1", CamelContext.class);
@@ -48,14 +48,14 @@ public class ContainerWideInterceptorTest extends TestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         camel2.stop();
         camel1.stop();
     }
 
-   @Test
+    @Test
     public void testOne() throws Exception {
         int start = myInterceptor.getCount();
 
@@ -74,7 +74,7 @@ public class ContainerWideInterceptorTest extends TestSupport {
         assertEquals("Should have been counted +1", 1, delta);
     }
 
-   @Test
+    @Test
     public void testTwo() throws Exception {
         int start = myInterceptor.getCount();
 

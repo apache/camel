@@ -32,8 +32,8 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("activemq-data");
         super.setUp();
     }

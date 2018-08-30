@@ -32,15 +32,15 @@ public class GreaterTest extends Assert {
 
     private InitialContext initialContext;
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
         initialContext = new InitialContext(properties);
     }
 
-   @Test
+    @Test
     public void testGreaterViaLocalInterface() throws Exception {
         Object object = initialContext.lookup("GreaterImplLocal");
 

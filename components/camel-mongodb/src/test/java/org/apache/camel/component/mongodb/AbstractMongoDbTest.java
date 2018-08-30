@@ -69,8 +69,8 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         testCollection.drop();
         dynamicCollection.drop();
 

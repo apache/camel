@@ -36,15 +36,15 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     private Set<Class<? extends Annotation>> annotations = new HashSet<>();
     private String scanPackage = "org.apache.camel.spring.scan";
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resolver = new DefaultPackageScanClassResolver();
         annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
         annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
     }
     
-   @Test
+    @Test
     public void testAccepableSchema() {
         assertFalse("We should not accept the test by default!", resolver.isAcceptableScheme("test://test"));
         resolver.setAcceptableSchemes("test:;test2:");
@@ -52,7 +52,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         assertTrue("We should accept the test2:!", resolver.isAcceptableScheme("test2://test"));
     }
 
-   @Test
+    @Test
     public void testFindByAnnotationWithoutExtraFilters() {
         Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
@@ -61,19 +61,19 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned, ScanTargetThree.class);
     }
 
-   @Test
+    @Test
     public void testFindByAnnotationsWithoutExtraFilters() {
         Set<Class<?>> scanned = resolver.findAnnotated(annotations, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
-   @Test
+    @Test
     public void testFindImplementationsWithoutExtraFilters() {
         Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
     }
     
-   @Test
+    @Test
     public void testFindByAnnotationWithIncludePackageFilter() {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
@@ -85,7 +85,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned);
     }
 
-   @Test
+    @Test
     public void testFindByAnnotationsWithIncludePackageFilter() {
         filter.addIncludePattern(scanPackage + ".b.*");
         filter.addIncludePattern(scanPackage + ".c.*");
@@ -95,7 +95,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
-   @Test
+    @Test
     public void testFindByAnnotationWithExcludePackageFilter() {
         filter.addExcludePattern(scanPackage + ".b.*");
         filter.addExcludePattern(scanPackage + ".c.*");
@@ -108,7 +108,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned);
     }
 
-   @Test
+    @Test
     public void testFindByAnnotationsWithExcludePackageFilter() {
         filter.addExcludePattern(scanPackage + ".a.*");
 
@@ -116,7 +116,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
-   @Test
+    @Test
     public void testFindByFilterWithIncludePackageFilter() {
         filter.addIncludePattern(scanPackage + ".**.ScanTarget*");
         resolver.addFilter(filter);
@@ -125,7 +125,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class, ScanTargetThree.class);
     }
     
-   @Test
+    @Test
     public void testFindImplementationsWithIncludePackageFilter() {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
@@ -134,7 +134,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned,  ScanTargetTwo.class);
     }
     
-   @Test
+    @Test
     public void testFindImplementationsWithExcludePackageFilter() {
         filter.addExcludePattern(scanPackage + ".a.*");
         resolver.addFilter(filter);
@@ -143,7 +143,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         validateMatchingSetContains(scanned,  ScanTargetTwo.class);
     }
     
-   @Test
+    @Test
     public void testFindByFilterPackageInJarUrl() throws Exception {
         ClassLoader savedClassLoader = null;
         try {
@@ -170,7 +170,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         }
     }
     
-   @Test
+    @Test
     public void testFindByFilterPackageInJarUrlWithPlusChars() throws Exception {
         ClassLoader savedClassLoader = null;
         try {

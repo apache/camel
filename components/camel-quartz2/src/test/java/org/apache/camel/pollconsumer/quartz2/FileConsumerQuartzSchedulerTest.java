@@ -25,8 +25,8 @@ import org.junit.Test;
 public class FileConsumerQuartzSchedulerTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/quartz");
         super.setUp();
     }

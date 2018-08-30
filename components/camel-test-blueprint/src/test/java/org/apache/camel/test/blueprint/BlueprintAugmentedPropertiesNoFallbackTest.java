@@ -28,8 +28,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 public class BlueprintAugmentedPropertiesNoFallbackTest extends CamelBlueprintTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should fail, because Blueprint XML uses property placeholders, but we didn't resolve the placeholder");

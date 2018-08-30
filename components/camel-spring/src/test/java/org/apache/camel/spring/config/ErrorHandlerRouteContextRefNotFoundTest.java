@@ -32,8 +32,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown exception");
@@ -49,7 +49,7 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/ErrorHandlerRouteContextRefNotFoundTest.xml");
     }
 
-   @Test
+    @Test
     public void testDummy() {
         // noop
     }

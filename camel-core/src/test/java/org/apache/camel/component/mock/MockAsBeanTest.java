@@ -78,7 +78,7 @@ public class MockAsBeanTest extends ContextTestSupport {
     }
     // END SNIPPET: e2
     
-   // START SNIPPET: e3
+    // START SNIPPET: e3
     @Test
     public void testMockAsBeanWithReplyBody() throws Exception {
         // we should expect to receive the transformed message
@@ -92,7 +92,7 @@ public class MockAsBeanTest extends ContextTestSupport {
     }
     // END SNIPPET: e3
     
-   // START SNIPPET: e4
+    // START SNIPPET: e4
     @Test
     public void testMockAsBeanWithReplyHeader() throws Exception {
         // we should expect to receive the transformed message

@@ -31,8 +31,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsStreamMessageTypeTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/stream");
         super.setUp();
     }

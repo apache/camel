@@ -30,8 +30,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class LevelDBSpringAggregateTest extends CamelSpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
     }
