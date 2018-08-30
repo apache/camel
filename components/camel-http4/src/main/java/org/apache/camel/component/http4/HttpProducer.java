@@ -111,6 +111,10 @@ public class HttpProducer extends DefaultProducer {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
         }
+        
+        if(getEndpoint().isIgnoreContentLengthHeader()) {
+            exchange.setProperty(Exchange.IGNORE_CONTENT_LENGTH_HEADER, Boolean.TRUE);
+        }
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
@@ -560,7 +564,8 @@ public class HttpProducer extends DefaultProducer {
                         InputStream is = in.getMandatoryBody(InputStream.class);
                         String length = in.getHeader(Exchange.CONTENT_LENGTH, String.class);
                         InputStreamEntity entity = null;
-                        if (ObjectHelper.isEmpty(length)) {
+                        if (exchange.getProperty(Exchange.IGNORE_CONTENT_LENGTH_HEADER, Boolean.FALSE, Boolean.class) ||
+                                ObjectHelper.isEmpty(length)) {
                             entity = new InputStreamEntity(is, -1);
                         } else {
                             entity = new InputStreamEntity(is, Long.parseLong(length));
