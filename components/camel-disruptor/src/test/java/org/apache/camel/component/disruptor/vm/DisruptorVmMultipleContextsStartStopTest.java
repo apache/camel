@@ -27,7 +27,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmMultipleContextsStartStopTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testStartStop() throws Exception {
         /* Check that contexts are communicated */
         MockEndpoint mock = context2.getEndpoint("mock:result", MockEndpoint.class);

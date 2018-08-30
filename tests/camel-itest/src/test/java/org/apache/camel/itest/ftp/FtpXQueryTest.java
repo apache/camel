@@ -88,8 +88,8 @@ public class FtpXQueryTest extends CamelTestSupport {
         ftpServer.start();
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();
         ftpServer = null;

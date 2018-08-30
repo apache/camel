@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringRemotingRouteTest extends Assert {
     
-   @Test
+    @Test
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);

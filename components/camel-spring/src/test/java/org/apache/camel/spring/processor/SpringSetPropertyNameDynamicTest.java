@@ -31,7 +31,7 @@ public class SpringSetPropertyNameDynamicTest extends ContextTestSupport {
         public static final String EXCHANGE_PROP_TX_FAILED = "ExchangePropTxFailed";
     }
 
-   @Test
+    @Test
     public void testSetPropertyNameWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedMessageCount(1);

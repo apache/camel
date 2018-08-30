@@ -51,7 +51,7 @@ public abstract class TracingTestBase extends SpringTestSupport {
         return getTracedMessages().size();
     }
 
-   @Test
+    @Test
     public void testTracerExceptionInOut() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         ((Tracer) context.getDefaultTracer()).setTraceOutExchanges(true);

@@ -32,7 +32,7 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringManagedThreadsThreadPoolTest.xml");
     }
 
-   @Test
+    @Test
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

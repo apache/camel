@@ -108,8 +108,8 @@ public class FileConfigureTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         // one of the above tests created a /target folder in the root we want to get rid of when testing
         deleteDirectory("/target");

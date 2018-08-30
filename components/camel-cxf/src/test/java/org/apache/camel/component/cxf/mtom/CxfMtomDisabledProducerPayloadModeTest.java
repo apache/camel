@@ -73,7 +73,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
     }
     
     @Override
-   @Test
+    @Test
     public void testProducer() throws Exception {
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;

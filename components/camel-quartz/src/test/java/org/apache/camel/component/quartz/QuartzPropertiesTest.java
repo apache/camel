@@ -36,8 +36,8 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         quartz.stop();
         super.tearDown();
     }

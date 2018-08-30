@@ -236,8 +236,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
     }

@@ -32,7 +32,7 @@ public class SpringPropertiesComponentRefTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentRefTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringPropertiesComponentStart() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

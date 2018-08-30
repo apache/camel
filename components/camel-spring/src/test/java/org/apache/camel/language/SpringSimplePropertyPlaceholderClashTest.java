@@ -43,7 +43,7 @@ public class SpringSimplePropertyPlaceholderClashTest extends SpringTestSupport 
         };
     }
 
-   @Test
+    @Test
     public void testReplaceSimpleExpression() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.FILE_NAME, "/root/dir/test.txt");
 

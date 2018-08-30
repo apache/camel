@@ -32,8 +32,8 @@ import org.junit.Test;
 public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
     }

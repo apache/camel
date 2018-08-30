@@ -32,7 +32,7 @@ public class CamelCustomPostProcessorOnRouteBuilderTest extends SpringTestSuppor
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/postprocessor/camelCustomPostProcessorOnRouteBuilderTest.xml");
     }
 
-   @Test
+    @Test
     public void testShouldProcessAnnotatedFields() throws Exception {
         getMockEndpoint("mock:injected").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

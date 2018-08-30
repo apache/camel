@@ -69,8 +69,8 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (this.gateway != null && customer != null) {
             for (String id : this.addressIds) {
                 if (this.gateway.address().delete(customer.getId(), id).isSuccess()) {

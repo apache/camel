@@ -28,7 +28,7 @@ import static org.apache.camel.TestSupport.assertIsInstanceOf;
 
 public class MisspelledRouteRefTest extends Assert {
 
-   @Test
+    @Test
     public void testApplicationContextFailed() throws Exception {
         try {
             Main main = new Main(); 

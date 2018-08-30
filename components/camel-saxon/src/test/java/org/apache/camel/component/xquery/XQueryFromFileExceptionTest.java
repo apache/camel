@@ -30,8 +30,8 @@ import org.junit.Test;
 public class XQueryFromFileExceptionTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xquery");
         super.setUp();
     }

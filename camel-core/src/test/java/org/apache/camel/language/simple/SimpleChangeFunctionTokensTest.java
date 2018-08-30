@@ -42,8 +42,8 @@ public class SimpleChangeFunctionTokensTest extends LanguageTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         // replace old tokens

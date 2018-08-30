@@ -49,7 +49,7 @@ public class SpringManagedCustomProcessorTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testManageCustomProcessor() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"custom\"");

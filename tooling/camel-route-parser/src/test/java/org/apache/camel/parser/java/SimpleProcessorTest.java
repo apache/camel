@@ -25,7 +25,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class SimpleProcessorTest extends CamelTestSupport {
 
-   @Test
+    @Test
     public void testProcess() throws Exception {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);

@@ -59,8 +59,8 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         value.close();
 
         super.tearDown();

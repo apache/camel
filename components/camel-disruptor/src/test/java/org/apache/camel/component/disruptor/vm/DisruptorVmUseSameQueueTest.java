@@ -26,7 +26,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmUseSameQueueTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testDisruptorVmUseSameQueue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 

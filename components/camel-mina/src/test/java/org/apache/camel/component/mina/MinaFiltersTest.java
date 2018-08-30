@@ -48,8 +48,8 @@ public class MinaFiltersTest extends BaseMinaTest {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         TestFilter.called = 0;
         super.setUp();
     }

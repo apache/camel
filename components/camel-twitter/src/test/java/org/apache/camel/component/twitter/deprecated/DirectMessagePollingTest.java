@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class DirectMessagePollingTest extends CamelTwitterConsumerTestSupport {
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         /* Uncomment when you need a test direct message
         TwitterConfiguration properties = new TwitterConfiguration();

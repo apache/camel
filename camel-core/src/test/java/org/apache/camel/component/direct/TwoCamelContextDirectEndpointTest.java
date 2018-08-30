@@ -57,8 +57,8 @@ public class TwoCamelContextDirectEndpointTest extends Assert {
         camel2.start();
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         camel1.stop();
         camel2.stop();
 

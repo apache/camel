@@ -39,8 +39,8 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         before = Thread.activeCount();
         super.setUp();
     }

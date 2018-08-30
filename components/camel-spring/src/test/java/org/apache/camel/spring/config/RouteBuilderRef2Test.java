@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RouteBuilderRef2Test extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testRouteBuilderRef2Test() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

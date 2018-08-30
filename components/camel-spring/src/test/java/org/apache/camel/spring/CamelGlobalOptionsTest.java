@@ -23,7 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelGlobalOptionsTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testGlobalOptionsOverrideProperties() {
         assertEquals(3, context.getGlobalOptions().size());
         assertEquals("VALUE_1", context.getGlobalOptions().get("KEY_1"));

@@ -33,7 +33,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
 
 
     @Override
-   @Test
+    @Test
     public void testSendSingleMessageWithoutEndOfData() throws Exception {
         expectedTimeoutCount = 1;
 
@@ -41,25 +41,25 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testSendMultipleMessagesWithoutEndOfDataByte() throws Exception {
         expectedTimeoutCount = 3;
     }
 
     @Override
-   @Test
+    @Test
     public void testEmptyAcknowledgement() throws Exception {
         runEmptyAcknowledgement(aa);
     }
 
     @Override
-   @Test
+    @Test
     public void testInvalidAcknowledgement() throws Exception {
         runInvalidAcknowledgement(aa);
     }
 
     @Override
-   @Test
+    @Test
     public void testMissingEndOfDataByte() throws Exception {
         expectedAACount = 2;
         expectedTimeoutCount = 1;
@@ -68,7 +68,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
         expectedAACount = 1;
 
@@ -76,7 +76,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception {
         expectedTimeoutCount = 1;
 
@@ -84,7 +84,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception {
         expectedAACount = 2;
         expectedTimeoutCount = 1;

@@ -27,12 +27,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringRouteNoOutputTest extends SpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         createApplicationContext();
     }
 
-   @Test
+    @Test
     public void testRouteNoOutput() {
         // noop
     }

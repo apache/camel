@@ -36,7 +36,7 @@ public class SpringIdempotentConsumerNoSkipDuplicateTest extends SpringTestSuppo
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateTest.xml");
     }
 
-   @Test
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("one", "two", "one", "two", "one", "three");

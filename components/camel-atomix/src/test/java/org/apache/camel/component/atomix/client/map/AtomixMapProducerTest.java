@@ -64,8 +64,8 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         map.close();
 
         super.tearDown();

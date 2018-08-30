@@ -40,8 +40,8 @@ public class JacksonNotUseDefaultObjectMapperTest extends CamelTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         df.setUseDefaultObjectMapper(false);
         super.setUp();
     }

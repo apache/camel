@@ -33,7 +33,7 @@ public class EventRouteTest extends SpringTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String uri = "spring-event:foo";
 
-   @Test
+    @Test
     public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);

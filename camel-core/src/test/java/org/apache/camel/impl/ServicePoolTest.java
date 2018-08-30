@@ -80,8 +80,8 @@ public class ServicePoolTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         pool.stop();
         super.tearDown();
         assertEquals("Should have stopped the producers", true, cleanup);

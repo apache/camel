@@ -29,7 +29,7 @@ public class SpringSimpleEmptyStringTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleEmptyStringTest.xml");
     }
     
-   @Test
+    @Test
     public void testSimpleEmptyString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("");
 

@@ -35,8 +35,8 @@ import org.junit.Test;
 public class ZipFileSplitOneFileTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/zip-unmarshal");
         super.setUp();
     }

@@ -32,7 +32,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class NoStreamCachingInterceptorTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testNoStreamCachingInterceptorEnabled() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMessageCount(1);

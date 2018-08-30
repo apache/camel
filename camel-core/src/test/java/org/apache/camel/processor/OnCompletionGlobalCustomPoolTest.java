@@ -37,8 +37,8 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
         super.setUp();
     }
     
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         pool.shutdownNow();
     }

@@ -27,8 +27,8 @@ public class OpenShiftListApplicationsModeJsonTest extends CamelTestSupport {
     private String password;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // INSERT credentials here
         username = null;
         password = null;

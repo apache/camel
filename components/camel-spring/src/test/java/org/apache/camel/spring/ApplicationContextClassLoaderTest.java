@@ -28,7 +28,7 @@ public class ApplicationContextClassLoaderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");
     }
     
-   @Test
+    @Test
     public void testClassLoader() {
         ClassLoader cl = context.getApplicationContextClassLoader();
         assertNotNull("The application context class loader should not be null", cl);

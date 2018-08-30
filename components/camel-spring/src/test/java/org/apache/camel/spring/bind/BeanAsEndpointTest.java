@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class BeanAsEndpointTest extends SpringTestSupport {
     protected Object body = "James";
 
-   @Test
+    @Test
     public void testSendingToBean() throws Exception {
         MockEndpoint mock = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello James!");

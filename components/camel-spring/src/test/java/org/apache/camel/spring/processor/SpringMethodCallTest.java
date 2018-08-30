@@ -29,7 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringMethodCallTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testMethodCallType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Camel");
@@ -40,7 +40,7 @@ public class SpringMethodCallTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testMethodCallRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:ref");
         mock.expectedBodiesReceived("Camel");
@@ -51,7 +51,7 @@ public class SpringMethodCallTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testToBeanType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hi Camel", "Hi World");

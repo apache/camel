@@ -24,8 +24,8 @@ import org.junit.Before;
 public class TransactionalClientDataSourceWithDefaultErrorHandlerTest extends TransactionalClientDataSourceTest {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         useTransactionErrorHandler = false;
     }

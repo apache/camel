@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class DefaultStreamCachingTest extends Assert {
     
     
-   @Test
+    @Test
     public void testStreamCaching() throws Exception {
         AbstractApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/streamCaching.xml"});
         CamelContext camelContext = appContext.getBean("camelContext", CamelContext.class);

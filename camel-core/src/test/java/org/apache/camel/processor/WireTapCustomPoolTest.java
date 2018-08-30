@@ -37,8 +37,8 @@ public class WireTapCustomPoolTest extends ContextTestSupport {
     protected MockEndpoint result;
     protected ExecutorService pool;
     
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         if (pool != null) {
             pool.shutdownNow();

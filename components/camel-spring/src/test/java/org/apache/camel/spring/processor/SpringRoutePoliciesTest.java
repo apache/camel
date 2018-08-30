@@ -36,7 +36,7 @@ public class SpringRoutePoliciesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringRoutePoliciesTest.xml");
     }
 
-   @Test
+    @Test
     public void testCustomPolicies() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

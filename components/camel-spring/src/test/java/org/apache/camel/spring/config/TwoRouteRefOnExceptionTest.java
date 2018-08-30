@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TwoRouteRefOnExceptionTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testTwoRouteRefNoOnException() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -44,7 +44,7 @@ public class TwoRouteRefOnExceptionTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testTwoRouteRefOnException() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testSameQueue() throws Exception {
         for (int i = 0; i < 128; i++) {
             template.sendBody("disruptor-vm:foo?blockWhenFull=false", "" + i);
@@ -43,7 +43,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
-   @Test
+    @Test
     public void testSameQueueDifferentSize() throws Exception {
         try {
             template.sendBody("disruptor-vm:foo?size=256", "Should fail");
@@ -56,7 +56,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
-   @Test
+    @Test
     public void testSameQueueDifferentSizeBar() throws Exception {
         try {
             template.sendBody("disruptor-vm:bar?size=256", "Should fail");

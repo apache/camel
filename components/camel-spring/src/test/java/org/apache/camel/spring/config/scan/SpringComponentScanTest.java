@@ -34,8 +34,8 @@ public class SpringComponentScanTest extends ContextTestSupport {
     private AbstractApplicationContext applicationContext;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         if (context != null) {
             context.stop();
@@ -46,15 +46,15 @@ public class SpringComponentScanTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // we're done so let's properly close the application context
         IOHelper.close(applicationContext);
 
         super.tearDown();
     }
 
-   @Test
+    @Test
     public void testExcludedRoute() throws InterruptedException {
         assertEquals(1, context.getRoutes().size());
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
@@ -65,7 +65,7 @@ public class SpringComponentScanTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-   @Test
+    @Test
     public void testSpringComponentScanFeature() throws InterruptedException {
         template.sendBody("direct:start", "request");
         MockEndpoint mock = getMockEndpoint("mock:end");

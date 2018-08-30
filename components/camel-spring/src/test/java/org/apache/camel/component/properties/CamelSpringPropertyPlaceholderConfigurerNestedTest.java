@@ -32,7 +32,7 @@ public class CamelSpringPropertyPlaceholderConfigurerNestedTest extends SpringTe
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerNestedTest.xml");
     }
 
-   @Test
+    @Test
     public void testCamelSpringPropertyPlaceholderConfigurerTest() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("And in French we say bonjour Camel");
 

@@ -38,8 +38,8 @@ public class WebsocketTwoRoutesToSameEndpointExampleTest extends CamelTestSuppor
     private int port;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(16310);
         super.setUp();
     }

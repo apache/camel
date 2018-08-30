@@ -32,7 +32,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
     }
 
-   @Test
+    @Test
     public void testLoadRoutes() throws Exception {
         SpringCamelContext camel = applicationContext.getBean(SpringCamelContext.class);
         assertEquals(0, camel.getRoutes().size());

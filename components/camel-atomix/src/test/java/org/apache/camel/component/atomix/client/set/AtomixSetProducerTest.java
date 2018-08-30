@@ -59,8 +59,8 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         set.close();
 
         super.tearDown();

@@ -34,7 +34,7 @@ public class RouteRefMultipleCamelContextRefsTest extends Assert {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefMultipleCamelContextRefsTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringTwoCamelContextDirectEndpoint() throws Exception {
         AbstractXmlApplicationContext ac = createApplicationContext();
         ac.start();

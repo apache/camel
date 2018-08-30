@@ -33,7 +33,7 @@ public class SkipNonPublicRouteBuilderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/packagescan/camelContext.xml");
     }
     
-   @Test
+    @Test
     public void testSkipNonPublicRouteBuilder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

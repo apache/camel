@@ -105,8 +105,8 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();
     }

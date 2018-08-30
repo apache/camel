@@ -30,7 +30,7 @@ public class CamelSpringPackageTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/config/routeBuilderPackage.xml"});
     }
     
-   @Test
+    @Test
     public void testRouteExcluded() throws InterruptedException {
         assertEquals(1, context.getRoutes().size());
         MockEndpoint mock = getMockEndpoint("mock:result");

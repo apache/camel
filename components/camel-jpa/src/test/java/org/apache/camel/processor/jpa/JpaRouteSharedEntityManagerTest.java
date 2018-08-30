@@ -46,8 +46,8 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // Don't run on Hibernate
         Assume.assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
         super.setUp();

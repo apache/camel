@@ -29,8 +29,8 @@ import org.junit.Test;
 public class IsMockEndpointsFileTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/input");
         deleteDirectory("target/messages");
         super.setUp();

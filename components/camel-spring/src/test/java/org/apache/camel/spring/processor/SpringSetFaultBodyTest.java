@@ -34,7 +34,7 @@ public class SpringSetFaultBodyTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringSetFaultBodyTest.xml");
     }
 
-   @Test
+    @Test
     public void testSetFaultBody() throws Exception {
         Exchange out = template.request("direct:start", new Processor() {
             @Override

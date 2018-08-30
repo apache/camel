@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RouteRefIncludeXmlFileTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testRouteRefInside() throws Exception {
         getMockEndpoint("mock:inside").expectedMessageCount(1);
 
@@ -36,7 +36,7 @@ public class RouteRefIncludeXmlFileTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testRouteRefOutside() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

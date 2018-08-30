@@ -35,8 +35,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CamelSpringPropertyPlaceholderConfigurer3Test extends SpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // inside the used properties file (cheese.properties) we've defined the following key/value mapping:
         // hi2=Guten Tag
         // however as we make use of the PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_OVERRIDE mode
@@ -49,8 +49,8 @@ public class CamelSpringPropertyPlaceholderConfigurer3Test extends SpringTestSup
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // clear the property to avoid any side effect by the other tests
         System.clearProperty("hi2");
 
@@ -62,7 +62,7 @@ public class CamelSpringPropertyPlaceholderConfigurer3Test extends SpringTestSup
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurer3Test.xml");
     }
 
-   @Test
+    @Test
     public void testCamelSpringPropertyPlaceholderConfigurerTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Gute Nacht Camel");
 

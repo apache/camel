@@ -38,8 +38,8 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
     private String oldPropertyValue;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         if (!isJavaVendor("ibm")) {
             // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
             // because of Service Provider discovery (this does not happen in OSGi because the META-INF/services package is not exported
@@ -51,8 +51,8 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (oldPropertyValue != null) {
             System.setProperty(KEY, oldPropertyValue);
         } else {

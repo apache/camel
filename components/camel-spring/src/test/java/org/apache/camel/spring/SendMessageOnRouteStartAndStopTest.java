@@ -39,8 +39,8 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // the event notifier should have send a message to the file endpoint
@@ -50,8 +50,8 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         // the event notifier should have send a message to the file endpoint
@@ -60,7 +60,7 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
         assertTrue("Stop file should exist on shutdown", start.exists());
     }
 
-   @Test
+    @Test
     public void testSendMessageOnStartupAndStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

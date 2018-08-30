@@ -45,7 +45,7 @@ public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport 
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testJmxEndpointsAddedDynamicallyAlwaysRegister() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");

@@ -38,19 +38,19 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testInvalidMessage() throws Exception {
         runNthInvalidMessage();
     }
 
     @Override
-   @Test
+    @Test
     public void testNthInvalidMessage() throws Exception {
         runNthInvalidMessage();
     }
 
     @Override
-   @Test
+    @Test
     public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
         expectedCompleteCount = 1;
 
@@ -59,14 +59,14 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
 
 
     @Override
-   @Test
+    @Test
     public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
         runNthMessageContainingEmbeddedStartOfBlock();
     }
 
 
     @Override
-   @Test
+    @Test
     public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
         setExpectedCounts();
 
@@ -78,7 +78,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
         expectedInvalidCount = 1;
 
@@ -86,7 +86,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testNthMessageContainingEmbeddedEndOfBlock() throws Exception {
         expectedInvalidCount = 1;
 
@@ -94,7 +94,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testInitialMessageWithoutEndOfDataByte() throws Exception {
         setExpectedCounts();
 
@@ -104,7 +104,7 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
     }
 
     @Override
-   @Test
+    @Test
     public void testMessageWithoutEndOfDataByte() throws Exception {
         expectedCompleteCount = 1;
         expectedInvalidCount = 1;

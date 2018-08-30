@@ -41,8 +41,8 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
         createDirectory("target/fileidempotent");
 
@@ -62,7 +62,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
 
-   @Test
+    @Test
     public void testIdempotentLoad() throws Exception {
         // send two files (report.txt exists already in idempotent repo)
         template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");

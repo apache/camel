@@ -34,8 +34,8 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailFetchSizeZeroTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
     }

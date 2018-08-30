@@ -73,8 +73,8 @@ public class JGroupsComponentTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         clientChannel.close();
         super.tearDown();
     }

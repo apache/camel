@@ -97,8 +97,8 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         alive = false;
         listener.shutdown();

@@ -32,7 +32,7 @@ public class SpringScriptTest extends ContextTestSupport {
 
     protected MockEndpoint resultEndpoint;
 
-   @Test
+    @Test
     public void testScript() throws Exception {
         resultEndpoint.expectedBodiesReceived("Hello");
 
@@ -42,8 +42,8 @@ public class SpringScriptTest extends ContextTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");

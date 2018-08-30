@@ -34,7 +34,7 @@ public class SpringTwoCamelContextDirectEndpointTest extends Assert {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringTwoCamelContextDirectEndpointTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringTwoCamelContextDirectEndpoint() throws Exception {
         AbstractXmlApplicationContext ac = createApplicationContext();
         ac.start();

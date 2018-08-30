@@ -26,8 +26,8 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringXPathFilterWithNamespaceTest extends XPathFilterTest {
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         matchingBody = "<person name='James' city='London' xmlns='http://example.com/person'/>";
         super.setUp();
     }

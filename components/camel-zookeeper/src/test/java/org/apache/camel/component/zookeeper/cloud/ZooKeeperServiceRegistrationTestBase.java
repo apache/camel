@@ -76,8 +76,8 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         CloseableUtils.closeQuietly(discovery);

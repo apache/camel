@@ -32,7 +32,7 @@ public class BeanBindingTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/beanBindingTest.xml");
     }
 
-   @Test
+    @Test
     public void testBeanBindingUsingBeanExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
@@ -46,7 +46,7 @@ public class BeanBindingTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testBeanBindingUsingConstantExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
@@ -60,7 +60,7 @@ public class BeanBindingTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testBeanBindingUsingHeaderExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
@@ -74,7 +74,7 @@ public class BeanBindingTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testBeanBindingUsingManyExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);

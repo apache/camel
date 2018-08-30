@@ -32,7 +32,7 @@ public class SpringRouteContextProduceBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringRouteContextProduceBeanTest.xml");
     }
 
-   @Test
+    @Test
     public void testRouteContextProduceBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

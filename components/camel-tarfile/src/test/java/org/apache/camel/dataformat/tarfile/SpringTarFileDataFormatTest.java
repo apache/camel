@@ -158,8 +158,8 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
     }

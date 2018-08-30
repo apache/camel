@@ -22,7 +22,7 @@ import org.junit.Assert;
 
 public class SecurityConstraintMappingTest extends Assert {
 
-   @Test
+    @Test
     public void testDefault() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
 
@@ -30,7 +30,7 @@ public class SecurityConstraintMappingTest extends Assert {
         assertNotNull(matcher.restricted("/foo"));
     }
 
-   @Test
+    @Test
     public void testFoo() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo");
@@ -41,7 +41,7 @@ public class SecurityConstraintMappingTest extends Assert {
         assertNull(matcher.restricted("/foo/bar"));
     }
 
-   @Test
+    @Test
     public void testFooWildcard() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo*");
@@ -52,7 +52,7 @@ public class SecurityConstraintMappingTest extends Assert {
         assertNotNull(matcher.restricted("/foo/bar"));
     }
 
-   @Test
+    @Test
     public void testFooBar() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo");
@@ -68,7 +68,7 @@ public class SecurityConstraintMappingTest extends Assert {
         assertNull(matcher.restricted("/bar/bar"));
     }
 
-   @Test
+    @Test
     public void testFooBarWildcard() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo*");
@@ -84,7 +84,7 @@ public class SecurityConstraintMappingTest extends Assert {
         assertNotNull(matcher.restricted("/bar/bar"));
     }
 
-   @Test
+    @Test
     public void testFooExclusion() {
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo/*");
@@ -97,7 +97,7 @@ public class SecurityConstraintMappingTest extends Assert {
         assertNull(matcher.restricted("/foo/public/open"));
     }
 
-   @Test
+    @Test
     public void testDefaultExclusion() {
         // everything is restricted unless its from the public
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();

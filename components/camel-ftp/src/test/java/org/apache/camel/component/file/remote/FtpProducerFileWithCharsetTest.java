@@ -34,8 +34,8 @@ public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         byte[] utf = payload.getBytes("utf-8");
         byte[] iso = payload.getBytes("iso-8859-1");
 

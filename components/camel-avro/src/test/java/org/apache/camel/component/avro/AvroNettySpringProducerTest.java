@@ -29,8 +29,8 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }

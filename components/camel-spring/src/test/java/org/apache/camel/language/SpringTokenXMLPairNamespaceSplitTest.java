@@ -32,7 +32,7 @@ public class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceS
     }
 
     @Override
-   @Test
+    @Test
     public void testTokenXMLPair2() throws Exception {
         // noop
     }

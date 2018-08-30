@@ -37,7 +37,7 @@ public class RegistryInjectionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/RegistryInjection.xml");
     }
 
-   @Test
+    @Test
     public void testInjectedStrategy() throws Exception {
         CamelContext context = createCamelContext();
 

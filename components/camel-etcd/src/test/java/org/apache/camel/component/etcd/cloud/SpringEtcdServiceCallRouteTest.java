@@ -70,8 +70,8 @@ public class SpringEtcdServiceCallRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         CLIENT.deleteDir("/etcd-services-1/").recursive().send().get();
         CLIENT.deleteDir("/etcd-services-2/").recursive().send().get();

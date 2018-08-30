@@ -32,7 +32,7 @@ public class SpringCamelContextDependsOnTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextDependsOnTest.xml");
     }
 
-   @Test
+    @Test
     public void testDependsOn() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

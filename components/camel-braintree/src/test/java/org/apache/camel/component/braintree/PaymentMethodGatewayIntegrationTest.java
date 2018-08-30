@@ -67,8 +67,8 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.paymentMethodsTokens) {
                 if (this.gateway.paymentMethod().delete(token).isSuccess()) {

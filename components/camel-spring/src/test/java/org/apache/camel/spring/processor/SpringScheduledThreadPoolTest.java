@@ -30,7 +30,7 @@ public class SpringScheduledThreadPoolTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringScheduledThreadPoolTest.xml");
     }
 
-   @Test
+    @Test
     public void testScheduledThreadPool() throws Exception {
         SizedScheduledExecutorService pool = context.getRegistry().lookupByNameAndType("myPool", SizedScheduledExecutorService.class);
         assertNotNull(pool);

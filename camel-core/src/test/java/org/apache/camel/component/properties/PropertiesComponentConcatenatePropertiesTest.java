@@ -40,8 +40,8 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("environment");
         super.tearDown();
     }

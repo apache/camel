@@ -22,7 +22,7 @@ import org.junit.Assert;
 
 public class SshShellOutputStringHelperTest extends Assert {
     
-   @Test
+    @Test
     public void testBeforeLast() {
         assertEquals("Hello ", SshShellOutputStringHelper.beforeLast("Hello World", "World"));
         assertEquals("Hello World ", SshShellOutputStringHelper.beforeLast("Hello World World", "World"));
@@ -34,7 +34,7 @@ public class SshShellOutputStringHelperTest extends Assert {
     }
     
     
-   @Test
+    @Test
     public void testBetweenBeforeLast() {
         assertEquals("foo bar' how are", SshShellOutputStringHelper.betweenBeforeLast("Hello 'foo bar' how are' you", "'", "'"));
         assertEquals("foo bar", SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "${", "}"));

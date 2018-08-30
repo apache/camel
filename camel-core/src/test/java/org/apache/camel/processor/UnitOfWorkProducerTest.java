@@ -61,8 +61,8 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         events.clear();
         super.tearDown();
     }

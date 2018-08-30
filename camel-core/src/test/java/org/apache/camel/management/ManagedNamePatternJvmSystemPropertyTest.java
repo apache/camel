@@ -38,8 +38,8 @@ public class ManagedNamePatternJvmSystemPropertyTest extends ManagementTestSuppo
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN);
         super.tearDown();
     }

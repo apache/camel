@@ -32,7 +32,7 @@ public class CamelContextLazyLoadTypeConvertersTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/CamelContextLazyLoadTypeConvertersTest.xml");
     }
 
-   @Test
+    @Test
     public void testConvert() throws Exception {
         TypeConverter converter = context.getTypeConverter();
         Integer value = converter.convertTo(Integer.class, "1000");

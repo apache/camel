@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class OneRouteRefOnExceptionAndDLCErrorHandlerTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testOneRouteRefNoOnExceptionAndDLCErrorHandler() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -38,7 +38,7 @@ public class OneRouteRefOnExceptionAndDLCErrorHandlerTest extends SpringTestSupp
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testOneRouteRefOnExceptionAndDLCErrorHandler() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

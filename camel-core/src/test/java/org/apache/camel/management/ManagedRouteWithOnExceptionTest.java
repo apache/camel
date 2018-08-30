@@ -36,8 +36,8 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         super.tearDown();
     }

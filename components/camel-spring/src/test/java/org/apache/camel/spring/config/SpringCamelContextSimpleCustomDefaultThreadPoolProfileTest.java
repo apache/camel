@@ -31,7 +31,7 @@ public class SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest extends 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest.xml");
     }
 
-   @Test
+    @Test
     public void testDefaultThreadPoolProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-B");
 

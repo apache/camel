@@ -32,7 +32,7 @@ public class SpringBuilderRefPropertyInjectTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefPropertyInjectTest.xml");
     }
 
-   @Test
+    @Test
     public void testPropertyInject() throws Exception {
         getMockEndpoint("{{result}}").expectedBodiesReceived("Hello Camel");
 

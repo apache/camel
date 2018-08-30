@@ -29,7 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testOrderOk() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Order OK");
@@ -47,7 +47,7 @@ public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testOrderError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("Order ERROR");
@@ -65,7 +65,7 @@ public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testOrderErrorWithNoExceptionClause() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedMessageCount(0);

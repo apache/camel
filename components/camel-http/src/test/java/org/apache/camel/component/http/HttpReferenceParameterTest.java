@@ -39,8 +39,8 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     private TestClientConfigurer testConfigurer;
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
         super.setUp();

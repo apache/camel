@@ -384,8 +384,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (!canTest()) {
             return;
         }

@@ -29,7 +29,7 @@ abstract class BaseSpringPropertiesComponentTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringPropertiesComponentStart() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -38,7 +38,7 @@ abstract class BaseSpringPropertiesComponentTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testSpringPropertiesComponentBar() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 
@@ -47,7 +47,7 @@ abstract class BaseSpringPropertiesComponentTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testSpringPropertiesComponentStart2() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -56,7 +56,7 @@ abstract class BaseSpringPropertiesComponentTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testSpringPropertiesComponentBar2() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 

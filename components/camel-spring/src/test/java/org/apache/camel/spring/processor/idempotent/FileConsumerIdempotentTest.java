@@ -40,8 +40,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
 
         super.setUp();
@@ -49,7 +49,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     }
 
 
-   @Test
+    @Test
     public void testIdempotent() throws Exception {
         // send a file
         template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");

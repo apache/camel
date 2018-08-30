@@ -41,7 +41,7 @@ public class BeanInfoTest extends Assert {
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
 
-   @Test
+    @Test
     public void testFindsSingleMethodMatchingBody() throws Throwable {
         MethodInvocation invocation = info.createInvocation(bean, exchange);
         assertNotNull("Should have found a method invocation!", invocation);
@@ -57,15 +57,15 @@ public class BeanInfoTest extends Assert {
         assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
-   @Test
+    @Test
     public void testBeanProcessor() throws Exception {
         BeanProcessor processor = new BeanProcessor(bean, info);
         processor.process(exchange);
         assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         exchange.getIn().setBody("James");
         info = new BeanInfo(camelContext, bean.getClass(), strategy);

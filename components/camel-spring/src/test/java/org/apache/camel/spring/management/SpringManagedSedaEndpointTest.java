@@ -44,7 +44,7 @@ public class SpringManagedSedaEndpointTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testSedaEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 

@@ -30,7 +30,7 @@ import org.apache.camel.component.disruptor.DisruptorReference;
  */
 public class DisruptorVmComponentReferenceEndpointTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testDisruptorVmComponentReference() throws Exception {
         DisruptorVmComponent vm = context.getComponent("disruptor-vm", DisruptorVmComponent.class);
 

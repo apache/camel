@@ -45,7 +45,7 @@ public class SpringManagedTransactedProcessorTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testTransacted() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

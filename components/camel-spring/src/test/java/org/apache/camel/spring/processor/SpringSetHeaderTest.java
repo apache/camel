@@ -26,7 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringSetHeaderTest extends ContextTestSupport {
     
-   @Test
+    @Test
     public void testSetHeaderWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:b");
         resultEndpoint.expectedBodiesReceived("Hello");

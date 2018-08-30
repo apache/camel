@@ -91,8 +91,8 @@ public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport 
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         CloseableUtils.closeQuietly(discovery);

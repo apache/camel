@@ -38,8 +38,8 @@ public class TestComparatorTest extends Assert {
         e3 = new TestObject(7);
     }
     
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
     }
 
     @Test

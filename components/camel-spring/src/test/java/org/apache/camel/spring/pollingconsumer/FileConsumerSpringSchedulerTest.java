@@ -31,8 +31,8 @@ public class FileConsumerSpringSchedulerTest extends SpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/spring");
         super.setUp();
     }

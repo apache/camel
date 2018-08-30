@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ContextScanOnExceptionAndDLCErrorHandlerTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testFoo() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
@@ -36,7 +36,7 @@ public class ContextScanOnExceptionAndDLCErrorHandlerTest extends SpringTestSupp
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testBar() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

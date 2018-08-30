@@ -33,7 +33,7 @@ public class CamelContextAwareTest extends SpringTestSupport {
     protected CamelContextAwareBean bean1;
 
 
-   @Test
+    @Test
     public void testInjectionPoints() throws Exception {
         assertNotNull("No CamelContext injected!", bean1.getCamelContext());
         Map<String, String> globalOptions  = bean1.getCamelContext().getGlobalOptions();
@@ -42,7 +42,7 @@ public class CamelContextAwareTest extends SpringTestSupport {
         assertEquals("Should get the value of org.apache.camel.test", globalOptions.get("org.apache.camel.test"), "this is a test first");
     }
     
-   @Test
+    @Test
     public void testCamelTemplates() throws Exception {
         DefaultProducerTemplate producer1 = getMandatoryBean(DefaultProducerTemplate.class, "producer1");
         assertEquals("Inject a wrong camel context", producer1.getCamelContext().getName(), "camel1");
@@ -55,8 +55,8 @@ public class CamelContextAwareTest extends SpringTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         bean1 = getMandatoryBean(CamelContextAwareBean.class, "bean1");
     }

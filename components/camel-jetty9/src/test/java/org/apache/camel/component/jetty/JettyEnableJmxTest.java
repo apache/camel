@@ -39,8 +39,8 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     private MBeanServerConnection mbsc;
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         releaseMBeanServers();
         mbsc = null;
         super.tearDown();
@@ -48,8 +48,8 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         enableJMX();
         releaseMBeanServers();
         super.setUp();

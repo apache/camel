@@ -32,12 +32,12 @@ import org.springframework.core.io.Resource;
 
 public class ResourceConverterTest extends TestSupport {
 
-   @Test
+    @Test
     public void testResourceConverterRegistry() {
         Assert.assertNotNull(getResourceTypeConverter());
     }
 
-   @Test
+    @Test
     public void testNonNullConversion() throws IOException {
         Resource resource = new ClassPathResource("testresource.txt", ResourceConverterTest.class);
         Assert.assertTrue(resource.exists());

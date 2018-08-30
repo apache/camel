@@ -32,7 +32,7 @@ public class SpringPropertyPlaceholderIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpring() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

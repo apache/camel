@@ -33,7 +33,7 @@ public class SpringAdviceWithContextScopedErrorHandlerIssueTest extends SpringTe
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringAdviceWithContextScopedErrorHandlerIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testAdviceWith() throws Exception {
         context.getRouteDefinition("route-a").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

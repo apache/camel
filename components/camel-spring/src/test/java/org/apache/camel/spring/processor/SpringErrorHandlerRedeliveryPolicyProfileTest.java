@@ -32,7 +32,7 @@ public class SpringErrorHandlerRedeliveryPolicyProfileTest extends SpringTestSup
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringErrorHandlerRedeliveryPolicyProfileTest.xml");
     }
 
-   @Test
+    @Test
     public void testErrorHandlerRedeliveryPolicyProfile() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

@@ -32,7 +32,7 @@ public class SpringBuilderRefBeanInjectTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefBeanInjectTest.xml");
     }
 
-   @Test
+    @Test
     public void testBeanInject() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

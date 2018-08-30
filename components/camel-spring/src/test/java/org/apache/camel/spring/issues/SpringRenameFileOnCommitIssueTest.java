@@ -31,13 +31,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/renameissue");
         super.setUp();
     }
 
-   @Test
+    @Test
     public void testFileRenameFileOnCommitIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

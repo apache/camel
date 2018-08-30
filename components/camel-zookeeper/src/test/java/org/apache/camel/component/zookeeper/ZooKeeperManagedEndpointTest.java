@@ -34,15 +34,15 @@ import org.springframework.jmx.support.JmxUtils;
 public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ZooKeeperTestSupport.setupTestServer();
         super.setUp();
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         ZooKeeperTestSupport.shutdownServer();
     }

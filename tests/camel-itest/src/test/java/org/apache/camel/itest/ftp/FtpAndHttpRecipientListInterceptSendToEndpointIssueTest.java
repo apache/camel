@@ -88,8 +88,8 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
         ftpServer.start();
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();
         ftpServer = null;

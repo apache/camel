@@ -46,8 +46,8 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
     }

@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class AnotherCamelProxyTest extends Assert {
 
-   @Test
+    @Test
     public void testAnotherCamelProxy() throws Exception {
         // START SNIPPET: e1
         AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/AnotherCamelProxyTest.xml");

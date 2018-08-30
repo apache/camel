@@ -35,8 +35,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
         super.setUp();

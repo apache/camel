@@ -62,8 +62,8 @@ public class SpringEtcdServiceCallDefaultRouteTest extends CamelSpringTestSuppor
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         CLIENT.deleteDir(CONFIGURATION.getServicePath()).recursive().send().get();
     }

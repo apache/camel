@@ -44,8 +44,8 @@ public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
     private WebServiceTemplate webServiceTemplate;
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }

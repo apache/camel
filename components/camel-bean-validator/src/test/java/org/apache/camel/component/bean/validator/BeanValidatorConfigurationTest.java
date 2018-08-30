@@ -40,8 +40,8 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     private ConstraintValidatorFactory constraintValidatorFactory;
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.messageInterpolator = new MyMessageInterpolator();
         this.traversableResolver = new MyTraversableResolver();
         this.constraintValidatorFactory = new MyConstraintValidatorFactory();

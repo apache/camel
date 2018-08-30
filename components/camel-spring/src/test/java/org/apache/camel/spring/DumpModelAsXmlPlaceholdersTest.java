@@ -32,7 +32,7 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/DumpModelAsXmlPlaceholdersTest.xml");
     }
 
-   @Test
+    @Test
     public void testDumpModelAsXml() throws Exception {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));

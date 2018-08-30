@@ -33,8 +33,8 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 3;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
     }

@@ -47,8 +47,8 @@ public class StringDataFormatTest extends TestSupport {
         template.start();
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         template.stop();
         context.stop();
     }

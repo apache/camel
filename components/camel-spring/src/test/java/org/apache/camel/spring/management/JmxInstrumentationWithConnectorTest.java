@@ -31,7 +31,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
         return true;
     }
 
-   @Test
+    @Test
     public void testJmxConfiguration() throws Exception {
         ManagementAgent agent = getMandatoryBean(DefaultManagementAgent.class, "agent");
         assertNotNull("SpringInstrumentationAgent must be configured for JMX support", agent);
@@ -44,7 +44,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/jmxInstrumentationWithConnector.xml");
     }
 
-   @Test
+    @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         // don't run the test in this method
     }

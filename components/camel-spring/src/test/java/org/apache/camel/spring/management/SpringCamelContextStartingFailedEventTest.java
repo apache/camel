@@ -46,7 +46,7 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
         return new ClassPathXmlApplicationContext("/org/apache/camel/spring/disableJmxConfig.xml");
     }
 
-   @Test
+    @Test
     public void testReady() {
         // noop
     }

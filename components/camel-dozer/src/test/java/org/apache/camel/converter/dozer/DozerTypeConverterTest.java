@@ -33,8 +33,8 @@ import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createS
 public class DozerTypeConverterTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();

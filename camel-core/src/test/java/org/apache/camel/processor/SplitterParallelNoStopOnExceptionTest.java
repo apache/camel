@@ -44,8 +44,8 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
         super.setUp();
     }
     
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         service.shutdownNow();
     }

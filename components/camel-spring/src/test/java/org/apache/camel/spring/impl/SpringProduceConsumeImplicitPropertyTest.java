@@ -32,7 +32,7 @@ public class SpringProduceConsumeImplicitPropertyTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/impl/SpringProduceConsumeImplicitPropertyTest.xml");
     }
 
-   @Test
+    @Test
     public void testImplicit() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

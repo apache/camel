@@ -32,7 +32,7 @@ public class SpringRouteIsComponentAnnotatedTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/contextscan/SpringRouteIsComponentAnnotatedTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringRouteIsComponentAnnotated() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

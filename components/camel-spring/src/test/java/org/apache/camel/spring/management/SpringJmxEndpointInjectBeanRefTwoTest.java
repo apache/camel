@@ -44,7 +44,7 @@ public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testJmxEndpointInjectBean() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

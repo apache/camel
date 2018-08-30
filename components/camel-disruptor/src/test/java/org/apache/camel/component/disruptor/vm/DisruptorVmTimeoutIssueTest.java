@@ -30,7 +30,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testDisruptorVmTimeoutWithAnotherDisruptorVm() throws Exception {
         try {
             template2.requestBody("disruptor-vm:start1?timeout=4000", "Hello");
@@ -42,7 +42,7 @@ public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
         }
     }
 
-   @Test
+    @Test
     public void testDisruptorVmTimeoutWithProcessor() throws Exception {
         try {
             template2.requestBody("disruptor-vm:start2?timeout=4000", "Hello");

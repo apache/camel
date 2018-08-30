@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends Assert {
 
-   @Test
+    @Test
     public void testShouldProcessAnnotatedFields() {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");

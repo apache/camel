@@ -32,7 +32,7 @@ public class ProduceSplitMethodCallIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/ProduceSplitMethodCallIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testProduceSplitMethodCallIssue() throws Exception {
         getMockEndpoint("mock:split").expectedBodiesReceived("Hello A", "Hello B");
 

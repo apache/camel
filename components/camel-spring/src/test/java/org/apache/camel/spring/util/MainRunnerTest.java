@@ -25,7 +25,7 @@ import org.apache.camel.TestSupport;
  */
 public class MainRunnerTest extends TestSupport {
 
-   @Test
+    @Test
     public void testMainRunner() throws Exception {
         MainRunner runner = new MainRunner();
         runner.setDelay(10);

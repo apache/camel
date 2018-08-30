@@ -222,8 +222,8 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
     }

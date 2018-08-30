@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DisruptorVmMultipleConsumersIssueTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testDisruptorVmMultipleConsumersIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");

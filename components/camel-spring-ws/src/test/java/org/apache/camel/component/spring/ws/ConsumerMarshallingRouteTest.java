@@ -43,8 +43,8 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         context.setTracing(true);
     }

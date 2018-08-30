@@ -26,8 +26,8 @@ import org.junit.Test;
 public class FtpConsumerCamelManualTest extends CamelTestSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/ftptest");
         super.setUp();
     }

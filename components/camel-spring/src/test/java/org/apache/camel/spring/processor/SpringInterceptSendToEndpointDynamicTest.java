@@ -31,7 +31,7 @@ public class SpringInterceptSendToEndpointDynamicTest extends ContextTestSupport
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointDynamic.xml");
     }
 
-   @Test
+    @Test
     public void testInterceptFile() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -41,7 +41,7 @@ public class SpringInterceptSendToEndpointDynamicTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testNoInterceptFile() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);

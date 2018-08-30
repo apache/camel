@@ -34,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ProcessorAsEndpointTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
 
-   @Test
+    @Test
     public void testSendingToProcessorEndpoint() throws Exception {
         ProcessorStub processor = getMandatoryBean(ProcessorStub.class, "myProcessor");
 
@@ -46,7 +46,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
         log.debug("Found exchanges: " + list);
     }
 
-   @Test
+    @Test
     public void testSendingToNonExistentEndpoint() throws Exception {
         String uri = "unknownEndpoint";
         Endpoint endpoint = context.getEndpoint(uri);

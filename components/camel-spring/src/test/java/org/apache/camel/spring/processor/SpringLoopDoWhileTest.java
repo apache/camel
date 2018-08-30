@@ -29,7 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringLoopDoWhileTest extends LoopDoWhileTest {
 
     @Override
-   @Test
+    @Test
     public void testLoopDoWhileFunctional() throws Exception {
         // not applicable in XML
     }

@@ -71,8 +71,8 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
         };
     }
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("res");
         createDirectory("res/home/myapp");
@@ -80,8 +80,8 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
         ftpServer.start();
     }
 
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();
         ftpServer = null;

@@ -31,7 +31,7 @@ public class CamelRouteRefInjectionIssueTest  extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/CamelRouteRefInjectionIssueTest.xml");
     }
     
-   @Test
+    @Test
     public void testTheRouteRefInjection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World!");

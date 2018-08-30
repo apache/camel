@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CamelProxyTest extends TestSupport {
 
-   @Test
+    @Test
     public void testCamelProxy() throws Exception {
         AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
 

@@ -34,7 +34,7 @@ public class SpringErrorHandlerConfigTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringErrorHandlerConfigTest.xml");
     }
 
-   @Test
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:dlc").expectedMessageCount(0);
@@ -44,7 +44,7 @@ public class SpringErrorHandlerConfigTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testDLC() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dlc").expectedBodiesReceived("Kaboom");
@@ -54,7 +54,7 @@ public class SpringErrorHandlerConfigTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testDefaultEH() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dlc").expectedMessageCount(0);

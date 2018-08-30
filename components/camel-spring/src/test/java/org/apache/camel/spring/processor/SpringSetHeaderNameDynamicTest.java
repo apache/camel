@@ -28,7 +28,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringSetHeaderNameDynamicTest extends ContextTestSupport {
 
 
-   @Test
+    @Test
     public void testSetHeaderNameWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedMessageCount(1);

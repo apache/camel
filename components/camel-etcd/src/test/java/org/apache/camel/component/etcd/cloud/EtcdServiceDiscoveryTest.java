@@ -49,8 +49,8 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         try {
             client.deleteDir(CONFIGURATION.getServicePath()).recursive().send().get();
             client.close();

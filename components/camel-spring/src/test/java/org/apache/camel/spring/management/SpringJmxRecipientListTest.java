@@ -45,7 +45,7 @@ public class SpringJmxRecipientListTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-   @Test
+    @Test
     public void testJmxEndpointsAddedDynamicallyDefaultRegister() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");

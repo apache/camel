@@ -47,8 +47,8 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xquery");
         super.setUp();
     }

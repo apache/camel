@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 
 public class MainDummyTest extends Assert {
 
-   @Test
+    @Test
     public void testMain() throws Exception {
         Main main = new Main();
         main.start();

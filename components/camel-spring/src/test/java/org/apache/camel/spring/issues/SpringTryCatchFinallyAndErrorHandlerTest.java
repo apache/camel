@@ -32,7 +32,7 @@ public class SpringTryCatchFinallyAndErrorHandlerTest extends ContextTestSupport
         return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringTryCatchFinallyAndErrorHandlerTest.xml");
     }
 
-   @Test
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:donkey").expectedMessageCount(0);
@@ -48,7 +48,7 @@ public class SpringTryCatchFinallyAndErrorHandlerTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testFail() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:donkey").expectedMessageCount(1);
@@ -64,7 +64,7 @@ public class SpringTryCatchFinallyAndErrorHandlerTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testFailAgain() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:donkey").expectedMessageCount(1);

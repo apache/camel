@@ -27,7 +27,7 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
  */
 public class DisruptorVmInOutWithErrorTest extends AbstractVmTestSupport {
 
-   @Test
+    @Test
     public void testInOutWithError() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

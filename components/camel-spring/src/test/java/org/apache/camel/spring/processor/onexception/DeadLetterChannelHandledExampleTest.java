@@ -29,7 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testOrderOK() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Order OK");
@@ -44,7 +44,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testOrderERROR() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("Order ERROR");

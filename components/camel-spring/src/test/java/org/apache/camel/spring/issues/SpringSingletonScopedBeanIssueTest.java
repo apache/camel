@@ -33,7 +33,7 @@ public class SpringSingletonScopedBeanIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringSingletonScopedBeanIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testSpringSingletonScopedBeanIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A", "AB", "ABC");

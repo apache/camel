@@ -45,7 +45,7 @@ public class DebugTest extends CamelTestSupport {
     }
     // END SNIPPET: e1
 
-   @Test
+    @Test
     public void testDebugger() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(1);
@@ -58,7 +58,7 @@ public class DebugTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testTwo() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(2);

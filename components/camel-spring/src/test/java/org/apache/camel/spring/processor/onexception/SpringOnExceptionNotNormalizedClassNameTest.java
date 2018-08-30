@@ -29,7 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringOnExceptionNotNormalizedClassNameTest extends ContextTestSupport {
 
-   @Test
+    @Test
     public void testOrderError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("Order ERROR");

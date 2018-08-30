@@ -27,7 +27,7 @@ import org.apache.camel.spring.example.MyProcessor;
  */
 public class MainExampleTest extends Assert {
 
-   @Test
+    @Test
     public void testMain() throws Exception {
         Main main = new Main();
         main.addRouteBuilder(new RouteBuilder() {
@@ -44,7 +44,7 @@ public class MainExampleTest extends Assert {
         main.stop();
     }
     
-   @Test
+    @Test
     public void testFileApplicationContextUri() throws Exception {
         Main main = new Main();
         main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");

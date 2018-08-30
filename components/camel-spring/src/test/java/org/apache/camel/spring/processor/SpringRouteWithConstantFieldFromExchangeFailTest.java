@@ -30,8 +30,8 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringRouteWithConstantFieldFromExchangeFailTest extends RouteWithConstantFieldFromExchangeFailTest {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown an exception");

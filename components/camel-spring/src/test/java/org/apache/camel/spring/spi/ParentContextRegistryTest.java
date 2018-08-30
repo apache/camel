@@ -38,22 +38,22 @@ public class ParentContextRegistryTest extends SpringTestSupport {
         );
     }
 
-   @Test
+    @Test
     public void testLookupByName() {
         assertEquals(EXPECTED_BEAN, context.getRegistry().lookupByName("testParentBean"));
     }
 
-   @Test
+    @Test
     public void testLookupByNameAndType() {
         assertEquals(EXPECTED_BEAN, context.getRegistry().lookupByNameAndType("testParentBean", List.class));
     }
 
-   @Test
+    @Test
     public void testFindByType() {
         assertEquals(Collections.singleton(EXPECTED_BEAN), context.getRegistry().findByType(List.class));
     }
 
-   @Test
+    @Test
     public void testFindByTypeWithName() {
         assertEquals(Collections.singletonMap("testParentBean", EXPECTED_BEAN),
                 context.getRegistry().findByTypeWithName(List.class));

@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SimpleRouteTest extends SpringTestSupport {
     protected Object expectedBody = "<hello>world!</hello>";
 
-   @Test
+    @Test
     public void testSimpleRoute() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(expectedBody);

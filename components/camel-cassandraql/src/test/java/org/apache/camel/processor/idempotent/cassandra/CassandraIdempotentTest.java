@@ -48,8 +48,8 @@ public class CassandraIdempotentTest extends BaseCassandraTest {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         if (canTest()) {
             idempotentRepository.stop();

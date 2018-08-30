@@ -57,7 +57,7 @@ public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml");
     }
 
-   @Test
+    @Test
     public void testMisconfigured() {
         // noop
     }

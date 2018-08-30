@@ -33,8 +33,8 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown an exception");

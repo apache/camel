@@ -27,7 +27,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsingTransactedTest extends TransactionalClientDataSourceTest {
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);

@@ -33,13 +33,13 @@ import static org.awaitility.Awaitility.await;
 public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionClientDataSourceSupport {
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/transacted");
         super.setUp();
     }
 
-   @Test
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
 
@@ -50,7 +50,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         });
     }
 
-   @Test
+    @Test
     public void testTransactionRollback() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
 

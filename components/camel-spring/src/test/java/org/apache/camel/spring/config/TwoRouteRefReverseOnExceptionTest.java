@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TwoRouteRefReverseOnExceptionTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testTwoRouteRefReverseNoOnException() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -44,7 +44,7 @@ public class TwoRouteRefReverseOnExceptionTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testTwoRouteRefReverseOnException() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

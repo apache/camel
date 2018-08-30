@@ -40,8 +40,8 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (clientConnector != null) {
             try {
                 clientConnector.close();

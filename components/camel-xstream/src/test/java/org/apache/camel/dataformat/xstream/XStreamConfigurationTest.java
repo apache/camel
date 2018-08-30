@@ -44,8 +44,8 @@ public class XStreamConfigurationTest extends CamelTestSupport {
     private static volatile boolean methodInjected;
     
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         constructorInjected = false;
         methodInjected = false;

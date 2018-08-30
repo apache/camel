@@ -40,8 +40,8 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private TestPostProcessAction action;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         prepareMailbox();
         action = new TestPostProcessAction();
         super.setUp();

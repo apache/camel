@@ -41,7 +41,7 @@ public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSu
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml");
     }
 
-   @Test
+    @Test
     public void testTryCatchMustHaveExceptionConfigured() {
         // noop
     }

@@ -35,7 +35,7 @@ public class SpringMDCTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringMDCTest.xml");
     }
 
-   @Test
+    @Test
     public void testMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -45,7 +45,7 @@ public class SpringMDCTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   @Test
+    @Test
     public void testMDCTwoMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World", "Bye World");

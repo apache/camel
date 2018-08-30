@@ -45,8 +45,8 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // lets assume this ID is already done
         myRepo.add("myuid-3");
 

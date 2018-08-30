@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class AutowireConstructorRouteTwoTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testAutowireConstructor() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Camel at 1", "Hello World at 2");

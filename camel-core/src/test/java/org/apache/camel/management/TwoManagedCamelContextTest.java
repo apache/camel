@@ -69,8 +69,8 @@ public class TwoManagedCamelContextTest extends TestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (camel1 != null) {
             camel1.stop();
         }

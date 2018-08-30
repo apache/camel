@@ -61,8 +61,8 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.transactionIds) {
                 // TODO: cleanup

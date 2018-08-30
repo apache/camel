@@ -45,7 +45,7 @@ public class MinaProducerShutdownTest extends TestSupport {
         me.testProducer();
     }
 
-   @Test
+    @Test
     public void testProducer() throws Exception {
         // use shutdown hook to verify that we have stopped within 5 seconds
         Thread hook = new AssertShutdownHook();

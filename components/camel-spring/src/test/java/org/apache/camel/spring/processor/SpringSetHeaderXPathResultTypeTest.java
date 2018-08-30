@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringSetHeaderXPathResultTypeTest extends SpringTestSupport {
 
-   @Test
+    @Test
     public void testXPathResultType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

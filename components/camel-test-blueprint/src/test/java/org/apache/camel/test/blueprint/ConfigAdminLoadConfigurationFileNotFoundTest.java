@@ -30,8 +30,8 @@ public class ConfigAdminLoadConfigurationFileNotFoundTest extends CamelBlueprint
     }
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should throw IllegalArgumentException, because the config file wasn't found");

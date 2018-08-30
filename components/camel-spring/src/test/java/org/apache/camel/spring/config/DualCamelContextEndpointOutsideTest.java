@@ -35,7 +35,7 @@ public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/DualCamelContextEndpointOutsideTest.xml");
     }
 
-   @Test
+    @Test
     public void testDualCamelContextEndpoint() throws Exception {
         CamelContext camelA = applicationContext.getBean("camel-A", CamelContext.class);
         assertNotNull(camelA);

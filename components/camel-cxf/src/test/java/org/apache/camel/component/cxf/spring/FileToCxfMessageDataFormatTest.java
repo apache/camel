@@ -39,8 +39,8 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     private Server server;
 
     @Override
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filetocxf");
 
         // set CXF
@@ -57,8 +57,8 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Override
-   @After
-   public void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         server.stop();

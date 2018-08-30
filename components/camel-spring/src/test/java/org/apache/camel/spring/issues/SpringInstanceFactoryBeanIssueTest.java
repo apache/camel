@@ -32,7 +32,7 @@ public class SpringInstanceFactoryBeanIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringInstanceFactoryBeanIssueTest.xml");
     }
 
-   @Test
+    @Test
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

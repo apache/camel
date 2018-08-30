@@ -23,7 +23,7 @@ import org.apache.camel.spring.CamelContextFactoryBean;
 
 public class SpringPropertiesComponentTest extends BaseSpringPropertiesComponentTest {
 
-   @Test
+    @Test
     public void testResolutionOfPlaceholdersOnFactoryBean() {
         final CamelContextFactoryBean factoryBean = applicationContext.getBean("&camel-1",
             CamelContextFactoryBean.class);
