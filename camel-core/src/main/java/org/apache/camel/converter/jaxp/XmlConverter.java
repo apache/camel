@@ -873,7 +873,7 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given {@link InputStream} to a DOM document
+     * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
      * @return the parsed document
@@ -885,7 +885,7 @@ public class XmlConverter {
     }
     
     /**
-     * Converts the given {@link InputStream} to a DOM document
+     * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
      * @param exchange is the exchange to be used when calling the converter
