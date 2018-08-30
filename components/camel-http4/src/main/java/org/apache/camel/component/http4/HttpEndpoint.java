@@ -459,6 +459,14 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     
     /**
      * Ignore Content-Length Header
+     * <p>
+     * Ignore the HTTP Content-Length Header when sending the 
+     * request to the HttpProducer.  Set this to false to explicitly 
+     * set Content-Length of a request body.
+     * </p>
+     * <p>
+     * Default: {@code true}
+     * </p>
      */
     public boolean isIgnoreContentLengthHeader() {
         return ignoreContentLengthHeader;
