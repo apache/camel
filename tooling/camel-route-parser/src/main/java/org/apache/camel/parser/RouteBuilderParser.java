@@ -207,40 +207,34 @@ public final class RouteBuilderParser {
                         unparsable.add(result.getElement());
                     }
                 } else {
-                    CamelEndpointDetails detail = findEndpointByUri(endpoints, result.getElement());
-                    if (detail != null) {
-                        // its a consumer only
-                        detail.setConsumerOnly(true);
-                    } else {
-                        String fileName = fullyQualifiedFileName;
-                        if (fileName.startsWith(baseDir)) {
-                            fileName = fileName.substring(baseDir.length() + 1);
-                        }
-
-                        detail = new CamelEndpointDetails();
-                        detail.setFileName(fileName);
-                        detail.setClassName(clazz.getQualifiedName());
-                        detail.setMethodName(configureMethod.getName());
-                        detail.setEndpointInstance(null);
-                        detail.setEndpointUri(result.getElement());
-                        int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
-                        if (line > -1) {
-                            detail.setLineNumber("" + line);
-                        }
-                        int lineEnd = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
-                        if (lineEnd > -1) {
-                            detail.setLineNumberEnd("" + lineEnd);
-                        }
-                        detail.setAbsolutePosition(result.getPosition());
-                        int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
-                        if (linePos > -1) {
-                            detail.setLinePosition(linePos);
-                        }
-                        detail.setEndpointComponentName(endpointComponentName(result.getElement()));
-                        detail.setConsumerOnly(true);
-                        detail.setProducerOnly(false);
-                        endpoints.add(detail);
+                    String fileName = fullyQualifiedFileName;
+                    if (fileName.startsWith(baseDir)) {
+                        fileName = fileName.substring(baseDir.length() + 1);
                     }
+
+                    CamelEndpointDetails detail = new CamelEndpointDetails();
+                    detail.setFileName(fileName);
+                    detail.setClassName(clazz.getQualifiedName());
+                    detail.setMethodName(configureMethod.getName());
+                    detail.setEndpointInstance(null);
+                    detail.setEndpointUri(result.getElement());
+                    int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
+                    if (line > -1) {
+                        detail.setLineNumber("" + line);
+                    }
+                    int lineEnd = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
+                    if (lineEnd > -1) {
+                        detail.setLineNumberEnd("" + lineEnd);
+                    }
+                    detail.setAbsolutePosition(result.getPosition());
+                    int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
+                    if (linePos > -1) {
+                        detail.setLinePosition(linePos);
+                    }
+                    detail.setEndpointComponentName(endpointComponentName(result.getElement()));
+                    detail.setConsumerOnly(true);
+                    detail.setProducerOnly(false);
+                    endpoints.add(detail);
                 }
             }
             // producer only
@@ -251,17 +245,6 @@ public final class RouteBuilderParser {
                         unparsable.add(result.getElement());
                     }
                 } else {
-                    CamelEndpointDetails detail = findEndpointByUri(endpoints, result.getElement());
-                    if (detail != null) {
-                        if (detail.isConsumerOnly()) {
-                            // its both a consumer and producer
-                            detail.setConsumerOnly(false);
-                            detail.setProducerOnly(false);
-                        } else {
-                            // its a producer only
-                            detail.setProducerOnly(true);
-                        }
-                    }
                     // the same endpoint uri may be used in multiple places in the same route
                     // so we should maybe add all of them
                     String fileName = fullyQualifiedFileName;
@@ -269,7 +252,7 @@ public final class RouteBuilderParser {
                         fileName = fileName.substring(baseDir.length() + 1);
                     }
 
-                    detail = new CamelEndpointDetails();
+                    CamelEndpointDetails detail = new CamelEndpointDetails();
                     detail.setFileName(fileName);
                     detail.setClassName(clazz.getQualifiedName());
                     detail.setMethodName(configureMethod.getName());
