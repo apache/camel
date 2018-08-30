@@ -52,17 +52,35 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/content", new HttpRequestHandler() {
+                registerHandler("/content-ignore", new HttpRequestHandler() {
                     @Override
                     public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
                         Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
                         String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
+                        Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
+                        String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
                         
-                        //Should we expect the length in the case that we remove the header or should the header be empty?
-                        assertEquals(Integer.toString(bodyContent.length()), contentLength);
+                        //Request Body Chunked if no Content-Length set.
+                        assertEquals("", contentLength);
+                        assertEquals("chunked", transferEncoding);
                         response.setStatusCode(HttpStatus.SC_OK);
                     }
-                }).create();
+                }).registerHandler("/content-no-ignore", new HttpRequestHandler() {
+                    @Override
+                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+                        Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
+                        String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
+                        Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
+                        String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
+                        
+                        //Content-Length was overridden to 10
+                        assertEquals("10", contentLength);
+                        assertEquals("", transferEncoding);
+                        response.setStatusCode(HttpStatus.SC_OK);
+                    }
+                })
+                .create();
+            
         localServer.start();
 
         super.setUp();
@@ -79,14 +97,31 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
     }
     
     @Test
-    public void testContentLengthIncorrect() throws Exception {
-        Exchange out = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content", new Processor() {
+    public void testContentLengthIgnore() throws Exception {
+        Exchange out = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content-ignore?bridgeEndpoint=true", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-                exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+                exchange.getIn().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bodyContent.getBytes())));
+            }
+            
+        });
+
+        assertNotNull(out);
+        assertFalse("Should not fail", out.isFailed());
+        
+    }
+    
+    @Test
+    public void testContentLengthNoIgnore() throws Exception {
+        Exchange out = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content-no-ignore?bridgeEndpoint=true&ignoreContentLengthHeader=false", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "10");
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
                 exchange.getIn().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bodyContent.getBytes())));
             }
             
