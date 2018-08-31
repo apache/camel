@@ -108,7 +108,9 @@ class XMLStreamReaderInputStream extends InputStream {
                                                   reader.getAttributeValue(i));
                         }
                         for (int i = 0; i < reader.getNamespaceCount(); i++) {
-                            writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+                            String namespacePrefix = reader.getNamespacePrefix(i);
+                            String namespaceURI = reader.getNamespaceURI(i);
+                            writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix, namespaceURI == null ? "" : namespaceURI);
                         }
                         break;
                     case XMLStreamConstants.END_ELEMENT:
