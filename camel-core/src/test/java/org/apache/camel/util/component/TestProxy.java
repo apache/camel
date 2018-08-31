@@ -82,6 +82,10 @@ class TestProxy {
         return null;
     }
 
+    public final <T extends java.util.Date> String withDate(T theDate, Class<? extends java.util.Date> dateClass, Class<T> parameter, T parameters) {
+        return null;
+    }
+
     public final String greetInnerChild(InnerChild child) {
         return sayHi(child.getName());
     }
