@@ -183,8 +183,7 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean duplicateRouteId;
 
     /**
-     * Whether to validate for direct/seda endpoints not having matching pairs, such as producing to
-     * a non existing seda endpoint.
+     * Whether to validate direct/seda endpoints sending to non existing consumers.
      *
      * @parameter property="camel.directOrSedaPairCheck"
      *            default-value="true"
@@ -477,6 +476,11 @@ public class ValidateMojo extends AbstractExecMojo {
             } else {
                 sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)", sedaDirectEndpoints, sedaDirectErrors);
             }
+            if (sedaDirectErrors > 0) {
+                getLog().warn(sedaDirectSummary);
+            } else {
+                getLog().info(sedaDirectSummary);
+            }
         }
 
         // route id
@@ -506,9 +510,9 @@ public class ValidateMojo extends AbstractExecMojo {
         Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
         Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
 
-        // find all pairs, eg consumers that has a producer (no need to check for producer that has a consumer)
-        for (CamelEndpointDetails c : consumers) {
-            boolean any = producers.stream().findAny().filter(e -> matchEndpointPath(c.getEndpointUri(), e.getEndpointUri())).isPresent();
+        // find all pairs, eg producers that has a consumer (no need to check for opposite)
+        for (CamelEndpointDetails p : producers) {
+            boolean any = consumers.stream().findAny().filter(c -> matchEndpointPath(p.getEndpointUri(), c.getEndpointUri())).isPresent();
             if (any) {
                 pairs++;
             }
@@ -523,22 +527,84 @@ public class ValidateMojo extends AbstractExecMojo {
         Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
         Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
 
-        // are there any consumers that do not have a producer pair
-        for (CamelEndpointDetails c : consumers) {
-            boolean any = producers.stream().findAny().filter(e -> matchEndpointPath(c.getEndpointUri(), e.getEndpointUri())).isPresent();
-            if (!any) {
-                errors++;
-            }
-        }
         // are there any producers that do not have a consumer pair
-        for (CamelEndpointDetails p : producers) {
-            boolean any = consumers.stream().findAny().filter(e -> matchEndpointPath(p.getEndpointUri(), e.getEndpointUri())).isPresent();
+        for (CamelEndpointDetails detail : producers) {
+            boolean any = consumers.stream().findAny().filter(c -> matchEndpointPath(detail.getEndpointUri(), c.getEndpointUri())).isPresent();
             if (!any) {
                 errors++;
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Endpoint pair (seda/direct) validation error at: ");
+                if (detail.getClassName() != null && detail.getLineNumber() != null) {
+                    // this is from java code
+                    sb.append(detail.getClassName());
+                    if (detail.getMethodName() != null) {
+                        sb.append(".").append(detail.getMethodName());
+                    }
+                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else if (detail.getLineNumber() != null) {
+                    // this is from xml
+                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                    if (fqn.endsWith(".xml")) {
+                        fqn = fqn.substring(0, fqn.length() - 4);
+                        fqn = asPackageName(fqn);
+                    }
+                    sb.append(fqn);
+                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else {
+                    sb.append(detail.getFileName());
+                }
+                sb.append("\n");
+                sb.append("\n\t").append(detail.getEndpointUri());
+                sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
+                sb.append("\n\n");
+
+                getLog().warn(sb.toString());
+            } else if (showAll) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Endpoint pair (seda/direct) validation passed at: ");
+                if (detail.getClassName() != null && detail.getLineNumber() != null) {
+                    // this is from java code
+                    sb.append(detail.getClassName());
+                    if (detail.getMethodName() != null) {
+                        sb.append(".").append(detail.getMethodName());
+                    }
+                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else if (detail.getLineNumber() != null) {
+                    // this is from xml
+                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                    if (fqn.endsWith(".xml")) {
+                        fqn = fqn.substring(0, fqn.length() - 4);
+                        fqn = asPackageName(fqn);
+                    }
+                    sb.append(fqn);
+                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else {
+                    sb.append(detail.getFileName());
+                }
+                sb.append("\n");
+                sb.append("\n\t").append(detail.getEndpointUri());
+                sb.append("\n\n");
+
+                getLog().info(sb.toString());
             }
         }
 
+        // NOTE: are there any consumers that do not have a producer pair
+        // You can have a consumer which you send to from outside a Camel route such as via ProducerTemplate
+
         return errors;
+    }
+
+    private static String endpointPathSummaryError(CamelEndpointDetails detail) {
+        String uri = detail.getEndpointUri();
+        String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
+        String path = StringHelper.after(p, ":");
+        return path + "\t" + "Non existing " + detail.getEndpointComponentName() + " queue name";
     }
 
     private static boolean matchEndpointPath(String uri, String uri2) {
