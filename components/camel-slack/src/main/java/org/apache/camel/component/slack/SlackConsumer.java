@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.slack;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,6 +40,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
@@ -156,18 +155,6 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             }
 
         }
-        return jsonString;
-    }
-
-    private String readResponse(HttpResponse response) throws IOException {
-        InputStream s = response.getEntity().getContent();
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = s.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        String jsonString = result.toString(StandardCharsets.UTF_8.name());
         return jsonString;
     }
 
