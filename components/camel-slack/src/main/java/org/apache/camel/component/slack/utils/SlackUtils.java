@@ -32,8 +32,8 @@ public final class SlackUtils {
     public static String readResponse(HttpResponse response) throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try (InputStream s = response.getEntity().getContent()) {
-        byte[] buffer = new byte[1024];
-        int length;
+            byte[] buffer = new byte[1024];
+            int length;
             while ((length = s.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
