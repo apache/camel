@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.slack;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpResponse;
@@ -41,6 +35,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
@@ -137,17 +133,6 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
             }
 
         }
-    }
-
-    private String readResponse(InputStream s) throws IOException, UnsupportedEncodingException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = s.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        String jsonString = result.toString(StandardCharsets.UTF_8.name());
-        return jsonString;
     }
 
     protected String asJson(SlackMessage message) {
