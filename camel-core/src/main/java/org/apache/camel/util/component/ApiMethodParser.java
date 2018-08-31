@@ -40,7 +40,7 @@ public abstract class ApiMethodParser<T> {
 
     private static final String METHOD_PREFIX = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<[^>]>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
     private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*([^<\\s]+)?\\s*(<[^>]+>)?(<(?<genericTypeParameterName>\\S+)\\s+extends\\s+"
-            + "(?<genericTypeParameterUpperBound>\\S+)>\\s+\\k<genericTypeParameterName>)?\\s+(\\S+)\\s*\\(\\s*(?<signature>[\\S\\s,]*)\\)\\s*;?\\s*");
+            + "(?<genericTypeParameterUpperBound>\\S+)>\\s+(?<returnType>\\S+))?\\s+(\\S+)\\s*\\(\\s*(?<signature>[\\S\\s,]*)\\)\\s*;?\\s*");
 
     private static final String JAVA_LANG = "java.lang.";
     private static final Map<String, Class<?>> PRIMITIVE_TYPES;
@@ -120,16 +120,21 @@ public abstract class ApiMethodParser<T> {
             // handle generic methods with single bounded type parameters
             String genericTypeParameterName = null;
             String genericTypeParameterUpperBound = null;
+            String returnType = null;
             try {
                 genericTypeParameterName = methodMatcher.group("genericTypeParameterName");
                 genericTypeParameterUpperBound = methodMatcher.group("genericTypeParameterUpperBound");
+                returnType = methodMatcher.group("returnType");
+                if (returnType != null && returnType.equals(genericTypeParameterName)) {
+                    returnType = genericTypeParameterUpperBound;
+                }
             } catch (IllegalArgumentException e) {
                 // ignore
             }
 
-            final Class<?> resultType = genericTypeParameterName != null ? forName(genericTypeParameterUpperBound) : forName(methodMatcher.group(1));
-            final String name = methodMatcher.group(6);
-            final String argSignature = methodMatcher.group(7);
+            final Class<?> resultType = returnType != null ? forName(returnType) : forName(methodMatcher.group(1));
+            final String name = methodMatcher.group(7);
+            final String argSignature = methodMatcher.group(8);
 
             final List<ApiMethodArg> arguments = new ArrayList<>();
             final List<Class<?>> argTypes = new ArrayList<>();
