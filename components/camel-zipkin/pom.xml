@@ -66,6 +66,15 @@
       <artifactId>brave</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
+    <dependency>
+	  <groupId>io.zipkin.brave</groupId>
+	  <artifactId>brave-context-slf4j</artifactId>
+	  <version>${brave-zipkin-version}</version>
+    </dependency>
+    <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-api</artifactId>
+     </dependency>
 
     <!-- test dependencies -->
     <dependency>
