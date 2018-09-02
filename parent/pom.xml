@@ -185,7 +185,7 @@
     <docker-java-version>3.0.14</docker-java-version>
     <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
-    <dozer-version>6.4.0</dozer-version>
+    <dozer-version>6.4.1</dozer-version>
     <drools-version>7.3.0.Final</drools-version>
     <dropbox-version>3.0.8</dropbox-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
