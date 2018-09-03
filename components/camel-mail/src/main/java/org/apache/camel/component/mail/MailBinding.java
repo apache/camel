@@ -55,6 +55,7 @@ import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -259,7 +260,7 @@ public class MailBinding {
                 LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
                     String contentType = message.getContentType();
-                    String type = ObjectHelper.before(contentType, "charset=");
+                    String type = StringHelper.before(contentType, "charset=");
                     if (type != null) {
                         // try again with fixed content type
                         LOG.debug("Trying to extract mail message again with fixed Content-Type: {}", type);

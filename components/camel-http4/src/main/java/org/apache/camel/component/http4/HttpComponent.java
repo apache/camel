@@ -47,6 +47,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -257,7 +258,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
         // the endpoint uri should use the component name as scheme, so we need to re-create it once more
-        String scheme = ObjectHelper.before(uri, "://");
+        String scheme = StringHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
                 new URI(scheme,
                         endpointUri.getUserInfo(),

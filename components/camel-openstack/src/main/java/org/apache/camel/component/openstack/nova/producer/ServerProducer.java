@@ -26,6 +26,7 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -83,8 +84,8 @@ public class ServerProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
         final String name = msg.getHeader(OpenstackConstants.NAME, String.class);
-        ObjectHelper.notEmpty(serverId, "Server ID");
-        ObjectHelper.notEmpty(name, "VolumeSnapshot name");
+        StringHelper.notEmpty(serverId, "Server ID");
+        StringHelper.notEmpty(name, "VolumeSnapshot name");
 
         final String snapshotId = os.compute().servers().createSnapshot(serverId, name);
         msg.setBody(snapshotId);
@@ -93,7 +94,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(serverId, "Server ID");
+        StringHelper.notEmpty(serverId, "Server ID");
         final Server result = os.compute().servers().get(serverId);
         msg.setBody(result);
     }
@@ -108,7 +109,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
         final Action action = msg.getHeader(NovaConstants.ACTION, Action.class);
         final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notNull(action, "Server action");
-        ObjectHelper.notEmpty(serverId, "Server ID");
+        StringHelper.notEmpty(serverId, "Server ID");
         final ActionResponse response = os.compute().servers().action(serverId, action);
         checkFailure(response, msg, "Performing action " + action.name());
     }
@@ -116,7 +117,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(serverId, "Server ID");
+        StringHelper.notEmpty(serverId, "Server ID");
         final ActionResponse response = os.compute().servers().delete(serverId);
         checkFailure(response, msg, "Delete server with ID " + serverId);
     }
@@ -128,7 +129,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
             Map headers = message.getHeaders();
             ServerCreateBuilder builder = Builders.server();
 
-            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            StringHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
             builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(NovaConstants.IMAGE_ID)) {

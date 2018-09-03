@@ -29,7 +29,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Component for JavaMail.
@@ -114,8 +114,8 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
         }
 
         // sanity check that we know the mail server
-        ObjectHelper.notEmpty(config.getHost(), "host");
-        ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+        StringHelper.notEmpty(config.getHost(), "host");
+        StringHelper.notEmpty(config.getProtocol(), "protocol");
 
         // Use global ssl if present
         if (endpoint.getConfiguration().getSslContextParameters() == null) {

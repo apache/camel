@@ -27,7 +27,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,12 +65,12 @@ public class MetricsComponent extends UriEndpointComponent {
     }
 
     String getMetricsName(String remaining) {
-        String name = ObjectHelper.after(remaining, ":");
+        String name = StringHelper.after(remaining, ":");
         return name == null ? remaining : name;
     }
 
     MetricsType getMetricsType(String remaining) {
-        String name = ObjectHelper.before(remaining, ":");
+        String name = StringHelper.before(remaining, ":");
         MetricsType type;
         if (name == null) {
             type = DEFAULT_METRICS_TYPE;

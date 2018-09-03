@@ -34,7 +34,7 @@ import com.google.maps.model.GeolocationResult;
 import com.google.maps.model.LatLng;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +66,8 @@ public class GeoCoderProducer extends DefaultProducer {
             }
 
             if (latlng != null) {
-                String lat = ObjectHelper.before(latlng, ",");
-                String lng = ObjectHelper.after(latlng, ",");
+                String lat = StringHelper.before(latlng, ",");
+                String lng = StringHelper.after(latlng, ",");
                 LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
 
                 LOG.debug("Geocode for lat/lng {}", latlng);

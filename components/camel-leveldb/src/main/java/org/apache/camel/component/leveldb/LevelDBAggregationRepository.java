@@ -30,6 +30,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.WriteBatch;
@@ -66,7 +67,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param repositoryName the repository name
      */
     public LevelDBAggregationRepository(String repositoryName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         this.repositoryName = repositoryName;
     }
 
@@ -78,8 +79,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param persistentFileName the persistent store filename
      */
     public LevelDBAggregationRepository(String repositoryName, String persistentFileName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
-        ObjectHelper.notEmpty(persistentFileName, "persistentFileName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(persistentFileName, "persistentFileName");
         this.repositoryName = repositoryName;
         this.persistentFileName = persistentFileName;
     }
@@ -91,7 +92,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param levelDBFile    the leveldb file to use as persistent store
      */
     public LevelDBAggregationRepository(String repositoryName, LevelDBFile levelDBFile) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         ObjectHelper.notNull(levelDBFile, "levelDBFile");
         this.levelDBFile = levelDBFile;
         this.repositoryName = repositoryName;

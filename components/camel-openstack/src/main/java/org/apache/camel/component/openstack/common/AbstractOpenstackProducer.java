@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
@@ -68,7 +69,7 @@ public abstract class AbstractOpenstackProducer extends DefaultProducer {
 
     protected String getOperation(Exchange exchange) {
         final String operation = exchange.getIn().getHeader(OpenstackConstants.OPERATION, endpoint.getOperation(), String.class);
-        ObjectHelper.notEmpty(operation, "Operation");
+        StringHelper.notEmpty(operation, "Operation");
         return operation;
     }
 

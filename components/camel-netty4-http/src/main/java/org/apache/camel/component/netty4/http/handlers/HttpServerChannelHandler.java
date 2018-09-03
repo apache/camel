@@ -19,11 +19,9 @@ package org.apache.camel.component.netty4.http.handlers;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -46,15 +44,14 @@ import org.apache.camel.component.netty4.http.HttpPrincipal;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
-import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -130,7 +127,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // drop parameters from url
             if (url.contains("?")) {
-                url = ObjectHelper.before(url, "?");
+                url = StringHelper.before(url, "?");
             }
 
             // we need the relative path without the hostname and port
@@ -228,17 +225,17 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
         String auth = request.headers().get("Authorization");
         if (auth != null) {
-            String constraint = ObjectHelper.before(auth, " ");
+            String constraint = StringHelper.before(auth, " ");
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
-                    String decoded = ObjectHelper.after(auth, " ");
+                    String decoded = StringHelper.after(auth, " ");
                     // the decoded part is base64 encoded, so we need to decode that
                     ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
                     ByteBuf out = Base64.decode(buf);
                     try {
                         String userAndPw = out.toString(Charset.defaultCharset());
-                        String username = ObjectHelper.before(userAndPw, ":");
-                        String password = ObjectHelper.after(userAndPw, ":");
+                        String username = StringHelper.before(userAndPw, ":");
+                        String password = StringHelper.after(userAndPw, ":");
                         HttpPrincipal principal = new HttpPrincipal(username, password);
                         LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
                         return principal;

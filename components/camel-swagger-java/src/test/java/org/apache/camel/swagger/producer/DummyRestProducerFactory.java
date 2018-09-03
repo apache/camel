@@ -25,7 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public class DummyRestProducerFactory implements RestProducerFactory {
 
@@ -42,7 +42,7 @@ public class DummyRestProducerFactory implements RestProducerFactory {
             public void process(Exchange exchange) throws Exception {
                 String query = exchange.getIn().getHeader(Exchange.REST_HTTP_QUERY, String.class);
                 if (query != null) {
-                    String name = ObjectHelper.after(query, "name=");
+                    String name = StringHelper.after(query, "name=");
                     exchange.getIn().setBody("Bye " + name);
                 }
                 String uri = exchange.getIn().getHeader(Exchange.REST_HTTP_URI, String.class);

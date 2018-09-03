@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
@@ -67,7 +68,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
                 inputChannelName = getEndpoint().getInputChannel();
             }
 
-            ObjectHelper.notEmpty(inputChannelName, "inputChannelName", getEndpoint());
+            StringHelper.notEmpty(inputChannelName, "inputChannelName", getEndpoint());
             inputChannel = (SubscribableChannel) destinationResolver.resolveDestination(inputChannelName);
         } else {
             inputChannel = (SubscribableChannel) getEndpoint().getMessageChannel();
@@ -80,7 +81,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         // if we do in-out we need to setup the input channel as well
         if (getEndpoint().isInOut()) {
             // we need to setup right outputChannel for further processing
-            ObjectHelper.notEmpty(getEndpoint().getOutputChannel(), "OutputChannel", getEndpoint());
+            StringHelper.notEmpty(getEndpoint().getOutputChannel(), "OutputChannel", getEndpoint());
             outputChannel = destinationResolver.resolveDestination(getEndpoint().getOutputChannel());
 
             if (outputChannel == null) {
