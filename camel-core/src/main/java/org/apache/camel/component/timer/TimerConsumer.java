@@ -67,7 +67,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                 public void run() {
                     if (!isTaskRunAllowed()) {
                         // do not run timer task as it was not allowed
-                        LOG.debug("Run now allowed for timer: {}", endpoint);
+                        LOG.debug("Run not allowed for timer: {}", endpoint);
                         return;
                     }
 
