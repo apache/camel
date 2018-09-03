@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages {@link ChronicleEngineEndpoint}.
@@ -42,8 +42,8 @@ public class ChronicleEngineComponent extends UriEndpointComponent {
         setProperties(configuration, parameters);
 
         ChronicleEngineEndpoint answer = new ChronicleEngineEndpoint(uri, this, configuration);
-        answer.setAddresses(ObjectHelper.before(remaining, "/"));
-        answer.setPath(ObjectHelper.after(remaining, "/"));
+        answer.setAddresses(StringHelper.before(remaining, "/"));
+        answer.setPath(StringHelper.after(remaining, "/"));
         return answer;
     }
 }

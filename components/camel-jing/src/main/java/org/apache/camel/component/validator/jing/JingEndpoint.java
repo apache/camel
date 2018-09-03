@@ -18,6 +18,7 @@ package org.apache.camel.component.validator.jing;
 
 import java.io.InputStream;
 
+import org.apache.camel.util.StringHelper;
 import org.xml.sax.InputSource;
 
 import com.thaiopensource.relaxng.SchemaFactory;
@@ -33,7 +34,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
@@ -126,7 +126,7 @@ public class JingEndpoint extends DefaultEndpoint {
         super.doStart();
 
         if (inputSource == null) {
-            ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
+            StringHelper.notEmpty(resourceUri, "resourceUri", this);
             InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             inputSource = new InputSource(inputStream);
         }

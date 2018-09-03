@@ -36,6 +36,7 @@ import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 public class ApnsServiceFactory implements CamelContextAware {
@@ -197,8 +198,8 @@ public class ApnsServiceFactory implements CamelContextAware {
         }
 
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        ObjectHelper.notEmpty(getCertificatePath(), "certificatePath");
-        ObjectHelper.notEmpty(getCertificatePassword(), "certificatePassword");
+        StringHelper.notEmpty(getCertificatePath(), "certificatePath");
+        StringHelper.notEmpty(getCertificatePassword(), "certificatePassword");
 
         InputStream certificateInputStream = null;
         try {

@@ -32,6 +32,7 @@ import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.OptimisticUpdateException;
 import org.fusesource.hawtdb.api.SortedIndex;
@@ -72,7 +73,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
      * @param repositoryName the repository name
      */
     public HawtDBAggregationRepository(String repositoryName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         this.repositoryName = repositoryName;
     }
 
@@ -84,8 +85,8 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
      * @param persistentFileName the persistent store filename
      */
     public HawtDBAggregationRepository(String repositoryName, String persistentFileName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
-        ObjectHelper.notEmpty(persistentFileName, "persistentFileName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(persistentFileName, "persistentFileName");
         this.repositoryName = repositoryName;
         this.persistentFileName = persistentFileName;
     }
@@ -97,7 +98,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
      * @param hawtDBFile     the hawtdb file to use as persistent store
      */
     public HawtDBAggregationRepository(String repositoryName, HawtDBFile hawtDBFile) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         ObjectHelper.notNull(hawtDBFile, "hawtDBFile");
         this.hawtDBFile = hawtDBFile;
         this.repositoryName = repositoryName;

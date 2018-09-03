@@ -105,7 +105,7 @@ public final class HttpHelper {
                 String charset = contentType.substring(index + 8);
                 // there may be another parameter after a semi colon, so skip that
                 if (charset.contains(";")) {
-                    charset = ObjectHelper.before(charset, ";");
+                    charset = StringHelper.before(charset, ";");
                 }
                 return IOHelper.normalizeCharset(charset);
             }
@@ -419,7 +419,7 @@ public final class HttpHelper {
             relativeUrl = endpoint.getHttpUri().toASCIIString();
             // strip query parameters from relative url
             if (relativeUrl.contains("?")) {
-                relativeUrl = ObjectHelper.before(relativeUrl, "?");
+                relativeUrl = StringHelper.before(relativeUrl, "?");
             }
             if (url.startsWith(relativeUrl)) {
                 baseUrl = url.substring(0, relativeUrl.length());

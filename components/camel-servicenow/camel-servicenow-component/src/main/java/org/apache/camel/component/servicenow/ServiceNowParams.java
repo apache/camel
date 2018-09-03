@@ -20,6 +20,7 @@ import java.util.function.Function;
 
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public enum ServiceNowParams implements ServiceNowParam {
     PARAM_SYS_ID("sys_id", "CamelServiceNowSysId", String.class),
@@ -91,7 +92,7 @@ public enum ServiceNowParams implements ServiceNowParam {
         this.id = id;
         this.header = header.startsWith(ServiceNowConstants.CAMEL_HEADER_PREFIX)
             ? header
-            : ServiceNowConstants.CAMEL_HEADER_PREFIX + ObjectHelper.capitalize(header);
+            : ServiceNowConstants.CAMEL_HEADER_PREFIX + StringHelper.capitalize(header);
 
         this.type = type;
         this.defaultValueSupplier = defaultValueSupplier;

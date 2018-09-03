@@ -24,6 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -87,7 +88,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
     private void doUpload(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(imageId, "Image ID");
+        StringHelper.notEmpty(imageId, "Image ID");
         final Image in = messageHeadersToImage(msg, false);
         final Payload payload = createPayload(msg);
         final Image out = os.images().upload(imageId, payload, in);
@@ -104,7 +105,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(imageId, "ImageID");
+        StringHelper.notEmpty(imageId, "ImageID");
         final Image out = os.images().get(imageId);
         msg.setBody(out);
     }
@@ -117,7 +118,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(imageId, "ImageID");
+        StringHelper.notEmpty(imageId, "ImageID");
         final ActionResponse response = os.compute().images().delete(imageId);
         checkFailure(response, msg, "Delete image " + imageId);
     }

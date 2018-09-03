@@ -25,7 +25,7 @@ import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.apache.camel.component.openstack.swift.SwiftEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
@@ -71,8 +71,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final Payload payload = createPayload(msg);
         final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-        ObjectHelper.notEmpty(containerName, "Container name");
-        ObjectHelper.notEmpty(objectName, "Object name");
+        StringHelper.notEmpty(containerName, "Container name");
+        StringHelper.notEmpty(objectName, "Object name");
         final String etag = os.objectStorage().objects().put(containerName, objectName, payload);
         msg.setBody(etag);
     }
@@ -81,8 +81,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-        ObjectHelper.notEmpty(containerName, "Container name");
-        ObjectHelper.notEmpty(objectName, "Object name");
+        StringHelper.notEmpty(containerName, "Container name");
+        StringHelper.notEmpty(objectName, "Object name");
         final SwiftObject out = os.objectStorage().objects().get(containerName, objectName);
         msg.setBody(out);
     }
@@ -90,7 +90,7 @@ public class ObjectProducer extends AbstractOpenstackProducer {
     private void doGetAll(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class), String.class);
-        ObjectHelper.notEmpty(name, "Container name");
+        StringHelper.notEmpty(name, "Container name");
         final List<? extends SwiftObject> out = os.objectStorage().objects().list(name);
         exchange.getIn().setBody(out);
     }
@@ -99,8 +99,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-        ObjectHelper.notEmpty(containerName, "Container name");
-        ObjectHelper.notEmpty(objectName, "Object name");
+        StringHelper.notEmpty(containerName, "Container name");
+        StringHelper.notEmpty(objectName, "Object name");
         final ActionResponse out = os.objectStorage().objects().delete(containerName, objectName);
         msg.setBody(out.getFault());
         msg.setFault(!out.isSuccess());
@@ -110,8 +110,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-        ObjectHelper.notEmpty(containerName, "Container name");
-        ObjectHelper.notEmpty(objectName, "Object name");
+        StringHelper.notEmpty(containerName, "Container name");
+        StringHelper.notEmpty(objectName, "Object name");
 
         msg.setBody(os.objectStorage().objects().getMetadata(containerName, objectName));
     }
@@ -120,8 +120,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-        ObjectHelper.notEmpty(containerName, "Container name");
-        ObjectHelper.notEmpty(objectName, "Object name");
+        StringHelper.notEmpty(containerName, "Container name");
+        StringHelper.notEmpty(objectName, "Object name");
         final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName), msg.getBody(Map.class));
         msg.setFault(!success);
         if (!success) {

@@ -28,6 +28,7 @@ import org.apache.camel.component.quartz2.QuartzHelper;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
@@ -157,7 +158,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notEmpty(cron, "cron", this);
+        StringHelper.notEmpty(cron, "cron", this);
 
         if (quartzScheduler == null) {
             // get the scheduler form the quartz component

@@ -32,6 +32,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
@@ -365,12 +366,12 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
     private TriggerKey createTriggerKey(String uri, String remaining, QuartzEndpoint endpoint) throws Exception {
         // Parse uri for trigger name and group
         URI u = new URI(uri);
-        String path = ObjectHelper.after(u.getPath(), "/");
+        String path = StringHelper.after(u.getPath(), "/");
         String host = u.getHost();
 
         // host can be null if the uri did contain invalid host characters such as an underscore
         if (host == null) {
-            host = ObjectHelper.before(remaining, "/");
+            host = StringHelper.before(remaining, "/");
             if (host == null) {
                 host = remaining;
             }
