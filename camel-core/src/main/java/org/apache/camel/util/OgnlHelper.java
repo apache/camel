@@ -155,7 +155,7 @@ public final class OgnlHelper {
         }
 
         if (ognlExpression.contains("[")) {
-            return ObjectHelper.before(ognlExpression, "[");
+            return StringHelper.before(ognlExpression, "[");
         }
         return ognlExpression;
     }

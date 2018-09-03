@@ -33,7 +33,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,7 +244,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
         this.traceFilter = filter;
         if (filter != null) {
             // assume simple language
-            String name = ObjectHelper.before(filter, ":");
+            String name = StringHelper.before(filter, ":");
             if (name == null) {
                 // use simple language by default
                 name = "simple";

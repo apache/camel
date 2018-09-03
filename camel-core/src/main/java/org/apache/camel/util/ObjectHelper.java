@@ -1222,7 +1222,7 @@ public final class ObjectHelper {
      * @return the class, or null if it could not be loaded
      */
     private static Class<?> doLoadClass(String name, ClassLoader loader) {
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
         if (loader == null) {
             return null;
         }

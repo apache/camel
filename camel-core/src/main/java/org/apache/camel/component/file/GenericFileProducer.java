@@ -208,7 +208,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // any done file to write?
             if (endpoint.getDoneFileName() != null) {
                 String doneFileName = endpoint.createDoneFileName(target);
-                ObjectHelper.notEmpty(doneFileName, "doneFileName", endpoint);
+                StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
 
                 // create empty exchange with empty body to write as the done file
                 Exchange empty = new DefaultExchange(exchange);

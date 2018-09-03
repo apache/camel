@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The <a href="http://camel.apache.org/dataformat-component.html">Data Format Component</a> enables using <a href="https://camel.apache.org/data-format.html">Data Format</a> as a component.
@@ -37,7 +37,7 @@ public class DataFormatComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String name = ObjectHelper.before(remaining, ":");
+        String name = StringHelper.before(remaining, ":");
 
         // try to lookup data format in the registry or create it from resource
         DataFormat df = getCamelContext().resolveDataFormat(name);
@@ -49,7 +49,7 @@ public class DataFormatComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("Cannot find data format with name: " + name);
         }
 
-        String operation = ObjectHelper.after(remaining, ":");
+        String operation = StringHelper.after(remaining, ":");
         if (!"marshal".equals(operation) && !"unmarshal".equals(operation)) {
             throw new IllegalArgumentException("Operation must be either marshal or unmarshal, was: " + operation);
         }

@@ -27,7 +27,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Custom load balancer
@@ -73,7 +73,7 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
             return loadBalancer;
         }
 
-        ObjectHelper.notEmpty(ref, "ref", this);
+        StringHelper.notEmpty(ref, "ref", this);
         return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), ref, LoadBalancer.class);
     }
 

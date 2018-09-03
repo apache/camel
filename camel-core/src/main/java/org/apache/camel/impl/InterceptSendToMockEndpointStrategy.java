@@ -21,7 +21,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +89,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             String key = "mock:" + endpoint.getEndpointKey().replaceFirst("://", ":");
             // strip off parameters as well
             if (key.contains("?")) {
-                key = ObjectHelper.before(key, "?");
+                key = StringHelper.before(key, "?");
             }
             LOG.info("Adviced endpoint [{}] with mock endpoint [{}]", uri, key);
 

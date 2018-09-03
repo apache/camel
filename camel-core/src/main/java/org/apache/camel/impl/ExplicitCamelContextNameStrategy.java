@@ -17,7 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Strategy to used an explicit (fixed) name for {@link org.apache.camel.CamelContext}.
@@ -29,7 +29,7 @@ public class ExplicitCamelContextNameStrategy implements CamelContextNameStrateg
     private final String name;
 
     public ExplicitCamelContextNameStrategy(String name) {
-        ObjectHelper.notEmpty(name, "CamelContext name ");
+        StringHelper.notEmpty(name, "CamelContext name ");
         this.name = name;
     }
 

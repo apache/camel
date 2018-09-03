@@ -42,6 +42,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -222,7 +223,7 @@ public class MBeanInfoAssembler implements Service {
                 }
 
                 // they key must be capitalized
-                key = ObjectHelper.capitalize(key);
+                key = StringHelper.capitalize(key);
 
                 // lookup first
                 ManagedAttributeInfo info = attributes.get(key);

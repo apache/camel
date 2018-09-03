@@ -45,6 +45,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -267,11 +268,11 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // type of the return type
         // due type erasure, so we have to gather it based on a String
         // representation
-        String name = ObjectHelper.between(type.toString(), "<", ">");
+        String name = StringHelper.between(type.toString(), "<", ">");
         if (name != null) {
             if (name.contains("<")) {
                 // we only need the outer type
-                name = ObjectHelper.before(name, "<");
+                name = StringHelper.before(name, "<");
             }
             return context.getClassResolver().resolveMandatoryClass(name);
         } else {

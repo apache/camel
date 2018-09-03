@@ -50,6 +50,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -535,7 +536,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void createJmxConnector(String host) throws IOException {
-        ObjectHelper.notEmpty(serviceUrlPath, "serviceUrlPath");
+        StringHelper.notEmpty(serviceUrlPath, "serviceUrlPath");
         ObjectHelper.notNull(registryPort, "registryPort");
 
         try {

@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,9 +227,9 @@ public class GenericFile<T> implements WrappedFile<T>  {
                 // use File.separatorChar as the normalizePath uses this as path separator so we should use the same
                 // in this logic here
                 if (newEndpointPath.endsWith("" + File.separatorChar)) {
-                    newFileName = ObjectHelper.after(newFileName, newEndpointPath);
+                    newFileName = StringHelper.after(newFileName, newEndpointPath);
                 } else {
-                    newFileName = ObjectHelper.after(newFileName, newEndpointPath + File.separatorChar);
+                    newFileName = StringHelper.after(newFileName, newEndpointPath + File.separatorChar);
                 }
 
                 // reconstruct file with clipped name

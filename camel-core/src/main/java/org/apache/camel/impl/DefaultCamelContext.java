@@ -662,7 +662,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Endpoint getEndpoint(String uri) {
-        ObjectHelper.notEmpty(uri, "uri");
+        StringHelper.notEmpty(uri, "uri");
 
         log.trace("Getting endpoint with uri: {}", uri);
 
@@ -688,7 +688,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (answer == null) {
             try {
                 // Use the URI prefix to find the component.
-                String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+                String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
                 if (splitURI[1] != null) {
                     scheme = splitURI[0];
                     log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
@@ -799,7 +799,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * @return the added endpoint
      */
     protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
-        ObjectHelper.notEmpty(uri, "uri");
+        StringHelper.notEmpty(uri, "uri");
         ObjectHelper.notNull(endpoint, "endpoint");
 
         // if there is endpoint strategies, then use the endpoints they return
@@ -1836,7 +1836,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                json = ObjectHelper.before(json, "  \"properties\": {");
+                json = StringHelper.before(json, "  \"properties\": {");
 
                 StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
@@ -1916,7 +1916,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             if (json == null) {
                 // the model may be shared for multiple data formats such as bindy, json (xstream, jackson, gson)
                 if (dataFormatName.contains("-")) {
-                    dataFormatName = ObjectHelper.before(dataFormatName, "-");
+                    dataFormatName = StringHelper.before(dataFormatName, "-");
                     json = getDataFormatParameterJsonSchema(dataFormatName);
                 }
                 if (json == null) {
@@ -2001,7 +2001,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            json = ObjectHelper.before(json, "  \"properties\": {");
+            json = StringHelper.before(json, "  \"properties\": {");
 
             StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
@@ -2159,7 +2159,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            json = ObjectHelper.before(json, "  \"componentProperties\": {");
+            json = StringHelper.before(json, "  \"componentProperties\": {");
             StringBuilder buffer = new StringBuilder("  \"componentProperties\": {");
 
             boolean first = true;
@@ -2324,7 +2324,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
 
             // skip component properties
-            json = ObjectHelper.before(json, "  \"componentProperties\": {");
+            json = StringHelper.before(json, "  \"componentProperties\": {");
             // and rewrite properties
             StringBuilder buffer = new StringBuilder("  \"properties\": {");
 

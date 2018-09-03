@@ -387,14 +387,14 @@ public final class IntrospectionSupport {
 
     public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
         if (isPropertyIsGetter(type, propertyName)) {
-            return type.getMethod("is" + ObjectHelper.capitalize(propertyName));
+            return type.getMethod("is" + StringHelper.capitalize(propertyName));
         } else {
-            return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
+            return type.getMethod("get" + StringHelper.capitalize(propertyName));
         }
     }
 
     public static Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
-        String name = "set" + ObjectHelper.capitalize(propertyName);
+        String name = "set" + StringHelper.capitalize(propertyName);
         for (Method method : type.getMethods()) {
             if (isSetter(method) && method.getName().equals(name)) {
                 return method;
@@ -405,7 +405,7 @@ public final class IntrospectionSupport {
 
     public static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
         try {
-            Method method = type.getMethod("is" + ObjectHelper.capitalize(propertyName));
+            Method method = type.getMethod("is" + StringHelper.capitalize(propertyName));
             if (method != null) {
                 return method.getReturnType().isAssignableFrom(boolean.class) || method.getReturnType().isAssignableFrom(Boolean.class);
             }
@@ -437,7 +437,7 @@ public final class IntrospectionSupport {
     }
 
     public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
-        ObjectHelper.notEmpty(optionPrefix, "optionPrefix");
+        StringHelper.notEmpty(optionPrefix, "optionPrefix");
         return setProperties(target, properties, optionPrefix, false);
     }
 
@@ -688,7 +688,7 @@ public final class IntrospectionSupport {
         Set<Method> candidates = new LinkedHashSet<>();
 
         // Build the method name.
-        name = "set" + ObjectHelper.capitalize(name);
+        name = "set" + StringHelper.capitalize(name);
         while (clazz != Object.class) {
             // Since Object.class.isInstance all the objects,
             // here we just make sure it will be add to the bottom of the set.

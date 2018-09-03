@@ -33,6 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * File consumer.
@@ -220,7 +221,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         String endpointNormalized = FileUtil.normalizePath(endpointPath);
         if (file.getPath().startsWith(endpointNormalized + File.separator)) {
             // skip duplicate endpoint path
-            path = new File(ObjectHelper.after(file.getPath(), endpointNormalized + File.separator));
+            path = new File(StringHelper.after(file.getPath(), endpointNormalized + File.separator));
         } else {
             path = new File(file.getPath());
         }

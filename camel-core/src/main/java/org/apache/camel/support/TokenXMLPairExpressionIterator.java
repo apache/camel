@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
+import org.apache.camel.util.StringHelper;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} XML body
@@ -152,7 +153,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             }
 
             // make sure the end tag matches the begin tag if the tag has a namespace prefix
-            String tag = ObjectHelper.before(next, ">");
+            String tag = StringHelper.before(next, ">");
             StringBuilder endTagSb = new StringBuilder("</");
             int firstSpaceIndex = tag.indexOf(" ");
             if (firstSpaceIndex > 0) {
@@ -166,7 +167,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             if (inheritNamespaceToken != null && rootTokenNamespaces != null) {
                 // append root namespaces to local start token
                 // grab the text
-                String text = ObjectHelper.after(next, ">");
+                String text = StringHelper.after(next, ">");
                 // build result with inherited namespaces
                 next = sb.append(tag).append(rootTokenNamespaces).append(">").append(text).append(endTagSb.toString()).toString();
             } else {
