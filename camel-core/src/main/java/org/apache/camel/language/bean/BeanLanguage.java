@@ -22,6 +22,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A <a href="http://camel.apache.org/bean-language.html">bean language</a>
@@ -88,8 +89,8 @@ public class BeanLanguage implements Language, IsSingleton {
         // we support both the .method name and the ?method= syntax
         // as the ?method= syntax is very common for the bean component
         if (expression.contains("?method=")) {
-            beanName = ObjectHelper.before(expression, "?");
-            method = ObjectHelper.after(expression, "?method=");
+            beanName = StringHelper.before(expression, "?");
+            method = StringHelper.after(expression, "?method=");
         } else {
             //first check case :: because of my.own.Bean::method
             int doubleColonIndex = expression.indexOf("::");

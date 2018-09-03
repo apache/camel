@@ -35,7 +35,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -101,14 +101,14 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
             throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
         }
 
-        String method = ObjectHelper.before(remaining, ":");
-        String s = ObjectHelper.after(remaining, ":");
+        String method = StringHelper.before(remaining, ":");
+        String s = StringHelper.after(remaining, ":");
 
         String path;
         String uriTemplate;
         if (s != null && s.contains(":")) {
-            path = ObjectHelper.before(s, ":");
-            uriTemplate = ObjectHelper.after(s, ":");
+            path = StringHelper.before(s, ":");
+            uriTemplate = StringHelper.after(s, ":");
         } else {
             path = s;
             uriTemplate = null;

@@ -42,6 +42,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,7 +247,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception is thrown if property with key not found or error converting to the given type.
      */
     public <T> T propertyInject(String key, Class<T> type) throws Exception {
-        ObjectHelper.notEmpty(key, "key");
+        StringHelper.notEmpty(key, "key");
         ObjectHelper.notNull(type, "Class type");
 
         // the properties component is mandatory

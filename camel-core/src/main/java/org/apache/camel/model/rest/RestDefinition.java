@@ -42,6 +42,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -973,7 +974,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                         for (RestOperationParamDefinition param : verb.getParams()) {
                             // name is mandatory
                             String name = param.getName();
-                            ObjectHelper.notEmpty(name, "parameter name");
+                            StringHelper.notEmpty(name, "parameter name");
                             // need to resolve property placeholders first
                             try {
                                 name = camelContext.resolvePropertyPlaceholders(name);

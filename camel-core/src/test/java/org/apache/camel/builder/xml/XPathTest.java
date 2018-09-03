@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -42,7 +43,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
@@ -438,7 +438,7 @@ public class XPathTest extends ContextTestSupport {
         assertNotNull(result);
 
         String s = context.getTypeConverter().convertTo(String.class, result);
-        assertEquals(ObjectHelper.between(xml, "<foo>", "</foo>"), s);
+        assertEquals(StringHelper.between(xml, "<foo>", "</foo>"), s);
     }
 
     @Test

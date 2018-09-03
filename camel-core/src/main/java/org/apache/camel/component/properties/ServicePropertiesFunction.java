@@ -18,7 +18,7 @@ package org.apache.camel.component.properties;
 
 import java.util.Locale;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A {@link org.apache.camel.component.properties.PropertiesFunction} that lookup the property value from
@@ -47,8 +47,8 @@ public class ServicePropertiesFunction implements PropertiesFunction {
         String defaultValue = null;
 
         if (remainder.contains(":")) {
-            key = ObjectHelper.before(remainder, ":");
-            defaultValue = ObjectHelper.after(remainder, ":");
+            key = StringHelper.before(remainder, ":");
+            defaultValue = StringHelper.after(remainder, ":");
         }
 
         // make sure to use upper case

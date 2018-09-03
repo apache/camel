@@ -34,6 +34,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -779,7 +780,7 @@ public final class ProcessorDefinitionHelper {
 
                     // is the value a known field (currently we only support constants from Exchange.class)
                     if (text.startsWith("Exchange.")) {
-                        String field = ObjectHelper.after(text, "Exchange.");
+                        String field = StringHelper.after(text, "Exchange.");
                         String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
                         if (constant != null) {
                             // invoke setter as the text has changed

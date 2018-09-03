@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public class PropertiesLocation {
     private final String resolver;
@@ -39,7 +39,7 @@ public class PropertiesLocation {
 
         idx = location.lastIndexOf(';');
         if (idx != -1) {
-            this.optional = ObjectHelper.after(location.substring(idx + 1), "optional=", Boolean::valueOf).orElse(false);
+            this.optional = StringHelper.after(location.substring(idx + 1), "optional=", Boolean::valueOf).orElse(false);
             location = location.substring(0, idx);
         } else {
             this.optional = false;

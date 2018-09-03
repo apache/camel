@@ -27,6 +27,7 @@ import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
+import org.apache.camel.util.StringHelper;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body
@@ -44,8 +45,8 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     protected final boolean includeTokens;
 
     public TokenPairExpressionIterator(String startToken, String endToken, boolean includeTokens) {
-        ObjectHelper.notEmpty(startToken, "startToken");
-        ObjectHelper.notEmpty(endToken, "endToken");
+        StringHelper.notEmpty(startToken, "startToken");
+        StringHelper.notEmpty(endToken, "endToken");
         this.startToken = startToken;
         this.endToken = endToken;
         this.includeTokens = includeTokens;
@@ -198,7 +199,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
             // only grab text after the start token
             if (next != null && next.contains(startToken)) {
-                next = ObjectHelper.after(next, startToken);
+                next = StringHelper.after(next, startToken);
 
                 // include tokens in answer
                 if (next != null && includeTokens) {

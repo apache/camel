@@ -39,6 +39,7 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1323,7 +1324,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
             if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
-                String uri = ObjectHelper.after(key, ":");
+                String uri = StringHelper.after(key, ":");
                 if (uri != null) {
                     factory = XPathFactory.newInstance(uri);
                     LOG.info("Using system property {} with value {} when created default XPathFactory {}", new Object[]{key, uri, factory});

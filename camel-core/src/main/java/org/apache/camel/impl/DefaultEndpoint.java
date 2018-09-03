@@ -36,6 +36,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,11 +214,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public String getEndpointKey() {
         if (isLenientProperties()) {
-            // only use the endpoint uri without parameters as the properties is
-            // lenient
+            // only use the endpoint uri without parameters as the properties are lenient
             String uri = getEndpointUri();
             if (uri.indexOf('?') != -1) {
-                return ObjectHelper.before(uri, "?");
+                return StringHelper.before(uri, "?");
             } else {
                 return uri;
             }

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -251,8 +252,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
-            long delay = Long.valueOf(ObjectHelper.after(group, ":"));
-            int count = Integer.valueOf(ObjectHelper.before(group, ":"));
+            long delay = Long.valueOf(StringHelper.after(group, ":"));
+            int count = Integer.valueOf(StringHelper.before(group, ":"));
             if (count > redeliveryCounter) {
                 break;
             } else {

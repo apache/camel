@@ -233,7 +233,7 @@ public final class ResourceHelper {
      */
     public static InputStream resolveResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
-            uri = ObjectHelper.after(uri, "file:");
+            uri = StringHelper.after(uri, "file:");
             uri = tryDecodeUri(uri);
             LOG.trace("Loading resource: {} from file system", uri);
             return new FileInputStream(uri);
@@ -253,7 +253,7 @@ public final class ResourceHelper {
                 throw e;
             }
         } else if (uri.startsWith("classpath:")) {
-            uri = ObjectHelper.after(uri, "classpath:");
+            uri = StringHelper.after(uri, "classpath:");
             uri = tryDecodeUri(uri);
         } else if (uri.contains(":")) {
             LOG.trace("Loading resource: {} with UrlHandler for protocol {}", uri, uri.split(":")[0]);
@@ -298,7 +298,7 @@ public final class ResourceHelper {
     public static URL resolveResourceAsUrl(ClassResolver classResolver, String uri) throws MalformedURLException {
         if (uri.startsWith("file:")) {
             // check if file exists first
-            String name = ObjectHelper.after(uri, "file:");
+            String name = StringHelper.after(uri, "file:");
             uri = tryDecodeUri(uri);
             LOG.trace("Loading resource: {} from file system", uri);
             File file = new File(name);
@@ -310,7 +310,7 @@ public final class ResourceHelper {
             LOG.trace("Loading resource: {} from HTTP", uri);
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
-            uri = ObjectHelper.after(uri, "classpath:");
+            uri = StringHelper.after(uri, "classpath:");
             uri = tryDecodeUri(uri);
         } else if (uri.contains(":")) {
             LOG.trace("Loading resource: {} with UrlHandler for protocol {}", uri, uri.split(":")[0]);

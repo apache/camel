@@ -1604,17 +1604,17 @@ public final class ExpressionBuilder {
      * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
-        ObjectHelper.notEmpty(tagName, "tagName");
+        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode, group);
     }
 
@@ -2505,7 +2505,7 @@ public final class ExpressionBuilder {
                 return null;
             }
             // the remainder is the rest of the ognl without the key
-            String remainder = ObjectHelper.after(ognl, key + keySuffix);
+            String remainder = StringHelper.after(ognl, key + keySuffix);
             return new MethodCallExpression(property, remainder).evaluate(exchange);
         }
 
