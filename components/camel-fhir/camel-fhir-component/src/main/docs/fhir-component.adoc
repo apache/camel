@@ -37,6 +37,7 @@ Endpoint prefix can be one of:
 * history
 * load-page
 * meta
+* operation
 * patch
 * read
 * search

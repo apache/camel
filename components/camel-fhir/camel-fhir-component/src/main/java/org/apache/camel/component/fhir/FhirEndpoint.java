@@ -29,6 +29,7 @@ import org.apache.camel.component.fhir.api.FhirDelete;
 import org.apache.camel.component.fhir.api.FhirHistory;
 import org.apache.camel.component.fhir.api.FhirLoadPage;
 import org.apache.camel.component.fhir.api.FhirMeta;
+import org.apache.camel.component.fhir.api.FhirOperation;
 import org.apache.camel.component.fhir.api.FhirPatch;
 import org.apache.camel.component.fhir.api.FhirRead;
 import org.apache.camel.component.fhir.api.FhirSearch;
@@ -110,6 +111,9 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
             break;
         case META:
             apiProxy = new FhirMeta(client);
+            break;
+        case OPERATION:
+            apiProxy = new FhirOperation(client);
             break;
         case PATCH:
             apiProxy = new FhirPatch(client);
