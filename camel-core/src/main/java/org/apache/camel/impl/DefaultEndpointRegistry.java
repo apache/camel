@@ -70,6 +70,10 @@ public class DefaultEndpointRegistry extends AbstractMap<EndpointKey, Endpoint> 
         Endpoint answer = staticMap.get(o);
         if (answer == null) {
             answer = dynamicMap.get(o);
+            if (answer != null && (context.isSetupRoutes() || context.isStartingRoutes())) {
+                dynamicMap.remove(o);
+                staticMap.put((EndpointKey) o, answer);
+            }
         }
         return answer;
     }
