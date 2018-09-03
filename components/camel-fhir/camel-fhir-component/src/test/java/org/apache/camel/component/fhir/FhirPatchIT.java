@@ -133,7 +133,6 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
         IIdType id = result.getId();
 
         Patient patient = fhirClient.read().resource(Patient.class).withId(id).preferResponseType(Patient.class).execute();
-        System.out.print(fhirContext.newJsonParser().encodeResourceToString(patient));
         assertTrue(patient.getActive());
     }
 }

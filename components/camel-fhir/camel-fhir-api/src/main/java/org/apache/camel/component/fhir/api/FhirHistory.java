@@ -89,7 +89,7 @@ public class FhirHistory {
      * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param <T> extends {@link IBaseBundle}
      * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
-     * @throws IllegalArgumentException If <code>theId</code> does not contain at least a resource type and ID
+     * @throws IllegalArgumentException If <code>id</code> does not contain at least a resource type and ID
      * @return the {@link IBaseBundle}
      */
     public <T extends IBaseBundle> T onInstance(IIdType id, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {

@@ -208,6 +208,18 @@
                   </nullableOptions>
                 </api>
                 <api>
+                  <apiName>operation</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
+                  <fromSignatureFile>signatures/operation-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                    <nullableOption>parameters</nullableOption>
+                    <nullableOption>outputParameterType</nullableOption>
+                    <nullableOption>returnType</nullableOption>
+                    <nullableOption>respondToUri</nullableOption>
+                  </nullableOptions>
+                </api>
+                <api>
                   <apiName>patch</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
                   <fromJavadoc/>
