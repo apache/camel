@@ -1,0 +1,40 @@
+[[Camel2.19.1Release-Camel2.19.1Release]]
+== Camel 2.19.1 Release
+ 
+### New and Noteworthy
+
+Welcome to the 2.19.1 release which is mainly a maintenance release and
+resolved over 57 issues.
+
+
+### Known Issues
+
+* See <<Camel2.19.0Release,Camel 2.19.0 Release>>
+
+### Important changes to consider when upgrading
+
+* See <<Camel2.19.0Release,Camel 2.19.0 Release>>
+
+### Getting the Binaries using Maven 2
+
+To use this release in your maven project, the proper dependency
+configuration that you should use in your
+http://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven
+POM] is:
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-core</artifactId>
+  <version>2.19.1</version>
+</dependency>
+-------------------------------------
+
+### Changelog
+
+For a more detailed view of new features and bug fixes, see the:
+
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12340460&projectId=12311211[Release
+notes for 2.19.1]
+
