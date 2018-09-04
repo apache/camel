@@ -224,7 +224,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             iis.prepareProcessor(targetOutputDef, target, instrumentationProcessor);
         }
 
-        // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
+        // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to trace the backlog)
         InterceptStrategy tracer = getOrCreateBacklogTracer();
         camelContext.addService(tracer);
         if (tracer instanceof BacklogTracer) {
