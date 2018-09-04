@@ -30,7 +30,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 @Configuration
-@ConditionalOnProperty(value = "camel.springboot.typeConversion", matchIfMissing = true)
+@ConditionalOnProperty(value = "camel.springboot.type-conversion", matchIfMissing = true)
 public class TypeConversionConfiguration {
 
     // We explicitly declare the destroyMethod to be "" as the Spring @Bean
