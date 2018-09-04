@@ -279,6 +279,7 @@ The maven plugin *validate* goal supports the following options which can be con
 | ignoreLenientProperties | true | Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter but would fail on properties that are not part of the component but in the uri because of using lenient properties. For example using the HTTP components to provide query parameters in the endpoint uri.
 | ignoreDeprecated | true | *Camel 2.23* Whether to ignore deprecated options being used in the endpoint uri.
 | duplicateRouteId | true | *Camel 2.20* Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates then Camel will fail to startup.
+| directOrSedaPairCheck | true | *Camel 2.23* Whether to validate direct/seda endpoints sending to non existing consumers.
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
 |===
 
