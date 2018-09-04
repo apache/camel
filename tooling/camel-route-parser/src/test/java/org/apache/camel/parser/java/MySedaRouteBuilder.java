@@ -25,7 +25,7 @@ public class MySedaRouteBuilder extends RouteBuilder  {
         from("timer:hello?period={{timer.period}}").routeId("hello").routeGroup("hello-group")
             .transform().method("myBean", "saySomething")
             .filter(simple("${body} contains 'foo'"))
-                .to("seda:foo")
+                .to("seda:bar")
             .end()
             .to("stream:out");
 
