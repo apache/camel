@@ -33,14 +33,13 @@ The operations is paired: start/stop and suspend/resume.
 
 Stop is performing a Graceful shutdown
 which means all its internal state, cache, etc is cleared. And the
-routes is being stopped in a graceful manner to ensure messages is given
+routes is being stopped in a graceful manner to ensure messages are given
 time to complete. If you start a `CamelContext` after a stop, then its
 performing a _cold_ start, recreating all the state, cache etc. again.
 
 Instead you can use the suspend/resume operations. They will keep the
 `CamelContext` _warm_ and only suspend/stop routes using the same
-Graceful shutdown feature. This ensures
-messages is given time to complete.
+Graceful shutdown feature. This ensures messages are given time to complete.
 
 End users is encouraged to use suspend/resume if you are temporary
 stopping a Camel application.
