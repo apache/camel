@@ -100,7 +100,7 @@
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
     <braintree-gateway-version>2.83.1</braintree-gateway-version>
     <brave-zipkin-version>5.2.0</brave-zipkin-version>
-    <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
+    <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <c3p0-bundle-version>0.9.5.2_2</c3p0-bundle-version>
     <caffeine-version>2.6.2</caffeine-version>
