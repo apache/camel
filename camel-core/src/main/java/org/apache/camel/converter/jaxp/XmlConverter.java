@@ -54,7 +54,6 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,8 +69,10 @@ import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -870,7 +871,14 @@ public class XmlConverter {
     @Converter
     public Document toDOMDocument(InputStream in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
-        return documentBuilder.parse(in);
+        if (in instanceof IOConverter.EncodingInputStream) {
+            // DocumentBuilder detects encoding from XML declaration, so we need to
+            // revert the converted encoding for the input stream
+            IOConverter.EncodingInputStream encIn = (IOConverter.EncodingInputStream) in;
+            return documentBuilder.parse(encIn.toOriginalInputStream());
+        } else {
+            return documentBuilder.parse(in);
+        }
     }
 
     /**
