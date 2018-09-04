@@ -38,6 +38,7 @@ import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
@@ -512,7 +513,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
         // find all pairs, eg producers that has a consumer (no need to check for opposite)
         for (CamelEndpointDetails p : producers) {
-            boolean any = consumers.stream().findAny().filter(c -> matchEndpointPath(p.getEndpointUri(), c.getEndpointUri())).isPresent();
+            boolean any = consumers.stream().anyMatch(c -> matchEndpointPath(p.getEndpointUri(), c.getEndpointUri()));
             if (any) {
                 pairs++;
             }
@@ -529,8 +530,8 @@ public class ValidateMojo extends AbstractExecMojo {
 
         // are there any producers that do not have a consumer pair
         for (CamelEndpointDetails detail : producers) {
-            boolean any = consumers.stream().findAny().filter(c -> matchEndpointPath(detail.getEndpointUri(), c.getEndpointUri())).isPresent();
-            if (!any) {
+            boolean none = consumers.stream().noneMatch(c -> matchEndpointPath(detail.getEndpointUri(), c.getEndpointUri()));
+            if (none) {
                 errors++;
 
                 StringBuilder sb = new StringBuilder();
@@ -604,12 +605,14 @@ public class ValidateMojo extends AbstractExecMojo {
         String uri = detail.getEndpointUri();
         String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
         String path = StringHelper.after(p, ":");
-        return path + "\t" + "Non existing " + detail.getEndpointComponentName() + " queue name";
+        return path + "\t" + "Sending to non existing " + detail.getEndpointComponentName() + " queue name";
     }
 
     private static boolean matchEndpointPath(String uri, String uri2) {
         String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
         String p2 = uri2.contains("?") ? StringHelper.before(uri2, "?") : uri2;
+        p = p.trim();
+        p2 = p2.trim();
         return p.equals(p2);
     }
 

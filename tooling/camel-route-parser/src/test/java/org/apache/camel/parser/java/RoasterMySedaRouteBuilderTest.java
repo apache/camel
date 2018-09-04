@@ -46,6 +46,10 @@ public class RoasterMySedaRouteBuilderTest {
         Assert.assertEquals("seda:foo", details.get(1).getEndpointUri());
         Assert.assertTrue(details.get(1).isConsumerOnly());
         Assert.assertFalse(details.get(1).isProducerOnly());
+        Assert.assertEquals("35", details.get(2).getLineNumber());
+        Assert.assertEquals("seda:bar", details.get(2).getEndpointUri());
+        Assert.assertTrue(details.get(2).isConsumerOnly());
+        Assert.assertFalse(details.get(2).isProducerOnly());
     }
 
 }
