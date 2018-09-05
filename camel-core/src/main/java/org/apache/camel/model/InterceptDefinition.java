@@ -24,15 +24,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.AsPredicate;
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Intercepts a message at each step in the route
@@ -41,8 +36,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
-    @XmlTransient
-    protected Processor output;
     @XmlTransient
     protected final List<Processor> intercepted = new ArrayList<>();
 
@@ -72,43 +65,6 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @Override
     public boolean isTopLevelOnly() {
         return true;
-    }
-
-    @Override
-    public Processor createProcessor(final RouteContext routeContext) throws Exception {
-        // create the output processor
-        output = this.createChildProcessor(routeContext, true);
-
-        // add the output as a intercept strategy to the route context so its invoked on each processing step
-        routeContext.getInterceptStrategies().add(new InterceptStrategy() {
-            private Processor interceptedTarget;
-
-            public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition,
-                                                         Processor target, Processor nextTarget) throws Exception {
-                // store the target we are intercepting
-                this.interceptedTarget = target;
-
-                // remember the target that was intercepted
-                intercepted.add(interceptedTarget);
-
-                if (interceptedTarget != null) {
-                    // wrap in a pipeline so we continue routing to the next
-                    return Pipeline.newInstance(context, output, interceptedTarget);
-                } else {
-                    return output;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "intercept[" + (interceptedTarget != null ? interceptedTarget : output) + "]";
-            }
-        });
-
-        // remove me from the route so I am not invoked in a regular route path
-        ((RouteDefinition) routeContext.getRoute()).getOutputs().remove(this);
-        // and return no processor to invoke next from me
-        return null;
     }
 
     /**
@@ -149,6 +105,10 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
             clearOutput();
             outputs.add(keep);
         }
+    }
+
+    public List<Processor> getIntercepted() {
+        return intercepted;
     }
 
     public Processor getInterceptedProcessor(int index) {

@@ -24,6 +24,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.junit.ClassRule;
@@ -47,8 +48,8 @@ public class AdviceTest {
 
         verifier.messages = messages;
 
-        context.getRouteDefinition("route")
-            .adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier
+            .adviceWith(context.getRouteDefinition("route"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() {
                     weaveAddLast().to("mock:messages");

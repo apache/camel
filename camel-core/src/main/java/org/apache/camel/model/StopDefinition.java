@@ -20,10 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Stops the processing of the current message
@@ -34,11 +31,6 @@ import org.apache.camel.spi.RouteContext;
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {
 
     public StopDefinition() {
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return new StopProcessor();
     }
 
     @Override

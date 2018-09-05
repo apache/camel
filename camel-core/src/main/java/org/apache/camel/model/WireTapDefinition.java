@@ -31,13 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.SendDynamicProcessor;
-import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 /**
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
@@ -70,66 +64,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     public WireTapDefinition() {
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // executor service is mandatory for wire tap
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
-
-        // must use InOnly for WireTap
-        setPattern(ExchangePattern.InOnly);
-
-        // create the send dynamic producer to send to the wire tapped endpoint
-        SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor(routeContext);
-
-        // create error handler we need to use for processing the wire tapped
-        Processor target = wrapInErrorHandler(routeContext, dynamicTo);
-
-        // and wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
-
-        // is true bt default
-        boolean isCopy = getCopy() == null || getCopy();
-
-        WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal, getPattern(), threadPool, shutdownThreadPool, isDynamic());
-        answer.setCopy(isCopy);
-        if (newExchangeProcessorRef != null) {
-            newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);
-        }
-        if (newExchangeProcessor != null) {
-            answer.addNewExchangeProcessor(newExchangeProcessor);
-        }
-        if (newExchangeExpression != null) {
-            answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
-        }
-        if (headers != null && !headers.isEmpty()) {
-            for (SetHeaderDefinition header : headers) {
-                Processor processor = createProcessor(routeContext, header);
-                answer.addNewExchangeProcessor(processor);
-            }
-        }
-        if (onPrepareRef != null) {
-            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
-        }
-        if (onPrepare != null) {
-            answer.setOnPrepare(onPrepare);
-        }
-
-        return answer;
-    }
-
-    @Override
-    protected Expression createExpression(RouteContext routeContext) {
-        // whether to use dynamic or static uri
-        if (isDynamic()) {
-            return super.createExpression(routeContext);
-        } else {
-            return ExpressionBuilder.constantExpression(getUri());
-        }
-    }
-
-    private boolean isDynamic() {
+    public boolean isDynamic() {
         // its dynamic by default
         return dynamicUri == null || dynamicUri;
     }

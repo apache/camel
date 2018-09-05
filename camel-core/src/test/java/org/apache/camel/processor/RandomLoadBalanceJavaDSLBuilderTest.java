@@ -93,7 +93,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
             sb.append(".loadBalance()");
 
             LoadBalanceDefinition lbd = (LoadBalanceDefinition) defn;
-            LoadBalancer balancer = lbd.getLoadBalancerType().getLoadBalancer(null);
+            LoadBalancer balancer = lbd.getLoadBalancerType().getLoadBalancer();
             if (balancer instanceof RandomLoadBalancer) {
                 sb.append(".random()");
             }

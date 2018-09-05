@@ -21,11 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Sets the contents of the message body
@@ -55,12 +52,6 @@ public class SetBodyDefinition extends NoOutputExpressionNode {
     @Override
     public String getLabel() {
         return "setBody[" + getExpression() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expr = getExpression().createExpression(routeContext);
-        return new SetBodyProcessor(expr);
     }
 
     /**

@@ -19,6 +19,7 @@ package org.apache.camel.test.issues;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -41,7 +42,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
-        context.getRouteDefinition("RouteA").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -52,7 +53,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
             }
         });
 
-        context.getRouteDefinition("RouteB").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
             }
@@ -67,7 +68,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
-        context.getRouteDefinition("RouteA").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -88,7 +89,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testMultipleAdvice() throws Exception {
-        context.getRouteDefinition("RouteA").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -100,7 +101,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
             }
         });
 
-        context.getRouteDefinition("RouteB").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
             }

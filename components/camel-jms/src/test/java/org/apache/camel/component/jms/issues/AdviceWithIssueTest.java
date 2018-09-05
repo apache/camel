@@ -21,6 +21,7 @@ import java.util.Collections;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -36,7 +37,7 @@ public class AdviceWithIssueTest extends CamelTestSupport {
 
     @Test
     public void testAdviceWith() throws Exception {
-        context.getRouteDefinition("starter").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("starter"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // when advicing then use wildcard as URI options cannot be matched

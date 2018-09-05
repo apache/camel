@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -67,12 +65,11 @@ import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Transformer;
 
 /**
- * Represents a {@link DataFormatTransformer} which leverages {@link DataFormat} to perform
+ * Represents a {@link org.apache.camel.impl.transformer.DataFormatTransformer} which leverages
+ * {@link org.apache.camel.spi.DataFormat} to perform
  * transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.
  * 
  * {@see TransformerDefinition}
@@ -131,16 +128,6 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
     private String ref;
-
-    @Override
-    protected Transformer doCreateTransformer(CamelContext context) {
-        return new DataFormatTransformer(context)
-                .setDataFormatType(dataFormatType)
-                .setDataFormatRef(ref)
-                .setModel(getScheme())
-                .setFrom(getFromType())
-                .setTo(getToType());
-    }
 
     public String getRef() {
         return ref;

@@ -31,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.apache.camel.test.cdi.Order;
@@ -52,8 +53,8 @@ public class CdiXmlTest {
 
     void pipeMatrixStream(@Observes CamelContextStartingEvent event,
                           ModelCamelContext context) throws Exception {
-        context.getRouteDefinition("matrix")
-            .adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier
+            .adviceWith(context.getRouteDefinition("matrix"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() {
                     weaveAddLast().to("mock:matrix");

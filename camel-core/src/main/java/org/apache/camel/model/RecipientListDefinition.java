@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,20 +25,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.EvaluateExpressionProcessor;
-import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 /**
  * Routes messages to a number of dynamically specified recipients (dynamic to)
@@ -110,114 +99,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Override
     public String getLabel() {
         return "recipientList[" + getExpression() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        final Expression expression = getExpression().createExpression(routeContext);
-
-        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
-        boolean isStreaming = getStreaming() != null && getStreaming();
-        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
-        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
-        boolean isStopOnException = getStopOnException() != null && getStopOnException();
-        boolean isIgnoreInvalidEndpoints = getIgnoreInvalidEndpoints() != null && getIgnoreInvalidEndpoints();
-        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
-
-        RecipientList answer;
-        if (delimiter != null) {
-            answer = new RecipientList(routeContext.getCamelContext(), expression, delimiter);
-        } else {
-            answer = new RecipientList(routeContext.getCamelContext(), expression);
-        }
-        answer.setAggregationStrategy(createAggregationStrategy(routeContext));
-        answer.setParallelProcessing(isParallelProcessing);
-        answer.setParallelAggregate(isParallelAggregate);
-        answer.setStreaming(isStreaming);
-        answer.setShareUnitOfWork(isShareUnitOfWork);
-        answer.setStopOnException(isStopOnException);
-        answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
-        answer.setStopOnAggregateException(isStopOnAggregateException);
-        if (getCacheSize() != null) {
-            answer.setCacheSize(getCacheSize());
-        }
-        if (onPrepareRef != null) {
-            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
-        }
-        if (onPrepare != null) {
-            answer.setOnPrepare(onPrepare);
-        }
-        if (getTimeout() != null) {
-            answer.setTimeout(getTimeout());
-        }
-
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", this, isParallelProcessing);
-        answer.setExecutorService(threadPool);
-        answer.setShutdownExecutorService(shutdownThreadPool);
-        long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing) {
-            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
-        }
-
-        // create a pipeline with two processors
-        // the first is the eval processor which evaluates the expression to use
-        // the second is the recipient list
-        List<Processor> pipe = new ArrayList<>(2);
-
-        // the eval processor must be wrapped in error handler, so in case there was an
-        // error during evaluation, the error handler can deal with it
-        // the recipient list is not in error handler, as its has its own special error handling
-        // when sending to the recipients individually
-        Processor evalProcessor = new EvaluateExpressionProcessor(expression);
-        evalProcessor = super.wrapInErrorHandler(routeContext, evalProcessor);
-
-        pipe.add(evalProcessor);
-        pipe.add(answer);
-
-        // wrap in nested pipeline so this appears as one processor
-        // (threads definition does this as well)
-        return new Pipeline(routeContext.getCamelContext(), pipe) {
-            @Override
-            public String toString() {
-                return "RecipientList[" + expression + "]";
-            }
-        };
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && strategyRef != null) {
-            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
-                if (getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
-            }
-        }
-
-        if (strategy == null) {
-            // default to use latest aggregation strategy
-            strategy = new UseLatestAggregationStrategy();
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        if (shareUnitOfWork != null && shareUnitOfWork) {
-            // wrap strategy in share unit of work
-            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
-        }
-
-        return strategy;
     }
 
     // Fluent API

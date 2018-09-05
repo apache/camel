@@ -21,11 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.RemovePropertyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Removes a named property from the message exchange
@@ -57,12 +53,6 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     @Override
     public String getLabel() {
         return "removeProperty[" + getPropertyName() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(getPropertyName(), "propertyName", this);
-        return new RemovePropertyProcessor(getPropertyName());
     }
 
     /**

@@ -24,15 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Routes messages based on dynamic rules
@@ -76,30 +70,6 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = getExpression().createExpression(routeContext);
-        String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
-
-        DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, delimiter);
-        if (getIgnoreInvalidEndpoints() != null) {
-            dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
-        }
-        if (getCacheSize() != null) {
-            dynamicRouter.setCacheSize(getCacheSize());
-        }
-
-        // and wrap this in an error handler
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
-        // create error handler (create error handler directly to keep it light weight,
-        // instead of using ProcessorDefinition.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, dynamicRouter.newRoutingSlipProcessorForErrorHandler());
-        dynamicRouter.setErrorHandler(errorHandler);
-
-        return dynamicRouter;
     }
 
     /**

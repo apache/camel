@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
@@ -41,32 +40,6 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
     private String ref;
     @XmlAttribute
     private String className;
-
-    @Override
-    protected Validator doCreateValidator(CamelContext context) throws Exception {
-        if (ref == null && className == null) {
-            throw new IllegalArgumentException("'ref' or 'type' must be specified for customValidator");
-        }
-        Validator validator;
-        if (ref != null) {
-            validator = context.getRegistry().lookupByNameAndType(ref, Validator.class);
-            if (validator == null) {
-                throw new IllegalArgumentException("Cannot find validator with ref:" + ref);
-            }
-            if (validator.getType() != null) {
-                throw new IllegalArgumentException(String.format("Validator '%s' is already in use. Please check if duplicate validator exists.", ref));
-            }
-        } else {
-            Class<Validator> validatorClass = context.getClassResolver().resolveMandatoryClass(className, Validator.class);
-            if (validatorClass == null) {
-                throw new IllegalArgumentException("Cannot find validator class: " + className);
-            }
-            validator = context.getInjector().newInstance(validatorClass);
-
-        }
-        validator.setCamelContext(context);
-        return validator.setType(getType());
-    }
 
     public String getRef() {
         return ref;

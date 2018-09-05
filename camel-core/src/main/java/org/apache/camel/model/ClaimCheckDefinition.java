@@ -23,14 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.ClaimCheckProcessor;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.ObjectHelper;
 
 /**
  * The Claim Check EIP allows you to replace message content with a claim check (a unique key),
@@ -74,92 +68,6 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     @Override
     public String getLabel() {
         return "claimCheck";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        org.apache.camel.util.ObjectHelper.notNull(operation, "operation", this);
-
-        ClaimCheckProcessor claim = new ClaimCheckProcessor();
-        claim.setOperation(operation.name());
-        claim.setKey(getKey());
-        claim.setFilter(getFilter());
-
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
-        if (strategy != null) {
-            claim.setAggregationStrategy(strategy);
-        }
-
-        // only filter or aggregation strategy can be configured not both
-        if (getFilter() != null && strategy != null) {
-            throw new IllegalArgumentException("Cannot use both filter and custom aggregation strategy on ClaimCheck EIP");
-        }
-
-        // validate filter, we cannot have both +/- at the same time
-        if (getFilter() != null) {
-            Iterable<?> it = ObjectHelper.createIterable(filter, ",");
-            boolean includeBody = false;
-            boolean excludeBody = false;
-            for (Object o : it) {
-                String pattern = o.toString();
-                if ("body".equals(pattern) || "+body".equals(pattern)) {
-                    includeBody = true;
-                } else if ("-body".equals(pattern)) {
-                    excludeBody = true;
-                }
-            }
-            if (includeBody && excludeBody) {
-                throw new IllegalArgumentException("Cannot have both include and exclude body at the same time in the filter: " + filter);
-            }
-            boolean includeHeaders = false;
-            boolean excludeHeaders = false;
-            for (Object o : it) {
-                String pattern = o.toString();
-                if ("headers".equals(pattern) || "+headers".equals(pattern)) {
-                    includeHeaders = true;
-                } else if ("-headers".equals(pattern)) {
-                    excludeHeaders = true;
-                }
-            }
-            if (includeHeaders && excludeHeaders) {
-                throw new IllegalArgumentException("Cannot have both include and exclude headers at the same time in the filter: " + filter);
-            }
-            boolean includeHeader = false;
-            boolean excludeHeader = false;
-            for (Object o : it) {
-                String pattern = o.toString();
-                if (pattern.startsWith("header:") || pattern.startsWith("+header:")) {
-                    includeHeader = true;
-                } else if (pattern.startsWith("-header:")) {
-                    excludeHeader = true;
-                }
-            }
-            if (includeHeader && excludeHeader) {
-                throw new IllegalArgumentException("Cannot have both include and exclude header at the same time in the filter: " + filter);
-            }
-        }
-
-        return claim;
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && aggregationStrategyRef != null) {
-            Object aggStrategy = routeContext.lookup(aggregationStrategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + aggregationStrategyRef);
-            }
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        return strategy;
     }
 
     // Fluent API

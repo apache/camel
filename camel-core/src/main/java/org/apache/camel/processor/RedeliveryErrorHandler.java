@@ -37,6 +37,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.reifier.ErrorHandlerReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
@@ -881,7 +882,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // find the error handler to use (if any)
         OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
         if (exceptionPolicy != null) {
-            data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
+            data.currentRedeliveryPolicy = ErrorHandlerReifier.createRedeliveryPolicy(exceptionPolicy, exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
             data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
@@ -1449,8 +1450,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         // must check for != 0 as (-1 means redeliver forever)
                         return true;
                     }
-                } else if (def.getRedeliveryPolicy() != null) {
-                    Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicy().getMaximumRedeliveries());
+                } else if (def.getRedeliveryPolicyType() != null) {
+                    Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicyType().getMaximumRedeliveries());
                     if (max != null && max != 0) {
                         // must check for != 0 as (-1 means redeliver forever)
                         return true;

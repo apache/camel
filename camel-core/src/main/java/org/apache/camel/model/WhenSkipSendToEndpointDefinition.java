@@ -18,12 +18,9 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.
@@ -34,26 +31,6 @@ public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
     @Override
     public String getShortName() {
         return "whenSkipSendToEndpoint";
-    }
-
-    @Override
-    protected Predicate createPredicate(RouteContext routeContext) {
-        // we need to keep track whether the when matches or not, so delegate
-        // the predicate and add the matches result as a property on the exchange
-        final Predicate delegate = super.createPredicate(routeContext);
-        return new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                boolean matches = delegate.matches(exchange);
-                exchange.setProperty(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED, matches);
-                return matches;
-            }
-
-            @Override
-            public String toString() {
-                return delegate.toString();
-            }
-        };
     }
 
     /**

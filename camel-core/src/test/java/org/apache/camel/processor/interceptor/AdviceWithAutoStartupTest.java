@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class AdviceWithAutoStartupTest extends ContextTestSupport {
@@ -28,7 +29,7 @@ public class AdviceWithAutoStartupTest extends ContextTestSupport {
         assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
         assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
 
-        context.getRouteDefinition("bar").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("bar"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("seda:newBar");

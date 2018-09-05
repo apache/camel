@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.reifier.TransactedReifier;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
@@ -79,7 +81,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
             if (policyRef != null) {
                 final TransactedDefinition transactedDefinition = new TransactedDefinition();
                 transactedDefinition.setRef(policyRef);
-                final Policy policy = transactedDefinition.resolvePolicy(routeContext);
+                final Policy policy = TransactedReifier.resolvePolicy(routeContext, transactedDefinition);
                 if (policy != null) {
                     if (!(policy instanceof JtaTransactionPolicy)) {
                         throw new RuntimeCamelException("The configured policy '" + policyRef + "' is of type '"

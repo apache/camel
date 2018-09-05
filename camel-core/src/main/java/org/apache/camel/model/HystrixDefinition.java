@@ -28,9 +28,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Hystrix Circuit Breaker EIP
@@ -65,11 +63,6 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     @Override
     public String getLabel() {
         return "hystrix";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        throw new IllegalStateException("Cannot find camel-hystrix on the classpath.");
     }
 
     public List<ProcessorDefinition<?>> getOutputs() {
@@ -111,7 +104,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
         return super.end();
     }
 
-    protected void preCreateProcessor() {
+    public void preCreateProcessor() {
         // move the fallback from outputs to fallback which we need to ensure
         // such as when using the XML DSL
         Iterator<ProcessorDefinition<?>> it = outputs.iterator();

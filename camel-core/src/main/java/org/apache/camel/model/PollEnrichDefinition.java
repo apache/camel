@@ -23,14 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.PollEnricher;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Enriches messages with data polled from a secondary resource
@@ -79,58 +73,6 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     @Override
     public String getLabel() {
         return "pollEnrich[" + getExpression() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-
-        // if no timeout then we should block, and there use a negative timeout
-        long time = timeout != null ? timeout : -1;
-        boolean isIgnoreInvalidEndpoint = getIgnoreInvalidEndpoint() != null && getIgnoreInvalidEndpoint();
-        Expression exp = getExpression().createExpression(routeContext);
-
-        PollEnricher enricher = new PollEnricher(exp, time);
-
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
-        if (strategy == null) {
-            enricher.setDefaultAggregationStrategy();
-        } else {
-            enricher.setAggregationStrategy(strategy);
-        }
-        if (getAggregateOnException() != null) {
-            enricher.setAggregateOnException(getAggregateOnException());
-        }
-        if (getCacheSize() != null) {
-            enricher.setCacheSize(getCacheSize());
-        }
-        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
-
-        return enricher;
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && aggregationStrategyRef != null) {
-            Object aggStrategy = routeContext.lookup(aggregationStrategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
-                if (getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(getAggregationStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(getAggregationStrategyMethodAllowNull());
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + aggregationStrategyRef);
-            }
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        return strategy;
     }
 
     // Fluent API

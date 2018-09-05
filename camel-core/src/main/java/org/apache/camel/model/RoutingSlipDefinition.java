@@ -24,15 +24,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Routes a message through a series of steps that are pre-determined (the slip)
@@ -85,30 +80,6 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     @Override
     public String getLabel() {
         return "routingSlip[" + getExpression() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = getExpression().createExpression(routeContext);
-        String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
-
-        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, delimiter);
-        if (getIgnoreInvalidEndpoints() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
-        }
-        if (getCacheSize() != null) {
-            routingSlip.setCacheSize(getCacheSize());
-        }
-
-        // and wrap this in an error handler
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
-        // create error handler (create error handler directly to keep it light weight,
-        // instead of using ProcessorDefinition.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, routingSlip.newRoutingSlipProcessorForErrorHandler());
-        routingSlip.setErrorHandler(errorHandler);
-
-        return routingSlip;
     }
 
     @Override

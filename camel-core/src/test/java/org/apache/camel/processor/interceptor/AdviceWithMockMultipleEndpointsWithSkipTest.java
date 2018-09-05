@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupport {
@@ -30,7 +31,7 @@ public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupp
     public void testAdvisedMockEndpointsWithSkip() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // mock sending to direct:foo and direct:bar and skip send to it

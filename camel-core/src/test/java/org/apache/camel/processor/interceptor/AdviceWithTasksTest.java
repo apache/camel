@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 /**
@@ -29,7 +30,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
     @Test
     public void testUnknownId() throws Exception {
         try {
-            context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     weaveById("xxx").replace().to("mock:xxx");
@@ -44,7 +45,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
     @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the node in the route which has id = bar
@@ -68,7 +69,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
     @Test
     public void testRemove() throws Exception {
         // START SNIPPET: e2
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the node in the route which has id = bar and remove it
@@ -90,7 +91,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
     @Test
     public void testBefore() throws Exception {
         // START SNIPPET: e3
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the node in the route which has id = bar
@@ -113,7 +114,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
     @Test
     public void testAfter() throws Exception {
         // START SNIPPET: e4
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the node in the route which has id = bar

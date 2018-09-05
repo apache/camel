@@ -17,6 +17,7 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -34,7 +35,7 @@ public class SpringAdviceWithContextScopedErrorHandlerIssueTest extends SpringTe
 
     @Test
     public void testAdviceWith() throws Exception {
-        context.getRouteDefinition("route-a").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:bar")

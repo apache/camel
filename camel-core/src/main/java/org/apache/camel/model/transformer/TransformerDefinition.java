@@ -21,15 +21,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Transformer;
 
 /**
- * <p>Represents a {@link Transformer} which declaratively transforms message content
+ * <p>Represents a {@link org.apache.camel.spi.Transformer} which declaratively transforms message content
  * according to the input type declared by {@link InputTypeDefinition} and/or output type
  * declared by {@link OutputTypeDefinition}.</p>
  * <p>If you specify from='java:com.example.ABC' and to='xml:XYZ', the transformer
@@ -40,7 +38,7 @@ import org.apache.camel.spi.Transformer;
  * Also it's possible to specify scheme='xml' so that the transformer will be picked up
  * for all of java to xml and xml to java transformation.</p>
  * 
- * {@see Transformer}
+ * {@see org.apache.camel.spi.Transformer}
  * {@see InputTypeDefinition}
  * {@see OutputTypeDefinition}
  */
@@ -55,12 +53,6 @@ public abstract class TransformerDefinition {
     private String fromType;
     @XmlAttribute
     private String toType;
-
-    public Transformer createTransformer(CamelContext context) throws Exception {
-        return doCreateTransformer(context);
-    };
-
-    protected abstract Transformer doCreateTransformer(CamelContext context) throws Exception;
 
     public String getScheme() {
         return scheme;

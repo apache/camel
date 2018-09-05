@@ -27,11 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Failover load balancer
@@ -57,44 +53,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     private Integer maximumFailoverAttempts;
 
     public FailoverLoadBalancerDefinition() {
-    }
-
-    @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        FailOverLoadBalancer answer;
-
-        List<Class<?>> classes = new ArrayList<>();
-        if (!exceptionTypes.isEmpty()) {
-            classes.addAll(exceptionTypes);
-        } else if (!exceptions.isEmpty()) {
-            for (String name : exceptions) {
-                Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
-                if (type == null) {
-                    throw new IllegalArgumentException("Cannot find class: " + name + " in the classpath");
-                }
-                if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
-                    throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
-                }
-                classes.add(type);
-            }
-        }
-        if (classes.isEmpty()) {
-            answer = new FailOverLoadBalancer();
-        } else {
-            answer = new FailOverLoadBalancer(classes);
-        }
-
-        if (getMaximumFailoverAttempts() != null) {
-            answer.setMaximumFailoverAttempts(getMaximumFailoverAttempts());
-        }
-        if (roundRobin != null) {
-            answer.setRoundRobin(roundRobin);
-        }
-        if (sticky != null) {
-            answer.setSticky(sticky);
-        }
-
-        return answer;
     }
 
     public List<String> getExceptions() {

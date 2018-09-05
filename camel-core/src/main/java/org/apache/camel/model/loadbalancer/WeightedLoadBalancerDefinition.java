@@ -16,22 +16,13 @@
  */
 package org.apache.camel.model.loadbalancer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.LoadBalancerDefinition;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Weighted load balancer
@@ -52,30 +43,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     private String distributionRatioDelimiter;
 
     public WeightedLoadBalancerDefinition() {
-    }
-
-    @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        WeightedLoadBalancer loadBalancer;
-        List<Integer> distributionRatioList = new ArrayList<>();
-        
-        try {
-            String[] ratios = distributionRatio.split(getDistributionRatioDelimiter());
-            for (String ratio : ratios) {
-                distributionRatioList.add(new Integer(ratio.trim()));
-            }
-
-            boolean isRoundRobin = getRoundRobin() != null && getRoundRobin();
-            if (isRoundRobin) {
-                loadBalancer = new WeightedRoundRobinLoadBalancer(distributionRatioList);
-            } else {
-                loadBalancer = new WeightedRandomLoadBalancer(distributionRatioList);
-            }
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-
-        return loadBalancer;
     }
 
     public Boolean getRoundRobin() {

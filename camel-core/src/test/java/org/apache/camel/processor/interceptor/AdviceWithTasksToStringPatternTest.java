@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 /**
@@ -29,7 +30,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
     @Test
     public void testUnknownId() throws Exception {
         try {
-            context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     weaveByToString("xxx").replace().to("mock:xxx");
@@ -44,7 +45,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
     @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave nodes in the route which has foo anywhere in their to string representation
@@ -67,7 +68,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
     @Test
     public void testRemove() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*bar.*").remove();
@@ -86,7 +87,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
     @Test
     public void testBefore() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*bar.*").before().to("mock:a").transform(constant("Bye World"));
@@ -105,7 +106,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
     @Test
     public void testAfter() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*bar.*").after().to("mock:a").transform(constant("Bye World"));

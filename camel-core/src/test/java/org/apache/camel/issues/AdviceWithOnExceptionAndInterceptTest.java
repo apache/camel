@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 /**
@@ -71,7 +72,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         });
 
         RouteDefinition routeDefinition = context.getRouteDefinitions().get(0);
-        routeDefinition.adviceWith(context, new AdviceWithRouteBuilder());
+        RouteReifier.adviceWith(routeDefinition, context, new AdviceWithRouteBuilder());
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(0);

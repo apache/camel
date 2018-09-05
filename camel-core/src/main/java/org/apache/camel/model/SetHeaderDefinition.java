@@ -22,13 +22,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Sets the value of a message header
@@ -71,14 +67,6 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     @Override
     public String getLabel() {
         return "setHeader[" + getHeaderName() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(headerName, "headerName");
-        Expression expr = getExpression().createExpression(routeContext);
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getHeaderName(), routeContext.getCamelContext());
-        return new SetHeaderProcessor(nameExpr, expr);
     }
 
     /**

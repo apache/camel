@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,12 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Delays processing for a specified length of time
@@ -70,36 +66,6 @@ public class DelayDefinition extends NoOutputExpressionNode implements ExecutorS
     @Override
     public String toString() {
         return "Delay[" + getExpression() + " -> " + getOutputs() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
-        Expression delay = createAbsoluteTimeDelayExpression(routeContext);
-
-        boolean async = getAsyncDelayed() != null && getAsyncDelayed();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, async);
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this, async);
-
-        Delayer answer = new Delayer(routeContext.getCamelContext(), childProcessor, delay, threadPool, shutdownThreadPool);
-        if (getAsyncDelayed() != null) {
-            answer.setAsyncDelayed(getAsyncDelayed());
-        }
-        if (getCallerRunsWhenRejected() == null) {
-            // should be default true
-            answer.setCallerRunsWhenRejected(true);
-        } else {
-            answer.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
-        }
-        return answer;
-    }
-
-    private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
-        ExpressionDefinition expr = getExpression();
-        if (expr != null) {
-            return expr.createExpression(routeContext);
-        }
-        return null;
     }
 
     // Fluent API

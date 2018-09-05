@@ -25,11 +25,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.Processor;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.processor.SamplingThrottler;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Extract a sample of the messages passing through a route
@@ -83,19 +80,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     @Override
     public String getLabel() {
         return "sample[" + description() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (messageFrequency != null) {
-            return new SamplingThrottler(messageFrequency);
-        } else {
-            // should default be 1 sample period
-            long time = getSamplePeriod() != null ? getSamplePeriod() : 1L;
-            // should default be in seconds
-            TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return new SamplingThrottler(time, tu);
-        }
     }
 
     // Fluent API

@@ -39,6 +39,8 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
@@ -112,7 +114,7 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public Endpoint resolveEndpoint(String uri) {
-        return route.resolveEndpoint(getCamelContext(), uri);
+        return new RouteReifier(route).resolveEndpoint(getCamelContext(), uri);
     }
 
     public Endpoint resolveEndpoint(String uri, String ref) {
@@ -203,7 +205,7 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in REST binding
             if (route.getRestBindingDefinition() != null) {
                 try {
-                    internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
+                    internal.addAdvice(new RestBindingReifier(route.getRestBindingDefinition()).createRestBindingAdvice(this));
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }

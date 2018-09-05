@@ -18,6 +18,7 @@ package org.apache.camel.itest.jms;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
 
     @Test
     public void testAdviceWithWeaveById() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("mock-b*").after().to("mock:last");
@@ -56,7 +57,7 @@ public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
 
     @Test
     public void testAdviceWithAddLast() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:last");

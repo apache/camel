@@ -22,9 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
@@ -41,11 +39,6 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
     @Override
     public String toString() {
         return "Otherwise[" + getOutputs() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, false);
     }
 
     @Override

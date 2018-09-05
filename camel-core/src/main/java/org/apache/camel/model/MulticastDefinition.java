@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,17 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AggregationStrategyClause;
 import org.apache.camel.builder.ProcessClause;
-import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 /**
  *  Routes the same message to multiple paths either sequentially or in parallel.
@@ -95,19 +86,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return "multicast";
     }
     
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor answer = this.createChildProcessor(routeContext, true);
-
-        // force the answer as a multicast processor even if there is only one child processor in the multicast
-        if (!(answer instanceof MulticastProcessor)) {
-            List<Processor> list = new ArrayList<>(1);
-            list.add(answer);
-            answer = createCompositeProcessor(routeContext, list);
-        }
-        return answer;
-    }
-
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -324,67 +302,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     public MulticastDefinition shareUnitOfWork() {
         setShareUnitOfWork(true);
         return this;
-    }
-
-    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        final AggregationStrategy strategy = createAggregationStrategy(routeContext);
-
-        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
-        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
-        boolean isStreaming = getStreaming() != null && getStreaming();
-        boolean isStopOnException = getStopOnException() != null && getStopOnException();
-        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
-        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
-
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing);
-
-        long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing) {
-            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
-        }
-        if (onPrepareRef != null) {
-            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
-        }
-
-        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
-                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
-        return answer;
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && strategyRef != null) {
-            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
-                if (getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
-            }
-        }
-
-        if (strategy == null) {
-            // default to use latest aggregation strategy
-            strategy = new UseLatestAggregationStrategy();
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        if (shareUnitOfWork != null && shareUnitOfWork) {
-            // wrap strategy in share unit of work
-            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
-        }
-
-        return strategy;
     }
 
     public AggregationStrategy getAggregationStrategy() {

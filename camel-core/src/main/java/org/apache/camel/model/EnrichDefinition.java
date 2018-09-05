@@ -23,19 +23,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.Enricher;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Enriches a message with data from a secondary resource
  *
- * @see Enricher
+ * @see org.apache.camel.processor.Enricher
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "enrich")
@@ -79,51 +73,6 @@ public class EnrichDefinition extends NoOutputExpressionNode {
     @Override
     public String getLabel() {
         return "enrich[" + getExpression() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-
-        Expression exp = getExpression().createExpression(routeContext);
-        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
-        boolean isIgnoreInvalidEndpoint = getIgnoreInvalidEndpoint() != null && getIgnoreInvalidEndpoint();
-
-        Enricher enricher = new Enricher(exp);
-        enricher.setShareUnitOfWork(isShareUnitOfWork);
-        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
-        if (strategy != null) {
-            enricher.setAggregationStrategy(strategy);
-        }
-        if (aggregateOnException != null) {
-            enricher.setAggregateOnException(aggregateOnException);
-        }
-        return enricher;
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && aggregationStrategyRef != null) {
-            Object aggStrategy = routeContext.lookup(aggregationStrategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
-                if (getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(getAggregationStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(getAggregationStrategyMethodAllowNull());
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + aggregationStrategyRef);
-            }
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        return strategy;
     }
 
     // Fluent API

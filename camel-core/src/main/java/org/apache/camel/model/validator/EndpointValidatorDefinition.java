@@ -21,11 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.validator.ProcessorValidator;
-import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
@@ -33,8 +28,8 @@ import org.apache.camel.spi.Validator;
  * Represents an endpoint {@link Validator} which leverages camel validator component such as
  * <a href="http://camel.apache.org/validation.html">Validator Component</a> and 
  * <a href="http://camel.apache.org/bean-validation.html">Bean Validator Component</a> to
- * perform content validation. A {@link ProcessorValidator} will be created internally
- * with a {@link SendProcessor} which forwards the message to the validator Endpoint.
+ * perform content validation. A {@link org.apache.camel.impl.validator.ProcessorValidator} will be created internally
+ * with a {@link org.apache.camel.processor.SendProcessor} which forwards the message to the validator Endpoint.
  * 
  * {@see ValidatorDefinition}
  * {@see Validator}
@@ -48,16 +43,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
     private String ref;
     @XmlAttribute
     private String uri;
-
-    @Override
-    protected Validator doCreateValidator(CamelContext context) throws Exception {
-        Endpoint endpoint = uri != null ? context.getEndpoint(uri)
-            : context.getRegistry().lookupByNameAndType(ref, Endpoint.class);
-        SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
-        return new ProcessorValidator(context)
-            .setProcessor(processor)
-            .setType(getType());
-    }
 
     public String getRef() {
         return ref;
