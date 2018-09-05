@@ -270,6 +270,20 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         // then
         assertThat(response, notNullValue());
     }
+    
+    @Test
+    public void testStringUpdate() throws Exception {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+
+        String body = "{\"id\" : 1}";
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
