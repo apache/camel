@@ -25,7 +25,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.spark.api.java.JavaRDDLike;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -50,7 +51,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     @UriParam
     private RddCallback rddCallback;
     @UriParam
-    private DataFrame dataFrame;
+    private Dataset<Row> dataFrame;
     @UriParam
     private DataFrameCallback dataFrameCallback;
 
@@ -147,14 +148,14 @@ public class SparkEndpoint extends DefaultEndpoint {
         this.rddCallback = rddCallback;
     }
 
-    public DataFrame getDataFrame() {
+    public Dataset<Row> getDataFrame() {
         return dataFrame;
     }
 
     /**
      * DataFrame to compute against.
      */
-    public void setDataFrame(DataFrame dataFrame) {
+    public void setDataFrame(Dataset<Row> dataFrame) {
         this.dataFrame = dataFrame;
     }
 
