@@ -467,8 +467,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * @param classType the canonical class name for the array passed as input
      *
-     * @deprecated as of 2.19.0. Replaced wtih {@link #type(Class)} with {@code []} appended to canonical class name
-     * , e.g. {@code type(MyClass[].class}
+     * @deprecated as of 2.19.0. Replaced with {@link #type(Class)} with {@code []} appended to canonical class name,
+     * e.g. {@code type(MyClass[].class}
      */
     @Deprecated
     public RestDefinition typeList(Class<?> classType) {
