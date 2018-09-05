@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *collect* (producer) | Indicates if results should be collected or counted. | true | boolean
-| *dataFrame* (producer) | DataFrame to compute against. |  | Dataset<Row>
+| *dataFrame* (producer) | DataFrame to compute against. |  | Row>
 | *dataFrameCallback* (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
 | *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
 | *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
