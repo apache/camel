@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -144,7 +145,16 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
 
         try {
-            getAsyncProcessor().process(exchange);
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    // noop
+                    if (log.isTraceEnabled()) {
+                        log.trace("Done processing event: {} {}", channel.getId(),
+                                doneSync ? "synchronously" : "asynchronously");
+                    }
+                }
+            });
         } catch (final Exception e) {
             final String msg = String.format("Error processing %s: %s", exchange, e);
             handleException(msg, new SalesforceException(msg, e));
