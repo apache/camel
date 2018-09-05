@@ -20,13 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Sets the exchange pattern on the message exchange
@@ -37,9 +33,7 @@ import org.apache.camel.spi.RouteContext;
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
     @XmlAttribute(required = true)
     private ExchangePattern pattern;
-    @XmlTransient
-    private ExchangePatternProcessor processor;
-    
+
     public SetExchangePatternDefinition() {
     }
 
@@ -78,12 +72,4 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
         return "setExchangePattern[" + pattern + "]";
     }
    
-    @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        if (processor == null) {
-            processor = new ExchangePatternProcessor(getPattern());
-        }
-        return processor;
-    }
-
 }

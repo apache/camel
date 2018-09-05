@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.spi.DataType;
@@ -47,12 +46,6 @@ public abstract class ValidatorDefinition {
 
     @XmlAttribute
     private String type;
-
-    public Validator createValidator(CamelContext context) throws Exception {
-        return doCreateValidator(context);
-    };
-
-    protected abstract Validator doCreateValidator(CamelContext context) throws Exception;
 
     public String getType() {
         return type;

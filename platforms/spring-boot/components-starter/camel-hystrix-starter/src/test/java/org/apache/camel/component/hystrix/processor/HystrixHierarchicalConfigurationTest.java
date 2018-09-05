@@ -56,8 +56,8 @@ public class HystrixHierarchicalConfigurationTest {
 
         Assert.assertNotNull(hystrixDefinition);
 
-        HystrixProcessorFactory factory = new HystrixProcessorFactory();
-        HystrixConfigurationDefinition config = factory.buildHystrixConfiguration(camelContext, hystrixDefinition);
+        HystrixReifier reifier = new HystrixReifier(hystrixDefinition);
+        HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(camelContext);
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());

@@ -26,13 +26,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Catches exceptions as part of a try, catch, finally block
@@ -79,39 +75,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @Override
     public String getLabel() {
         return "doCatch[ " + getExceptionClasses() + "]";
-    }
-
-    @Override
-    public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
-        // create and load exceptions if not done
-        if (exceptionClasses == null) {
-            exceptionClasses = createExceptionClasses(routeContext.getCamelContext());
-        }
-
-        // must have at least one exception
-        if (exceptionClasses.isEmpty()) {
-            throw new IllegalArgumentException("At least one Exception must be configured to catch");
-        }
-
-        // parent must be a try
-        if (!(getParent() instanceof TryDefinition)) {
-            throw new IllegalArgumentException("This doCatch should have a doTry as its parent on " + this);
-        }
-
-        // do catch does not mandate a child processor
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
-
-        Predicate when = null;
-        if (onWhen != null) {
-            when = onWhen.getExpression().createPredicate(routeContext);
-        }
-
-        Predicate handle = handledPolicy;
-        if (handled != null) {
-            handle = handled.createPredicate(routeContext);
-        }
-
-        return new CatchProcessor(exceptionClasses, childProcessor, when, handle);
     }
 
     @Override
@@ -224,15 +187,4 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.handled = handled;
     }
 
-    protected List<Class<? extends Throwable>> createExceptionClasses(CamelContext context) throws ClassNotFoundException {
-        // must use the class resolver from CamelContext to load classes to ensure it can
-        // be loaded in all kind of environments such as JEE servers and OSGi etc.
-        List<String> list = getExceptions();
-        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
-        for (String name : list) {
-            Class<Throwable> type = context.getClassResolver().resolveMandatoryClass(name, Throwable.class);
-            answer.add(type);
-        }
-        return answer;
-    }
 }

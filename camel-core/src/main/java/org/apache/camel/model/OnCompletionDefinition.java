@@ -34,11 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Route to be executed when normal route processing completes
@@ -79,12 +76,20 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return routeScoped != null ? routeScoped : false;
     }
 
+    public Boolean getRouteScoped() {
+        return routeScoped;
+    }
+
     public Processor getOnCompletion(String routeId) {
         return onCompletions.get(routeId);
     }
 
     public Collection<Processor> getOnCompletions() {
         return onCompletions.values();
+    }
+
+    public void setOnCompletion(String routeId, Processor processor) {
+        onCompletions.put(routeId, processor);
     }
 
     @Override
@@ -110,57 +115,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @Override
     public boolean isTopLevelOnly() {
         return true;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // assign whether this was a route scoped onCompletion or not
-        // we need to know this later when setting the parent, as only route scoped should have parent
-        // Note: this logic can possible be removed when the Camel routing engine decides at runtime
-        // to apply onCompletion in a more dynamic fashion than current code base
-        // and therefore is in a better position to decide among context/route scoped OnCompletion at runtime
-        if (routeScoped == null) {
-            routeScoped = super.getParent() != null;
-        }
-
-        boolean isOnCompleteOnly = getOnCompleteOnly() != null && getOnCompleteOnly();
-        boolean isOnFailureOnly = getOnFailureOnly() != null && getOnFailureOnly();
-        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
-        boolean original = getUseOriginalMessagePolicy() != null && getUseOriginalMessagePolicy();
-
-        if (isOnCompleteOnly && isOnFailureOnly) {
-            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
-        }
-        if (original) {
-            // ensure allow original is turned on
-            routeContext.setAllowUseOriginalMessage(true);
-        }
-
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        String routeId = route.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-
-        // wrap the on completion route in a unit of work processor
-        CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
-
-        onCompletions.put(routeId, internal);
-
-        Predicate when = null;
-        if (onWhen != null) {
-            when = onWhen.getExpression().createPredicate(routeContext);
-        }
-
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, isParallelProcessing);
-
-        // should be after consumer by default
-        boolean afterConsumer = mode == null || mode == OnCompletionMode.AfterConsumer;
-
-        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), internal,
-                threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when, original, afterConsumer);
-        return answer;
     }
 
     /**

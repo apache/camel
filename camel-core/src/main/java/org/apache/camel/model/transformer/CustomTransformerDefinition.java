@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 
@@ -41,34 +40,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
     private String ref;
     @XmlAttribute
     private String className;
-
-    @Override
-    protected Transformer doCreateTransformer(CamelContext context) throws Exception {
-        if (ref == null && className == null) {
-            throw new IllegalArgumentException("'ref' or 'className' must be specified for customTransformer");
-        }
-        Transformer transformer;
-        if (ref != null) {
-            transformer = context.getRegistry().lookupByNameAndType(ref, Transformer.class);
-            if (transformer == null) {
-                throw new IllegalArgumentException("Cannot find transformer with ref:" + ref);
-            }
-            if (transformer.getModel() != null || transformer.getFrom() != null || transformer.getTo() != null) {
-                throw new IllegalArgumentException(String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.", ref));
-            }
-        } else {
-            Class<Transformer> transformerClass = context.getClassResolver().resolveMandatoryClass(className, Transformer.class);
-            if (transformerClass == null) {
-                throw new IllegalArgumentException("Cannot find transformer class: " + className);
-            }
-            transformer = context.getInjector().newInstance(transformerClass);
-
-        }
-        transformer.setCamelContext(context);
-        return transformer.setModel(getScheme())
-                          .setFrom(getFromType())
-                          .setTo(getToType());
-    }
 
     public String getRef() {
         return ref;

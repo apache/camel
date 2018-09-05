@@ -26,11 +26,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * A base class for nodes which contain an expression and a number of outputs
@@ -93,28 +90,6 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         return getExpression().getLabel();
     }
 
-    /**
-     * Creates the {@link FilterProcessor} from the expression node.
-     *
-     * @param routeContext  the route context
-     * @return the created {@link FilterProcessor}
-     * @throws Exception is thrown if error creating the processor
-     */
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = createOutputsProcessor(routeContext);
-        return new FilterProcessor(createPredicate(routeContext), childProcessor);
-    }
-
-    /**
-     * Creates the {@link Predicate} from the expression node.
-     *
-     * @param routeContext  the route context
-     * @return the created predicate
-     */
-    protected Predicate createPredicate(RouteContext routeContext) {
-        return getExpression().createPredicate(routeContext);
-    }
-
     @Override
     public void configureChild(ProcessorDefinition<?> output) {
         // reuse the logic from pre create processor
@@ -122,10 +97,10 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     }
 
     @Override
-    protected void preCreateProcessor() {
-        Expression exp = expression;
-        if (expression != null && expression.getExpressionValue() != null) {
-            exp = expression.getExpressionValue();
+    public void preCreateProcessor() {
+        Expression exp = getExpression();
+        if (getExpression() != null && getExpression().getExpressionValue() != null) {
+            exp = getExpression().getExpressionValue();
         }
 
         if (exp instanceof ExpressionClause) {
@@ -135,17 +110,18 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
                 // ExpressionClause which is a fancy builder to define expressions and predicates
                 // using fluent builders in the DSL. However we need afterwards a callback to
                 // reset the expression to the expression type the ExpressionClause did build for us
-                expression = clause.getExpressionType();
+                setExpression(clause.getExpressionType());
             }
         }
 
-        if (expression != null && expression.getExpression() == null) {
+        if (getExpression() != null && getExpression().getExpression() == null) {
             // use toString from predicate or expression so we have some information to show in the route model
-            if (expression.getPredicate() != null) {
-                expression.setExpression(expression.getPredicate().toString());
-            } else if (expression.getExpressionValue() != null) {
-                expression.setExpression(expression.getExpressionValue().toString());
+            if (getExpression().getPredicate() != null) {
+                getExpression().setExpression(getExpression().getPredicate().toString());
+            } else if (getExpression().getExpressionValue() != null) {
+                getExpression().setExpression(getExpression().getExpressionValue().toString());
             }
         }
     }
+
 }

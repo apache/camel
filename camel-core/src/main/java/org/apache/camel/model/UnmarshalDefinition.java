@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -61,10 +60,7 @@ import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
-import org.apache.camel.processor.UnmarshalProcessor;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Converts the message data received from the wire into a format that Apache Camel processors can consume
@@ -73,8 +69,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> {
-
-    // TODO: Camel 3.0, ref attribute should be removed as UnmarshalDataFormat is to be used instead
 
     @XmlElements({
         @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
@@ -160,9 +154,4 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         this.dataFormatType = dataFormatType;
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), null);
-        return new UnmarshalProcessor(dataFormat);
-    }
 }

@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
@@ -38,7 +37,6 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
@@ -97,46 +95,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         loadBalancerType = loadbalancer;
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // the load balancer is stateful so we should only create it once in case its used from a context scoped error handler
-
-        LoadBalancer loadBalancer = loadBalancerType.getLoadBalancer(routeContext);
-        if (loadBalancer == null) {
-            // then create it and reuse it
-            loadBalancer = loadBalancerType.createLoadBalancer(routeContext);
-            loadBalancerType.setLoadBalancer(loadBalancer);
-
-            // some load balancer can only support a fixed number of outputs
-            int max = loadBalancerType.getMaximumNumberOfOutputs();
-            int size = getOutputs().size();
-            if (size > max) {
-                throw new IllegalArgumentException("To many outputs configured on " + loadBalancerType + ": " + size + " > " + max);
-            }
-
-            for (ProcessorDefinition<?> processorType : getOutputs()) {
-                // output must not be another load balancer
-                // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
-                // on Windows boxes or with IBM JDKs etc.
-                if (LoadBalanceDefinition.class.isInstance(processorType)) {
-                    throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
-                }
-                Processor processor = createProcessor(routeContext, processorType);
-                processor = wrapChannel(routeContext, processor, processorType);
-                loadBalancer.addProcessor(processor);
-            }
-        }
-
-        Boolean inherit = inheritErrorHandler;
-        if (loadBalancerType instanceof FailoverLoadBalancerDefinition) {
-            // special for failover load balancer where you can configure it to not inherit error handler for its children
-            // but the load balancer itself should inherit so Camels error handler can react afterwards
-            inherit = true;
-        }
-        Processor target = wrapChannel(routeContext, loadBalancer, this, inherit);
-        return target;
-    }
-    
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -148,7 +106,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      */
     public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
         CustomLoadBalancerDefinition def = new CustomLoadBalancerDefinition();
-        def.setLoadBalancer(loadBalancer);
+        def.setCustomLoadBalancer(loadBalancer);
         setLoadBalancerType(def);
         return this;
     }

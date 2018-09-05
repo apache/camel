@@ -26,10 +26,7 @@ import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Sticky load balancer
@@ -45,11 +42,6 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
     private ExpressionSubElementDefinition correlationExpression;
 
     public StickyLoadBalancerDefinition() {
-    }
-
-    @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        return new StickyLoadBalancer(correlationExpression.createExpression(routeContext));
     }
 
     public ExpressionSubElementDefinition getCorrelationExpression() {

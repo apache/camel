@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class AdviceWithWeaveByToUriCBRTest extends ContextTestSupport {
@@ -27,7 +28,7 @@ public class AdviceWithWeaveByToUriCBRTest extends ContextTestSupport {
     @Test
     public void testAdviceCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToUri("direct:branch*").replace().to("mock:foo");

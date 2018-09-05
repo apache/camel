@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 /**
@@ -29,7 +30,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
     @Test
     public void testIssue() throws Exception {
         RouteDefinition testRoute = context.getRouteDefinition("TestRoute");
-        testRoute.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(testRoute, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*")
@@ -40,7 +41,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         });
 
         RouteDefinition smtpRoute = context.getRouteDefinition("smtpRoute");
-        smtpRoute.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(smtpRoute, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("smtp*")

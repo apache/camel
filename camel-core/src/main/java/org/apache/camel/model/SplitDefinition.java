@@ -25,16 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.Splitter;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 /**
  * Splits a single message into many sub-messages.
@@ -98,65 +92,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @Override
     public String getLabel() {
         return "split[" + getExpression() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        aggregationStrategy = createAggregationStrategy(routeContext);
-
-        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
-        boolean isStreaming = getStreaming() != null && getStreaming();
-        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
-        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
-        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", this, isParallelProcessing);
-
-        long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing) {
-            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
-        }
-        if (onPrepareRef != null) {
-            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
-        }
-
-        Expression exp = getExpression().createExpression(routeContext);
-
-        Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
-                            isParallelProcessing, threadPool, shutdownThreadPool, isStreaming, isStopOnException(),
-                            timeout, onPrepare, isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
-        return answer;
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && strategyRef != null) {
-            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
-                if (getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
-            }
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        if (strategy != null && shareUnitOfWork != null && shareUnitOfWork) {
-            // wrap strategy in share unit of work
-            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
-        }
-
-        return strategy;
     }
 
     // Fluent API

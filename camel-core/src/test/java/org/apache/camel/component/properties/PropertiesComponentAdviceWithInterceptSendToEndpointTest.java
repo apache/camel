@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class PropertiesComponentAdviceWithInterceptSendToEndpointTest extends ContextTestSupport {
@@ -27,7 +28,7 @@ public class PropertiesComponentAdviceWithInterceptSendToEndpointTest extends Co
     @Test
     public void testAdviceWithInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinition("foo");
-        route.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("{{cool.mock}}:res*").to("mock:foo");

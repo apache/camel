@@ -51,14 +51,4 @@ public class RethrowDefinition extends NoOutputDefinition<RethrowDefinition> {
         return "rethrow[]";
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return exchange -> {
-            Exception e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-            if (e != null) {
-                throw e;
-            }
-        };
-    }
-
 }

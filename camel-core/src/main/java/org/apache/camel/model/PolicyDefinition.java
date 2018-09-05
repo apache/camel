@@ -22,14 +22,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Service;
-import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines a policy the route will use
@@ -61,6 +56,14 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         return "Policy[" + description() + "]";
     }
     
+    public Policy getPolicy() {
+        return policy;
+    }
+
+    public Class<? extends Policy> getType() {
+        return type;
+    }
+
     protected String description() {
         if (policy != null) {
             return policy.toString();
@@ -131,35 +134,6 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     public PolicyDefinition ref(String ref) {
         setRef(ref);
         return this;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Policy policy = resolvePolicy(routeContext);
-        ObjectHelper.notNull(policy, "policy", this);
-
-        // before wrap
-        policy.beforeWrap(routeContext, this);
-
-        // create processor after the before wrap
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-
-        // wrap
-        Processor target = policy.wrap(routeContext, childProcessor);
-
-        if (!(target instanceof Service)) {
-            // wrap the target so it becomes a service and we can manage its lifecycle
-            target = new WrapProcessor(target, childProcessor);
-        }
-        return target;
-    }
-
-    protected Policy resolvePolicy(RouteContext routeContext) {
-        if (policy != null) {
-            return policy;
-        }
-        // reuse code on transacted definition to do the resolution
-        return TransactedDefinition.doResolvePolicy(routeContext, getRef(), type);
     }
 
 }

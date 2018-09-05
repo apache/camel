@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class AdviceWithMockEndpointsTest extends ContextTestSupport {
@@ -38,7 +39,7 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // mock all endpoints
@@ -74,7 +75,7 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     public void testAdvisedMockEndpointsWithPattern() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // mock only log endpoints

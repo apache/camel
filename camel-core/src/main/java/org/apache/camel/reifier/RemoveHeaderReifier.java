@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.reifier;
 
-import org.apache.camel.spi.Policy;
+import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RemoveHeaderDefinition;
+import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
-/**
- * Used to expose the method &apos;resolvePolicy&apos; used by
- * {@link JtaTransactionErrorHandlerBuilder} to resolve configured policy
- * references.
- */
-public class TransactedDefinition extends org.apache.camel.model.TransactedDefinition {
+class RemoveHeaderReifier extends ProcessorReifier<RemoveHeaderDefinition> {
+
+    RemoveHeaderReifier(ProcessorDefinition<?> definition) {
+        super((RemoveHeaderDefinition) definition);
+    }
 
     @Override
-    public Policy resolvePolicy(RouteContext routeContext) {
-        return super.resolvePolicy(routeContext);
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        ObjectHelper.notNull(definition.getHeaderName(), "headerName", this);
+        return new RemoveHeaderProcessor(definition.getHeaderName());
     }
 }

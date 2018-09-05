@@ -17,6 +17,7 @@
 package org.apache.camel.test.blueprint;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class SimpleWeaveAddMockLastTest extends CamelBlueprintTestSupport {
@@ -32,7 +33,7 @@ public class SimpleWeaveAddMockLastTest extends CamelBlueprintTestSupport {
 
     @Test
     public void testWeaveAddMockLast() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:result");

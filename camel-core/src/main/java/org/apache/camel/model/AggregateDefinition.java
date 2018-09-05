@@ -29,26 +29,19 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContextAware;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.AggregationStrategyClause;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.PredicateClause;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
-import org.apache.camel.processor.aggregate.AggregateProcessor;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
  * Aggregates many messages into a single message
@@ -170,133 +163,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return createAggregator(routeContext);
-    }
-
-    protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-
-        // wrap the aggregate route in a unit of work processor
-        CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
-
-        Expression correlation = getExpression().createExpression(routeContext);
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
-
-        boolean parallel = getParallelProcessing() != null && getParallelProcessing();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, parallel);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, parallel);
-        if (threadPool == null && !parallel) {
-            // executor service is mandatory for the Aggregator
-            // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
-            threadPool = new SynchronousExecutorService();
-            shutdownThreadPool = true;
-        }
-
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal,
-                correlation, strategy, threadPool, shutdownThreadPool);
-
-        AggregationRepository repository = createAggregationRepository(routeContext);
-        if (repository != null) {
-            answer.setAggregationRepository(repository);
-        }
-
-        if (getAggregateController() == null && getAggregateControllerRef() != null) {
-            setAggregateController(routeContext.mandatoryLookup(getAggregateControllerRef(), AggregateController.class));
-        }
-
-        // this EIP supports using a shared timeout checker thread pool or fallback to create a new thread pool
-        boolean shutdownTimeoutThreadPool = false;
-        ScheduledExecutorService timeoutThreadPool = timeoutCheckerExecutorService;
-        if (timeoutThreadPool == null && timeoutCheckerExecutorServiceRef != null) {
-            // lookup existing thread pool
-            timeoutThreadPool = routeContext.getCamelContext().getRegistry().lookupByNameAndType(timeoutCheckerExecutorServiceRef, ScheduledExecutorService.class);
-            if (timeoutThreadPool == null) {
-                // then create a thread pool assuming the ref is a thread pool profile id
-                timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
-                        AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER, timeoutCheckerExecutorServiceRef);
-                if (timeoutThreadPool == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + timeoutCheckerExecutorServiceRef 
-                            + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
-                }
-                shutdownTimeoutThreadPool = true;
-            }
-        }
-        answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
-        answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
-
-        // set other options
-        answer.setParallelProcessing(parallel);
-        if (getOptimisticLocking() != null) {
-            answer.setOptimisticLocking(getOptimisticLocking());
-        }
-        if (getCompletionPredicate() != null) {
-            Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
-            answer.setCompletionPredicate(predicate);
-        } else if (strategy instanceof Predicate) {
-            // if aggregation strategy implements predicate and was not configured then use as fallback
-            log.debug("Using AggregationStrategy as completion predicate: {}", strategy);
-            answer.setCompletionPredicate((Predicate) strategy);
-        }
-        if (getCompletionTimeoutExpression() != null) {
-            Expression expression = getCompletionTimeoutExpression().createExpression(routeContext);
-            answer.setCompletionTimeoutExpression(expression);
-        }
-        if (getCompletionTimeout() != null) {
-            answer.setCompletionTimeout(getCompletionTimeout());
-        }
-        if (getCompletionInterval() != null) {
-            answer.setCompletionInterval(getCompletionInterval());
-        }
-        if (getCompletionSizeExpression() != null) {
-            Expression expression = getCompletionSizeExpression().createExpression(routeContext);
-            answer.setCompletionSizeExpression(expression);
-        }
-        if (getCompletionSize() != null) {
-            answer.setCompletionSize(getCompletionSize());
-        }
-        if (getCompletionFromBatchConsumer() != null) {
-            answer.setCompletionFromBatchConsumer(getCompletionFromBatchConsumer());
-        }
-        if (getCompletionOnNewCorrelationGroup() != null) {
-            answer.setCompletionOnNewCorrelationGroup(getCompletionOnNewCorrelationGroup());
-        }
-        if (getEagerCheckCompletion() != null) {
-            answer.setEagerCheckCompletion(getEagerCheckCompletion());
-        }
-        if (getIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreInvalidCorrelationKeys(getIgnoreInvalidCorrelationKeys());
-        }
-        if (getCloseCorrelationKeyOnCompletion() != null) {
-            answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
-        }
-        if (getDiscardOnCompletionTimeout() != null) {
-            answer.setDiscardOnCompletionTimeout(getDiscardOnCompletionTimeout());
-        }
-        if (getForceCompletionOnStop() != null) {
-            answer.setForceCompletionOnStop(getForceCompletionOnStop());
-        }
-        if (getCompleteAllOnStop() != null) {
-            answer.setCompleteAllOnStop(getCompleteAllOnStop());
-        }
-        if (optimisticLockRetryPolicy == null) {
-            if (getOptimisticLockRetryPolicyDefinition() != null) {
-                answer.setOptimisticLockRetryPolicy(getOptimisticLockRetryPolicyDefinition().createOptimisticLockRetryPolicy());
-            }
-        } else {
-            answer.setOptimisticLockRetryPolicy(optimisticLockRetryPolicy);
-        }
-        if (getAggregateController() != null) {
-            answer.setAggregateController(getAggregateController());
-        }
-        if (getCompletionTimeoutCheckerInterval() != null) {
-            answer.setCompletionTimeoutCheckerInterval(getCompletionTimeoutCheckerInterval());
-        }
-        return answer;
-    }
-
-    @Override
     public void configureChild(ProcessorDefinition<?> output) {
         if (expression instanceof ExpressionClause) {
             ExpressionClause<?> clause = (ExpressionClause<?>) expression;
@@ -312,43 +178,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
                 correlationExpression.setExpressionType(clause.getExpressionType());
             }
         }
-    }
-
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && strategyRef != null) {
-            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
-                if (getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
-            }
-        }
-
-        if (strategy == null) {
-            throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
-        }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
-        }
-
-        return strategy;
-    }
-
-    private AggregationRepository createAggregationRepository(RouteContext routeContext) {
-        AggregationRepository repository = getAggregationRepository();
-        if (repository == null && aggregationRepositoryRef != null) {
-            repository = routeContext.mandatoryLookup(aggregationRepositoryRef, AggregationRepository.class);
-        }
-        return repository;
     }
 
     public AggregationStrategy getAggregationStrategy() {

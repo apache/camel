@@ -79,6 +79,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.IOHelper;
@@ -406,7 +407,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     private void replaceFromEndpoints() throws Exception {
         for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
-            context.getRouteDefinition(entry.getKey()).adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     replaceFromWith(entry.getValue());

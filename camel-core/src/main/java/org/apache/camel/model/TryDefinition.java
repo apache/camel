@@ -27,11 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Marks the beginning of a try, catch, finally block
@@ -65,35 +62,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @Override
     public String getLabel() {
         return "doTry";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor tryProcessor = createOutputsProcessor(routeContext, getOutputsWithoutCatches());
-        if (tryProcessor == null) {
-            throw new IllegalArgumentException("Definition has no children on " + this);
-        }
-
-        List<Processor> catchProcessors = new ArrayList<>();
-        if (catchClauses != null) {
-            for (CatchDefinition catchClause : catchClauses) {
-                catchProcessors.add(createProcessor(routeContext, catchClause));
-            }
-        }
-
-        FinallyDefinition finallyDefinition = finallyClause;
-        if (finallyDefinition == null) {
-            finallyDefinition = new FinallyDefinition();
-            finallyDefinition.setParent(this);
-        }
-        Processor finallyProcessor = createProcessor(routeContext, finallyDefinition);
-
-        // must have either a catch or finally
-        if (finallyClause == null && catchClauses == null) {
-            throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
-        }
-
-        return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);
     }
 
     // Fluent API
@@ -208,7 +176,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     @Override
-    protected void preCreateProcessor() {
+    public void preCreateProcessor() {
         // force re-creating initialization to ensure its up-to-date
         initialized = false;
         checkInitialized();

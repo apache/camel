@@ -25,9 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.StringHelper;
 
 /**
  * Custom load balancer
@@ -56,31 +53,21 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
         this.ref = ref;
     }
 
-    public LoadBalancer getLoadBalancer() {
+    public LoadBalancer getCustomLoadBalancer() {
         return loadBalancer;
     }
 
     /**
      * The custom load balancer to use.
      */
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
+    public void setCustomLoadBalancer(LoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
     @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        if (loadBalancer != null) {
-            return loadBalancer;
-        }
-
-        StringHelper.notEmpty(ref, "ref", this);
-        return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), ref, LoadBalancer.class);
-    }
-
-    @Override
     public String toString() {
-        if (loadBalancer != null) {
-            return "CustomLoadBalancer[" + loadBalancer + "]";
+        if (getCustomLoadBalancer() != null) {
+            return "CustomLoadBalancer[" + getCustomLoadBalancer() + "]";
         } else {
             return "CustomLoadBalancer[" + ref + "]";
         }

@@ -30,22 +30,13 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.processor.CatchProcessor;
-import org.apache.camel.processor.FatalFallbackErrorHandler;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.AsPredicate;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
@@ -95,8 +86,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     // TODO: in Camel 3.0 the OnExceptionDefinition should not contain state and ErrorHandler processors
     @XmlTransient
     private final Map<String, Processor> errorHandlers = new HashMap<>();
-    @XmlTransient
-    private RedeliveryPolicy redeliveryPolicy;
 
     public OnExceptionDefinition() {
     }
@@ -117,6 +106,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     public boolean isRouteScoped() {
         // is context scoped by default
         return routeScoped != null ? routeScoped : false;
+    }
+
+    public Boolean getRouteScoped() {
+        return routeScoped;
     }
 
     @Override
@@ -148,108 +141,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return true;
     }
 
-    /**
-     * Allows an exception handler to create a new redelivery policy for this exception type
-     *
-     * @param context      the camel context
-     * @param parentPolicy the current redelivery policy, is newer <tt>null</tt>
-     * @return a newly created redelivery policy, or return the original policy if no customization is required
-     *         for this exception handler.
-     */
-    public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
-        if (redeliveryPolicy != null) {
-            return redeliveryPolicy;
-        } else if (redeliveryPolicyRef != null) {
-            return CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);
-        } else if (redeliveryPolicyType != null) {
-            return redeliveryPolicyType.createRedeliveryPolicy(context, parentPolicy);
-        } else if (!outputs.isEmpty() && parentPolicy.getMaximumRedeliveries() != 0) {
-            // if we have outputs, then do not inherit parent maximumRedeliveries
-            // as you would have to explicit configure maximumRedeliveries on this onException to use it
-            // this is the behavior Camel has always had
-            RedeliveryPolicy answer = parentPolicy.copy();
-            answer.setMaximumRedeliveries(0);
-            return answer;
-        } else {
-            return parentPolicy;
-        }
-    }
-
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
-        // assign whether this was a route scoped onException or not
-        // we need to know this later when setting the parent, as only route scoped should have parent
-        // Note: this logic can possible be removed when the Camel routing engine decides at runtime
-        // to apply onException in a more dynamic fashion than current code base
-        // and therefore is in a better position to decide among context/route scoped OnException at runtime
-        if (routeScoped == null) {
-            routeScoped = super.getParent() != null;
-        }
-
-        setHandledFromExpressionType(routeContext);
-        setContinuedFromExpressionType(routeContext);
-        setRetryWhileFromExpressionType(routeContext);
-        setOnRedeliveryFromRedeliveryRef(routeContext);
-        setOnExceptionOccurredFromOnExceptionOccurredRef(routeContext);
-
-        // load exception classes
-        if (exceptions != null && !exceptions.isEmpty()) {
-            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
-        }
-
-        // must validate configuration before creating processor
-        validateConfiguration();
-
-        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy) {
-            // ensure allow original is turned on
-            routeContext.setAllowUseOriginalMessage(true);
-        }
-
-        // lets attach this on exception to the route error handler
-        Processor child = createOutputsProcessor(routeContext);
-        if (child != null) {
-            // wrap in our special safe fallback error handler if OnException have child output
-            Processor errorHandler = new FatalFallbackErrorHandler(child);
-            String id = routeContext.getRoute().getId();
-            errorHandlers.put(id, errorHandler);
-        }
-        // lookup the error handler builder
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) route.getErrorHandlerBuilder();
-        // and add this as error handlers
-        builder.addErrorHandlers(routeContext, this);
-    }
-
-    @Override
-    public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
-        // load exception classes
-        if (exceptions != null && !exceptions.isEmpty()) {
-            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
-        }
-
-        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy) {
-            // ensure allow original is turned on
-            routeContext.setAllowUseOriginalMessage(true);
-        }
-
-        // must validate configuration before creating processor
-        validateConfiguration();
-
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
-
-        Predicate when = null;
-        if (onWhen != null) {
-            when = onWhen.getExpression().createPredicate(routeContext);
-        }
-
-        Predicate handle = null;
-        if (handled != null) {
-            handle = handled.createPredicate(routeContext);
-        }
-
-        return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
-    }
-
-    protected void validateConfiguration() {
+    public void validateConfiguration() {
         if (isInheritErrorHandler() != null && isInheritErrorHandler()) {
             throw new IllegalArgumentException(this + " cannot have the inheritErrorHandler option set to true");
         }
@@ -273,7 +165,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
                     retryWhilePolicy,
                     redeliveryPolicyType,
                     useOriginalMessagePolicy,
-                    redeliveryPolicy,
                     onRedeliveryRef,
                     onRedelivery,
                     onExceptionOccurred)
@@ -731,18 +622,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Set the {@link RedeliveryPolicy} to be used.
-     *
-     * @param redeliveryPolicy the redelivery policy
-     * @return the builder
-     */
-    public OnExceptionDefinition redeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
-        return this;
-    }
-
-    /**
-     * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
+     * Sets a reference to a {@link org.apache.camel.processor.RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
      *
      * @param redeliveryPolicyRef reference to use for lookup
      * @return the builder
@@ -871,12 +751,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return errorHandlers.values();
     }
 
-    public RedeliveryPolicyDefinition getRedeliveryPolicy() {
-        return redeliveryPolicyType;
-    }
-
-    public void setRedeliveryPolicy(RedeliveryPolicyDefinition redeliveryPolicy) {
-        this.redeliveryPolicyType = redeliveryPolicy;
+    public void setErrorHandler(String routeId, Processor errorHandler) {
+        errorHandlers.put(routeId, errorHandler);
     }
 
     public RedeliveryPolicyDefinition getRedeliveryPolicyType() {
@@ -994,64 +870,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected boolean isAsyncDelayedRedelivery(CamelContext context) {
-        if (getRedeliveryPolicy() != null) {
-            return getRedeliveryPolicy().isAsyncDelayedRedelivery(context);
-        }
-        return false;
-    }
-
     protected RedeliveryPolicyDefinition getOrCreateRedeliveryPolicy() {
         if (redeliveryPolicyType == null) {
             redeliveryPolicyType = new RedeliveryPolicyDefinition();
         }
         return redeliveryPolicyType;
-    }
-
-    protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {
-        List<String> list = getExceptions();
-        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
-        for (String name : list) {
-            Class<? extends Throwable> type = resolver.resolveMandatoryClass(name, Throwable.class);
-            answer.add(type);
-        }
-        return answer;
-    }
-
-    private void setHandledFromExpressionType(RouteContext routeContext) {
-        if (getHandled() != null && handledPolicy == null && routeContext != null) {
-            handled(getHandled().createPredicate(routeContext));
-        }
-    }
-
-    private void setContinuedFromExpressionType(RouteContext routeContext) {
-        if (getContinued() != null && continuedPolicy == null && routeContext != null) {
-            continued(getContinued().createPredicate(routeContext));
-        }
-    }
-
-    private void setRetryWhileFromExpressionType(RouteContext routeContext) {
-        if (getRetryWhile() != null && retryWhilePolicy == null && routeContext != null) {
-            retryWhile(getRetryWhile().createPredicate(routeContext));
-        }
-    }
-
-    private void setOnRedeliveryFromRedeliveryRef(RouteContext routeContext) {
-        // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(onRedeliveryRef)) {
-            // if ref is provided then use mandatory lookup to fail if not found
-            Processor onRedelivery = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onRedeliveryRef, Processor.class);
-            setOnRedelivery(onRedelivery);
-        }
-    }
-
-    private void setOnExceptionOccurredFromOnExceptionOccurredRef(RouteContext routeContext) {
-        // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef)) {
-            // if ref is provided then use mandatory lookup to fail if not found
-            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onExceptionOccurredRef, Processor.class);
-            setOnExceptionOccurred(onExceptionOccurred);
-        }
     }
 
 }

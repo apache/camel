@@ -18,6 +18,7 @@ package org.apache.camel.itest.issues;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,7 +46,7 @@ public class IsUseAdviceWithJUnit4Test extends CamelTestSupport {
     @Test
     public void testIsUseAdviceWith() throws Exception {
 
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             public void configure() throws Exception {
 
                 replaceFromWith(directEndPointURI);

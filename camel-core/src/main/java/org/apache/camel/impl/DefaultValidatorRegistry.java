@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -39,7 +40,7 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
     public DefaultValidatorRegistry(CamelContext context, List<ValidatorDefinition> definitions) throws Exception {
         this(context);
         for (ValidatorDefinition def : definitions) {
-            Validator validator = def.createValidator(context);
+            Validator validator = ValidatorReifier.reifier(def).createValidator(context);
             context.addService(validator);
             put(createKey(def), validator);
         }

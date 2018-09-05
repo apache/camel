@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class AdviceWithPolicyTest extends ContextTestSupport {
     @Test
     public void testAdviceWithPolicy() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("b").after().to("mock:result");

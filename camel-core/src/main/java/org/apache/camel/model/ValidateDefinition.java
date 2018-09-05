@@ -23,10 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Validates a message based on an expression
@@ -60,12 +58,6 @@ public class ValidateDefinition extends NoOutputExpressionNode {
     @Override
     public String getLabel() {
         return "validate[" + getExpression() + "]";
-    }
-
-    @Override
-    public PredicateValidatingProcessor createProcessor(RouteContext routeContext) throws Exception {
-        Predicate pred = getExpression().createPredicate(routeContext);
-        return new PredicateValidatingProcessor(pred);
     }
 
     /**

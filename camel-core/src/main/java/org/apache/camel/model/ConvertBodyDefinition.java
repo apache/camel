@@ -16,19 +16,13 @@
  */
 package org.apache.camel.model;
 
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Converts the message body to another type
@@ -77,30 +71,6 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return "convertBodyTo[" + getType() + "]";
     }
     
-    public static void validateCharset(String charset) throws UnsupportedCharsetException {
-        if (charset != null) {
-            if (Charset.isSupported(charset)) {
-                Charset.forName(charset);
-                return;
-            }
-        }
-        throw new UnsupportedCharsetException(charset);
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (typeClass == null && type != null) {
-            typeClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(type);
-        }
-
-        // validate charset
-        if (charset != null) {
-            validateCharset(charset);
-        }
-
-        return new ConvertBodyProcessor(getTypeClass(), getCharset());
-    }
-
     public String getType() {
         return type;
     }

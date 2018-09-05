@@ -23,6 +23,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
     @Test
     public void testAdvised() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context,
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context,
                 new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {

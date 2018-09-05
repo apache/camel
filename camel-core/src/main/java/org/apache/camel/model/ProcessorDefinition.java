@@ -37,16 +37,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.EnrichClause;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -59,20 +56,14 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.interceptor.DefaultChannel;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,47 +155,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return false;
     }
 
-    /**
-     * Override this in definition class and implement logic to create the processor
-     * based on the definition model.
-     */
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
-    }
-
-    /**
-     * Prefer to use {#link #createChildProcessor}.
-     */
-    public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
-        Collection<ProcessorDefinition<?>> outputs = getOutputs();
-        return createOutputsProcessor(routeContext, outputs);
-    }
-
-    /**
-     * Creates the child processor (outputs) from the current definition
-     *
-     * @param routeContext   the route context
-     * @param mandatory      whether or not children is mandatory (ie the definition should have outputs)
-     * @return the created children, or <tt>null</tt> if definition had no output
-     * @throws Exception is thrown if error creating the child or if it was mandatory and there was no output defined on definition
-     */
-    public Processor createChildProcessor(RouteContext routeContext, boolean mandatory) throws Exception {
-        Processor children = null;
-        // at first use custom factory
-        if (routeContext.getCamelContext().getProcessorFactory() != null) {
-            children = routeContext.getCamelContext().getProcessorFactory().createChildProcessor(routeContext, this, mandatory);
-        }
-        // fallback to default implementation if factory did not create the child
-        if (children == null) {
-            children = createOutputsProcessor(routeContext);
-        }
-
-        if (children == null && mandatory) {
-            throw new IllegalArgumentException("Definition has no children on " + this);
-        }
-        return children;
-    }
-
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         if (!isOutputSupported()) {
@@ -235,335 +185,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         blocks.clear();
     }
 
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
-        Processor processor = makeProcessor(routeContext);
-        if (processor == null) {
-            // no processor to add
-            return;
-        }
-
-        if (!routeContext.isRouteAdded()) {
-            boolean endpointInterceptor = false;
-
-            // are we routing to an endpoint interceptor, if so we should not add it as an event driven
-            // processor as we use the producer to trigger the interceptor
-            if (processor instanceof Channel) {
-                Channel channel = (Channel) processor;
-                Processor next = channel.getNextProcessor();
-                if (next instanceof InterceptEndpointProcessor) {
-                    endpointInterceptor = true;
-                }
-            }
-
-            // only add regular processors as event driven
-            if (endpointInterceptor) {
-                log.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
-            } else {
-                log.trace("Adding event driven processor: {}", processor);
-                routeContext.addEventDrivenProcessor(processor);
-            }
-
-        }
-    }
-
-    /**
-     * Wraps the child processor in whatever necessary interceptors and error handlers
-     */
-    public Processor wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
-        // dont double wrap
-        if (processor instanceof Channel) {
-            return processor;
-        }
-        return wrapChannel(routeContext, processor, null);
-    }
-
-    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
-        return wrapChannel(routeContext, processor, child, isInheritErrorHandler());
-    }
-
-    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
-        // put a channel in between this and each output to control the route flow logic
-        ModelChannel channel = createChannel(routeContext);
-        channel.setNextProcessor(processor);
-
-        // add interceptor strategies to the channel must be in this order: camel context, route context, local
-        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
-        addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
-        addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
-
-        // must do this ugly cast to avoid compiler error on AIX/HP-UX
-        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
-
-        // set the child before init the channel
-        channel.setChildDefinition(child);
-        channel.initChannel(defn, routeContext);
-
-        // set the error handler, must be done after init as we can set the error handler as first in the chain
-        if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
-            // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
-            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", defn);
-        } else if (ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, defn, true)
-                || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, defn, true)
-                || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, defn, true)) {
-            // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
-            // by checking that any of our parent(s) is not a try .. catch or finally type
-            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", defn);
-        } else if (defn instanceof OnExceptionDefinition || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, defn, true)) {
-            log.trace("{} is part of OnException so no error handler is applied", defn);
-            // do not use error handler for onExceptions blocks as it will handle errors itself
-        } else if (defn instanceof HystrixDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixDefinition.class, defn, true)) {
-            // do not use error handler for hystrix as it offers circuit breaking with fallback for its outputs
-            // however if inherit error handler is enabled, we need to wrap an error handler on the hystrix parent
-            if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
-                // only wrap the parent (not the children of the hystrix)
-                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
-            } else {
-                log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
-            }
-        } else if (defn instanceof MulticastDefinition) {
-            // do not use error handler for multicast as it offers fine grained error handlers for its outputs
-            // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
-            MulticastDefinition def = (MulticastDefinition) defn;
-            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && def.getShareUnitOfWork();
-            if (isShareUnitOfWork && child == null) {
-                // only wrap the parent (not the children of the multicast)
-                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
-            } else {
-                log.trace("{} is part of multicast which have special error handling so no error handler is applied", defn);
-            }
-        } else {
-            // use error handler by default or if configured to do so
-            wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
-        }
-
-        // do post init at the end
-        channel.postInitChannel(defn, routeContext);
-        log.trace("{} wrapped in Channel: {}", defn, channel);
-
-        return channel;
-    }
-
-    /**
-     * Wraps the given channel in error handler (if error handler is inherited)
-     *
-     * @param channel             the channel
-     * @param routeContext        the route context
-     * @param inheritErrorHandler whether to inherit error handler
-     * @throws Exception can be thrown if failed to create error handler builder
-     */
-    private void wrapChannelInErrorHandler(Channel channel, RouteContext routeContext, Boolean inheritErrorHandler) throws Exception {
-        if (inheritErrorHandler == null || inheritErrorHandler) {
-            log.trace("{} is configured to inheritErrorHandler", this);
-            Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(routeContext, output);
-            // set error handler on channel
-            channel.setErrorHandler(errorHandler);
-        } else {
-            log.debug("{} is configured to not inheritErrorHandler.", this);
-        }
-    }
-
-    /**
-     * Wraps the given output in an error handler
-     *
-     * @param routeContext the route context
-     * @param output the output
-     * @return the output wrapped with the error handler
-     * @throws Exception can be thrown if failed to create error handler builder
-     */
-    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
-        // create error handler
-        Processor errorHandler = builder.createErrorHandler(routeContext, output);
-
-        // invoke lifecycles so we can manage this error handler builder
-        for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {
-            strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
-        }
-
-        return errorHandler;
-    }
-
-    /**
-     * Adds the given list of interceptors to the channel.
-     *
-     * @param routeContext  the route context
-     * @param channel       the channel to add strategies
-     * @param strategies    list of strategies to add.
-     */
-    protected void addInterceptStrategies(RouteContext routeContext, Channel channel, List<InterceptStrategy> strategies) {
-        for (InterceptStrategy strategy : strategies) {
-            if (!routeContext.isHandleFault() && strategy instanceof HandleFault) {
-                // handle fault is disabled so we should not add it
-                continue;
-            }
-
-            // add strategy
-            channel.addInterceptStrategy(strategy);
-        }
-    }
-
-    /**
-     * Creates a new instance of some kind of composite processor which defaults
-     * to using a {@link Pipeline} but derived classes could change the behaviour
-     */
-    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        return Pipeline.newInstance(routeContext.getCamelContext(), list);
-    }
-
-    /**
-     * Creates a new instance of the {@link Channel}.
-     */
-    protected ModelChannel createChannel(RouteContext routeContext) throws Exception {
-        return new DefaultChannel();
-    }
-
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
-        // We will save list of actions to restore the outputs back to the original state.
-        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-        try {
-            return createOutputsProcessorImpl(routeContext, outputs);
-        } finally {
-            propertyPlaceholdersChangeReverter.run();
-        }
-    }
-
-    protected Processor createOutputsProcessorImpl(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
-        List<Processor> list = new ArrayList<>();
-        for (ProcessorDefinition<?> output : outputs) {
-
-            // allow any custom logic before we create the processor
-            output.preCreateProcessor();
-
-            // resolve properties before we create the processor
-            ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), output);
-
-            // resolve constant fields (eg Exchange.FILE_NAME)
-            ProcessorDefinitionHelper.resolveKnownConstantFields(output);
-
-            // also resolve properties and constant fields on embedded expressions
-            ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;
-            if (me instanceof ExpressionNode) {
-                ExpressionNode exp = (ExpressionNode) me;
-                ExpressionDefinition expressionDefinition = exp.getExpression();
-                if (expressionDefinition != null) {
-                    // resolve properties before we create the processor
-                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
-
-                    // resolve constant fields (eg Exchange.FILE_NAME)
-                    ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
-                }
-            }
-
-            Processor processor = createProcessor(routeContext, output);
-
-            // inject id
-            if (processor instanceof IdAware) {
-                String id = output.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-                ((IdAware) processor).setId(id);
-            }
-
-            if (output instanceof Channel && processor == null) {
-                continue;
-            }
-
-            Processor channel = wrapChannel(routeContext, processor, output);
-            list.add(channel);
-        }
-
-        // if more than one output wrap than in a composite processor else just keep it as is
-        Processor processor = null;
-        if (!list.isEmpty()) {
-            if (list.size() == 1) {
-                processor = list.get(0);
-            } else {
-                processor = createCompositeProcessor(routeContext, list);
-            }
-        }
-
-        return processor;
-    }
-
-    protected Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> output) throws Exception {
-        Processor processor = null;
-        // at first use custom factory
-        if (routeContext.getCamelContext().getProcessorFactory() != null) {
-            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
-        }
-        // fallback to default implementation if factory did not create the processor
-        if (processor == null) {
-            processor = output.createProcessor(routeContext);
-        }
-        return processor;
-    }
-
-    /**
-     * Creates the processor and wraps it in any necessary interceptors and error handlers
-     */
-    protected Processor makeProcessor(RouteContext routeContext) throws Exception {
-        // We will save list of actions to restore the definition back to the original state.
-        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-        try {
-            return makeProcessorImpl(routeContext);
-        } finally {
-            // Lets restore
-            propertyPlaceholdersChangeReverter.run();
-        }
-    }
-
-    private Processor makeProcessorImpl(RouteContext routeContext) throws Exception {
-        Processor processor = null;
-
-        // allow any custom logic before we create the processor
-        preCreateProcessor();
-
-        // resolve properties before we create the processor
-        ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), this);
-
-        // resolve constant fields (eg Exchange.FILE_NAME)
-        ProcessorDefinitionHelper.resolveKnownConstantFields(this);
-
-        // also resolve properties and constant fields on embedded expressions
-        ProcessorDefinition<?> me = (ProcessorDefinition<?>) this;
-        if (me instanceof ExpressionNode) {
-            ExpressionNode exp = (ExpressionNode) me;
-            ExpressionDefinition expressionDefinition = exp.getExpression();
-            if (expressionDefinition != null) {
-                // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
-
-                // resolve constant fields (eg Exchange.FILE_NAME)
-                ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
-            }
-        }
-
-        // at first use custom factory
-        if (routeContext.getCamelContext().getProcessorFactory() != null) {
-            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, this);
-        }
-        // fallback to default implementation if factory did not create the processor
-        if (processor == null) {
-            processor = createProcessor(routeContext);
-        }
-
-        // inject id
-        if (processor instanceof IdAware) {
-            String id = this.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-            ((IdAware) processor).setId(id);
-        }
-
-        if (processor == null) {
-            // no processor to make
-            return null;
-        }
-        return wrapProcessor(routeContext, processor);
-    }
-
     /**
      * Strategy to execute any custom logic before the {@link Processor} is created.
      */
-    protected void preCreateProcessor() {
+    public void preCreateProcessor() {
         // noop
     }
 
@@ -1160,7 +785,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
-     * Creates a {@link Pipeline} so that the message
+     * Creates a {@link org.apache.camel.processor.Pipeline} so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      *

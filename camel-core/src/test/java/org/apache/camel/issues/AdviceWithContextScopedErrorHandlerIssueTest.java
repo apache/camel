@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 /**
@@ -28,7 +29,7 @@ public class AdviceWithContextScopedErrorHandlerIssueTest extends ContextTestSup
 
     @Test
     public void testAdviceWith() throws Exception {
-        context.getRouteDefinition("route-a").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:bar")

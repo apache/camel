@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 /**
@@ -28,7 +29,7 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
 
     @Test
     public void testWeaveAddLast() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // insert at the end of the existing route, the given piece of route
@@ -47,7 +48,7 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
 
     @Test
     public void testWeaveByToUriAndAddLast() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToUri("mock:foo").replace().to("mock:foo2");

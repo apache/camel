@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
 
@@ -52,7 +51,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * Creates a new {@link StreamResequencerConfig} instance using default
      * values for <code>capacity</code> (1000) and <code>timeout</code>
      * (1000L). Elements of the sequence are compared using the
-     * {@link DefaultExchangeComparator}.
+     * default {@link ExpressionResultComparator}.
      */
     public StreamResequencerConfig() {
         this(1000, 1000L);
@@ -61,13 +60,14 @@ public class StreamResequencerConfig extends ResequencerConfig {
     /**
      * Creates a new {@link StreamResequencerConfig} instance using the given
      * values for <code>capacity</code> and <code>timeout</code>. Elements
-     * of the sequence are compared using the {@link DefaultExchangeComparator}.
+     * of the sequence are compared using the default
+     * {@link ExpressionResultComparator}.
      * 
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
      */
     public StreamResequencerConfig(int capacity, long timeout) {
-        this(capacity, timeout, new DefaultExchangeComparator());
+        this(capacity, timeout, null, null);
     }
 
     /**
@@ -81,22 +81,21 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * @param comparator comparator for sequence comparision
      */
     public StreamResequencerConfig(int capacity, long timeout, ExpressionResultComparator comparator) {
-        this.capacity = capacity;
-        this.timeout = timeout;
-        this.comparator = comparator;
+        this(capacity, timeout, null, comparator);
     }
 
     /**
      * Creates a new {@link StreamResequencerConfig} instance using the given
      * values for <code>capacity</code> and <code>timeout</code>. Elements
-     * of the sequence are compared using the {@link DefaultExchangeComparator}.
+     * of the sequence are compared using the default
+     * {@link ExpressionResultComparator}.
      *
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
      * @param rejectOld  if true, throws an exception when messages older than the last delivered message are processed
      */
     public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld) {
-        this(capacity, timeout, rejectOld, new DefaultExchangeComparator());
+        this(capacity, timeout, rejectOld, null);
     }
 
     /**
@@ -120,7 +119,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * Returns a new {@link StreamResequencerConfig} instance using default
      * values for <code>capacity</code> (1000) and <code>timeout</code>
      * (1000L). Elements of the sequence are compared using the
-     * {@link DefaultExchangeComparator}.
+     * default {@link ExpressionResultComparator}.
      * 
      * @return a default {@link StreamResequencerConfig}.
      */

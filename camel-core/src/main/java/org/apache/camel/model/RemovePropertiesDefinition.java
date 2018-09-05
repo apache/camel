@@ -22,11 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.RemovePropertiesProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Removes message exchange properties whose name matches a specified pattern
@@ -68,18 +64,6 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     @Override
     public String getLabel() {
         return "removeProperties[" + getPattern() + "]";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(getPattern(), "patterns", this);
-        if (getExcludePatterns() != null) {
-            return new RemovePropertiesProcessor(getPattern(), getExcludePatterns());
-        } else if (getExcludePattern() != null) {
-            return new RemovePropertiesProcessor(getPattern(), new String[]{getExcludePattern()});
-        } else {
-            return new RemovePropertiesProcessor(getPattern(), null);
-        }
     }
 
     /**
