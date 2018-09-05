@@ -46,6 +46,13 @@ public class RedisConsumer extends DefaultConsumer implements MessageListener {
         redisConfiguration.getListenerContainer().addMessageListener(this, topics);
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        Collection<Topic> topics = toTopics(redisConfiguration.getChannels());
+        redisConfiguration.getListenerContainer().removeMessageListener(this, topics);
+        super.doStop();
+    }
+
     private Collection<Topic> toTopics(String channels) {
         String[] channelsArrays = channels.split(",");
         List<Topic> topics = new ArrayList<>();
